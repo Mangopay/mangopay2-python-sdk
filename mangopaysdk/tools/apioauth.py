@@ -1,0 +1,30 @@
+from mangopaysdk.types.oauthtoken import OAuthToken
+from mangopaysdk.tools.apibase import ApiBase
+
+
+class ApiOAuth(ApiBase):
+    """MangoPay API methods for users."""
+
+    def CreateToken(self):
+        """Get token information for OAuth Authentication.
+        return MangoPay OAuthToken object with token information
+        """
+
+        urlMethod = self._getRequestUrl('authentication_oauth')
+        requestType = self._getRequestType('authentication_oauth')
+        requestData = {
+            'grant_type' : 'client_credentials'
+        }
+
+        rest = self._getRestToolObject(False)
+        response = rest.Request(urlMethod, requestType, requestData)
+        token = self._castAuthResponseToEntity(response)
+        return token
+        
+    def _castAuthResponseToEntity(self, dict):
+        res = OAuthToken()
+        res.access_token = dict['access_token']
+        res.token_type = dict['token_type']
+        res.expires_in = dict['expires_in']
+        res.valid = True
+        return res
