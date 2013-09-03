@@ -162,8 +162,8 @@
     <Compile Include="tests\testbase.py">
       <SubType>Code</SubType>
     </Compile>
-	<Compile Include="tests\testtokens.py" />
-	<Compile Include="tests\testconfigurations.py" />
+    <Compile Include="tests\testtokens.py" />
+    <Compile Include="tests\testconfigurations.py" />
     <Compile Include="tests\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -183,13 +183,11 @@
     </Content>
     <Content Include="tests\testconfigurations.py">
       <SubType>Content</SubType>
-    </Content>    <Content Include="LICENSE">
+    </Content>
+    <Content Include="LICENSE">
       <SubType>Content</SubType>
     </Content>
     <Content Include="MANIFEST.in">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="README">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

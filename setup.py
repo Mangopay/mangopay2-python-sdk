@@ -9,7 +9,7 @@ setup(
     packages=['mangopaysdk', 'mangopaysdk.entities', 'mangopaysdk.tools', 'mangopaysdk.types', 'mangopaysdk.types.exceptions'],
     url='http://pypi.python.org/pypi/mangopaysdk/',
     description='MangoPay API',
-    long_description=open('README').read(),
+    long_description=open('README.md').read(),
     install_requires=[
         "requests>=1.2.0",
         "requests-oauthlib>=0.3.0",
