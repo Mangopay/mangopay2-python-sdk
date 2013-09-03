@@ -7,8 +7,8 @@ class Configuration:
     """
 
     # Setting for client: client Id and client password
-    ClientID = 'mosaiclab' ################################################## REMOVE ON DISTRIBUTION!!!
-    ClientPassword = 'FPpPoofN837Y0MxRXnKVH31kJ2dLc54oT481R55KEkjeQ6Bph4' ### REMOVE ON DISTRIBUTION!!!
+    ClientID = ''
+    ClientPassword = ''
 
     # Base URL to MangoPay API
     BaseUrl = 'https://mangopay-api-inte.leetchi.com'
