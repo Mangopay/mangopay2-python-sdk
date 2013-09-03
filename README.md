@@ -1,6 +1,6 @@
 MangoPay SDK
 =================================================
-mangopaysdk is a client library to work with mangopay REST API
+MangoPaySDK is a client library to work with MangoPay REST API
 (http://www.mangopay.com/).
 
 
@@ -16,7 +16,7 @@ We strongly recommend using PIP as installation method:
 
 License
 -------------------------------------------------
-MangoPaySdk is distributed under MIT license, see LICENSE file.
+MangoPaySDK is distributed under MIT license, see LICENSE file.
 
 
 Unit Tests (not included in pip package)
