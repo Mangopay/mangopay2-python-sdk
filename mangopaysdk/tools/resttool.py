@@ -81,7 +81,7 @@ class RestTool:
 
         if (self._debugMode): logging.getLogger(__name__).debug('RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
 
-        decodedResp = json.loads(response.text) if ('application/json' in response.headers['content-type']) else None
+        decodedResp = json.loads(response.text) if (response.text != '' and 'application/json' in response.headers['content-type']) else None
         self._checkResponseCode(response, decodedResp)
 
         # load pagination info
@@ -100,9 +100,9 @@ class RestTool:
         """
         
         if response.status_code != requests.codes.ok:
-            message = ""
-            if decodedResp.get('Message') != None:
+            message = str(response.status_code)
+            if decodedResp != None and decodedResp.get('Message') != None:
                 message = decodedResp.get('Message')
-            elif decodedResp.get('error') != None:
+            elif decodedResp != None and decodedResp.get('error') != None:
                 message = decodedResp.get('error')
             raise ResponseException(response.request.url, response.status_code, message)

@@ -15,12 +15,11 @@ class ApiClients(ApiBase):
         urlMethod = self._getRequestUrl('authentication_base')
         requestType = self._getRequestType('authentication_base')
         requestData = {
-            'ClientID' : clientId,
+            'ClientId' : clientId,
             'Name' : clientName,
             'Email' : clientEmail,
         }
 
-        rest = self._getRestToolObject(True)
-        responseObj = rest.Request(urlMethod, requestType, requestData)
-
-        return self._castResponseToEntity(response, 'Client')
+        rest = self._getRestToolObject(False)
+        response = rest.Request(urlMethod, requestType, requestData)
+        return self._castResponseToEntity(response, 'Client');
