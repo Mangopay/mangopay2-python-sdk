@@ -50,7 +50,7 @@ Sample usage
 
     # change and update some of his data
     john.LastName += " - CHANGED"
-    self.sdk.users.Update(john)
+    api.users.Update(john)
 
     # get all users (with pagination)
     from mangopaysdk.types.pagination import Pagination
