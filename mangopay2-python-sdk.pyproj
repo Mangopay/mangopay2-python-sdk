@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>82ff4f5f-bfda-4a74-9d71-4b30e81ddf41</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>_tmp.py</StartupFile>
+    <StartupFile>_tmp_example.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -168,7 +168,7 @@
     <Compile Include="tests\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="_tmp.py" />
+    <Compile Include="_tmp_example.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="mangopaysdk\" />
