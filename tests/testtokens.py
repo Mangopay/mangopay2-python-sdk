@@ -20,7 +20,7 @@ class Test_Tokens(TestBase):
         self.assertEqual(token.access_token, self.sdk.OAuthToken.access_token)
 
     def test_isTokenLeaking(self):
-        api = MangoPayApi()
+        api = self.buildNewMangoPayApi()
         self.sdk.users.GetAll()
         api.users.GetAll()
         self.assertTrue(api.OAuthToken.access_token != self.sdk.OAuthToken.access_token)
