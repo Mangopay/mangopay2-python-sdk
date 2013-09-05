@@ -1,7 +1,7 @@
 MangoPay SDK
 =================================================
-MangoPaySDK is a client library to work with MangoPay REST API
-(http://www.mangopay.com/).
+MangoPaySDK is a python client library to work with
+[MangoPay REST API](http://docs.mangopay.com/api-references/).
 
 
 Installation
@@ -35,8 +35,8 @@ Unit Tests (not included in pip package)
 
 Contacts
 -------------------------------------------------
-Report bugs or suggest features using issue tracker at GitHub
-(https://github.com/MangoPay/mangopay2-python-sdk).
+Report bugs or suggest features using
+[issue tracker at GitHub](https://github.com/MangoPay/mangopay2-python-sdk).
 
 
 Sample usage
