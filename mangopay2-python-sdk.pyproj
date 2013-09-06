@@ -34,6 +34,8 @@
     <Compile Include="mangopaysdk\entities\entitybase.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\refund.py" />
+    <Compile Include="mangopaysdk\tools\apirefunds.py" />
     <Compile Include="mangopaysdk\tools\authenticationHelper.py">
       <SubType>Code</SubType>
     </Compile>
