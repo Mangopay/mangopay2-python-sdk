@@ -78,7 +78,7 @@ Configuration example
     from mangopaysdk.mangopayapi import MangoPayApi
     api = MangoPayApi()
 
-    api.Config.ClientID = 'your-client-id'
+    api.Config.ClientId = 'your-client-id'
     api.Config.ClientPassword = 'your-client-password'
     print(api.Config.BaseUrl) # you probably dont have to change it
 
