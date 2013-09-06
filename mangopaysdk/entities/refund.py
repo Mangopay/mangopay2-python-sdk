@@ -1,7 +1,7 @@
-from mangopaysdk.entities.entitybase import EntityBase
+from mangopaysdk.entities.transaction import Transaction
 
 
-class Refund(EntityBase):
+class Refund(Transaction):
     """Refund entity"""
         
     InitialTransactionId = 0

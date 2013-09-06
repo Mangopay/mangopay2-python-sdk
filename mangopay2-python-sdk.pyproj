@@ -28,12 +28,15 @@
     <Compile Include="mangopaysdk\entities\bankaccount.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\card.py" />
+    <Compile Include="mangopaysdk\entities\cardregistration.py" />
     <Compile Include="mangopaysdk\entities\client.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mangopaysdk\entities\entitybase.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\payindirectcard.py" />
     <Compile Include="mangopaysdk\entities\refund.py" />
     <Compile Include="mangopaysdk\tools\apirefunds.py" />
     <Compile Include="mangopaysdk\tools\authenticationHelper.py">
