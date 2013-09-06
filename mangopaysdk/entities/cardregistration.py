@@ -13,7 +13,7 @@ class CardRegistration(EntityBase):
     ResultCode = ''
     Currency = ''
     
-    # CREATED, ERROR, VALIDATED
+    # CardRegistrationStatus CREATED, ERROR, VALIDATED
     Status = None	
     
     # Boolean

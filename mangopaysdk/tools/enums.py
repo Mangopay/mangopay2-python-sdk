@@ -70,6 +70,12 @@ class TransactionNature:
     REPUDIATION = 'REPUDIATION'
 
 
+class CardRegistrationStatus:
+    CREATED = 'CREATED',
+    ERROR = 'ERROR',
+    VALIDATED = 'VALIDATED',
+	
+
 #class AuthenticationType:
 #    Basic = 'Basic'
 #    Strong = 'Strong'
