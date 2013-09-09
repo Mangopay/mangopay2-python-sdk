@@ -1,4 +1,5 @@
-from mangopaysdk.tools import apioauth, apiclients, apiusers, apiwallets, apitransfers, apipayins, apipayouts, apirefunds
+from mangopaysdk.tools import apioauth, apiclients, apiusers, apiwallets, apitransfers, apipayins, apipayouts
+from mangopaysdk.tools import apirefunds, apicardregistrations, apicards
 from mangopaysdk.configuration import Configuration
 
 
@@ -34,3 +35,5 @@ class MangoPayApi:
         self.payIns = apipayins.ApiPayIns(self)
         self.payOuts = apipayouts.ApiPayOuts(self)
         self.refunds = apirefunds.ApiRefunds(self)
+        self.cardRegistrations = apicardregistrations.ApiBase(self)
+        self.cards = apicards.ApiCards(self)

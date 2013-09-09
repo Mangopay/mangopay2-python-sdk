@@ -1,5 +1,6 @@
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.tools.apioauth import ApiOAuth
+from mangopaysdk.types.pagination import Pagination
 from tests.testbase import TestBase
 
 

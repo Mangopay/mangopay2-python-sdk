@@ -1,14 +1,6 @@
 class Pagination():
     """Class represents pagination information."""
 
-    Page = 0
-
-    ItemsPerPage = 10
-
-    TotalPages = 0
-
-    TotalItems = 0
-
     """Array with links to navigation.
     All values optional. Format:
     (
@@ -28,3 +20,6 @@ class Pagination():
         """
         self.Page = page
         self.ItemsPerPage = itemsPerPage
+        self.TotalPages = None
+        self.TotalItems = None
+

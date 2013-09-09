@@ -28,8 +28,8 @@ class Test_PayIns(TestBase):
        self.assertEqualInputProps(payIn, getPayIn)
        self.assertEqual(getPayIn.Status, 'CREATED')
        self.assertIsNone(getPayIn.ExecutionDate)
-       self.assertIsNotNone(getPayIn.PaymentDetails.RedirectURL)
-       self.assertIsNotNone(getPayIn.PaymentDetails.ReturnURL)
+       self.assertIsNotNone(getPayIn.ExecutionDetails.RedirectURL)
+       self.assertIsNotNone(getPayIn.ExecutionDetails.ReturnURL)
 
 if __name__ == '__main__':
     unittest.main()

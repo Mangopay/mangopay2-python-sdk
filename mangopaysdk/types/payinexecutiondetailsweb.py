@@ -2,11 +2,19 @@ from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 
 
 class PayInExecutionDetailsWeb (PayInExecutionDetails):
+    """ Class represents Web type for execution option in PayIn entity."""
 
-    # URL format expected.
-    TemplateURL = ''
+    def __init__(self):
+        # URL format expected
+        self.RedirectURL = None
+        self.ReturnURL = None
+        self.TemplateURL = None
 
-    Culture = ''
+        self.Culture = ''
+        # Mode3DSType { DEFAULT, FORCE }
+        self.SecureMode = None
 
-    # Mode3DSType { DEFAULT, FORCE }
-    SecureMode = ''
+    def GetReadOnlyProperties(self):
+        properties = super().GetReadOnlyProperties()
+        properties.append('RedirectURL' )        
+        return properties

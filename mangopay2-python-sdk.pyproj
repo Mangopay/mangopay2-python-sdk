@@ -36,7 +36,9 @@
     <Compile Include="mangopaysdk\entities\entitybase.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mangopaysdk\types\payinexecutiondetailsdirectcard.py" />
+    <Compile Include="mangopaysdk\tools\apicards.py" />
+    <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
+    <Compile Include="mangopaysdk\types\payinexecutiondetailsdirect.py" />
     <Compile Include="mangopaysdk\types\payinpaymentdetailsdirectcard.py" />
     <Compile Include="mangopaysdk\entities\refund.py" />
     <Compile Include="mangopaysdk\tools\apirefunds.py" />

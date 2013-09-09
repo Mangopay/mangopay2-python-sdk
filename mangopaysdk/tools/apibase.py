@@ -32,13 +32,12 @@ class ApiBase:
         'authentication_base' : ('/api/clients/', 'POST'),
         'authentication_oauth' : ('/api/oauth/token', 'POST'),
 
-        'cardregistrations_create': ('/cardregistrations', 'POST'),
-        'cardregistrations_udapte': ('/cardregistrations/%s', 'PUT'),
-        'cardregistrations_get': ('/cardregistrations/%s', 'GET'),
+        'cardregistration_create': ('/cardregistrations', 'POST'),
+        'cardregistration_save': ('/cardregistrations/%s', 'PUT'),
+        'cardregistration_get': ('/cardregistrations/%s', 'GET'),
 
-        'cards_get': ('/cards/%s', 'GET'),
-        'cards_get': ('/cards/%s', 'GET'),
-
+        'card_get': ('/cards/%s', 'GET'),
+       
         'crosscurrencytransfers_create' : ('/transfers/%s', 'POST'),
         'crosscurrencytransfers_get' : ('/transfers/%s', 'GET'),
 

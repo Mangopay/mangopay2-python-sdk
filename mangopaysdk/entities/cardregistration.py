@@ -18,3 +18,13 @@ class CardRegistration(EntityBase):
     
     # Boolean
     Reusable = None
+
+    def GetReadOnlyProperties(self):
+        properties = super().GetReadOnlyProperties()
+        properties.append('AccessKey')
+        properties.append('PreregistrationData')
+        properties.append('CardRegistrationURL')
+        properties.append('CardId')
+        properties.append('ResultCode')
+        properties.append('Status')
+        return properties

@@ -73,8 +73,7 @@ class TransactionNature:
 class CardRegistrationStatus:
     CREATED = 'CREATED',
     ERROR = 'ERROR',
-    VALIDATED = 'VALIDATED',
-	
+    VALIDATED = 'VALIDATED'
 
 #class AuthenticationType:
 #    Basic = 'Basic'

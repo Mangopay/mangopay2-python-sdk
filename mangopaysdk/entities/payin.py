@@ -20,7 +20,11 @@ class PayIn (Transaction):
     def GetDependsObjects(self):
         return { 
                 'PaymentType': {'_property_name': 'PaymentDetails', 'CARD': 'PayInPaymentDetailsCard'},
-                'ExecutionType': {'_property_name': 'ExecutionDetails', 'WEB': 'PayInExecutionDetailsWeb'} 
+                'ExecutionType': {
+                    '_property_name': 'ExecutionDetails', 
+                    'WEB': 'PayInExecutionDetailsWeb',
+                    'DIRECT': 'PayInExecutionDetailsDirect'                
+                    }
                }
 
     def GetReadOnlyProperties(self):

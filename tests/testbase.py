@@ -110,13 +110,13 @@ class TestBase(unittest.TestCase):
         if TestBase._payInPaymentDetailsCard == None:
             TestBase._payInPaymentDetailsCard = PayInPaymentDetailsCard()
             TestBase._payInPaymentDetailsCard.CardType = 'AMEX'
-            TestBase._payInPaymentDetailsCard.ReturnURL = 'https://test.com'
         return TestBase._payInPaymentDetailsCard
     
     def getPayInExecutionDetailsWeb(self):
         """return PayInExecutionDetailsWeb"""
         if TestBase._payInExecutionDetailsWeb == None:
             TestBase._payInExecutionDetailsWeb = PayInExecutionDetailsWeb()
+            TestBase._payInExecutionDetailsWeb.ReturnURL = 'https://test.com'
             TestBase._payInExecutionDetailsWeb.TemplateURL = 'https://TemplateURL.com'
             TestBase._payInExecutionDetailsWeb.SecureMode = 'DEFAULT'
             TestBase._payInExecutionDetailsWeb.Culture = 'fr'

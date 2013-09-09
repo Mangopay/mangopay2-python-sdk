@@ -4,18 +4,13 @@ import time
 
 class OAuthToken:
     """Token data for OAuth Authentication."""
-
-    # timestamp
-    _create_time = 0
-
-    expires_in = 0
-
-    access_token = ''
-
-    token_type = ''
-
+    
     def __init__(self):
+        # timestamp
         self.create_time = int(time.time() - 5)
+        self.expires_in = None
+        self.access_token = None
+        self.token_type = None
 
     def IsExpire(self):
         """Check that current tokens are expire and return true if yes.
