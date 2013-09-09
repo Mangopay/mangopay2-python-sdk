@@ -308,7 +308,7 @@ class ApiBase:
         requestData = {}
 
         for k,v in entityProperies.items():
-            if blackList.count(k) > 0:
+            if blackList.count(k) > 0 or v == None:
                 continue;
 
             if self._canReadSubRequestData(entity, k):

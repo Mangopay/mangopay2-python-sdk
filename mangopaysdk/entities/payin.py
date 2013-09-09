@@ -3,19 +3,17 @@ from mangopaysdk.entities.transaction import Transaction
 
 class PayIn (Transaction):
 
-    CreditedWalletId = 0
-
-    # PayInPaymentType {CARD, BANK_WIRE, AUTOMATIC_DEBIT, DIRECT_DEBIT }
-    PaymentType = None
-
-    # One of PayInPaymentDetails implementations, depending on PaymentType
-    PaymentDetails = None
-
-    # ExecutionType { WEB, TOKEN, DIRECT, PREAUTHORIZED, RECURRING_ORDER_EXECUTION }
-    ExecutionType = ''
-
-    # One of PayInExecutionDetails implementations, depending on ExecutionType
-    ExecutionDetails = None
+    def __init__(self, id = None):
+        self.CreditedWalletId = None
+        # PayInPaymentType {CARD, BANK_WIRE, AUTOMATIC_DEBIT, DIRECT_DEBIT }
+        self.PaymentType = None
+        # One of PayInPaymentDetails implementations, depending on PaymentType
+        self.PaymentDetails = None
+        # ExecutionType { WEB, TOKEN, DIRECT, PREAUTHORIZED, RECURRING_ORDER_EXECUTION }
+        self.ExecutionType = None
+        # One of PayInExecutionDetails implementations, depending on ExecutionType
+        self.ExecutionDetails = None
+        return super().__init__(id)    
 
     def GetDependsObjects(self):
         return { 

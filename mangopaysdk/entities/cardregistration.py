@@ -3,21 +3,22 @@ from mangopaysdk.entities.entitybase import EntityBase
 
 class CardRegistration(EntityBase):
     """CardRegistration entity"""
-
-    UserId = ''
-    AccessKey = ''
-    PreregistrationData = ''
-    CardRegistrationURL = ''
-    CardId = ''
-    RegistrationData = ''
-    ResultCode = ''
-    Currency = ''
     
-    # CardRegistrationStatus CREATED, ERROR, VALIDATED
-    Status = None	
-    
-    # Boolean
-    Reusable = None
+    def __init__(self, id = None):
+        self.UserId = None
+        self.AccessKey = None
+        self.PreregistrationData = None
+        self.CardRegistrationURL = None
+        self.CardId = None
+        self.RegistrationData = None
+        self.ResultCode = None
+        self.Currency = None
+        # CardRegistrationStatus CREATED, ERROR, VALIDATED
+        self.Status = None	
+        # Boolean
+        self.Reusable = None
+        return super().__init__(id)
+   
 
     def GetReadOnlyProperties(self):
         properties = super().GetReadOnlyProperties()

@@ -7,32 +7,25 @@ class Transaction (EntityBase):
     Base class for: PayIn, PayOut, Transfer.
     """
 
-    AuthorId = 0
-
-    CreditedUserId = 0
-
-    # @var Money
-    DebitedFunds = None
-
-    # @var Money
-    CreditedFunds = None
-
-    # @var Money
-    Fees = None
-
-    # TransactionType {PAYIN, PAYOUT, TRANSFER}
-    Type = None
-
-    # TransactionNature {REGULAR, REFUND, REPUDIATION}
-    Nature = None
-
-    # TransactionStatus {CREATED, SUCCEEDED, FAILED}
-    Status = None
-
-    ResultCode = None
-
-    # @var timestamp
-    ExecutionDate = None
+    def __init__(self, id = None):
+        self.AuthorId = None
+        self.CreditedUserId = None
+        # Money
+        self.DebitedFunds = None
+        # Money
+        self.CreditedFunds = None
+        # Money
+        self.Fees = None
+        # TransactionType {PAYIN, PAYOUT, TRANSFER}
+        self.Type = None
+        # TransactionNature {REGULAR, REFUND, REPUDIATION}
+        self.Nature = None
+        # TransactionStatus {CREATED, SUCCEEDED, FAILED}
+        self.Status = None
+        self.ResultCode = None
+        # timestamp
+        self.ExecutionDate = None
+        return super().__init__(id)
 
     def GetSubObjects(self):
         return {

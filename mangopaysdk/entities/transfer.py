@@ -3,6 +3,7 @@ from mangopaysdk.entities.transaction import Transaction
 
 class Transfer (Transaction):
 
-    DebitedWalletId = 0
-
-    CreditedWalletId = 0
+    def __init__(self, id = None):
+        self.DebitedWalletId = None
+        self.CreditedWalletId = None
+        return super().__init__(id)

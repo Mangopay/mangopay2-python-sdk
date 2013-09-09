@@ -3,14 +3,14 @@ from mangopaysdk.entities.transaction import Transaction
 
 class PayOut (Transaction):
 
-    DebitedWalletId = 0
-
-    # PayInPaymentType (BANK_WIRE, MERCHANT_EXPENSE, AMAZON_GIFTCARD)
-    PaymentType = ''
-
-    # One of PayOutPaymentDetails implementations, depending on $PaymentType
-    MeanOfPaymentDetails = None
-
+    def __init__(self, id = None):
+        self.DebitedWalletId = None
+        # PayInPaymentType (BANK_WIRE, MERCHANT_EXPENSE, AMAZON_GIFTCARD)
+        self.PaymentType = None
+        # One of PayOutPaymentDetails implementations, depending on $PaymentType
+        self.MeanOfPaymentDetails = None
+        return super().__init__(id) 
+     
     def GetDependsObjects(self):
         return {
             'PaymentType': {'_property_name': 'MeanOfPaymentDetails', 'BANK_WIRE': 'PayOutPaymentDetailsBankWire'}
