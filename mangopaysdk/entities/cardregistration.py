@@ -9,7 +9,7 @@ class CardRegistration(EntityBase):
     PreregistrationData = ''
     CardRegistrationURL = ''
     CardId = ''
-    CardRegistrationData = ''
+    RegistrationData = ''
     ResultCode = ''
     Currency = ''
     

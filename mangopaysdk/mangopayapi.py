@@ -35,5 +35,5 @@ class MangoPayApi:
         self.payIns = apipayins.ApiPayIns(self)
         self.payOuts = apipayouts.ApiPayOuts(self)
         self.refunds = apirefunds.ApiRefunds(self)
-        self.cardRegistrations = apicardregistrations.ApiBase(self)
+        self.cardRegistrations = apicardregistrations.ApiCardRegistrations(self)
         self.cards = apicards.ApiCards(self)

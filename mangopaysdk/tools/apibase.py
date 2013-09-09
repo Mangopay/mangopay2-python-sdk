@@ -13,6 +13,8 @@ from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.client import Client
+from mangopaysdk.entities.card import Card
+from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails

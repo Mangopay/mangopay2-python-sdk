@@ -11,6 +11,8 @@ from mangopaysdk.entities.payout import PayOut
 from mangopaysdk.entities.payout import PayOut
 from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.transaction import Transaction
+from mangopaysdk.entities.card import Card
+from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
@@ -18,8 +20,6 @@ from mangopaysdk.types.money import Money
 
 
 class TestBase(unittest.TestCase):
-
-    # sdk = None
 
     _john = None
     _matrix = None
@@ -30,6 +30,8 @@ class TestBase(unittest.TestCase):
     _payInExecutionDetailsWeb = None
     _johnsPayOutBankWire = None    
     _johnsTransfer = None
+    _johnsCardRegistration = None
+    
 
     def __init__(self, methodName='runTest'):
         self.sdk = self.buildNewMangoPayApi()
@@ -198,6 +200,18 @@ class TestBase(unittest.TestCase):
             #self.assertEqualInputProps(TestBase._johnsTransfer, transfer, True)
         return TestBase._johnsTransfer
 
+    def getJohnsCardRegistration(self):
+        """Creates card registration object.
+        return CardRegistration 
+        """
+        if (self._johnsCardRegistration == None):
+            user = self.getJohn()
+            cardRegistration = CardRegistration()
+            cardRegistration.UserId = user.Id
+            cardRegistration.Currency = 'EUR'
+            self._johnsCardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
+        return self._johnsCardRegistration
+   
     def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):
 
         if (isinstance(entity1, UserNatural)):

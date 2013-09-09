@@ -153,6 +153,7 @@
     </Compile>
     <Compile Include="setup.py" />
     <Compile Include="tests\testapiclients.py" />
+    <Compile Include="tests\testcardregistrations.py" />
     <Compile Include="tests\testpayins.py">
       <SubType>Code</SubType>
     </Compile>
