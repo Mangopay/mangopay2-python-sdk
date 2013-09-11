@@ -1,6 +1,5 @@
 import requests, json, logging
 from mangopaysdk.tools.authenticationHelper import AuthenticationHelper
-from mangopaysdk.tools.apioauth import ApiOAuth
 from mangopaysdk.tools.urltool import UrlTool
 from mangopaysdk.types.exceptions.responseexception import ResponseException
 

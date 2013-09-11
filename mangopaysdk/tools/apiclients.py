@@ -1,4 +1,5 @@
 from mangopaysdk.tools.apibase import ApiBase
+from mangopaysdk.tools.resttool import RestTool
 
 
 class ApiClients(ApiBase):
@@ -20,6 +21,6 @@ class ApiClients(ApiBase):
             'Email' : clientEmail,
         }
 
-        rest = self._getRestToolObject(False)
+        rest = RestTool(self._root, False)
         response = rest.Request(urlMethod, requestType, requestData)
         return self._castResponseToEntity(response, 'Client');

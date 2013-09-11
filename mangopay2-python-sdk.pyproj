@@ -38,6 +38,18 @@
     </Compile>
     <Compile Include="mangopaysdk\tools\apicards.py" />
     <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
+    <Compile Include="mangopaysdk\tools\storages\authorizationtokenmanager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mangopaysdk\tools\storages\defaultstoragestrategy.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mangopaysdk\tools\storages\istoragestrategy.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mangopaysdk\tools\storages\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mangopaysdk\types\payinexecutiondetailsdirect.py" />
     <Compile Include="mangopaysdk\types\payinpaymentdetailsdirectcard.py" />
     <Compile Include="mangopaysdk\entities\refund.py" />
@@ -183,6 +195,7 @@
     <Folder Include="mangopaysdk\" />
     <Folder Include="mangopaysdk\entities\" />
     <Folder Include="mangopaysdk\tools\" />
+    <Folder Include="mangopaysdk\tools\storages\" />
     <Folder Include="mangopaysdk\types\" />
     <Folder Include="mangopaysdk\types\exceptions\" />
     <Folder Include="tests\" />

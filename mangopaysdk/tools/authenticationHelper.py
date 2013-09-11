@@ -1,9 +1,7 @@
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth2
-from mangopaysdk.tools import enums # , apioauth, apibase
+from mangopaysdk.tools import enums
 from mangopaysdk.configuration import Configuration
-##import base64
-##import oauthlib, requests
 
 
 class AuthenticationHelper:
@@ -25,7 +23,7 @@ class AuthenticationHelper:
         if authRequired == False: # or self._root.Config.AuthenticationType == enums.AuthenticationType.Basic:
             return HTTPBasicAuth(self._root.Config.ClientID, self._root.Config.ClientPassword)
         else:
-            oauth = self._root.OAuthToken
+            oauth = self._root.OAuthTokenManager.GetToken()
             if not oauth or not oauth.access_token or not oauth.token_type:
                 raise Exception('OAuthToken is not created (or is invalid) for strong authentication')
             token = {'access_token' : oauth.access_token, 'token_type' : oauth.token_type}

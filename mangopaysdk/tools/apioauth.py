@@ -1,5 +1,6 @@
 from mangopaysdk.types.oauthtoken import OAuthToken
 from mangopaysdk.tools.apibase import ApiBase
+from mangopaysdk.tools.resttool import RestTool
 
 
 class ApiOAuth(ApiBase):
@@ -9,14 +10,13 @@ class ApiOAuth(ApiBase):
         """Get token information for OAuth Authentication.
         return MangoPay OAuthToken object with token information
         """
-
         urlMethod = self._getRequestUrl('authentication_oauth')
         requestType = self._getRequestType('authentication_oauth')
         requestData = {
             'grant_type' : 'client_credentials'
         }
 
-        rest = self._getRestToolObject(False)
+        rest = RestTool(self._root, False)
         response = rest.Request(urlMethod, requestType, requestData)
         token = self._castAuthResponseToEntity(response)
         return token

@@ -8,20 +8,22 @@ class Test_Tokens(TestBase):
     """Tests basic methods for token management"""
 
     def test_forceToken(self):
-        token = self.sdk.authenticationManager.CreateToken()
-        # overwrite token in API
-        self.sdk.OAuthToken = token
-        self.sdk.users.GetAll(Pagination(1, 2))
-        self.assertEqual(token.access_token, self.sdk.OAuthToken.access_token)
+        oldToken = self.sdk.OAuthTokenManager.GetToken()
+        newToken = self.sdk.authenticationManager.CreateToken()       
+        self.assertNotEqual(oldToken.access_token, newToken.access_token)
+        self.sdk.OAuthTokenManager.StoreToken(newToken)
+        storedToken = self.sdk.OAuthTokenManager.GetToken()
+        self.assertEquals(newToken.access_token, storedToken.access_token)
 
     def test_stadnardUseToken(self):
         self.sdk.users.GetAll(Pagination(1, 2))
-        token = self.sdk.OAuthToken
+        token = self.sdk.OAuthTokenManager.GetToken()
         self.sdk.users.GetAll(Pagination(1, 2))
-        self.assertEqual(token.access_token, self.sdk.OAuthToken.access_token)
+        self.assertEqual(token.access_token, self.sdk.OAuthTokenManager.GetToken().access_token)
 
     def test_isTokenLeaking(self):
         api = self.buildNewMangoPayApi()
         self.sdk.users.GetAll(Pagination(1, 2))
-        api.users.GetAll(Pagination(1, 2))
-        self.assertTrue(api.OAuthToken.access_token != self.sdk.OAuthToken.access_token)
+        token1 = self.sdk.OAuthTokenManager.GetToken()
+        token2 = api.OAuthTokenManager.GetToken()
+        self.assertEquals(token1.access_token, token2.access_token) 

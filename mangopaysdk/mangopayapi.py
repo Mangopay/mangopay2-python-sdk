@@ -1,6 +1,7 @@
 from mangopaysdk.tools import apioauth, apiclients, apiusers, apiwallets, apitransfers, apipayins, apipayouts
 from mangopaysdk.tools import apirefunds, apicardregistrations, apicards
 from mangopaysdk.configuration import Configuration
+from mangopaysdk.tools.storages.authorizationtokenmanager import AuthorizationTokenManager
 
 
 class MangoPayApi:
@@ -16,12 +17,9 @@ class MangoPayApi:
         # Config/authorization related fields
         #########################################
 
-        # OAuthToken; None by default: will auto-generate it on first API call.
-        # Or you can set your own if you want to reuse it until it expires.
-        self.OAuthToken = None
-
         # Configuration instance with default settings (to be reset if required).
         self.Config = Configuration()
+        self.OAuthTokenManager = AuthorizationTokenManager(self);
 
         #########################################
         # API managers fields

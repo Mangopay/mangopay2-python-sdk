@@ -12,7 +12,7 @@ class OAuthToken:
         self.access_token = None
         self.token_type = None
 
-    def IsExpire(self):
+    def IsExpired(self):
         """Check that current tokens are expire and return true if yes.
 		return bool
 		"""

@@ -21,6 +21,7 @@ from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
+from mangopaysdk.tools.resttool import RestTool
 
 
 class ApiBase:
@@ -183,7 +184,7 @@ class ApiBase:
         if entity != None:
             requestData = self._buildRequestData(entity)
 
-        rest = self._getRestToolObject()
+        rest = RestTool(self._root, True)
         response = rest.Request(urlMethod, self._getRequestType(methodKey), requestData)
 
         if responseClassName != None:
@@ -200,7 +201,7 @@ class ApiBase:
         """
         urlMethod = self._buildUrl(methodKey, entityId, secondEntityId)
 
-        rest = self._getRestToolObject()
+        rest = RestTool(self._root, True)
         response = rest.Request(urlMethod, self._getRequestType(methodKey))
 
         if responseClassName != None:
@@ -221,7 +222,7 @@ class ApiBase:
         if pagination == None:
             pagination = Pagination()
 
-        rest = self._getRestToolObject()
+        rest = RestTool(self._root, True)
         response = rest.Request(urlMethod, self._getRequestType(methodKey), None, pagination, filter)
 
         if responseClassName != None:
@@ -238,24 +239,13 @@ class ApiBase:
         urlMethod = self._buildUrl(methodKey, entity.Id)
         requestData = self._buildRequestData(entity)
 
-        rest = self._getRestToolObject()
+        rest = RestTool(self._root, True)
         response =  rest.Request(urlMethod, self._getRequestType(methodKey), requestData)
 
         if responseClassName != None:
             return self._castResponseToEntity(response, responseClassName)
         return response
 
-    def _getRestToolObject (self, authRequired = True):
-        """Get RestTool object.
-        param bool authRequired Variable to flag that in request the authentication data are required
-        """
-
-        # check/create auth token first...
-        if (authRequired and (self._root.OAuthToken is None or self._root.OAuthToken.IsExpire())):
-            self._root.OAuthToken = self._root.authenticationManager.CreateToken()
-
-        from mangopaysdk.tools.resttool import RestTool
-        return RestTool(self._root, authRequired)
 
     def _castResponseToEntity(self, response, entityClassName, asDependentObject = False):
         """Cast response object to entity object.
