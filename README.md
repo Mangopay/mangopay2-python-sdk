@@ -84,19 +84,3 @@ Configuration example
 
     # call some API methods...
     users = api.users.GetAll()
-
-
-Example with auth token reusage
--------------------------------------------------
-
-    from mangopaysdk.mangopayapi import MangoPayApi
-    api = MangoPayApi()
-
-    # optionally you can reuse token from previous requests (unless expired)
-    api.OAuthToken = myTokensPersistenceService.loadIfStored()
-
-    # call some API methods...
-    users = api.users.GetAll()
-
-    # optionally store the token for future requests (until expires)
-    myTokensPersistenceService.store(api.OAuthToken)
