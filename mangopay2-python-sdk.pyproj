@@ -41,6 +41,7 @@
     <Compile Include="mangopaysdk\tools\storages\authorizationtokenmanager.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\tools\storages\memorystoragestrategy.py" />
     <Compile Include="mangopaysdk\tools\storages\defaultstoragestrategy.py">
       <SubType>Code</SubType>
     </Compile>

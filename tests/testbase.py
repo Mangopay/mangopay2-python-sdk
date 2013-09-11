@@ -17,6 +17,7 @@ from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
 from mangopaysdk.types.money import Money
+from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 
 
 class TestBase(unittest.TestCase):
@@ -42,6 +43,7 @@ class TestBase(unittest.TestCase):
         # use test client credentails
         sdk.Config.ClientID = 'example'
         sdk.Config.ClientPassword = 'uyWsmnwMQyTnqKgi8Y35A3eVB7bGhqrebYqA1tL6x2vYNpGPiY'
+        sdk.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
         return sdk
 
     def getJohn(self):

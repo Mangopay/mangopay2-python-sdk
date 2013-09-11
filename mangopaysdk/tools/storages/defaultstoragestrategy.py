@@ -1,6 +1,4 @@
 from mangopaysdk.tools.storages.istoragestrategy import IStorageStrategy
-from mangopaysdk.tools.apioauth import ApiOAuth
-from mangopaysdk.types.oauthtoken import OAuthToken
 from mangopaysdk.configuration import Configuration
 import os
 import pickle
