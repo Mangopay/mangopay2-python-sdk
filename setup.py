@@ -6,7 +6,7 @@ setup(
     version='0.1.8',
     author='Mangopay (www.mangopay.com)',
     author_email='it-support@mangopay.com',
-    packages=['mangopaysdk', 'mangopaysdk.entities', 'mangopaysdk.tools', 'mangopaysdk.types', 'mangopaysdk.types.exceptions'],
+    packages=['mangopaysdk', 'mangopaysdk.entities', 'mangopaysdk.tools', 'mangopaysdk.tools.storages', 'mangopaysdk.types', 'mangopaysdk.types.exceptions'],
     url='http://pypi.python.org/pypi/mangopaysdk/',
     description='MangoPay API',
     long_description=open('README.md').read(),
