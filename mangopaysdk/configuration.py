@@ -13,6 +13,9 @@ class Configuration:
     # Base URL to MangoPay API
     BaseUrl = 'https://mangopay-api-inte.leetchi.com'
 
+    # path to temp - required to cache auth tokens
+    TempPath = "c:\Temp\\"
+
     # Constant to switch debug mode (0/1) - display all request and response data
     DebugMode = 0
 

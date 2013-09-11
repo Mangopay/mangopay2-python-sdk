@@ -13,7 +13,7 @@ class Test_Tokens(TestBase):
         self.assertNotEqual(oldToken.access_token, newToken.access_token)
         self.sdk.OAuthTokenManager.StoreToken(newToken)
         storedToken = self.sdk.OAuthTokenManager.GetToken()
-        self.assertEquals(newToken.access_token, storedToken.access_token)
+        self.assertEqual(newToken.access_token, storedToken.access_token)
 
     def test_stadnardUseToken(self):
         self.sdk.users.GetAll(Pagination(1, 2))
