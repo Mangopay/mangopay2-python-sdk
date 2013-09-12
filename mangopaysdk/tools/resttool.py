@@ -58,7 +58,7 @@ class RestTool:
         throws Exception If cURL has error
         """
 
-        urlToolObj = UrlTool(self._root)
+        urlToolObj = UrlTool(self._root.Config)
         restUrl = urlToolObj.GetRestUrl(urlMethod, self._authRequired, pagination, additionalUrlParams)
         fullUrl = urlToolObj.GetFullUrl(restUrl)
 

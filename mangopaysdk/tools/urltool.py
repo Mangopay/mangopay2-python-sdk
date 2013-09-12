@@ -7,18 +7,18 @@ class UrlTool:
     # Root/parent MangoPayApi instance that holds the OAuthToken and Configuration instance
     _root = None
 
-    def __init__ (self, root):
+    def __init__ (self, config):
        """Constructor.
        param MangoPayApi Root/parent instance that holds the OAuthToken and Configuration instance
        """
-       self._root = root
+       self._config = config
 
     def GetRestUrl(self, urlKey, addClientId = True, pagination = None, additionalUrlParams = None):
 
         if not addClientId:
             url = '/v2' + urlKey
         else:
-            url = '/v2/' + self._root.Config.ClientID + urlKey
+            url = '/v2/' + self._config.ClientID + urlKey
 
             if pagination != None:
                 url += '?page=' + str(pagination.Page) + '&per_page=' + str(pagination.ItemsPerPage)
@@ -33,7 +33,7 @@ class UrlTool:
         return self._getHost() + restUrl
 
     def _getHost(self):
-        baseUrl = self._root.Config.BaseUrl
+        baseUrl = self._config.BaseUrl
         #remove '/' from end baseurl
         if baseUrl[-1] == '/':
             baseUrl = baseUrl[0: -1]
