@@ -26,4 +26,4 @@ class Test_Tokens(TestBase):
         self.sdk.users.GetAll(Pagination(1, 2))
         token1 = self.sdk.OAuthTokenManager.GetToken()
         token2 = api.OAuthTokenManager.GetToken()
-        self.assertEquals(token1.access_token, token2.access_token) 
+        self.assertEqual(token1.access_token, token2.access_token) 

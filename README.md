@@ -7,7 +7,15 @@ MangoPaySDK is a python client library to work with
 Installation
 -------------------------------------------------
 SDK has been written in Python 3.3
-and depends on requests and requests-oauthlib packages.
+and requires:
+	requests
+	requests-oauthlib
+	portalocker
+
+On Windows platforms PyWin32 is required. If you can't install portalocker or PyWin32 use
+	
+	sdk = MangoPayApi()
+	sdk.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
 
 We strongly recommend using PIP as installation method:
 

@@ -1,3 +1,4 @@
+v0.1.9, 12/09/2013 -- File storage locking with portalocker
 v0.1.8, 11/09/2013 -- File storage for tokens added.
 v0.1.7, 10/09/2013 -- direct card added.
 v0.1.5, 02/09/2013 -- Initial release.
