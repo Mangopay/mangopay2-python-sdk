@@ -1,4 +1,5 @@
 from mangopaysdk.tools import enums
+import logging
 
 
 class Configuration:
@@ -23,5 +24,4 @@ class Configuration:
 
 # we use DEBUG level for internal debugging
 if (Configuration.DebugMode):
-    import logging
     logging.basicConfig(level=logging.DEBUG)

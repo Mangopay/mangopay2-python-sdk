@@ -1,5 +1,6 @@
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.tools.storages.defaultstoragestrategy import DefaultStorageStrategy
+from mangopaysdk.types.oauthtoken import OAuthToken
 
 
 class AuthorizationTokenManager(ApiBase):
@@ -15,11 +16,14 @@ class AuthorizationTokenManager(ApiBase):
         If currently stored token is expired, this method creates a new one.
         return Valid OAuthToken instance.
         """
-        token = self._storageStrategy.Get()
-        if (token == None or token.IsExpired()):
-            self.StoreToken(self._root.authenticationManager.CreateToken())
-        
-        return self._storageStrategy.Get();
+        token = None
+        tokenDict = self._storageStrategy.Get()
+        if tokenDict != None:
+            token = OAuthToken(tokenDict)
+        if token == None or token.IsExpired():
+            token = self._root.authenticationManager.CreateToken()
+            self.StoreToken(token)        
+        return token
     
     def StoreToken(self, token):
         """Stores authorization token passed as an argument in the underlying

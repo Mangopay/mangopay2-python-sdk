@@ -1,6 +1,7 @@
 from mangopaysdk.types.oauthtoken import OAuthToken
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.tools.resttool import RestTool
+import logging
 
 
 class ApiOAuth(ApiBase):
@@ -27,4 +28,7 @@ class ApiOAuth(ApiBase):
         res.token_type = dict['token_type']
         res.expires_in = dict['expires_in']
         res.valid = True
+
+        if (self._root.Config.DebugMode): 
+            logging.getLogger(__name__).debug('New token created: {0} '.format(res.access_token))
         return res
