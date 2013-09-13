@@ -10,9 +10,9 @@ SDK has been written in Python 3.3
 and requires:
 	requests
 	requests-oauthlib
-	portalocker
+	lockfile
 
-On Windows platforms PyWin32 is required. If you can't install portalocker or PyWin32 use
+If you have problem with using token file based cache (Configuration.TempPath) you can use memory cache:
 	
 	sdk = MangoPayApi()
 	sdk.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
@@ -52,7 +52,7 @@ Sample usage
 
     from mangopaysdk.mangopayapi import MangoPayApi
     api = MangoPayApi()
-
+	
     # get some user by id
     john = api.users.Get(someId)
 
@@ -88,6 +88,7 @@ Configuration example
 
     api.Config.ClientId = 'your-client-id'
     api.Config.ClientPassword = 'your-client-password'
+	api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
     print(api.Config.BaseUrl) # you probably dont have to change it
 
     # call some API methods...
