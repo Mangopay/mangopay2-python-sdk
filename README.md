@@ -8,10 +8,12 @@ Installation
 -------------------------------------------------
 SDK has been written in Python 3.3
 and requires:
+
 	requests
 	requests-oauthlib
 	lockfile
 
+	
 If you have problem with using token file based cache (Configuration.TempPath) you can use memory cache:
 	
 	sdk = MangoPayApi()
@@ -47,6 +49,42 @@ Report bugs or suggest features using
 [issue tracker at GitHub](https://github.com/MangoPay/mangopay2-python-sdk).
 
 
+
+Client creation example (you need to call it only once)
+-------------------------------------------------
+
+    from mangopaysdk.mangopayapi import MangoPayApi
+    api = MangoPayApi()
+
+    client = api.clients.Create('your-client-id', 'your-client-name', 'your-client-email@sample.org')
+    print(client.Passphrase) # you receive your password here
+
+
+Configuration example
+-------------------------------------------------
+See the example above and call `api.clients.Create` once to get your passphrase.
+Then set `api.Config.ClientId` to your MangoPay Client ID and 
+`api.Config.ClientPassword` to your passphrase.
+
+You also need to set a folder path in `api.Config.TempPath` that SDK needs 
+to store temporary files. This path should be outside your www folder.
+It could be `/tmp/` or `/var/tmp/` or any other location that PHP can write to.
+
+`api.Config.BaseUrl` is set to sandbox environment by default. To enable production
+environment, set it to `https://mangopay-api.leetchi.com`.
+
+    from mangopaysdk.mangopayapi import MangoPayApi
+    api = MangoPayApi()
+
+    api.Config.ClientId = 'your-client-id'
+    api.Config.ClientPassword = 'your-client-password'
+	api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
+    print(api.Config.BaseUrl) # you probably dont have to change it
+
+    # call some API methods...
+    users = api.users.GetAll()
+
+
 Sample usage
 -------------------------------------------------
 
@@ -69,27 +107,3 @@ Sample usage
     pagination = Pagination(2, 10) # get 2nd page, 10 items per page
     accounts = api.users.GetBankAccounts(john.Id, pagination)
 
-
-Client creation example (you need to call it only once)
--------------------------------------------------
-
-    from mangopaysdk.mangopayapi import MangoPayApi
-    api = MangoPayApi()
-
-    client = api.clients.Create('your-client-id', 'your-client-name', 'your-client-email@sample.org')
-    print(client.Passphrase) # you receive your password here
-
-
-Configuration example
--------------------------------------------------
-
-    from mangopaysdk.mangopayapi import MangoPayApi
-    api = MangoPayApi()
-
-    api.Config.ClientId = 'your-client-id'
-    api.Config.ClientPassword = 'your-client-password'
-	api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
-    print(api.Config.BaseUrl) # you probably dont have to change it
-
-    # call some API methods...
-    users = api.users.GetAll()
