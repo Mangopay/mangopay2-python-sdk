@@ -26,6 +26,7 @@ class TestBase(unittest.TestCase):
     _matrix = None
     _johnsAccount = None
     _johnsWallet = None
+    _johnsWalletWithMoney = None
     _johnsPayInCardWeb = None
     _payInPaymentDetailsCard = None
     _payInExecutionDetailsWeb = None
@@ -109,20 +110,22 @@ class TestBase(unittest.TestCase):
     
     def getJohnsWalletWithMoney(self, amount = 10000):
         """Creates static JohnsWallet (wallets belonging to John) if not created yet
-         return Wallet
-         """
-        wallet = self.getJohnsWallet()        
-        if (wallet.Balance.Amount <= 0):
+        return Wallet
+        """
+        if TestBase._johnsWalletWithMoney == None:
+            john = self.getJohn()
+            wallet = Wallet()
+            wallet.Owners = [john.Id]
+            wallet.Currency = 'EUR'
+            wallet.Description = 'WALLET IN EUR'            
+            wallet = self.sdk.wallets.Create(wallet)    
             cardRegistration = CardRegistration()
             cardRegistration.UserId = wallet.Owners[0]
             cardRegistration.Currency = 'EUR'
             cardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
-            
             cardRegistration.RegistrationData = self.getPaylineCorrectRegistartionData(cardRegistration)
             cardRegistration = self.sdk.cardRegistrations.Update(cardRegistration)
-            
             card = self.sdk.cards.Get(cardRegistration.CardId)
-            
             # create pay-in CARD DIRECT
             payIn = PayIn()
             payIn.CreditedWalletId = wallet.Id
@@ -133,7 +136,6 @@ class TestBase(unittest.TestCase):
             payIn.Fees = Money()
             payIn.Fees.Amount = 0
             payIn.Fees.Currency = 'EUR'
-
             # payment type as CARD
             payIn.PaymentDetails = PayInPaymentDetailsCard()
             if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD'):
@@ -147,7 +149,8 @@ class TestBase(unittest.TestCase):
             payIn.ExecutionDetails.SecureModeReturnURL = 'http://test.com'
             # create Pay-In
             self.sdk.payIns.Create(payIn)
-        return self.sdk.wallets.Get(wallet.Id)
+            TestBase._johnsWalletWithMoney = self.sdk.wallets.Get(wallet.Id)
+        return TestBase._johnsWalletWithMoney
     
     def getPayInPaymentDetailsCard(self):
         """return PayInPaymentDetailsCard"""
@@ -251,7 +254,6 @@ class TestBase(unittest.TestCase):
             payOut.MeanOfPaymentDetails.Communication = 'Communication text'
 
             TestBase._johnsPayOutBankWire = self.sdk.payOuts.Create(payOut)
-            self.assertEqualInputProps(TestBase._johnsPayOutBankWire, payOut, True)
         return TestBase._johnsPayOutBankWire
 
     def getJohnsTransfer(self, walletWithMoney = None, wallet = None):

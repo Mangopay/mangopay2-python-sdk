@@ -10,8 +10,8 @@ class Test_PayOuts(TestBase):
     def test_PayOuts_Create_BankWire_FailsCauseNotEnoughMoney(self):
         "Cannot test anything else here: have no pay-ins with sufficient status?"
 
+        TestBase._johnsWallet = None
         with self.assertRaises(ResponseException) as cm:
-            payIn = self.getJohnsPayInCardWeb()
             payOut = self.getJohnsPayOutBankWire()
 
         self.assertEqual(400, cm.exception.Code)
