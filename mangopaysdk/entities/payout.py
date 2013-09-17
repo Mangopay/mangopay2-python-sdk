@@ -7,7 +7,7 @@ class PayOut (Transaction):
         self.DebitedWalletId = None
         # PayInPaymentType (BANK_WIRE, MERCHANT_EXPENSE, AMAZON_GIFTCARD)
         self.PaymentType = None
-        # One of PayOutPaymentDetails implementations, depending on $PaymentType
+        # One of PayOutPaymentDetails implementations, depending on PaymentType
         self.MeanOfPaymentDetails = None
         return super().__init__(id) 
      

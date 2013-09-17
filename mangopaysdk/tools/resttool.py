@@ -74,7 +74,7 @@ class RestTool:
         elif self._requestType == "GET":
             response = requests.get(fullUrl, auth = authObj, verify=False)
         elif self._requestType == "PUT":
-            response = requests.put(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)
+            response = requests.put(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)  
         elif self._requestType == "DELETE":
             response = requests.delete(fullUrl, auth = authObj, verify=False, headers=headers)
 

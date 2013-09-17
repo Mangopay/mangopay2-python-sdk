@@ -27,7 +27,7 @@ class ApiPayIns (ApiBase):
         param Refund refund object to create
         return Refund Object returned by REST API
         """
-        return self._createObject('payins_createrefunds', payInId, 'Refund', refund)
+        return self._createObject('payins_createrefunds', refund, 'Refund', payInId)
 
     def GetRefund(self, payInId):
         """Get refund for pay-in object.

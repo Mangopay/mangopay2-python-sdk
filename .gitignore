@@ -38,3 +38,4 @@ nosetests.xml
 # VS
 *.suo
 TestResults
+mangopay2-python-sdk.pyproj.user

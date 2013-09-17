@@ -1,6 +1,7 @@
 from mangopaysdk.tools.storages.istoragestrategy import IStorageStrategy
 from mangopaysdk.configuration import Configuration
 import os, json
+from mangopaysdk.types.oauthtoken import OAuthToken
 import lockfile.mkdirlockfile
 
 
@@ -12,7 +13,7 @@ class DefaultStorageStrategy(IStorageStrategy):
 
     def Get(self):
         """Gets the currently stored objects as dictionary.
-        return stored object dictionary or null.
+        return stored Token dictionary or null.
         """
         if not os.path.exists(DefaultStorageStrategy.cache_path):
            return None
@@ -31,7 +32,7 @@ class DefaultStorageStrategy(IStorageStrategy):
            cached = None
         fp.close()
         lock.release()     
-        return cached
+        return OAuthToken(cached)
 
     def Store(self, obj):
         """Stores authorization token passed as an argument.

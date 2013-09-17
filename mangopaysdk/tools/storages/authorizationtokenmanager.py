@@ -16,10 +16,7 @@ class AuthorizationTokenManager(ApiBase):
         If currently stored token is expired, this method creates a new one.
         return Valid OAuthToken instance.
         """
-        token = None
-        tokenDict = self._storageStrategy.Get()
-        if tokenDict != None:
-            token = OAuthToken(tokenDict)
+        token = self._storageStrategy.Get()
         if token == None or token.IsExpired():
             token = self._root.authenticationManager.CreateToken()
             self.StoreToken(token)        

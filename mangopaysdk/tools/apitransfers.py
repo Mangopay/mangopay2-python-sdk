@@ -25,7 +25,7 @@ class ApiTransfers (ApiBase ):
         param Refund refund Refund object to create
         return Refund Object returned by REST API
         """
-        return self._createObject('transfers_createrefunds', transferId, 'Refund', refund)
+        return self._createObject('transfers_createrefunds', refund, 'Refund', transferId)
         
     def GetRefund(self, transferId):
         """Get refund for transfer object.

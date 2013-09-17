@@ -10,7 +10,7 @@ class BankAccount(EntityBase):
         self.Type = 'IBAN'
         self.OwnerName = None
         self.OwnerAddress = None
-        # must be valid ^[a-zA-Z]{2}\d{2}\s*(\w{4}\s*){2,7}\w{1,4}$
+        # must be valid ^[a-zA-Z]{2}\d{2}\s*(\w{4}\s*){2,7}\w{1,4}
         self.IBAN = None
         # example BREXPLPWKRA
         self.BIC = None

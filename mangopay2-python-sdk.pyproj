@@ -165,6 +165,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="setup.py" />
+    <Compile Include="tests\testrefunds.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tests\testapiclients.py" />
     <Compile Include="tests\testcardregistrations.py" />
     <Compile Include="tests\testpayins.py">

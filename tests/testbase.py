@@ -1,6 +1,4 @@
-import unittest
-import logging
-import time
+import unittest, logging, time, requests
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.entities.wallet import Wallet
 from mangopaysdk.entities.usernatural import UserNatural
@@ -12,10 +10,12 @@ from mangopaysdk.entities.payout import PayOut
 from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.entities.card import Card
+from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
+from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.money import Money
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 
@@ -30,10 +30,8 @@ class TestBase(unittest.TestCase):
     _payInPaymentDetailsCard = None
     _payInExecutionDetailsWeb = None
     _johnsPayOutBankWire = None    
-    _johnsTransfer = None
     _johnsCardRegistration = None
     
-
     def __init__(self, methodName='runTest'):
         self.sdk = self.buildNewMangoPayApi()
         super(TestBase, self).__init__(methodName)
@@ -109,6 +107,48 @@ class TestBase(unittest.TestCase):
             #self.assertEqualInputProps(TestBase._johnsWallet, wallet, True)
         return TestBase._johnsWallet
     
+    def getJohnsWalletWithMoney(self, amount = 10000):
+        """Creates static JohnsWallet (wallets belonging to John) if not created yet
+         return Wallet
+         """
+        wallet = self.getJohnsWallet()        
+        if (wallet.Balance.Amount <= 0):
+            cardRegistration = CardRegistration()
+            cardRegistration.UserId = wallet.Owners[0]
+            cardRegistration.Currency = 'EUR'
+            cardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
+            
+            cardRegistration.RegistrationData = self.getPaylineCorrectRegistartionData(cardRegistration)
+            cardRegistration = self.sdk.cardRegistrations.Update(cardRegistration)
+            
+            card = self.sdk.cards.Get(cardRegistration.CardId)
+            
+            # create pay-in CARD DIRECT
+            payIn = PayIn()
+            payIn.CreditedWalletId = wallet.Id
+            payIn.AuthorId = cardRegistration.UserId
+            payIn.DebitedFunds = Money()
+            payIn.DebitedFunds.Amount = amount
+            payIn.DebitedFunds.Currency = 'EUR'
+            payIn.Fees = Money()
+            payIn.Fees.Amount = 0
+            payIn.Fees.Currency = 'EUR'
+
+            # payment type as CARD
+            payIn.PaymentDetails = PayInPaymentDetailsCard()
+            if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD'):
+                payIn.PaymentDetails.CardType = 'CB_VISA_MASTERCARD'
+            elif (card.CardType == 'AMEX'):
+                payIn.PaymentDetails.CardType = 'AMEX'
+
+            # execution type as DIRECT
+            payIn.ExecutionDetails = PayInExecutionDetailsDirect()
+            payIn.ExecutionDetails.CardId = card.Id
+            payIn.ExecutionDetails.SecureModeReturnURL = 'http://test.com'
+            # create Pay-In
+            self.sdk.payIns.Create(payIn)
+        return self.sdk.wallets.Get(wallet.Id)
+    
     def getPayInPaymentDetailsCard(self):
         """return PayInPaymentDetailsCard"""
         if TestBase._payInPaymentDetailsCard == None:
@@ -150,6 +190,43 @@ class TestBase(unittest.TestCase):
             #self.assertEqualInputProps(TestBase._johnsPayInCardWeb, payIn, True)
         return TestBase._johnsPayInCardWeb
 
+    def getJohnsPayInCardDirect(self, wallet = None):
+        """Creates Pay-In Card Direct object
+        return PayIn
+        """
+        if wallet == None:
+            wallet = self.getJohnsWallet()
+
+        cardRegistration = CardRegistration()
+        cardRegistration.UserId = wallet.Owners[0]
+        cardRegistration.Currency = 'EUR'
+        cardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
+        cardRegistration.RegistrationData = self.getPaylineCorrectRegistartionData(cardRegistration)
+        cardRegistration = self.sdk.cardRegistrations.Update(cardRegistration)
+        card = self.sdk.cards.Get(cardRegistration.CardId)
+            
+        # create pay-in CARD DIRECT
+        payIn = PayIn()
+        payIn.CreditedWalletId = wallet.Id
+        payIn.AuthorId = wallet.Owners[0]
+        payIn.DebitedFunds = Money()
+        payIn.DebitedFunds.Amount = 10000
+        payIn.DebitedFunds.Currency = 'EUR'
+        payIn.Fees = Money()
+        payIn.Fees.Amount = 0
+        payIn.Fees.Currency = 'EUR'
+        # payment type as CARD
+        payIn.PaymentDetails = PayInPaymentDetailsCard()
+        if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD'):
+            payIn.PaymentDetails.CardType = 'CB_VISA_MASTERCARD'
+        elif (card.CardType == 'AMEX'):
+            payIn.PaymentDetails.CardType = 'AMEX'
+        # execution type as DIRECT
+        payIn.ExecutionDetails = PayInExecutionDetailsDirect()
+        payIn.ExecutionDetails.CardId = card.Id
+        payIn.ExecutionDetails.SecureModeReturnURL = 'http://test.com'
+        return self.sdk.payIns.Create(payIn)
+    
     def getJohnsPayOutBankWire(self):
         """Creates Pay-Out  Bank Wire object"""
         if TestBase._johnsPayOutBankWire == None:
@@ -177,31 +254,68 @@ class TestBase(unittest.TestCase):
             self.assertEqualInputProps(TestBase._johnsPayOutBankWire, payOut, True)
         return TestBase._johnsPayOutBankWire
 
-    def getJohnsTransfer(self):
+    def getJohnsTransfer(self, walletWithMoney = None, wallet = None):
         """Creates Pay-Out  Bank Wire object"""
-        if TestBase._johnsTransfer == None:
-            wallet = self.getJohnsWallet()
-            user = self.getJohn()
-            
-            transfer = Transfer()
-            transfer.Tag = 'DefaultTag'
-            transfer.AuthorId = user.Id
-            transfer.CreditedUserId = user.Id
-            transfer.DebitedFunds = Money()
-            transfer.DebitedFunds.Currency = 'EUR'
-            transfer.DebitedFunds.Amount = 100
-            transfer.Fees = Money()
-            transfer.Fees.Currency = 'EUR'
-            transfer.Fees.Amount = 10
+        
+        if walletWithMoney == None:
+            walletWithMoney = self.getJohnsWalletWithMoney()
+        if wallet == None:
+            wallet = Wallet()
+            wallet.Owners = [walletWithMoney.Owners[0]]
+            wallet.Currency = 'EUR'
+            wallet.Description = 'WALLET IN EUR'
+            wallet = self.sdk.wallets.Create(wallet)
 
-            transfer.DebitedWalletId = wallet.Id
-            transfer.CreditedWalletId = wallet.Id
+        transfer = Transfer()
+        transfer.Tag = 'DefaultTag'
+        transfer.AuthorId = walletWithMoney.Owners[0]
+        transfer.CreditedUserId = walletWithMoney.Owners[0]
+        transfer.DebitedFunds = Money()
+        transfer.DebitedFunds.Currency = 'EUR'
+        transfer.DebitedFunds.Amount = 100
+        transfer.Fees = Money()
+        transfer.Fees.Currency = 'EUR'
+        transfer.Fees.Amount = 0
+        transfer.DebitedWalletId = walletWithMoney.Id
+        transfer.CreditedWalletId = wallet.Id
+        return self.sdk.transfers.Create(transfer)
 
-            TestBase._johnsTransfer = self.sdk.transfers.Create(transfer)
-            #TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #self.assertEqualInputProps(TestBase._johnsTransfer, transfer, True)
-        return TestBase._johnsTransfer
-
+    def getJohnsRefundForTransfer(self, transfer = None):
+        """Creates refund object for transfer
+        return Refund
+        """
+        if transfer == None:
+            transfer = self.getJohnsTransfer()
+        refund = Refund()
+        refund.DebitedWalletId = transfer.DebitedWalletId
+        refund.CreditedWalletId = transfer.CreditedWalletId
+        refund.AuthorId = transfer.AuthorId
+        refund.DebitedFunds = Money()
+        refund.DebitedFunds.Amount = transfer.DebitedFunds.Amount
+        refund.DebitedFunds.Currency = transfer.DebitedFunds.Currency
+        refund.Fees = Money()
+        refund.Fees.Amount = transfer.Fees.Amount
+        refund.Fees.Currency = transfer.Fees.Currency
+        return self.sdk.transfers.CreateRefund(transfer.Id, refund)
+    
+    def getJohnsRefundForPayIn(self, payIn = None):
+        """ Creates refund object for PayIn
+        return Refund
+        """
+        if payIn == None:
+            payIn = self.getJohnsPayInCardDirect()
+        
+        refund = Refund()
+        refund.CreditedWalletId = payIn.CreditedWalletId
+        refund.AuthorId = payIn.AuthorId
+        refund.DebitedFunds = Money()
+        refund.DebitedFunds.Amount = payIn.DebitedFunds.Amount
+        refund.DebitedFunds.Currency = payIn.DebitedFunds.Currency
+        refund.Fees = Money()
+        refund.Fees.Amount = payIn.Fees.Amount
+        refund.Fees.Currency = payIn.Fees.Currency
+        return self.sdk.payIns.CreateRefund(payIn.Id, refund)
+        
     def getJohnsCardRegistration(self):
         """Creates card registration object.
         return CardRegistration 
@@ -213,9 +327,25 @@ class TestBase(unittest.TestCase):
             cardRegistration.Currency = 'EUR'
             self._johnsCardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
         return self._johnsCardRegistration
-   
-    def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):
 
+    def getPaylineCorrectRegistartionData(self, cardRegistration):
+        """Get registration data from Payline service
+        param CardRegistration cardRegistration
+        return string
+        """
+        data = 'data=' + cardRegistration.PreregistrationData + '&accessKeyRef=' + cardRegistration.AccessKey;
+        data += '&cardNumber=4970101122334406&cardExpirationDate=1214&cardCvx=123'
+        headers = {"Content-Type" : "application/x-www-form-urlencoded", 'Connection':'close'}
+        response = requests.post(cardRegistration.CardRegistrationURL, data, verify=False, headers=headers)
+        if response.status_code != requests.codes.ok:
+            if decodedResp != None and decodedResp.get('Message') != None:
+                message = decodedResp.get('Message')
+            elif decodedResp != None and decodedResp.get('error') != None:
+                message = decodedResp.get('error')
+            raise ResponseException(response.request.url, response.status_code, message)
+        return response.text
+    
+    def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):
         if (isinstance(entity1, UserNatural)):
             self.assertEqual(entity1.Tag, entity2.Tag)
             self.assertEqual(entity1.PersonType, entity2.PersonType)

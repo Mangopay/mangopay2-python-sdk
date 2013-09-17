@@ -7,7 +7,7 @@ class OAuthToken:
     
     def __init__(self, dict = None):
         # timestamp
-        self.create_time = dict['create_time'] if dict != None else int(time.time() - 5)
+        self.create_time = dict['create_time'] if (dict != None and 'create_time' in dict) else int(time.time() - 5)
         self.expires_in = dict['expires_in'] if dict != None else None
         self.access_token = dict['access_token'] if dict != None else None
         self.token_type = dict['token_type'] if dict != None else None

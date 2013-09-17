@@ -25,8 +25,23 @@ class Test_CardRegistrations(TestBase):
         self.assertTrue(int(getCardRegistration.Id) > 0)
         self.assertEqual(cardRegistration.Id, getCardRegistration.Id)
     
-    def test_CardRegistrations_Update(self):
-        cardRegistration = self.getJohnsCardRegistration()
+    
         cardRegistration.RegistrationData = 'test RegistrationData'
         getCardRegistration = self.sdk.cardRegistrations.Update(cardRegistration)
         self.assertEqual('test RegistrationData', getCardRegistration.RegistrationData)
+
+    def test_CardRegistrations_Update(self):
+        cardRegistration = self.getJohnsCardRegistration()
+        registrationData = self.getPaylineCorrectRegistartionData(cardRegistration)
+        cardRegistration.RegistrationData = registrationData
+        
+        getCardRegistration = self.sdk.cardRegistrations.Update(cardRegistration)
+        self.assertEqual(registrationData, getCardRegistration.RegistrationData)
+        self.assertTrue(getCardRegistration.CardId != None)
+        self.assertEqual('VALIDATED', getCardRegistration.Status)
+        self.assertEqual('00000', getCardRegistration.ResultCode)
+    
+        # def test_Cards_CheckCardExisting(self):
+        cardRegistration = self.sdk.cardRegistrations.Get(cardRegistration.Id)
+        card = self.sdk.cards.Get(cardRegistration.CardId)
+        self.assertTrue(int(card.Id) > 0)

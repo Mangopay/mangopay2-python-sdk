@@ -14,12 +14,14 @@ from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.client import Client
 from mangopaysdk.entities.card import Card
+from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
+from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
 from mangopaysdk.tools.resttool import RestTool
 
