@@ -19,12 +19,11 @@ class TestRefunds(TestBase):
         self.assertEqual(getRefund.Type, 'TRANSFER')
     
     def test_Refund_GetForPayIn(self):
-        pass
-        #refund = self.getJohnsRefundForPayIn()
-        #payIn = self.getJohnsPayInCardDirect()
-        #user = self.getJohn()
-        #getRefund = self.sdk.refunds.Get(refund.Id)
-        #self.assertEqual(getRefund.Id, refund.Id)
-        #self.assertEqual(getRefund.InitialTransactionId, payIn.Id)
-        #self.assertEqual(getRefund.AuthorId, user.Id)
-        #self.assertEqual(getRefund.Type, 'PAYOUT')
+        payIn = self.getJohnsPayInCardDirect()
+        refund = self.getJohnsRefundForPayIn(payIn)
+        user = self.getJohn()
+        getRefund = self.sdk.refunds.Get(refund.Id)
+        self.assertEqual(getRefund.Id, refund.Id)
+        self.assertEqual(getRefund.InitialTransactionId, payIn.Id)
+        self.assertEqual(getRefund.AuthorId, user.Id)
+        self.assertEqual(getRefund.Type, 'PAYOUT')
