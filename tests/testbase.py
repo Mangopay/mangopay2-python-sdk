@@ -340,11 +340,7 @@ class TestBase(unittest.TestCase):
         headers = {"Content-Type" : "application/x-www-form-urlencoded", 'Connection':'close'}
         response = requests.post(cardRegistration.CardRegistrationURL, data, verify=False, headers=headers)
         if response.status_code != requests.codes.ok:
-            if decodedResp != None and decodedResp.get('Message') != None:
-                message = decodedResp.get('Message')
-            elif decodedResp != None and decodedResp.get('error') != None:
-                message = decodedResp.get('error')
-            raise ResponseException(response.request.url, response.status_code, message)
+            raise ResponseException(response.request.url, response.status_code, response.text)
         return response.text
     
     def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):
