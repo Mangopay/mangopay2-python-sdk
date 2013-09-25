@@ -57,7 +57,9 @@ Client creation example (you need to call it only once)
     api = MangoPayApi()
 
     client = api.clients.Create('your-client-id', 'your-client-name', 'your-client-email@sample.org')
-    print(client.Passphrase) # you receive your password here
+    
+    # you receive your password here, note it down and keep in secret
+    print(client.Passphrase)
 
 
 Configuration example
@@ -78,7 +80,7 @@ environment, set it to `https://api.mangopay.com`.
 
     api.Config.ClientId = 'your-client-id'
     api.Config.ClientPassword = 'your-client-password'
-	api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
+    api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
     print(api.Config.BaseUrl) # you probably dont have to change it
 
     # call some API methods...
