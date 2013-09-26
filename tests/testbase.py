@@ -27,7 +27,6 @@ class TestBase(unittest.TestCase):
     _johnsAccount = None
     _johnsWallet = None
     _johnsWalletWithMoney = None
-    _johnsPayInCardWeb = None
     _payInPaymentDetailsCard = None
     _payInExecutionDetailsWeb = None
     _johnsPayOutBankWire = None    
@@ -170,28 +169,23 @@ class TestBase(unittest.TestCase):
         return TestBase._payInExecutionDetailsWeb
     
     def getJohnsPayInCardWeb(self):
-        """Creates Pay-In Card Web object"""
-        if TestBase._johnsPayInCardWeb == None:
-            wallet = self.getJohnsWallet()
-            user = self.getJohn()
+        """Creates Pay-In Card Web object"""       
+        wallet = self.getJohnsWallet()
+        user = self.getJohn()
             
-            payIn = PayIn()
-            payIn.AuthorId = user.Id
-            payIn.CreditedUserId = user.Id
-            payIn.DebitedFunds = Money()
-            payIn.DebitedFunds.Currency = 'EUR'
-            payIn.DebitedFunds.Amount = 1000
-            payIn.Fees = Money()
-            payIn.Fees.Currency = 'EUR'
-            payIn.Fees.Amount = 5
-            payIn.CreditedWalletId = wallet.Id
-            payIn.PaymentDetails = self.getPayInPaymentDetailsCard()
-            payIn.ExecutionDetails = self.getPayInExecutionDetailsWeb()
-            
-            TestBase._johnsPayInCardWeb = self.sdk.payIns.Create(payIn)
-            #TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #self.assertEqualInputProps(TestBase._johnsPayInCardWeb, payIn, True)
-        return TestBase._johnsPayInCardWeb
+        payIn = PayIn()
+        payIn.AuthorId = user.Id
+        payIn.CreditedUserId = user.Id
+        payIn.DebitedFunds = Money()
+        payIn.DebitedFunds.Currency = 'EUR'
+        payIn.DebitedFunds.Amount = 1000
+        payIn.Fees = Money()
+        payIn.Fees.Currency = 'EUR'
+        payIn.Fees.Amount = 5
+        payIn.CreditedWalletId = wallet.Id
+        payIn.PaymentDetails = self.getPayInPaymentDetailsCard()
+        payIn.ExecutionDetails = self.getPayInExecutionDetailsWeb()
+        return self.sdk.payIns.Create(payIn)
 
     def getJohnsPayInCardDirect(self, wallet = None):
         """Creates Pay-In Card Direct object

@@ -34,8 +34,8 @@ Unit Tests (not included in pip package)
 
     cd project_directory
 
-    # discovers and runs ALL tests:
-    python -m unittest
+    # runs ALL tests:
+    python -m unittest test_suite
 
     # runs single module/class/method:
     python -m unittest test_module1 test_module2

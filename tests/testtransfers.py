@@ -37,6 +37,3 @@ class Test_Transfers(TestBase):
         self.assertTrue(walletCredited.Balance.Amount, 0)
         self.assertEqual('TRANSFER', refund.Type)
         self.assertEqual('REFUND', refund.Nature)
-
-if __name__ == '__main__':
-    unittest.main()

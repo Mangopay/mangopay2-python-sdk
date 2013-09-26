@@ -77,6 +77,3 @@ class Test_PayIns(TestBase):
         self.assertEqual(walletAfterRefund.Balance.Amount, walletAfterPayIn.Balance.Amount - payIn.DebitedFunds.Amount)
         self.assertEqual('PAYOUT', refund.Type)
         self.assertEqual('REFUND', refund.Nature)
-
-if __name__ == '__main__':
-    unittest.main()

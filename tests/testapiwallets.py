@@ -48,6 +48,3 @@ class Test_ApiWallets(TestBase):
         self.assertIsInstance(transactions[0], Transaction)
         self.assertEqual(transactions[0].AuthorId, john.Id)
         self.assertEqualInputProps(transactions[0], payIn)
-
-if __name__ == '__main__':
-    unittest.main()

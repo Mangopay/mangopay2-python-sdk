@@ -1,0 +1,19 @@
+language: python
+python:
+  - "3.3"
+
+before_install:
+ - pip install requests --use-mirrors
+ - pip install requests-oauthlib --use-mirrors
+ - pip install lockfile --use-mirrors
+ - pip install coveralls --use-mirrors
+
+script:
+ - coverage run --source=mangopaysdk test_suite.py
+
+after_success:
+ - coveralls
+	
+notifications:
+  email:
+    - arek.felinczak@mosaic-lab.com

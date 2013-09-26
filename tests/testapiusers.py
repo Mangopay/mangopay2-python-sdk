@@ -121,7 +121,3 @@ class Test_ApiUsers(TestBase):
         self.assertEqual(pagination.ItemsPerPage, 12)
         self.assertTrue(pagination.TotalPages > 0)
         self.assertTrue(pagination.TotalItems > 0)
-
-
-if __name__ == '__main__':
-    unittest.main()
