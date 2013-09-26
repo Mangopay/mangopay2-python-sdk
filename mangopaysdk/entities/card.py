@@ -18,7 +18,5 @@ class Card(EntityBase):
         self.Currency = None
         # UNKNOWN, VALID, INVALID
         self.Validity = None
-        # Boolean
-        self.Reusable = None
         return super().__init__(id)
     

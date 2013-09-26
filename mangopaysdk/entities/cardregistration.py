@@ -15,8 +15,6 @@ class CardRegistration(EntityBase):
         self.Currency = None
         # CardRegistrationStatus CREATED, ERROR, VALIDATED
         self.Status = None	
-        # Boolean
-        self.Reusable = None
         return super().__init__(id)
    
 
