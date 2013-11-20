@@ -12,7 +12,7 @@ class Configuration:
     ClientPassword = ''
 
     # Base URL to MangoPay API
-    BaseUrl = 'https://api-preprod.mangopay.com'
+    BaseUrl = 'https://api.sandbox.mangopay.com'
 
     # path to temp - required to cache auth tokens
     TempPath = "c:\Temp\\"

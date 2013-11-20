@@ -11,7 +11,9 @@ from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.entities.card import Card
 from mangopaysdk.entities.refund import Refund
+from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.cardregistration import CardRegistration
+from mangopaysdk.tools.enums import *
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
@@ -31,6 +33,7 @@ class TestBase(unittest.TestCase):
     _payInExecutionDetailsWeb = None
     _johnsPayOutBankWire = None    
     _johnsCardRegistration = None
+    _joknsKycDocument = None
     
     def __init__(self, methodName='runTest'):
         self.sdk = self.buildNewMangoPayApi()
@@ -39,8 +42,8 @@ class TestBase(unittest.TestCase):
     def buildNewMangoPayApi(self):
         sdk = MangoPayApi()
         # use test client credentails
-        sdk.Config.ClientID = 'example'
-        sdk.Config.ClientPassword = 'uyWsmnwMQyTnqKgi8Y35A3eVB7bGhqrebYqA1tL6x2vYNpGPiY'
+        sdk.Config.ClientID = 'sdk-unit-tests'
+        sdk.Config.ClientPassword = 'cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju'
         sdk.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
         return sdk
 
@@ -67,6 +70,7 @@ class TestBase(unittest.TestCase):
             john = self.getJohn()
             user = UserLegal()
             user.Name = "MartixSampleOrg"
+            user.Email = "john.doe@sample.org"
             user.LegalPersonType = "BUSINESS"
             user.HeadquartersAddress = "Some Address"
             user.LegalRepresentativeFirstName = john.FirstName
@@ -88,7 +92,7 @@ class TestBase(unittest.TestCase):
             account.Type = 'IBAN'
             account.OwnerName = john.FirstName + ' ' +  john.LastName
             account.OwnerAddress = john.Address
-            account.IBAN = 'AD1200012030200359100100'
+            account.IBAN = 'FR7617906000320008335232973'
             account.BIC = 'BINAADADXXX'
             TestBase._johnsAccount = self.sdk.users.CreateBankAccount(john.Id, account)
             self.assertEqualInputProps(TestBase._johnsAccount, account, True)
@@ -337,6 +341,19 @@ class TestBase(unittest.TestCase):
             raise ResponseException(response.request.url, response.status_code, response.text)
         return response.text
     
+    def getUserKycDocument(self):
+        """Creates KycDocument
+        return KycDocument 
+        """
+        if (self._joknsKycDocument == None):
+            user = self.getJohn()
+            kycDocument = KycDocument()
+            kycDocument.Tag = 'test tag 1'
+            kycDocument.Type = KycDocumentType.IDENTITY_PROOF
+            self._joknsKycDocument = self.sdk.users.CreateUserKycDocument(kycDocument, user.Id)
+        return self._joknsKycDocument
+
+
     def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):
         if (isinstance(entity1, UserNatural)):
             self.assertEqual(entity1.Tag, entity2.Tag)

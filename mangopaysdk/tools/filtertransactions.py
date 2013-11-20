@@ -17,3 +17,6 @@ class FilterTransactions:
 
     # End date in unix format: return only transactions that have CreationDate AFTER this date
     AfterDate = None
+
+    # EventType value 
+    EventType = None

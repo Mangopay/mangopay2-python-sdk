@@ -7,7 +7,7 @@ class ApiTransfers (ApiBase ):
 
     def Create(self, transfer):
         """Create new transfer.
-        param Transfer object
+        param Transfer object with fields: AuthorId, CreditedUserId, DebitedFunds,Fees, DebitedWalletID, CreditedWalletID, Tag
         return Transfer object returned from API
         """
         return self._createObject('transfers_create', transfer, 'Transfer')

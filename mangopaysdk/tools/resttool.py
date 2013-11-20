@@ -77,7 +77,7 @@ class RestTool:
             response = requests.put(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)  
         elif self._requestType == "DELETE":
             response = requests.delete(fullUrl, auth = authObj, verify=False, headers=headers)
-
+        
         if (self._debugMode): logging.getLogger(__name__).debug('RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
 
         decodedResp = json.loads(response.text) if (response.text != '' and 'application/json' in response.headers['content-type']) else None
@@ -98,7 +98,7 @@ class RestTool:
         @throws RequestException If response code not OK
         """
         
-        if response.status_code != requests.codes.ok:
+        if response.status_code != requests.codes.ok and response.status_code != requests.codes.no_content:
             message = str(response.status_code)
             if decodedResp != None and decodedResp.get('Message') != None:
                 message = decodedResp.get('Message')

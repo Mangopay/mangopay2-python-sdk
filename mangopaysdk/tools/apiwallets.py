@@ -7,21 +7,21 @@ class ApiWallets(ApiBase):
 
     def Create(self, wallet):
         """Create new wallet.
-        param Wallet wallet
+        param Wallet wallet with fields: Owners, Descriptio, Currency, Tag
         return Wallet object returned from API
         """
         return self._createObject('wallets_create', wallet, 'Wallet')
 
     def Get(self, walletId):
-        """Get wallet.
-        param type walletId Wallet identifier
+        """Get wallet by Id.
+        param int/GUID walletId identifier
         return Wallet object returned from API
         """
         return self._getObject('wallets_get', walletId, 'Wallet')
 
     def Update(self, wallet):
         """Update wallet.
-        param type wallet Wallet object to save
+        param Wallet wallet with fields: Id, Owners, Descriptio, Tag
         return Wallet object returned from API
         """
         return self._saveObject('wallets_save', wallet, 'Wallet')

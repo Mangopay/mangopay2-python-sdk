@@ -10,15 +10,20 @@ class UserLegal (User):
         self._setPersonType(PersonType.Legal)
 
         self.Name = None
-        # Type for legal user. Possible: BUSINESS, ORGANIZATION
+        # Required  LegalPersonType: BUSINESS, ORGANIZATION
         self.LegalPersonType = None
         self.HeadquartersAddress = None
+        # Required
         self.LegalRepresentativeFirstName = None
+        # Required
         self.LegalRepresentativeLastName = None
         self.LegalRepresentativeAddress = None
         self.LegalRepresentativeEmail = None
+        # Required
         self.LegalRepresentativeBirthday = None
+        # Required
         self.LegalRepresentativeNationality = None
+        # Required
         self.LegalRepresentativeCountryOfResidence = None
         self._statute = None
         self._proofOfRegistration = None

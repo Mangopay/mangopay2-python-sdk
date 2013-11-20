@@ -1,7 +1,10 @@
+import base64
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.userlegal import UserLegal
 from mangopaysdk.entities.usernatural import UserNatural
 from mangopaysdk.entities.bankaccount import BankAccount
+from mangopaysdk.entities.kycdocument import KycDocument
+from mangopaysdk.entities.kycpage import KycPage
 
 
 class ApiUsers(ApiBase):
@@ -9,7 +12,7 @@ class ApiUsers(ApiBase):
 
     def Create(self, user):
         """Create new user.
-        param UserLegal/UserNatural user
+        param UserLegal/UserNatural user (list of required fields in coresponding entity class)
         return UserLegal/UserNatural User object returned from API
         """
         if isinstance(user, UserNatural):
@@ -71,15 +74,15 @@ class ApiUsers(ApiBase):
 
     def CreateBankAccount(self, userId, bankAccount):
         """Create bank account for user.
-        param int userId User Id
-        param BankAccount Entity of bank account object
+        param Int/GUID userId 
+        param BankAccount Entity of bank account with fields: OwnerName, UserId, Type, OwnerAddress,IBAN, BIC, Tag
         return BankAccount Create bank account object
         """
         return self._createObject('users_createbankaccounts', bankAccount, 'BankAccount', userId)
 
     def GetBankAccounts(self, userId, pagination = None):
         """Get all bank accounts for user.
-        param int userId User Id
+        param Int/GUID userId 
         param Pagination object
         return array with bank account entities
         """
@@ -87,14 +90,14 @@ class ApiUsers(ApiBase):
         
     def GetBankAccount(self, userId, bankAccountId):
         """Get bank account for user.
-        param int userId User Id
+        param Int/GUID userId 
         param int bankAccountId number
         return BankAccount Entity of bank account object
         """
         return self._getObject('users_getbankaccount', userId, 'BankAccount', bankAccountId)
 
     def GetUserResponse(self, response):
-        """Get correct user object.
+        """Get correct user object - to be used internally.
         param object response Response from API
         return UserNatural User object returned from API
         throws Exception If occur unexpected response from API
@@ -107,3 +110,36 @@ class ApiUsers(ApiBase):
             
         else:
             raise Exception('Unexpected response. Missing PersonType property')
+
+    def CreateUserKycDocument(self, kycDocument, userId):
+        """Create KycDocument
+        param KycDocument entity with Type and Tag set
+        param Int/GUID User identifier
+        return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
+        """
+        return self._createObject('users_createkycdocument', kycDocument, 'KycDocument', userId)
+
+    def GetUserKycDocument(self, kycDocumentId, userId):
+        """Get KycDocument by ID.
+        param Int/GUID KycDocument identifier
+        param Int/GUID User identifier
+        return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
+        """
+        return self._getObject('users_getkycdocument', userId, 'KycDocument', kycDocumentId)
+
+    def CreateUserKycPage(self, kycPage, userId, kycDocumentId):
+        """Create KycPage for existing KycDocument
+        param KycPage entity (File should be base64 string)
+        param Int/GUID User identifier
+        param Int/GUID KycDocument identifier
+        """
+        self._createObject('users_createkycpage', kycPage, None, userId, kycDocumentId)
+
+    def UpdateUserKycDocument(self, kycDocument, userId, kycDocumentId):
+        """Updates KycDocument     
+        param KycDocument entity (field Status should be set)
+        param Int/GUID User identifier
+        param Int/GUID KycDocument identifier
+        return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
+        """
+        return self._saveObject('users_savekycdocument', kycDocument, 'KycDocument', userId, kycDocument.Id)

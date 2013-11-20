@@ -1,10 +1,12 @@
-import random, string
+import random, string, time
 from tests.testbase import TestBase
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.types.pagination import Pagination
 from mangopaysdk.types.exceptions.responseexception import ResponseException
 from mangopaysdk.entities.userlegal import UserLegal
 from mangopaysdk.entities.bankaccount import BankAccount
+from mangopaysdk.entities.kycdocument import KycDocument
+from mangopaysdk.entities.kycpage import KycPage
 from mangopaysdk.tools.enums import *
 
 
@@ -31,7 +33,13 @@ class Test_ApiUsers(TestBase):
         user = UserLegal()
         user.Name = "SomeOtherSampleOrg"
         user.LegalPersonType = "BUSINESS"
-
+        user.Email = "john.doe@sample.org"
+        user.LegalPersonType = "BUSINESS"
+        user.LegalRepresentativeFirstName = 'Piter'
+        user.LegalRepresentativeLastName = 'Doe'
+        user.LegalRepresentativeBirthday = int(time.mktime((1979, 11, 21, 0,0,0, -1, -1, -1)))
+        user.LegalRepresentativeNationality = 'FR'
+        user.LegalRepresentativeCountryOfResidence = 'FR'
         ret = self.sdk.users.Create(user)
 
         self.assertTrue(int(ret.Id) > 0, "Created successfully after required props set")
@@ -121,3 +129,33 @@ class Test_ApiUsers(TestBase):
         self.assertEqual(pagination.ItemsPerPage, 12)
         self.assertTrue(pagination.TotalPages > 0)
         self.assertTrue(pagination.TotalItems > 0)
+
+    def test_Users_CreateKycDocument(self):
+        kycDoc = self.getUserKycDocument()
+        self.assertNotEqual(kycDoc.Id, None)
+        self.assertNotEqual(kycDoc.Id, 0)
+        self.assertNotEqual(kycDoc.CreationDate, None)
+        self.assertEqual(kycDoc.Status, KycDocumentStatus.CREATED)
+
+    def test_Users_GetKycDocument(self):
+        john = self.getJohn()
+        kycDoc = self.getUserKycDocument()
+        kycDocRes = self.sdk.users.GetUserKycDocument(kycDoc.Id, john.Id)
+        self.assertEqual(kycDoc.Id, kycDocRes.Id)
+        self.assertEqual(kycDoc.Tag, kycDocRes.Tag)
+        self.assertEqual(kycDoc.Type, kycDocRes.Type)
+        self.assertEqual(kycDoc.Status, kycDocRes.Status)   
+        
+    def test_Users_UpdateKycDocument(self):
+        john = self.getJohn()
+        kycDoc = self.getUserKycDocument()
+        kycDoc.Status = KycDocumentStatus.VALIDATION_ASKED
+        kycDocRes = self.sdk.users.UpdateUserKycDocument(kycDoc, john.Id, kycDoc.Id)
+        self.assertEqual(kycDocRes.Status, KycDocumentStatus.VALIDATION_ASKED) 
+
+    def test_Users_CreateKycDocumentPage(self):
+        john = self.getJohn()
+        kycDoc = self.getUserKycDocument()
+        kycPage = KycPage().LoadDocumentFromFile('D:/7tapeta.jpg')
+        kycDocRes = self.sdk.users.CreateUserKycPage(kycPage, john.Id, kycDoc.Id)
+        self.assertEqual(kycDocRes, None)

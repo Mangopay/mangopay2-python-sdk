@@ -62,6 +62,7 @@ class Test_PayIns(TestBase):
         self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsDirect)
         self.assertEqual(payIn.Id, getPayIn.Id)
         self.assertIsNotNone(getPayIn.ExecutionDetails.CardId)
+        self.assertEqual(payIn.ResultCode, '000000')
     
     def test_PayIns_CreateRefund_CardDirect(self):
         wallet = self.getJohnsWallet()

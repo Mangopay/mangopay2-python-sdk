@@ -3,6 +3,9 @@ from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.types.dto import Dto 
 from mangopaysdk.types.money import Money
 import json, inspect
+from mangopaysdk.entities.event import Event
+from mangopaysdk.entities.kycdocument import KycDocument
+from mangopaysdk.entities.kycpage import KycPage
 from mangopaysdk.entities.payin import PayIn
 from mangopaysdk.entities.payout import PayOut
 from mangopaysdk.entities.bankaccount import BankAccount
@@ -107,6 +110,12 @@ class ApiBase:
         'users_createnaturals' : ('/users/natural', 'POST'),
         'users_createlegals' : ('/users/legal', 'POST'),
         'users_createkycrequest' : ('/users/%s/KYC/requests', 'POST'),
+        
+        'users_createkycpage' : ('/users/%s/KYC/documents/%s/pages', 'POST'),
+        'users_createkycdocument' : ('/users/%s/KYC/documents/', 'POST'),
+        'users_getkycdocument' : ('/users/%s/KYC/documents/%s', 'GET'),
+        'users_savekycdocument' : ('/users/%s/KYC/documents/%s', 'PUT'),
+
         'users_createbankaccounts' : ('/users/%s/bankaccounts', 'POST'),
         'users_all' : ('/users', 'GET'),
         'users_allkyc' : ('/users/%s/KYC', 'GET'),
@@ -173,15 +182,16 @@ class ApiBase:
             return urlMethod % (param1, param2)
         return urlMethod
 
-    def _createObject (self, methodKey, entity, responseClassName = None, entityId = None):
+    def _createObject (self, methodKey, entity, responseClassName = None, entityId = None, secondEntityId = None):
         """Create object in API.
         param string methodKey Key with request data
         param object entity Entity object
         param object responseClassName Name of entity class from response
         param int entityId Entity identifier
+        param int secondEntityId Releated entity identifier
         return dictionary Response data
         """
-        urlMethod = self._buildUrl(methodKey, entityId)
+        urlMethod = self._buildUrl(methodKey, entityId, secondEntityId)
 
         if entity != None:
             requestData = self._buildRequestData(entity)
@@ -231,18 +241,20 @@ class ApiBase:
             return self._castResponseToEntity(response, responseClassName)
         return response
 
-    def _saveObject (self, methodKey, entity, responseClassName = None):
+    def _saveObject (self, methodKey, entity, responseClassName = None, entityId = None, secondEntityId = None):
         """Save object in API.
         param string methodKey Key with request data
         param object entity Entity object to save
         param object responseClassName Name of entity class from response
         return object Response data
         """
-        urlMethod = self._buildUrl(methodKey, entity.Id)
+        if (entityId == None):
+            entityId = entity.Id
+        urlMethod = self._buildUrl(methodKey, entityId, secondEntityId)
         requestData = self._buildRequestData(entity)
 
         rest = RestTool(self._root, True)
-        response =  rest.Request(urlMethod, self._getRequestType(methodKey), requestData)
+        response = rest.Request(urlMethod, self._getRequestType(methodKey), requestData)
 
         if responseClassName != None:
             return self._castResponseToEntity(response, responseClassName)

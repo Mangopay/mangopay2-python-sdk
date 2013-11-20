@@ -8,13 +8,16 @@ class UserNatural(User):
     def __init__(self, id = None):
         super(UserNatural, self).__init__(id)
         self._setPersonType(PersonType.Natural)
-
+        # Required
         self.FirstName = None
+        # Required
         self.LastName = None
         self.Address = None
-        # Date of birth: Unix timestamp
+        # Required Date of birth: Unix timestamp
         self.Birthday = None
+        # Required
         self.Nationality = None
+        # Required
         self.CountryOfResidence = None
         self.Occupation = None
         # Int

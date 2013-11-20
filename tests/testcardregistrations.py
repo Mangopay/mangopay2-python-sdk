@@ -39,7 +39,7 @@ class Test_CardRegistrations(TestBase):
         self.assertEqual(registrationData, getCardRegistration.RegistrationData)
         self.assertTrue(getCardRegistration.CardId != None)
         self.assertEqual('VALIDATED', getCardRegistration.Status)
-        self.assertEqual('00000', getCardRegistration.ResultCode)
+        self.assertEqual('000000', getCardRegistration.ResultCode)
     
         # def test_Cards_CheckCardExisting(self):
         cardRegistration = self.sdk.cardRegistrations.Get(cardRegistration.Id)

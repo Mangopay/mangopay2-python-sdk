@@ -30,6 +30,9 @@
     </Compile>
     <Compile Include="mangopaysdk\entities\card.py" />
     <Compile Include="mangopaysdk\entities\cardregistration.py" />
+    <Compile Include="mangopaysdk\entities\kycpage.py" />
+    <Compile Include="mangopaysdk\entities\kycdocument.py" />
+    <Compile Include="mangopaysdk\entities\event.py" />
     <Compile Include="mangopaysdk\entities\client.py">
       <SubType>Code</SubType>
     </Compile>
@@ -38,6 +41,7 @@
     </Compile>
     <Compile Include="mangopaysdk\tools\apicards.py" />
     <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
+    <Compile Include="mangopaysdk\tools\apievents.py" />
     <Compile Include="mangopaysdk\tools\storages\authorizationtokenmanager.py">
       <SubType>Code</SubType>
     </Compile>
@@ -165,6 +169,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="setup.py" />
+    <Compile Include="tests\testevents.py" />
     <Compile Include="tests\testrefunds.py">
       <SubType>Code</SubType>
     </Compile>
@@ -205,9 +210,6 @@
     <Folder Include="tests\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CHANGES.txt">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="tests\testconfigurations.py">
       <SubType>Content</SubType>
     </Content>

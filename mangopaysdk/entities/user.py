@@ -5,9 +5,9 @@ class User(EntityBase):
 
     def __init__(self, id = None):
         super(User, self).__init__(id)
-
+        # Required
         self.Email = None
-        # Type of user
+        # PersonType
         self.PersonType = None
 
     def _setPersonType(self, personType):
