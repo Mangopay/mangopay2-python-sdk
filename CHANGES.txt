@@ -1,6 +1,0 @@
-v0.2.1, 17/09/2013 -- added more tests - small fixes
-v0.2.0, 13/09/2013 -- change portalocker library to filelock (PyWin32 is not required on Windows from this revision)
-v0.1.9, 12/09/2013 -- file storage locking with portalocker
-v0.1.8, 11/09/2013 -- file storage for tokens added.
-v0.1.7, 10/09/2013 -- direct card added.
-v0.1.5, 02/09/2013 -- Initial release.
