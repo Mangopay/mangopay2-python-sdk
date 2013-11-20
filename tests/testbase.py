@@ -334,7 +334,7 @@ class TestBase(unittest.TestCase):
         return string
         """
         data = 'data=' + cardRegistration.PreregistrationData + '&accessKeyRef=' + cardRegistration.AccessKey;
-        data += '&cardNumber=4970101122334406&cardExpirationDate=1214&cardCvx=123'
+        data += '&cardNumber=4970100000000154&cardExpirationDate=1214&cardCvx=123'
         headers = {"Content-Type" : "application/x-www-form-urlencoded", 'Connection':'close'}
         response = requests.post(cardRegistration.CardRegistrationURL, data, verify=False, headers=headers)
         if response.status_code != requests.codes.ok:
