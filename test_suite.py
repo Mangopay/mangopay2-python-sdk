@@ -8,13 +8,14 @@ import copy
 from tests.testapiclients import Test_ApiClients
 from tests.testapiusers import Test_ApiUsers
 from tests.testapiwallets import Test_ApiWallets
-from tests.testcardregistrations import CardRegistration
+from tests.testcardregistrations import Test_CardRegistrations
 from tests.testconfigurations import Test_Configurations
 from tests.testpayins import Test_PayIns
 from tests.testpayouts import Test_PayOuts
 from tests.testrefunds import TestRefunds
 from tests.testtokens import Test_Tokens
 from tests.testtransfers import Test_Transfers
+from tests.testevents import Test_ApiEvents
 
 
 suite = unittest.TestSuite()
@@ -27,7 +28,8 @@ suite.addTest(unittest.makeSuite(Test_PayOuts))
 suite.addTest(unittest.makeSuite(Test_Tokens))
 suite.addTest(unittest.makeSuite(Test_Transfers))
 suite.addTest(unittest.makeSuite(TestRefunds))
-suite.addTest(unittest.makeSuite(CardRegistration))
+suite.addTest(unittest.makeSuite(Test_CardRegistrations))
+suite.addTest(unittest.makeSuite(Test_ApiEvents))
 
 modules = ['mangopaysdk']
 
@@ -37,5 +39,5 @@ for module in modules:
 runner = unittest.TextTestRunner(verbosity=1)
 result = runner.run(suite)
 
-if not result.wasSuccessful():
-    sys.exit(1)
+#if not result.wasSuccessful():
+#sys.exit(1)

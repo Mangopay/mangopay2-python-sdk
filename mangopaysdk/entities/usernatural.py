@@ -26,7 +26,7 @@ class UserNatural(User):
         self.ProofOfAddress = None
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(UserNatural, self).GetReadOnlyProperties()
         properties.append('ProofOfIdentity' )        
         properties.append('ProofOfAddress' )        
         return properties

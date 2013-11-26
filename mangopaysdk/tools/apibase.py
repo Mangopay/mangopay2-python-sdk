@@ -29,7 +29,7 @@ from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsB
 from mangopaysdk.tools.resttool import RestTool
 
 
-class ApiBase:
+class ApiBase(object):
     """Base class for all Api* classes (managers)."""
 
     # Root/parent MangoPayApi instance that holds the OAuthToken and Configuration instance

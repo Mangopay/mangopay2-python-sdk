@@ -11,5 +11,5 @@ class Event (EntityBase):
         # Unix timestamp
         self.Date = None
        
-        return super().__init__(id)
+        return super(Event, self).__init__(id)
     

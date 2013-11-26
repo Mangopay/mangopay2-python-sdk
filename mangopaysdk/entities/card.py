@@ -18,5 +18,5 @@ class Card(EntityBase):
         self.Currency = None
         # UNKNOWN, VALID, INVALID
         self.Validity = None
-        return super().__init__(id)
+        return super(Card, self).__init__(id)
     

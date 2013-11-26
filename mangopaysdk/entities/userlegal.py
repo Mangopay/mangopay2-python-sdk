@@ -30,7 +30,7 @@ class UserLegal (User):
         self._shareholderDeclaration = None
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(UserLegal, self).GetReadOnlyProperties()
         properties.append('Statute' )        
         properties.append('ProofOfRegistration' )        
         properties.append('ShareholderDeclaration' )        

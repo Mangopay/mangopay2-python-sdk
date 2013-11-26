@@ -104,7 +104,7 @@ class Test_ApiUsers(TestBase):
     def test_Users_CreateBankAccount(self):
         john = self.getJohn()
         account = self.getJohnsAccount()
-        
+
         self.assertTrue(int(account.Id) > 0)
         self.assertEqual(account.UserId, john.Id)
 
@@ -144,14 +144,14 @@ class Test_ApiUsers(TestBase):
         self.assertEqual(kycDoc.Id, kycDocRes.Id)
         self.assertEqual(kycDoc.Tag, kycDocRes.Tag)
         self.assertEqual(kycDoc.Type, kycDocRes.Type)
-        self.assertEqual(kycDoc.Status, kycDocRes.Status)   
-        
+        self.assertEqual(kycDoc.Status, kycDocRes.Status)
+
     def test_Users_UpdateKycDocument(self):
         john = self.getJohn()
         kycDoc = self.getUserKycDocument()
         kycDoc.Status = KycDocumentStatus.VALIDATION_ASKED
         kycDocRes = self.sdk.users.UpdateUserKycDocument(kycDoc, john.Id, kycDoc.Id)
-        self.assertEqual(kycDocRes.Status, KycDocumentStatus.VALIDATION_ASKED) 
+        self.assertEqual(kycDocRes.Status, KycDocumentStatus.VALIDATION_ASKED)
 
     def test_Users_CreateKycDocumentPage(self):
         john = self.getJohn()
@@ -159,3 +159,6 @@ class Test_ApiUsers(TestBase):
         kycPage = KycPage().LoadDocumentFromFile('D:/7tapeta.jpg')
         kycDocRes = self.sdk.users.CreateUserKycPage(kycPage, john.Id, kycDoc.Id)
         self.assertEqual(kycDocRes, None)
+
+if __name__ == '__main__':
+     Test_ApiUsers().test_Users_GetKycDocument()

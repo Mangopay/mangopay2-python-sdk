@@ -15,11 +15,11 @@ class CardRegistration(EntityBase):
         self.Currency = None
         # CardRegistrationStatus CREATED, ERROR, VALIDATED
         self.Status = None	
-        return super().__init__(id)
+        return super(CardRegistration, self).__init__(id)
    
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(CardRegistration, self).GetReadOnlyProperties()
         properties.append('AccessKey')
         properties.append('PreregistrationData')
         properties.append('CardRegistrationURL')

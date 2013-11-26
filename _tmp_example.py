@@ -13,8 +13,8 @@ from mangopaysdk.types.pagination import Pagination
 
 api = MangoPayApi()
 # test client credentials
-api.Config.ClientID = 'example'
-api.Config.ClientPassword = 'uyWsmnwMQyTnqKgi8Y35A3eVB7bGhqrebYqA1tL6x2vYNpGPiY'
+api.Config.ClientID = 'sdk-unit-tests'
+api.Config.ClientPassword = 'cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju'
 
 # optionally reuse token from previous requests (unless expired)
 token = api.authenticationManager.CreateToken()

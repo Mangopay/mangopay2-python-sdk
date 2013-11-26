@@ -9,7 +9,7 @@ class PayOut (Transaction):
         self.PaymentType = None
         # One of PayOutPaymentDetails implementations, depending on PaymentType
         self.MeanOfPaymentDetails = None
-        return super().__init__(id) 
+        return super(PayOut, self).__init__(id) 
      
     def GetDependsObjects(self):
         return {
@@ -17,7 +17,7 @@ class PayOut (Transaction):
         }
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(PayOut, self).GetReadOnlyProperties()
         properties.append('PaymentType' )        
         properties.append('ExecutionType' )        
         return properties

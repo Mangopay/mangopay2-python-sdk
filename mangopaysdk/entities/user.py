@@ -14,6 +14,6 @@ class User(EntityBase):
         self.PersonType = personType
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(User, self).GetReadOnlyProperties()
         properties.append('PersonType' )        
         return properties

@@ -12,7 +12,7 @@ class Wallet(EntityBase):
         self.Balance = None
         # Currency code in ISO
         self.Currency = None
-        return super().__init__(id)
+        return super(Wallet, self).__init__(id)
     
     def GetSubObjects(self):
         """Get array with mapping which property is object and what type of object.
@@ -21,6 +21,6 @@ class Wallet(EntityBase):
         return {'Balance' : 'Money'}
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(Wallet, self).GetReadOnlyProperties()
         properties.append('Balance' )        
         return properties

@@ -198,6 +198,7 @@
     <Compile Include="tests\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="test_suite.py" />
     <Compile Include="_tmp_example.py" />
   </ItemGroup>
   <ItemGroup>

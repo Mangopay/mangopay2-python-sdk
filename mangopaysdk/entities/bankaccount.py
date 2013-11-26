@@ -14,9 +14,9 @@ class BankAccount(EntityBase):
         self.IBAN = None
         # example BREXPLPWKRA
         self.BIC = None
-        return super().__init__(id)
+        return super(BankAccount, self).__init__(id)
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(BankAccount, self).GetReadOnlyProperties()
         properties.append('UserId' )        
         return properties

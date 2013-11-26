@@ -13,7 +13,7 @@ class PayIn (Transaction):
         self.ExecutionType = None
         # One of PayInExecutionDetails implementations, depending on ExecutionType
         self.ExecutionDetails = None
-        return super().__init__(id)    
+        return super(PayIn, self).__init__(id)    
 
     def GetDependsObjects(self):
         return { 
@@ -26,7 +26,7 @@ class PayIn (Transaction):
                }
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(PayIn, self).GetReadOnlyProperties()
         properties.append('PaymentType' )        
         properties.append('ExecutionType' )        
         return properties

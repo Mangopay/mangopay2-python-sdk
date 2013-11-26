@@ -8,4 +8,4 @@ class Refund(Transaction):
         self.InitialTransactionId = None
         self.DebitedWalletId = None
         self.CreditedWalletId = None
-        return super().__init__(id)
+        return super(Refund, self).__init__(id)

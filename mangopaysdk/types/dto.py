@@ -1,4 +1,4 @@
-class Dto:
+class Dto(object):
     """Abstract class for all DTOs (entities and their composites)."""
     
     def GetSubObjects(self):

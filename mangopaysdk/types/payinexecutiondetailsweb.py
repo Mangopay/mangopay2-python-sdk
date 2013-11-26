@@ -15,6 +15,6 @@ class PayInExecutionDetailsWeb (PayInExecutionDetails):
         self.SecureMode = None
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(PayInExecutionDetailsWeb, self).GetReadOnlyProperties()
         properties.append('RedirectURL' )        
         return properties

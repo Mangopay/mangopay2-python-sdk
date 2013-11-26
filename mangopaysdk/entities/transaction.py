@@ -25,7 +25,7 @@ class Transaction (EntityBase):
         self.ResultCode = None
         # timestamp
         self.ExecutionDate = None
-        return super().__init__(id)
+        return super(Transaction, self).__init__(id)
 
     def GetSubObjects(self):
         return {
@@ -35,7 +35,7 @@ class Transaction (EntityBase):
         }
 
     def GetReadOnlyProperties(self):
-        properties = super().GetReadOnlyProperties()
+        properties = super(Transaction, self).GetReadOnlyProperties()
         properties.append('Status' )        
         properties.append('ResultCode' )        
         properties.append('ExecutionDate' )        

@@ -1,5 +1,4 @@
 from datetime import datetime
-import urllib
 
 
 class UrlTool:
@@ -25,8 +24,11 @@ class UrlTool:
 
             if additionalUrlParams != None:
                 url += "&" if (url.count("?") > 0) else "?"
-                url += urllib.parse.urlencode(additionalUrlParams.__dict__)
- 
+                # avoid urlparse because of 2.7 compatibility issues
+                for key, val in additionalUrlParams.__dict__.items():
+                    url += "%s=%s&" %(key,val)
+                url = url[:-1]
+                
         return url
 
     def GetFullUrl(self, restUrl):

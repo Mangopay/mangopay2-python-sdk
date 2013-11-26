@@ -13,5 +13,5 @@ class Client (EntityBase):
         self.Email = None
         # Password for client
         self.Passphrase = None
-        return super().__init__(id)
+        return super(Client, self).__init__(id)
     
