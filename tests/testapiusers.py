@@ -156,7 +156,7 @@ class Test_ApiUsers(TestBase):
     def test_Users_CreateKycDocumentPage(self):
         john = self.getJohn()
         kycDoc = self.getUserKycDocument()
-        kycPage = KycPage().LoadDocumentFromFile('D:/7tapeta.jpg')
+        kycPage = KycPage().LoadDocumentFromFile('./spacer.gif')
         kycDocRes = self.sdk.users.CreateUserKycPage(kycPage, john.Id, kycDoc.Id)
         self.assertEqual(kycDocRes, None)
 
