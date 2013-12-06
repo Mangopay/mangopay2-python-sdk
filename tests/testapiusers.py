@@ -8,6 +8,7 @@ from mangopaysdk.entities.bankaccount import BankAccount
 from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.kycpage import KycPage
 from mangopaysdk.tools.enums import *
+import os
 
 
 class Test_ApiUsers(TestBase):
@@ -156,7 +157,7 @@ class Test_ApiUsers(TestBase):
     def test_Users_CreateKycDocumentPage(self):
         john = self.getJohn()
         kycDoc = self.getUserKycDocument()
-        kycPage = KycPage().LoadDocumentFromFile('./spacer.gif')
+        kycPage = KycPage().LoadDocumentFromFile(os.path.join(os.path.dirname(__file__),"spacer.gif"))
         kycDocRes = self.sdk.users.CreateUserKycPage(kycPage, john.Id, kycDoc.Id)
         self.assertEqual(kycDocRes, None)
 
