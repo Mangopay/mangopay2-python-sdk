@@ -141,10 +141,10 @@ class TestBase(unittest.TestCase):
             payIn.Fees.Currency = 'EUR'
             # payment type as CARD
             payIn.PaymentDetails = PayInPaymentDetailsCard()
-            if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD'):
-                payIn.PaymentDetails.CardType = 'CB_VISA_MASTERCARD'
-            elif (card.CardType == 'AMEX'):
-                payIn.PaymentDetails.CardType = 'AMEX'
+            if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD' or card.CardType == CardType.CB_VISA_MASTERCARD):
+                payIn.PaymentDetails.CardType = CardType.CB_VISA_MASTERCARD
+            # elif (card.CardType == CardType.AMEX):
+            #    payIn.PaymentDetails.CardType = CardType.AMEX
 
             # execution type as DIRECT
             payIn.ExecutionDetails = PayInExecutionDetailsDirect()
@@ -159,7 +159,7 @@ class TestBase(unittest.TestCase):
         """return PayInPaymentDetailsCard"""
         if TestBase._payInPaymentDetailsCard == None:
             TestBase._payInPaymentDetailsCard = PayInPaymentDetailsCard()
-            TestBase._payInPaymentDetailsCard.CardType = 'AMEX'
+            TestBase._payInPaymentDetailsCard.CardType = CardType.CB_VISA_MASTERCARD
         return TestBase._payInPaymentDetailsCard
     
     def getPayInExecutionDetailsWeb(self):
@@ -218,10 +218,10 @@ class TestBase(unittest.TestCase):
         payIn.Fees.Currency = 'EUR'
         # payment type as CARD
         payIn.PaymentDetails = PayInPaymentDetailsCard()
-        if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD'):
-            payIn.PaymentDetails.CardType = 'CB_VISA_MASTERCARD'
-        elif (card.CardType == 'AMEX'):
-            payIn.PaymentDetails.CardType = 'AMEX'
+        if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD' or card.CardType == CardType.CB_VISA_MASTERCARD):
+            payIn.PaymentDetails.CardType = CardType.CB_VISA_MASTERCARD
+        #elif (card.CardType == CardType.AMEX):
+        #    payIn.PaymentDetails.CardType = CardType.AMEX
         # execution type as DIRECT
         payIn.ExecutionDetails = PayInExecutionDetailsDirect()
         payIn.ExecutionDetails.CardId = card.Id

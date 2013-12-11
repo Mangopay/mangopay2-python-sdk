@@ -5,7 +5,7 @@ class Event (EntityBase):
     """Event entity."""
     
     def __init__(self, id = None):
-        self.RessourceId = ''
+        self.ResourceId = ''
         # EventType enum
         self.EventType = None
         # Unix timestamp

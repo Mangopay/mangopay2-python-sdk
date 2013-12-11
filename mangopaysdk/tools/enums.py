@@ -61,7 +61,7 @@ class Mode3DSType:
 
 class CardType:
     CB_VISA_MASTERCARD = 'CB_VISA_MASTERCARD'
-    AMEX = 'AMEX'
+    #AMEX = 'AMEX'
 
 
 class TransactionNature:

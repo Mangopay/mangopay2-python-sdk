@@ -14,8 +14,8 @@ class Test_ApiEvents(TestBase):
 
     def test_Events_GetEvents(self):
         event = self.sdk.events.Get()
-        self.assertNotEqual(event[0].RessourceId, None)
-        self.assertNotEqual(event[0].RessourceId, '')
+        self.assertNotEqual(event[0].ResourceId, None)
+        self.assertNotEqual(event[0].ResourceId, '')
         self.assertNotEqual(event[0].EventType, None)
         self.assertNotEqual(event[0].EventType, '')
         self.assertNotEqual(event[0].Date, None)
