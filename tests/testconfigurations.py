@@ -7,7 +7,7 @@ class Test_Configurations(TestBase):
 
     def test_confInConstruct(self):
         sdk = MangoPayApi()      
-        sdk.Config.ClientId = "test_asd"
+        sdk.Config.ClientID = "test_asd"
         sdk.Config.ClientPassword = "00000"
         sdk.OAuthTokenManager.StoreToken(None)
         with self.assertRaises(ResponseException) as cm:

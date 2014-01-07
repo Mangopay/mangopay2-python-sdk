@@ -65,7 +65,7 @@ Client creation example (you need to call it only once)
 Configuration example
 -------------------------------------------------
 See the example above and call `api.clients.Create` once to get your passphrase.
-Then set `api.Config.ClientId` to your MangoPay Client ID and 
+Then set `api.Config.ClientID` to your MangoPay Client ID and 
 `api.Config.ClientPassword` to your passphrase.
 
 You also need to set a folder path in `api.Config.TempPath` that SDK needs 
@@ -78,7 +78,7 @@ environment, set it to `https://api.mangopay.com`.
     from mangopaysdk.mangopayapi import MangoPayApi
     api = MangoPayApi()
 
-    api.Config.ClientId = 'your-client-id'
+    api.Config.ClientID = 'your-client-id'
     api.Config.ClientPassword = 'your-client-password'
     api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
     print(api.Config.BaseUrl) # you probably dont have to change it
