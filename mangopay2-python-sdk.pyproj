@@ -28,7 +28,9 @@
     <Compile Include="mangopaysdk\entities\bankaccount.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\aaaabankwire.py" />
     <Compile Include="mangopaysdk\entities\card.py" />
+    <Compile Include="mangopaysdk\entities\cardpreauthorization.py" />
     <Compile Include="mangopaysdk\entities\cardregistration.py" />
     <Compile Include="mangopaysdk\entities\kycpage.py" />
     <Compile Include="mangopaysdk\entities\kycdocument.py" />
@@ -39,6 +41,7 @@
     <Compile Include="mangopaysdk\entities\entitybase.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\tools\apicardpreauthorizations.py" />
     <Compile Include="mangopaysdk\tools\apicards.py" />
     <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
     <Compile Include="mangopaysdk\tools\apievents.py" />
@@ -113,9 +116,11 @@
     <Compile Include="mangopaysdk\types\payinpaymentdetailscard.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\types\payinpaymentdetailspreauthorized.py" />
     <Compile Include="mangopaysdk\types\payoutpaymentdetails.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\types\payinpaymentdetailsbankwire.py" />
     <Compile Include="mangopaysdk\types\payoutpaymentdetailsbankwire.py">
       <SubType>Code</SubType>
     </Compile>
@@ -169,6 +174,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="setup.py" />
+    <Compile Include="tests\testcardpreauthorizations.py" />
     <Compile Include="tests\testevents.py" />
     <Compile Include="tests\testrefunds.py">
       <SubType>Code</SubType>

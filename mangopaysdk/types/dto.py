@@ -2,7 +2,7 @@ class Dto(object):
     """Abstract class for all DTOs (entities and their composites)."""
     
     def GetSubObjects(self):
-        """Get array with mapping which property is object and what type of object..
+        """Get array with mapping which property is object and what type of object.
         To be overridden in child class if has any sub objects.
         return array
         """

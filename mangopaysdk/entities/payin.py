@@ -14,16 +14,19 @@ class PayIn (Transaction):
         # One of PayInExecutionDetails implementations, depending on ExecutionType
         self.ExecutionDetails = None
         return super(PayIn, self).__init__(id)    
-
+    
     def GetDependsObjects(self):
         return { 
-                'PaymentType': {'_property_name': 'PaymentDetails', 'CARD': 'PayInPaymentDetailsCard'},
-                'ExecutionType': {
+                'PaymentType': {
+                    '_property_name': 'PaymentDetails', 
+                    'CARD': 'PayInPaymentDetailsCard',
+                    'BANK_WIRE': 'PayInPaymentDetailsBankWire'
+                }, 'ExecutionType': {
                     '_property_name': 'ExecutionDetails', 
                     'WEB': 'PayInExecutionDetailsWeb',
                     'DIRECT': 'PayInExecutionDetailsDirect'                
-                    }
-               }
+                }
+        }
 
     def GetReadOnlyProperties(self):
         properties = super(PayIn, self).GetReadOnlyProperties()

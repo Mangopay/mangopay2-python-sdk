@@ -1,9 +1,11 @@
 import unittest
 from tests.testbase import TestBase
+from mangopaysdk.tools.enums import PayInPaymentType, ExecutionType, TransactionType, TransactionStatus, TransactionNature
 from mangopaysdk.entities.payin import PayIn
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
+from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 
 
 class Test_PayIns(TestBase):
@@ -12,9 +14,9 @@ class Test_PayIns(TestBase):
     def test_PayIns_Create_CardWeb(self):
        payIn = self.getJohnsPayInCardWeb()
        self.assertTrue(int(payIn.Id) > 0)
-       self.assertEqual(payIn.PaymentType, 'CARD')
+       self.assertEqual(payIn.PaymentType, PayInPaymentType.CARD)
        self.assertIsInstance(payIn.PaymentDetails, PayInPaymentDetailsCard)
-       self.assertEqual(payIn.ExecutionType, 'WEB')
+       self.assertEqual(payIn.ExecutionType, ExecutionType.WEB)
        self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsWeb)
     
     def test_PayIns_Get_CardWeb(self):
@@ -22,9 +24,9 @@ class Test_PayIns(TestBase):
        getPayIn = self.sdk.payIns.Get(payIn.Id)
         
        self.assertEqual(payIn.Id, getPayIn.Id)
-       self.assertEqual(payIn.PaymentType, 'CARD')
+       self.assertEqual(payIn.PaymentType, PayInPaymentType.CARD)
        self.assertIsInstance(payIn.PaymentDetails, PayInPaymentDetailsCard)
-       self.assertEqual(payIn.ExecutionType, 'WEB')
+       self.assertEqual(payIn.ExecutionType, ExecutionType.WEB)
        self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsWeb)
        self.assertEqualInputProps(payIn, getPayIn)
        self.assertEqual(getPayIn.Status, 'CREATED')
@@ -40,25 +42,25 @@ class Test_PayIns(TestBase):
         user = self.getJohn()
         self.assertTrue(int(payIn.Id) > 0)
         self.assertEqual(wallet.Id, payIn.CreditedWalletId)
-        self.assertEqual('CARD', payIn.PaymentType)
+        self.assertEqual(PayInPaymentType.CARD, payIn.PaymentType)
         self.assertIsInstance(payIn.PaymentDetails, PayInPaymentDetailsCard)
-        self.assertEqual('DIRECT', payIn.ExecutionType)
+        self.assertEqual(ExecutionType.DIRECT, payIn.ExecutionType)
         self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsDirect)
         self.assertIsInstance(payIn.DebitedFunds, Money)
         self.assertIsInstance(payIn.CreditedFunds, Money)
         self.assertIsInstance(payIn.Fees, Money)
         self.assertEqual(user.Id, payIn.AuthorId)
         self.assertEqual(wallet.Balance.Amount, beforeWallet.Balance.Amount + payIn.CreditedFunds.Amount)
-        self.assertEqual('SUCCEEDED', payIn.Status)
-        self.assertEqual('PAYIN', payIn.Type)
+        self.assertEqual(TransactionStatus.SUCCEEDED, payIn.Status)
+        self.assertEqual(TransactionType.PAYIN, payIn.Type)
     
     def test_PayIns_Get_CardDirect(self):
         payIn = self.getJohnsPayInCardDirect()        
         getPayIn = self.sdk.payIns.Get(payIn.Id)        
         self.assertEqual(payIn.Id, getPayIn.Id)
-        self.assertEqual(payIn.PaymentType, 'CARD')
+        self.assertEqual(payIn.PaymentType, PayInPaymentType.CARD)
         self.assertIsInstance(payIn.PaymentDetails, PayInPaymentDetailsCard)
-        self.assertEqual(payIn.ExecutionType, 'DIRECT')
+        self.assertEqual(payIn.ExecutionType, ExecutionType.DIRECT)
         self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsDirect)
         self.assertEqual(payIn.Id, getPayIn.Id)
         self.assertIsNotNone(getPayIn.ExecutionDetails.CardId)
@@ -76,5 +78,34 @@ class Test_PayIns(TestBase):
         self.assertTrue(int(refund.Id) > 0)
         self.assertTrue(refund.DebitedFunds.Amount, payIn.DebitedFunds.Amount)
         self.assertEqual(walletAfterRefund.Balance.Amount, walletAfterPayIn.Balance.Amount - payIn.DebitedFunds.Amount)
-        self.assertEqual('PAYOUT', refund.Type)
-        self.assertEqual('REFUND', refund.Nature)
+        self.assertEqual(TransactionType.PAYOUT, refund.Type)
+        self.assertEqual(TransactionNature.REFUND, refund.Nature)
+
+    def test_PayIns_Create_BankWireDirect(self):
+        payIn = self.getJohnsPayInBankWireDirect()
+        self.assertTrue(int(payIn.Id) > 0)
+        self.assertEqual(payIn.PaymentType, PayInPaymentType.BANK_WIRE)
+        self.assertIsInstance(payIn.PaymentDetails,  PayInPaymentDetailsBankWire)
+        self.assertEqual(payIn.ExecutionType, ExecutionType.DIRECT)
+        self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsDirect)
+        self.assertEqual(payIn.CreditedUserId, payIn.AuthorId)
+        self.assertEqual(payIn.Status, TransactionStatus.CREATED)
+        self.assertEqual(payIn.Nature, TransactionNature.REGULAR)
+        self.assertTrue(len(payIn.PaymentDetails.WireReference) == 10)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Type)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.BIC)
+
+    def test_PayIns_Get_BankWireDirect(self):
+        payIn = self.getJohnsPayInBankWireDirect()
+        getPayIn = self.sdk.payIns.Get(payIn.Id)
+        self.assertTrue(int(payIn.Id) > 0)
+        self.assertEqual(payIn.PaymentType, PayInPaymentType.BANK_WIRE)
+        self.assertIsInstance(payIn.PaymentDetails,  PayInPaymentDetailsBankWire)
+        self.assertEqual(payIn.ExecutionType, ExecutionType.DIRECT)
+        self.assertIsInstance(payIn.ExecutionDetails, PayInExecutionDetailsDirect)
+        self.assertEqual(payIn.CreditedUserId, payIn.AuthorId)
+        self.assertEqual(payIn.Status, TransactionStatus.CREATED)
+        self.assertEqual(payIn.Nature, TransactionNature.REGULAR)
+        self.assertTrue(len(payIn.PaymentDetails.WireReference) == 10)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Type)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.BIC)    

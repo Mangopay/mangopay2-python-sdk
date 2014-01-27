@@ -13,31 +13,33 @@ from mangopaysdk.entities.card import Card
 from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.cardregistration import CardRegistration
+from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
 from mangopaysdk.tools.enums import *
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
+from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 from mangopaysdk.types.money import Money
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 
 
 class TestBase(unittest.TestCase):
-
-    _john = None
-    _matrix = None
-    _johnsAccount = None
-    _johnsWallet = None
-    _johnsWalletWithMoney = None
-    _payInPaymentDetailsCard = None
-    _payInExecutionDetailsWeb = None
-    _johnsPayOutBankWire = None    
-    _johnsCardRegistration = None
-    _joknsKycDocument = None
-    
+        
     def __init__(self, methodName='runTest'):
         self.sdk = self.buildNewMangoPayApi()
         super(TestBase, self).__init__(methodName)
+        self._john = None
+        self._matrix = None
+        self._johnsAccount = None
+        self._johnsWallet = None
+        self._johnsWalletWithMoney = None
+        self._payInPaymentDetailsCard = None
+        self._payInExecutionDetailsWeb = None
+        self._johnsPayOutBankWire = None    
+        self._johnsCardRegistration = None
+        self._johnsKycDocument = None
+        self._johnsCardPreAuthorization = None
 
     def buildNewMangoPayApi(self):
         sdk = MangoPayApi()
@@ -49,7 +51,7 @@ class TestBase(unittest.TestCase):
 
     def getJohn(self):
         """Creates TestBase._john (test natural user) if not created yet"""
-        if (TestBase._john == None):
+        if (self._john == None):
             user = UserNatural()
             user.FirstName = "John"
             user.LastName = "Doe"
@@ -60,13 +62,13 @@ class TestBase(unittest.TestCase):
             user.CountryOfResidence = "FR"
             user.Occupation = "programmer"
             user.IncomeRange = 3
-            TestBase._john = self.sdk.users.Create(user)
-            self.assertEqualInputProps(TestBase._john, user, True)
-        return TestBase._john
+            self._john = self.sdk.users.Create(user)
+            self.assertEqualInputProps(self._john, user, True)
+        return self._john
 
     def getMatrix(self):
         """Creates TestBase._matrix (test legal user) if not created yet"""
-        if (TestBase._matrix == None):
+        if (self._matrix == None):
             john = self.getJohn()
             user = UserLegal()
             user.Name = "MartixSampleOrg"
@@ -80,13 +82,13 @@ class TestBase(unittest.TestCase):
             user.LegalRepresentativeBirthday = john.Birthday
             user.LegalRepresentativeNationality = john.Nationality
             user.LegalRepresentativeCountryOfResidence = john.CountryOfResidence
-            TestBase._matrix = self.sdk.users.Create(user)
-            self.assertEqualInputProps(TestBase._matrix, user, True)
-        return TestBase._matrix
+            self._matrix = self.sdk.users.Create(user)
+            self.assertEqualInputProps(self._matrix, user, True)
+        return self._matrix
     
     def getJohnsAccount(self):
         """Creates TestBase._johnsAccount (bank account belonging to John) if not created yet"""
-        if TestBase._johnsAccount == None:
+        if self._johnsAccount == None:
             john = self.getJohn()
             account = BankAccount()
             account.Type = 'IBAN'
@@ -94,28 +96,28 @@ class TestBase(unittest.TestCase):
             account.OwnerAddress = john.Address
             account.IBAN = 'FR7617906000320008335232973'
             account.BIC = 'BINAADADXXX'
-            TestBase._johnsAccount = self.sdk.users.CreateBankAccount(john.Id, account)
-            self.assertEqualInputProps(TestBase._johnsAccount, account, True)
-        return TestBase._johnsAccount
+            self._johnsAccount = self.sdk.users.CreateBankAccount(john.Id, account)
+            self.assertEqualInputProps(self._johnsAccount, account, True)
+        return self._johnsAccount
     
     def getJohnsWallet(self):
         """Creates TestBase._johnsWallet (wallets belonging to John) if not created yet"""
-        if TestBase._johnsWallet == None:
+        if self._johnsWallet == None:
             john = self.getJohn()
             wallet = Wallet()
             wallet.Owners = [john.Id]
             wallet.Currency = 'EUR'
             wallet.Description = 'WALLET IN EUR'            
-            TestBase._johnsWallet = self.sdk.wallets.Create(wallet)
+            self._johnsWallet = self.sdk.wallets.Create(wallet)
             #TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #self.assertEqualInputProps(TestBase._johnsWallet, wallet, True)
-        return TestBase._johnsWallet
+            #self.assertEqualInputProps(self._johnsWallet, wallet, True)
+        return self._johnsWallet
     
     def getJohnsWalletWithMoney(self, amount = 10000):
         """Creates static JohnsWallet (wallets belonging to John) if not created yet
         return Wallet
         """
-        if TestBase._johnsWalletWithMoney == None:
+        if self._johnsWalletWithMoney == None:
             john = self.getJohn()
             wallet = Wallet()
             wallet.Owners = [john.Id]
@@ -152,25 +154,25 @@ class TestBase(unittest.TestCase):
             payIn.ExecutionDetails.SecureModeReturnURL = 'http://test.com'
             # create Pay-In
             self.sdk.payIns.Create(payIn)
-            TestBase._johnsWalletWithMoney = self.sdk.wallets.Get(wallet.Id)
-        return TestBase._johnsWalletWithMoney
+            self._johnsWalletWithMoney = self.sdk.wallets.Get(wallet.Id)
+        return self._johnsWalletWithMoney
     
     def getPayInPaymentDetailsCard(self):
         """return PayInPaymentDetailsCard"""
-        if TestBase._payInPaymentDetailsCard == None:
-            TestBase._payInPaymentDetailsCard = PayInPaymentDetailsCard()
-            TestBase._payInPaymentDetailsCard.CardType = CardType.CB_VISA_MASTERCARD
-        return TestBase._payInPaymentDetailsCard
+        if self._payInPaymentDetailsCard == None:
+            self._payInPaymentDetailsCard = PayInPaymentDetailsCard()
+            self._payInPaymentDetailsCard.CardType = CardType.CB_VISA_MASTERCARD
+        return self._payInPaymentDetailsCard
     
     def getPayInExecutionDetailsWeb(self):
         """return PayInExecutionDetailsWeb"""
-        if TestBase._payInExecutionDetailsWeb == None:
-            TestBase._payInExecutionDetailsWeb = PayInExecutionDetailsWeb()
-            TestBase._payInExecutionDetailsWeb.ReturnURL = 'https://test.com'
-            TestBase._payInExecutionDetailsWeb.TemplateURL = 'https://TemplateURL.com'
-            TestBase._payInExecutionDetailsWeb.SecureMode = 'DEFAULT'
-            TestBase._payInExecutionDetailsWeb.Culture = 'fr'
-        return TestBase._payInExecutionDetailsWeb
+        if self._payInExecutionDetailsWeb == None:
+            self._payInExecutionDetailsWeb = PayInExecutionDetailsWeb()
+            self._payInExecutionDetailsWeb.ReturnURL = 'https://test.com'
+            self._payInExecutionDetailsWeb.TemplateURL = 'https://TemplateURL.com'
+            self._payInExecutionDetailsWeb.SecureMode = 'DEFAULT'
+            self._payInExecutionDetailsWeb.Culture = 'fr'
+        return self._payInExecutionDetailsWeb
     
     def getJohnsPayInCardWeb(self):
         """Creates Pay-In Card Web object"""       
@@ -228,9 +230,29 @@ class TestBase(unittest.TestCase):
         payIn.ExecutionDetails.SecureModeReturnURL = 'http://test.com'
         return self.sdk.payIns.Create(payIn)
     
+    def getJohnsPayInBankWireDirect(self):
+        wallet = self.getJohnsWallet()        
+        payIn = PayIn()
+        payIn.CreditedWalletId = wallet.Id
+        payIn.AuthorId = wallet.Owners[0]
+       
+        # payment type as CARD
+        payIn.PaymentDetails = PayInPaymentDetailsBankWire()
+        payIn.PaymentDetails.DeclaredDebitedFunds = Money()
+        payIn.PaymentDetails.DeclaredFees = Money()
+        payIn.PaymentDetails.DeclaredDebitedFunds.Currency = 'EUR'
+        payIn.PaymentDetails.DeclaredFees.Currency = 'EUR'
+        payIn.PaymentDetails.DeclaredDebitedFunds.Amount = 10000
+        payIn.PaymentDetails.DeclaredFees.Amount = 1000
+       
+        # execution type as DIRECT
+        payIn.ExecutionDetails = PayInExecutionDetailsDirect()
+        payIn.ExecutionType = ExecutionType.DIRECT
+        return self.sdk.payIns.Create(payIn)
+    
     def getJohnsPayOutBankWire(self):
         """Creates Pay-Out  Bank Wire object"""
-        if TestBase._johnsPayOutBankWire == None:
+        if self._johnsPayOutBankWire == None:
             wallet = self.getJohnsWallet()
             user = self.getJohn()
             account = self.getJohnsAccount()
@@ -251,8 +273,8 @@ class TestBase(unittest.TestCase):
             payOut.MeanOfPaymentDetails.BankAccountId = account.Id
             payOut.MeanOfPaymentDetails.Communication = 'Communication text'
 
-            TestBase._johnsPayOutBankWire = self.sdk.payOuts.Create(payOut)
-        return TestBase._johnsPayOutBankWire
+            self._johnsPayOutBankWire = self.sdk.payOuts.Create(payOut)
+        return self._johnsPayOutBankWire
 
     def getJohnsTransfer(self, walletWithMoney = None, wallet = None):
         """Creates Pay-Out  Bank Wire object"""
@@ -328,6 +350,26 @@ class TestBase(unittest.TestCase):
             self._johnsCardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
         return self._johnsCardRegistration
 
+    def getJohnsCardPreAuthorization(self):
+        """Creates card pre authorization object.
+        return CardPreAuthorization 
+        """
+        if (self._johnsCardPreAuthorization == None):
+            user = self.getJohn()
+            payIn = self.getJohnsPayInCardDirect()
+            cardPreAuthorization = CardPreAuthorization()
+            cardPreAuthorization.AuthorId = user.Id
+            cardPreAuthorization.Tag = 'Test Card PreAuthorization'
+            cardPreAuthorization.CardId = payIn.ExecutionDetails.CardId
+            cardPreAuthorization.SecureMode = Mode3DSType.DEFAULT
+            cardPreAuthorization.SecureModeReturnURL = 'https://test.com'
+            cardPreAuthorization.DebitedFunds = Money()
+            cardPreAuthorization.DebitedFunds.Amount = 1000
+            cardPreAuthorization.DebitedFunds.Currency = 'EUR'
+            self._johnsCardPreAuthorization = self.sdk.cardPreAuthorizations.Create(cardPreAuthorization)
+        return self._johnsCardPreAuthorization
+
+
     def getPaylineCorrectRegistartionData(self, cardRegistration):
         """Get registration data from Payline service
         param CardRegistration cardRegistration
@@ -345,13 +387,13 @@ class TestBase(unittest.TestCase):
         """Creates KycDocument
         return KycDocument 
         """
-        if (self._joknsKycDocument == None):
+        if (self._johnsKycDocument == None):
             user = self.getJohn()
             kycDocument = KycDocument()
             kycDocument.Tag = 'test tag 1'
             kycDocument.Type = KycDocumentType.IDENTITY_PROOF
-            self._joknsKycDocument = self.sdk.users.CreateUserKycDocument(kycDocument, user.Id)
-        return self._joknsKycDocument
+            self._johnsKycDocument = self.sdk.users.CreateUserKycDocument(kycDocument, user.Id)
+        return self._johnsKycDocument
 
 
     def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):

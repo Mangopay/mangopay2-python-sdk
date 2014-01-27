@@ -96,6 +96,22 @@ class ApiUsers(ApiBase):
         """
         return self._getObject('users_getbankaccount', userId, 'BankAccount', bankAccountId)
 
+    def GetCards(self, userId, pagination = None):
+        """Get user payment cards.
+        param Int/GUID userId 
+        param Pagination object
+        return array or card entities
+        """
+        return self._getList('users_getcards', pagination, 'Card', userId)
+
+    def GetTransactions(self, userId, pagination = None):
+        """Get user payment cards.
+        param Int/GUID userId 
+        param Pagination object
+        return array or transactions
+        """
+        return self._getList('users_transactions', pagination, 'Transaction', userId)
+
     def GetUserResponse(self, response):
         """Get correct user object - to be used internally.
         param object response Response from API

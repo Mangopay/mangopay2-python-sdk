@@ -19,9 +19,12 @@ from mangopaysdk.entities.client import Client
 from mangopaysdk.entities.card import Card
 from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.cardregistration import CardRegistration
+from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
 from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
+from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
+from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
@@ -79,6 +82,8 @@ class ApiBase(object):
         'payins_bankwire-preauthorized_create' : ('/payins/bankwire/preauthorized/', 'POST'),
         'payins_bankwire-recurrentexecution_create' : ('/payins/bankwire/recurrent-pay-in-execution/', 'POST'),
 
+        'payins_preauthorized-direct_create' : ('/payins/PreAuthorized/direct/', 'POST'),
+
         'payins_directcredit-web_create' : ('/payins/direct-credit/web/', 'POST'),
         'payins_directcredit-direct_create' : ('/payins/direct-credit/direct/', 'POST'),
         'payins_directcredit-preauthorized_create' : ('/payins/direct-credit/preauthorized/', 'POST'),
@@ -93,6 +98,9 @@ class ApiBase(object):
         'payouts_get' : ('/payouts/%s', 'GET'),
         'payouts_createrefunds' : ('/payouts/%s/refunds', 'POST'),
         'payouts_getrefunds' : ('/payouts/%s/refunds', 'GET'),
+        'preauthorizations_create' : ('/preauthorizations/card/direct', 'POST'),
+        'preauthorizations_save' : ('/preauthorizations/%s', 'PUT'),
+        'preauthorizations_get' : ('/preauthorizations/%s', 'GET'),
 
         'reccurringpayinorders_create' : ('/reccurring-pay-in-orders', 'POST'),
         'reccurringpayinorders_get' : ('/reccurring-pay-in-orders/%s', 'GET'),
@@ -132,6 +140,8 @@ class ApiBase(object):
         'users_getproofofregistration' : ('/users/%s/ProofOfRegistration', 'GET'),
         'users_getshareholderdeclaration' : ('/users/%s/ShareholderDeclaration', 'GET'),
         'users_getbankaccount' : ('/users/%s/bankaccounts/%s', 'GET'),
+        'users_getcards' : ('/users/%s/cards', 'GET'),
+        'users_transactions' : ('/users/%s/transactions', 'GET'),
         'users_getpaymentcard' : ('/users/%s/payment-cards/%s', 'GET'),
         'users_savenaturals' : ('/users/natural/%s', 'PUT'),
         'users_savelegals' : ('/users/legal/%s', 'PUT'),
@@ -274,7 +284,17 @@ class ApiBase(object):
                 objList.append(self._castResponseToEntity(reponseObject, entityClassName))
             return objList
 
-        if len(entityClassName) > 0:
+        if len(entityClassName) > 0 and entityClassName == "Transaction" and response['Type'] != None:
+            if response['Type'] == "PAYIN":
+                entityClassName = "PayIn"
+            if response['Type'] == "PAYOUT":
+                entityClassName = "PayOut"
+            if response['Type'] == "REFUND":
+                entityClassName = "Refund"
+            if response['Type'] == "TRANSFER":
+                entityClassName = "Transfer"
+            entity = globals()[entityClassName]()
+        elif len(entityClassName) > 0 :
             entity = globals()[entityClassName]()
         else:
             raise Exception ('Cannot cast response to entity object. Wrong entity class name')
@@ -286,7 +306,7 @@ class ApiBase(object):
             
             if hasattr(entity, name):
                 # is sub object?
-                if subObjects.get(name) != None:
+                if subObjects.get(name) != None and value != None:
                     object = self._castResponseToEntity(value, subObjects[name])
                     setattr(entity, name, object)
                 else:

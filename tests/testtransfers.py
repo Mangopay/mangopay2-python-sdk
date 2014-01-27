@@ -1,6 +1,7 @@
 import unittest
 from tests.testbase import TestBase
 from mangopaysdk.entities.transfer import Transfer
+from mangopaysdk.tools.enums import TransactionType, TransactionNature
 
 
 class Test_Transfers(TestBase):
@@ -35,5 +36,5 @@ class Test_Transfers(TestBase):
         self.assertTrue(int(refund.Id) > 0)
         self.assertTrue(refund.DebitedFunds.Amount, transfer.DebitedFunds.Amount)
         self.assertTrue(walletCredited.Balance.Amount, 0)
-        self.assertEqual('TRANSFER', refund.Type)
-        self.assertEqual('REFUND', refund.Nature)
+        self.assertEqual(TransactionType.TRANSFER, refund.Type)
+        self.assertEqual(TransactionNature.REFUND, refund.Nature)

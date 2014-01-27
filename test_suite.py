@@ -16,6 +16,7 @@ from tests.testrefunds import TestRefunds
 from tests.testtokens import Test_Tokens
 from tests.testtransfers import Test_Transfers
 from tests.testevents import Test_ApiEvents
+from tests.testcardpreauthorizations import Test_CardPreAuthorization
 
 
 suite = unittest.TestSuite()
@@ -29,6 +30,7 @@ suite.addTest(unittest.makeSuite(Test_Tokens))
 suite.addTest(unittest.makeSuite(Test_Transfers))
 suite.addTest(unittest.makeSuite(TestRefunds))
 suite.addTest(unittest.makeSuite(Test_CardRegistrations))
+suite.addTest(unittest.makeSuite(Test_CardPreAuthorization))
 suite.addTest(unittest.makeSuite(Test_ApiEvents))
 
 modules = ['mangopaysdk']

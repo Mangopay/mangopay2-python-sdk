@@ -131,6 +131,22 @@ class Test_ApiUsers(TestBase):
         self.assertTrue(pagination.TotalPages > 0)
         self.assertTrue(pagination.TotalItems > 0)
 
+    def test_Users_Cards(self):
+       john = self.getJohn()
+       payIn = self.getJohnsPayInCardDirect()
+       userCards = self.sdk.users.GetCards(john.Id)
+       self.assertTrue(len(userCards) == 1)
+       self.assertIsNotNone(userCards[0].CardType)
+       self.assertIsNotNone(userCards[0].Currency)
+
+    def test_Users_Transactions(self):
+       john = self.getJohn()
+       transfer = self.getJohnsTransfer()
+       userTransfers = self.sdk.users.GetTransactions(john.Id)
+       self.assertTrue(len(userTransfers) > 0)
+       self.assertIsNotNone(userTransfers[0].Type)
+       self.assertIsNotNone(userTransfers[0].Status)
+
     def test_Users_CreateKycDocument(self):
         kycDoc = self.getUserKycDocument()
         self.assertNotEqual(kycDoc.Id, None)
