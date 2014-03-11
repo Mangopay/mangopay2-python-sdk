@@ -2,6 +2,7 @@ MangoPay SDK
 =================================================
 
 [![Build Status](https://travis-ci.org/Ledej/mangopay2-python-sdk.png?branch=develop)](https://travis-ci.org/Ledej/mangopay2-python-sdk)
+
 MangoPaySDK is a python client library to work with
 [MangoPay REST API](http://docs.mangopay.com/api-references/).
 
