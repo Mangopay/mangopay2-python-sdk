@@ -6,12 +6,12 @@ class RequestType:
 
 
 class PersonType:
-    Natural = 'NATURAL';
+    Natural = 'NATURAL'
     Legal = 'LEGAL'
 
 
 class LegalPersonType:
-    BUSINESS = 'BUSINESS';
+    BUSINESS = 'BUSINESS'
     ORGANIZATION = 'ORGANIZATION'
 
 

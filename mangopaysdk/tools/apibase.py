@@ -3,6 +3,7 @@ from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.types.dto import Dto 
 from mangopaysdk.types.money import Money
 import json, inspect
+from mangopaysdk.tools.resttool import RestTool
 from mangopaysdk.entities.event import Event
 from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.kycpage import KycPage
@@ -20,6 +21,7 @@ from mangopaysdk.entities.card import Card
 from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
+from mangopaysdk.entities.hook import Hook
 from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
@@ -29,7 +31,11 @@ from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
-from mangopaysdk.tools.resttool import RestTool
+from mangopaysdk.types.bankaccountdetailsiban import BankAccountDetailsIBAN
+from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
+from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
+from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
+from mangopaysdk.types.bankaccountdetailsother import BankAccountDetailsOTHER
 
 
 class ApiBase(object):
@@ -124,7 +130,12 @@ class ApiBase(object):
         'users_getkycdocument' : ('/users/%s/KYC/documents/%s', 'GET'),
         'users_savekycdocument' : ('/users/%s/KYC/documents/%s', 'PUT'),
 
-        'users_createbankaccounts' : ('/users/%s/bankaccounts', 'POST'),
+        'users_createbankaccounts_iban': ('/users/%s/bankaccounts/iban', 'POST'),
+        'users_createbankaccounts_gb': ('/users/%s/bankaccounts/gb', 'POST'),
+        'users_createbankaccounts_us': ('/users/%s/bankaccounts/us', 'POST'),
+        'users_createbankaccounts_ca': ('/users/%s/bankaccounts/ca', 'POST'),
+        'users_createbankaccounts_other': ('/users/%s/bankaccounts/other', 'POST'),
+
         'users_all' : ('/users', 'GET'),
         'users_allkyc' : ('/users/%s/KYC', 'GET'),
         'users_allkycrequests' : ('/users/%s/KYC/requests', 'GET'),
@@ -354,5 +365,7 @@ class ApiBase(object):
         if isinstance(entity, PayIn) and (propertyName == 'PaymentDetails' or propertyName == 'ExecutionDetails'):
             return True
         if isinstance(entity, PayOut) and propertyName == 'MeanOfPaymentDetails':
+            return True
+        if isinstance(entity, BankAccount) and propertyName == 'Details':
             return True
         return False

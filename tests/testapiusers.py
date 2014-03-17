@@ -9,6 +9,11 @@ from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.kycpage import KycPage
 from mangopaysdk.tools.enums import *
 import os
+from __builtin__ import Exception
+from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
+from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
+from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
+from mangopaysdk.types.bankaccountdetailsother import BankAccountDetailsOTHER
 
 
 class Test_ApiUsers(TestBase):
@@ -102,12 +107,92 @@ class Test_ApiUsers(TestBase):
         self.assertEqualInputProps(userUpdated, matrix)
         self.assertEqualInputProps(userFetched, matrix)
 
-    def test_Users_CreateBankAccount(self):
+    def test_Users_CreateBankAccount_IBAN(self):
         john = self.getJohn()
         account = self.getJohnsAccount()
 
         self.assertTrue(int(account.Id) > 0)
         self.assertEqual(account.UserId, john.Id)
+
+    def test_Users_CreateBankAccount_GB(self):
+        john = self.getJohn()
+        account = BankAccount()
+        account.OwnerName = john.FirstName + ' ' + john.LastName
+        account.OwnerAddress = john.Address
+        account.Details = BankAccountDetailsGB()
+        account.Details.AccountNumber = '234234234234'
+        account.Details.SortCode = '234334'
+        
+        createAccount = self.sdk.users.CreateBankAccount(john.Id, account)
+        
+        self.assertTrue(len(createAccount.Id) > 0)
+        self.assertEqual(createAccount.UserId, john.Id)
+        self.assertEqual(createAccount.Type, 'GB')
+        self.assertEqual(createAccount.Details.AccountNumber, '234234234234')
+        self.assertEqual(createAccount.Details.SortCode, '234334')
+    
+    
+    def test_Users_CreateBankAccount_US(self):
+        john = self.getJohn()
+        account = BankAccount()
+        account.OwnerName = john.FirstName + ' ' + john.LastName
+        account.OwnerAddress = john.Address
+        account.Details = BankAccountDetailsUS()
+        account.Details.AccountNumber = '234234234234'
+        account.Details.ABA = '234334789'
+        
+        createAccount = self.sdk.users.CreateBankAccount(john.Id, account)
+        
+        self.assertTrue(len(createAccount.Id) > 0)
+        self.assertEqual(createAccount.UserId, john.Id)
+        self.assertEqual(createAccount.Type, 'US')
+        self.assertEqual(createAccount.Details.AccountNumber, '234234234234')
+        self.assertEqual(createAccount.Details.ABA, '234334789')
+    
+    
+    def test_Users_CreateBankAccount_CA(self):
+        john = self.getJohn()
+        account = BankAccount()
+        account.OwnerName = john.FirstName + ' ' + john.LastName
+        account.OwnerAddress = john.Address
+        account.Details = BankAccountDetailsCA()
+        account.Details.BankName = 'TestBankName'
+        account.Details.BranchCode = '12345'
+        account.Details.AccountNumber = '234234234234'
+        account.Details.InstitutionNumber = '123'
+        
+        createAccount = self.sdk.users.CreateBankAccount(john.Id, account)
+        
+        self.assertTrue(len(createAccount.Id) > 0)
+        self.assertEqual(createAccount.UserId, john.Id)
+        self.assertEqual(createAccount.Type, 'CA')
+        self.assertEqual(createAccount.Details.AccountNumber, '234234234234')
+        self.assertEqual(createAccount.Details.BankName, 'TestBankName')
+        self.assertEqual(createAccount.Details.BranchCode, '12345')
+        self.assertEqual(createAccount.Details.InstitutionNumber, '123')
+    
+    
+    def test_Users_CreateBankAccount_OTHER(self):
+        john = self.getJohn()
+        account = BankAccount()
+        account.OwnerName = john.FirstName + ' ' + john.LastName
+        account.OwnerAddress = john.Address
+        account.Details = BankAccountDetailsOTHER()
+        account.Details.Type = 'OTHER'
+        account.Details.Country = 'FR'
+        account.Details.AccountNumber = '234234234234'
+        account.Details.BIC = 'BINAADADXXX'
+        
+        createAccount = self.sdk.users.CreateBankAccount(john.Id, account)
+        
+        self.assertTrue(len(createAccount.Id) > 0)
+        self.assertEqual(createAccount.UserId, john.Id)
+        self.assertEqual(createAccount.Type, 'OTHER')
+        self.assertEqual(createAccount.Details.Type, 'OTHER')
+        self.assertEqual(createAccount.Details.Country, 'FR')
+        self.assertEqual(createAccount.Details.AccountNumber, '234234234234')
+        self.assertEqual(createAccount.Details.BIC, 'BINAADADXXX')
+    
 
     def test_Users_BankAccount(self):
         john = self.getJohn()
@@ -176,6 +261,67 @@ class Test_ApiUsers(TestBase):
         kycPage = KycPage().LoadDocumentFromFile(os.path.join(os.path.dirname(__file__),"spacer.gif"))
         kycDocRes = self.sdk.users.CreateUserKycPage(kycPage, john.Id, kycDoc.Id)
         self.assertEqual(kycDocRes, None)
+
+    def test_Users_CreateKycPage_EmptyFileString(self):
+        kycDocument = self.getUserKycDocument()
+        user = self.getJohn()
+        kycPage = KycPage()
+        kycPage.File = ''
+        kycPageResponse = self.sdk.users.CreateUserKycPage(kycPage, user.Id, kycDocument.Id)    
+        self.assertEqual(kycPageResponse, None)
+    
+    def test_Users_CreateKycPage_WrongFileString(self):
+        kycDocument = self.getUserKycDocument()
+        user = self.getJohn()
+        kycPage = KycPage()
+        kycPage.File = 'qqqq'
+        kycPageResponse = self.sdk.users.CreateUserKycPage(kycPage, user.Id, kycDocument.Id)
+        self.assertEqual(kycPageResponse, None)
+    
+    def test_Users_CreateKycPage_CorrectFileString(self):
+        user = self.getJohn()
+        kycDocumentInit = KycDocument()
+        kycDocumentInit.Status = KycDocumentStatus.CREATED
+        kycDocumentInit.Type = KycDocumentType.IDENTITY_PROOF
+        kycDocument = self.sdk.users.CreateUserKycDocument(kycDocumentInit, user.Id)
+        kycPage = KycPage()
+        kycPage.File = 'dGVzdCB0ZXN0IHRlc3QgdGVzdA=='
+        
+        kycPageResponse = self.sdk.users.CreateUserKycPage(kycPage, user.Id, kycDocument.Id)
+        self.assertEqual(kycPageResponse, None)
+    
+    def test_Users_CreateKycPage_EmptyFilePath(self):
+        user = self.getJohn()
+        kycDocumentInit = KycDocument()
+        kycDocumentInit.Status = KycDocumentStatus.CREATED
+        kycDocumentInit.Type = KycDocumentType.IDENTITY_PROOF
+        kycDocument = self.sdk.users.CreateUserKycDocument(kycDocumentInit, user.Id)
+        
+        try:
+            self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, '')
+        except Exception as exc:
+            self.assertEqual(exc.message, 'Path of file cannot be empty')
+        
+    def test_Users_CreateKycPage_WrongFilePath(self) :
+        user = self.getJohn()
+        kycDocumentInit = KycDocument()
+        kycDocumentInit.Status = KycDocumentStatus.CREATED
+        kycDocumentInit.Type = KycDocumentType.IDENTITY_PROOF
+        kycDocument = self.sdk.users.CreateUserKycDocument(kycDocumentInit, user.Id)
+        
+        try:
+            self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, 'notExistFileName.tmp')
+        except Exception as exc:
+            self.assertEqual(exc.message, 'File not exist')
+    
+    def test_Users_CreateKycPage_CorrectFilePath(self) :
+        user = self.getJohn()
+        kycDocumentInit = KycDocument()
+        kycDocumentInit.Status = KycDocumentStatus.CREATED
+        kycDocumentInit.Type = KycDocumentType.IDENTITY_PROOF
+        kycDocument = self.sdk.users.CreateUserKycDocument(kycDocumentInit, user.Id)
+
+        self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, __file__)
 
 if __name__ == '__main__':
      Test_ApiUsers().test_Users_GetKycDocument()

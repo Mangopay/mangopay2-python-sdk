@@ -28,10 +28,10 @@
     <Compile Include="mangopaysdk\entities\bankaccount.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mangopaysdk\entities\aaaabankwire.py" />
     <Compile Include="mangopaysdk\entities\card.py" />
     <Compile Include="mangopaysdk\entities\cardpreauthorization.py" />
     <Compile Include="mangopaysdk\entities\cardregistration.py" />
+    <Compile Include="mangopaysdk\entities\hook.py" />
     <Compile Include="mangopaysdk\entities\kycpage.py" />
     <Compile Include="mangopaysdk\entities\kycdocument.py" />
     <Compile Include="mangopaysdk\entities\event.py" />
@@ -45,6 +45,7 @@
     <Compile Include="mangopaysdk\tools\apicards.py" />
     <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
     <Compile Include="mangopaysdk\tools\apievents.py" />
+    <Compile Include="mangopaysdk\tools\apihooks.py" />
     <Compile Include="mangopaysdk\tools\storages\authorizationtokenmanager.py">
       <SubType>Code</SubType>
     </Compile>
@@ -58,6 +59,12 @@
     <Compile Include="mangopaysdk\tools\storages\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\types\bankaccountdetails.py" />
+    <Compile Include="mangopaysdk\types\bankaccountdetailsca.py" />
+    <Compile Include="mangopaysdk\types\bankaccountdetailsgb.py" />
+    <Compile Include="mangopaysdk\types\bankaccountdetailsiban.py" />
+    <Compile Include="mangopaysdk\types\bankaccountdetailsother.py" />
+    <Compile Include="mangopaysdk\types\bankaccountdetailsus.py" />
     <Compile Include="mangopaysdk\types\payinexecutiondetailsdirect.py" />
     <Compile Include="mangopaysdk\types\payinpaymentdetailsdirectcard.py" />
     <Compile Include="mangopaysdk\entities\refund.py" />
@@ -176,6 +183,7 @@
     <Compile Include="setup.py" />
     <Compile Include="tests\testcardpreauthorizations.py" />
     <Compile Include="tests\testevents.py" />
+    <Compile Include="tests\testhooks.py" />
     <Compile Include="tests\testrefunds.py">
       <SubType>Code</SubType>
     </Compile>

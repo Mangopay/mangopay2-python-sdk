@@ -83,7 +83,7 @@ class Test_PayIns(TestBase):
 
     def test_PayIns_Create_BankWireDirect(self):
         payIn = self.getJohnsPayInBankWireDirect()
-        self.assertTrue(int(payIn.Id) > 0)
+        self.assertTrue(len(payIn.Id) > 0)
         self.assertEqual(payIn.PaymentType, PayInPaymentType.BANK_WIRE)
         self.assertIsInstance(payIn.PaymentDetails,  PayInPaymentDetailsBankWire)
         self.assertEqual(payIn.ExecutionType, ExecutionType.DIRECT)
@@ -92,8 +92,11 @@ class Test_PayIns(TestBase):
         self.assertEqual(payIn.Status, TransactionStatus.CREATED)
         self.assertEqual(payIn.Nature, TransactionNature.REGULAR)
         self.assertTrue(len(payIn.PaymentDetails.WireReference) == 10)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount)
         self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Type)
-        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.BIC)
+        self.assertEqual(payIn.PaymentDetails.BankAccount.Type, 'IBAN')
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.IBAN)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.BIC)
 
     def test_PayIns_Get_BankWireDirect(self):
         payIn = self.getJohnsPayInBankWireDirect()
@@ -107,5 +110,8 @@ class Test_PayIns(TestBase):
         self.assertEqual(payIn.Status, TransactionStatus.CREATED)
         self.assertEqual(payIn.Nature, TransactionNature.REGULAR)
         self.assertTrue(len(payIn.PaymentDetails.WireReference) == 10)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount)
         self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Type)
-        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.BIC)    
+        self.assertEqual(payIn.PaymentDetails.BankAccount.Type, 'IBAN')
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.IBAN)
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.BIC)  

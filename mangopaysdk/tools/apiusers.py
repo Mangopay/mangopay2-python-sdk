@@ -5,6 +5,8 @@ from mangopaysdk.entities.usernatural import UserNatural
 from mangopaysdk.entities.bankaccount import BankAccount
 from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.kycpage import KycPage
+import collections
+import os.path
 
 
 class ApiUsers(ApiBase):
@@ -78,7 +80,8 @@ class ApiUsers(ApiBase):
         param BankAccount Entity of bank account with fields: OwnerName, UserId, Type, OwnerAddress,IBAN, BIC, Tag
         return BankAccount Create bank account object
         """
-        return self._createObject('users_createbankaccounts', bankAccount, 'BankAccount', userId)
+        type = self.GetBankAccountType(bankAccount)
+        return self._createObject('users_createbankaccounts_' + type, bankAccount, 'BankAccount', userId)
 
     def GetBankAccounts(self, userId, pagination = None):
         """Get all bank accounts for user.
@@ -149,7 +152,7 @@ class ApiUsers(ApiBase):
         param Int/GUID User identifier
         param Int/GUID KycDocument identifier
         """
-        self._createObject('users_createkycpage', kycPage, None, userId, kycDocumentId)
+        return self._createObject('users_createkycpage', kycPage, None, userId, kycDocumentId)
 
     def UpdateUserKycDocument(self, kycDocument, userId, kycDocumentId):
         """Updates KycDocument     
@@ -159,3 +162,39 @@ class ApiUsers(ApiBase):
         return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
         """
         return self._saveObject('users_savekycdocument', kycDocument, 'KycDocument', userId, kycDocument.Id)
+
+    def CreateKycPageFromFile(self, userId, kycDocumentId, file):
+        """Create page for Kyc document from file
+        param int userId User identifier
+        param KycPage page Kyc
+        """
+        
+        filePath = file
+        #if (isinstance(file, collections.Sequence)):
+        #    filePath = file['tmp_name']
+        
+        if (filePath == None or filePath == ''):
+            raise Exception('Path of file cannot be empty')
+        
+        if (not os.path.isfile(filePath)):
+            raise Exception('File not exist')
+        
+        kycPage = KycPage()
+        with open(filePath) as f:
+            encoded = base64.encodestring(f.read())
+        kycPage.File = encoded
+        
+        if (kycPage.File == None):
+            raise Exception('Content of the file cannot be empty')
+        
+        self.CreateUserKycPage(kycPage, userId, kycDocumentId)
+
+    def GetBankAccountType(self, bankAccount):
+        
+        if (bankAccount.Details == None):
+            raise Exception('Details is not defined or it is not object type')
+        
+        className = bankAccount.Details.__class__.__name__.replace('BankAccountDetails', '').lower()
+
+        return className
+    

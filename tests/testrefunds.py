@@ -4,7 +4,7 @@ from mangopaysdk.entities.refund import Refund
 from mangopaysdk.tools.enums import TransactionType, TransactionStatus
 
 
-class TestRefunds(TestBase):
+class Test_Refunds(TestBase):
     """
     Tests basic methods for refunds
     """

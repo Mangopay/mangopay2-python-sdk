@@ -14,6 +14,7 @@ from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
+from mangopaysdk.entities.hook import Hook
 from mangopaysdk.tools.enums import *
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
@@ -22,6 +23,8 @@ from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsD
 from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 from mangopaysdk.types.money import Money
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
+from mangopaysdk.types.pagination import Pagination
+from mangopaysdk.types.bankaccountdetailsiban import BankAccountDetailsIBAN
 
 
 class TestBase(unittest.TestCase):
@@ -40,6 +43,7 @@ class TestBase(unittest.TestCase):
         self._johnsCardRegistration = None
         self._johnsKycDocument = None
         self._johnsCardPreAuthorization = None
+        self._johnsHook = None
 
     def buildNewMangoPayApi(self):
         sdk = MangoPayApi()
@@ -91,11 +95,13 @@ class TestBase(unittest.TestCase):
         if self._johnsAccount == None:
             john = self.getJohn()
             account = BankAccount()
-            account.Type = 'IBAN'
             account.OwnerName = john.FirstName + ' ' +  john.LastName
             account.OwnerAddress = john.Address
-            account.IBAN = 'FR7617906000320008335232973'
-            account.BIC = 'BINAADADXXX'
+            account.UserId = john.Id
+            account.Type = 'IBAN'
+            account.Details = BankAccountDetailsIBAN()
+            account.Details.IBAN = 'FR7617906000320008335232973'
+            account.Details.BIC = 'BINAADADXXX'
             self._johnsAccount = self.sdk.users.CreateBankAccount(john.Id, account)
             self.assertEqualInputProps(self._johnsAccount, account, True)
         return self._johnsAccount
@@ -395,6 +401,20 @@ class TestBase(unittest.TestCase):
             self._johnsKycDocument = self.sdk.users.CreateUserKycDocument(kycDocument, user.Id)
         return self._johnsKycDocument
 
+    def getJohnHook(self):
+        if self._johnsHook == None:
+            pagination = Pagination(1, 1)
+            list = self.sdk.hooks.GetAll(pagination)
+            
+            if list[0] != None:
+                self._johnsHook = list[0]
+            else:
+                hook = Hook()
+                hook.EventType = EventType.PAYIN_NORMAL_CREATED
+                hook.Url = 'http://test.com'
+                self._johnsHook = self.sdk.hooks.Create(hook)
+        
+        return self._johnsHook
 
     def assertEqualInputProps(self, entity1, entity2, asFreshlyCreated = False):
         if (isinstance(entity1, UserNatural)):
@@ -426,11 +446,29 @@ class TestBase(unittest.TestCase):
 
         elif (isinstance(entity1, BankAccount)):
             self.assertEqual(entity1.Tag, entity2.Tag)
+            self.assertEqual(entity1.UserId, entity2.UserId)
             self.assertEqual(entity1.Type, entity2.Type)
             self.assertEqual(entity1.OwnerName, entity2.OwnerName)
             self.assertEqual(entity1.OwnerAddress, entity2.OwnerAddress)
-            self.assertEqual(entity1.IBAN, entity2.IBAN)
-            self.assertEqual(entity1.BIC, entity2.BIC)
+            if (entity1.Type == 'IBAN'):
+                self.assertEqual(entity1.Details.IBAN, entity2.Details.IBAN)
+                self.assertEqual(entity1.Details.BIC, entity2.Details.BIC)
+            elif (entity1.Type == 'GB'):
+                self.assertEqual(entity1.Details.AccountNumber, entity2.Details.AccountNumber)
+                self.assertEqual(entity1.Details.SortCode, entity2.Details.SortCode)
+            elif (entity1.Type == 'US'):
+                self.assertEqual(entity1.Details.AccountNumber, entity2.Details.AccountNumber)
+                self.assertEqual(entity1.Details.ABA, entity2.Details.ABA)
+            elif (entity1.Type == 'CA'):
+                self.assertEqual(entity1.Details.BankName, entity2.Details.BankName)
+                self.assertEqual(entity1.Details.InstitutionNumber, entity2.Details.InstitutionNumber)
+                self.assertEqual(entity1.Details.BranchCode, entity2.Details.BranchCode)
+                self.assertEqual(entity1.Details.AccountNumber, entity2.Details.AccountNumber)
+            elif (entity1.Type == 'OTHER'):
+                self.assertEqual(entity1.Details.Type, entity2.Details.Type)
+                self.assertEqual(entity1.Details.Country, entity2.Details.Country)
+                self.assertEqual(entity1.Details.BIC, entity2.Details.BIC)
+                self.assertEqual(entity1.Details.AccountNumber, entity2.Details.AccountNumber)
             if (not asFreshlyCreated): self.assertEqual(entity1.UserId, entity2.UserId)
             
         elif (isinstance(entity1, PayIn)):
