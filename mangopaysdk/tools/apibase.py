@@ -88,7 +88,7 @@ class ApiBase(object):
         'payins_bankwire-preauthorized_create' : ('/payins/bankwire/preauthorized/', 'POST'),
         'payins_bankwire-recurrentexecution_create' : ('/payins/bankwire/recurrent-pay-in-execution/', 'POST'),
 
-        'payins_preauthorized-direct_create' : ('/payins/PreAuthorized/direct/', 'POST'),
+        'payins_preauthorized-direct_create' : ('/payins/preauthorized/direct/', 'POST'),
 
         'payins_directcredit-web_create' : ('/payins/direct-credit/web/', 'POST'),
         'payins_directcredit-direct_create' : ('/payins/direct-credit/direct/', 'POST'),

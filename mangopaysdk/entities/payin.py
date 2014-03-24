@@ -5,7 +5,7 @@ class PayIn (Transaction):
 
     def __init__(self, id = None):
         self.CreditedWalletId = None
-        # PayInPaymentType {CARD, BANK_WIRE, AUTOMATIC_DEBIT, DIRECT_DEBIT }
+        # PayInPaymentType {CARD, BANK_WIRE, AUTOMATIC_DEBIT, DIRECT_DEBIT, PREAUTHORIZED }
         self.PaymentType = None
         # One of PayInPaymentDetails implementations, depending on PaymentType
         self.PaymentDetails = None
@@ -20,6 +20,7 @@ class PayIn (Transaction):
                 'PaymentType': {
                     '_property_name': 'PaymentDetails', 
                     'CARD': 'PayInPaymentDetailsCard',
+                    'PREAUTHORIZED': 'PayInPaymentDetailsPreAuthorized',
                     'BANK_WIRE': 'PayInPaymentDetailsBankWire'
                 }, 'ExecutionType': {
                     '_property_name': 'ExecutionDetails', 

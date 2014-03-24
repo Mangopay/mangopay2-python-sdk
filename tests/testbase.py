@@ -21,6 +21,7 @@ from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
+from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
 from mangopaysdk.types.money import Money
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 from mangopaysdk.types.pagination import Pagination
