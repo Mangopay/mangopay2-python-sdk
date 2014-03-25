@@ -76,7 +76,7 @@ class ApiUsers(ApiBase):
 
     def CreateBankAccount(self, userId, bankAccount):
         """Create bank account for user.
-        param Int/GUID userId 
+        param Int/GUID userId
         param BankAccount Entity of bank account with fields: OwnerName, UserId, Type, OwnerAddress,IBAN, BIC, Tag
         return BankAccount Create bank account object
         """
@@ -85,15 +85,15 @@ class ApiUsers(ApiBase):
 
     def GetBankAccounts(self, userId, pagination = None):
         """Get all bank accounts for user.
-        param Int/GUID userId 
+        param Int/GUID userId
         param Pagination object
         return array with bank account entities
         """
         return self._getList('users_allbankaccount', pagination, 'BankAccount', userId)
-        
+
     def GetBankAccount(self, userId, bankAccountId):
         """Get bank account for user.
-        param Int/GUID userId 
+        param Int/GUID userId
         param int bankAccountId number
         return BankAccount Entity of bank account object
         """
@@ -101,7 +101,7 @@ class ApiUsers(ApiBase):
 
     def GetCards(self, userId, pagination = None):
         """Get user payment cards.
-        param Int/GUID userId 
+        param Int/GUID userId
         param Pagination object
         return array or card entities
         """
@@ -109,7 +109,7 @@ class ApiUsers(ApiBase):
 
     def GetTransactions(self, userId, pagination = None):
         """Get user payment cards.
-        param Int/GUID userId 
+        param Int/GUID userId
         param Pagination object
         return array or transactions
         """
@@ -126,7 +126,7 @@ class ApiUsers(ApiBase):
                 return self._castResponseToEntity(response, 'UserNatural');
             elif response['PersonType'].lower() == 'legal':
                 return self._castResponseToEntity(response, 'UserLegal');
-            
+
         else:
             raise Exception('Unexpected response. Missing PersonType property')
 
@@ -155,7 +155,7 @@ class ApiUsers(ApiBase):
         return self._createObject('users_createkycpage', kycPage, None, userId, kycDocumentId)
 
     def UpdateUserKycDocument(self, kycDocument, userId, kycDocumentId):
-        """Updates KycDocument     
+        """Updates KycDocument
         param KycDocument entity (field Status should be set)
         param Int/GUID User identifier
         param Int/GUID KycDocument identifier
@@ -168,33 +168,40 @@ class ApiUsers(ApiBase):
         param int userId User identifier
         param KycPage page Kyc
         """
-        
+
         filePath = file
         #if (isinstance(file, collections.Sequence)):
         #    filePath = file['tmp_name']
-        
+
         if (filePath == None or filePath == ''):
             raise Exception('Path of file cannot be empty')
-        
+
         if (not os.path.isfile(filePath)):
             raise Exception('File not exist')
-        
+
         kycPage = KycPage()
         with open(filePath) as f:
             encoded = base64.encodestring(f.read())
         kycPage.File = encoded
-        
+
         if (kycPage.File == None):
             raise Exception('Content of the file cannot be empty')
-        
+
         self.CreateUserKycPage(kycPage, userId, kycDocumentId)
 
     def GetBankAccountType(self, bankAccount):
-        
+
         if (bankAccount.Details == None):
             raise Exception('Details is not defined or it is not object type')
-        
+
         className = bankAccount.Details.__class__.__name__.replace('BankAccountDetails', '').lower()
 
         return className
-    
+
+    def GetWallets(self, userId, pagination = None):
+        """Get all wallets for user.
+        param Int/GUID userId
+        param Pagination object
+        return array with wallet entities
+        """
+        return self._getList('users_allwallets', pagination, 'Wallet', userId)
