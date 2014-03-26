@@ -22,6 +22,11 @@ class Configuration:
 
     #AuthenticationType = enums.AuthenticationType.Strong
 
+    # RestTool class
+    # NB: you can swap this class for one of ours that implement some custom logic
+    RestToolClass = None
+
+
 # we use DEBUG level for internal debugging
 if (Configuration.DebugMode):
     logging.basicConfig(level=logging.DEBUG)

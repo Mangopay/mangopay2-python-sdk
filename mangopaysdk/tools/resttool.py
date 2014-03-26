@@ -5,7 +5,7 @@ from mangopaysdk.types.exceptions.responseexception import ResponseException
 import sys
 
 
-class RestTool:
+class BaseRestTool(object):
     """Class to prepare HTTP request, call the request and decode the response."""
 
     # Root/parent MangoPayApi instance that holds the OAuthToken and Configuration instance
@@ -125,3 +125,37 @@ class RestTool:
             elif decodedResp != None and decodedResp.get('error') != None:
                 message = decodedResp.get('error')
             raise ResponseException(response.request.url, response.status_code, message)
+
+
+def _getRestTool(root, *args, **kwargs):
+        RestToolClass = root.Config.RestToolClass
+        if RestToolClass is None:
+            RestToolClass = BaseRestTool
+
+        # in the case the user swap for his own class, check it's good enough
+        if not issubclass(RestToolClass, BaseRestTool):
+            raise ValueError("You've swapped the `Configuration.RestToolClass` "
+                             "for you own but you need `%s` to subclass "
+                             "the original class `%s`" % (RestToolClass,
+                                                          BaseRestTool))
+
+        return RestToolClass(root, *args, **kwargs)
+
+
+class RestToolProxy(object):
+    """
+    Wrapper around the `BaseRestTool` class
+    It decides which class should be used based on the `root.Config.RestToolClass`
+    And then proxies the calls to the wrapped class instance
+    """
+
+    def __init__(self, root, *args, **kwargs):
+        resttool = _getRestTool(root, *args, **kwargs)
+        self._resttool = resttool
+
+    def __getattribute__(self, attr):
+        return getattr(object.__getattribute__(self, '_resttool'), attr)
+
+
+# for easy backward compatibility we use the proxy as the main class
+RestTool = RestToolProxy
