@@ -53,12 +53,10 @@ class BaseRestTool(object):
 
         return response
 
-    def _runRequest(self, urlMethod, pagination, additionalUrlParams):
-        """Execute request and check response.
-        return object Respons data
-        throws Exception If cURL has error
+    def _generateRequest(self, urlMethod, pagination, additionalUrlParams):
+        """Generate the request object
+        that will be used in the `_runRequest`
         """
-
         urlToolObj = UrlTool(self._root.Config)
         restUrl = urlToolObj.GetRestUrl(urlMethod, self._authRequired, pagination, additionalUrlParams)
         fullUrl = urlToolObj.GetFullUrl(restUrl)
@@ -71,14 +69,28 @@ class BaseRestTool(object):
         if (self._debugMode): logging.getLogger(__name__).debug('REQUEST: {0} {1}\n  DATA: {2}'.format(self._requestType, fullUrl, self._requestData))
 
         if self._requestType == "POST":
-            response = requests.post(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)
+            request = requests.Request('POST', fullUrl, data=json.dumps(self._requestData), auth=authObj, headers=headersJson)
         elif self._requestType == "GET":
-            response = requests.get(fullUrl, auth = authObj, verify=False)
+            request = requests.Request('GET', fullUrl, auth=authObj)
         elif self._requestType == "PUT":
-            response = requests.put(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)  
+            request = requests.Request('PUT', fullUrl, data=json.dumps(self._requestData), auth=authObj, headers=headersJson)  
         elif self._requestType == "DELETE":
-            response = requests.delete(fullUrl, auth = authObj, verify=False, headers=headers)
-        
+            request = requests.Request('DELETE', fullUrl, auth=authObj, headers=headers)
+
+        return request
+
+    def _runRequest(self, urlMethod, pagination, additionalUrlParams):
+        """Execute request and check response.
+        return object Respons data
+        throws Exception If cURL has error
+        """
+        request = self._generateRequest(urlMethod, pagination, additionalUrlParams)
+        prepared_request = request.prepare()
+
+        # send the request
+        session = requests.Session()
+        response = session.send(prepared_request, verify=False)
+
         if (self._debugMode): logging.getLogger(__name__).debug('RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
 
         decodedResp = json.loads(response.text) if (response.text != '' and 'application/json' in response.headers['content-type']) else None
