@@ -79,17 +79,20 @@ class BaseRestTool(object):
 
         return request
 
+    def _sendRequest(self, request):
+        """Prepare and send the request"""
+        prepared_request = request.prepare()
+        session = requests.Session()
+        response = session.send(prepared_request, verify=False)
+        return response
+
     def _runRequest(self, urlMethod, pagination, additionalUrlParams):
         """Execute request and check response.
         return object Respons data
         throws Exception If cURL has error
         """
         request = self._generateRequest(urlMethod, pagination, additionalUrlParams)
-        prepared_request = request.prepare()
-
-        # send the request
-        session = requests.Session()
-        response = session.send(prepared_request, verify=False)
+        response = self._sendRequest(request)
 
         if (self._debugMode): logging.getLogger(__name__).debug('RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
 
