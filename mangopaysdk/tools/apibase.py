@@ -1,6 +1,6 @@
 from mangopaysdk.types.pagination import Pagination
 from mangopaysdk.entities.entitybase import EntityBase
-from mangopaysdk.types.dto import Dto 
+from mangopaysdk.types.dto import Dto
 from mangopaysdk.types.money import Money
 import json, inspect
 from mangopaysdk.tools.resttool import RestTool
@@ -55,7 +55,6 @@ class ApiBase(object):
 
         'card_get': ('/cards/%s', 'GET'),
         'card_save': ('/cards/%s', 'PUT'),
-       
         'crosscurrencytransfers_create' : ('/transfers/%s', 'POST'),
         'crosscurrencytransfers_get' : ('/transfers/%s', 'GET'),
 
@@ -125,7 +124,7 @@ class ApiBase(object):
         'users_createnaturals' : ('/users/natural', 'POST'),
         'users_createlegals' : ('/users/legal', 'POST'),
         'users_createkycrequest' : ('/users/%s/KYC/requests', 'POST'),
-        
+
         'users_createkycpage' : ('/users/%s/KYC/documents/%s/pages', 'POST'),
         'users_createkycdocument' : ('/users/%s/KYC/documents/', 'POST'),
         'users_getkycdocument' : ('/users/%s/KYC/documents/%s', 'GET'),
@@ -315,7 +314,7 @@ class ApiBase(object):
         dependsObjects = entity.GetDependsObjects()
 
         for name, value in response.items():
-            
+
             if hasattr(entity, name):
                 # is sub object?
                 if subObjects.get(name) != None and value != None:
@@ -354,7 +353,8 @@ class ApiBase(object):
                 requestData[k] = v.__dict__
             else:
                 requestData[k] = v
-
+        print 'REQUEST DATA:'
+        print requestData
         return requestData
 
 
