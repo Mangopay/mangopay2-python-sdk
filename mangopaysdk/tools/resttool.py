@@ -59,6 +59,8 @@ class BaseRestTool(object):
         """
         urlToolObj = UrlTool(self._root.Config)
         restUrl = urlToolObj.GetRestUrl(urlMethod, self._authRequired, pagination, additionalUrlParams)
+        print '#####################################################\n'
+        print restUrl
         fullUrl = urlToolObj.GetFullUrl(restUrl)
 
         authObj = AuthenticationHelper(self._root).GetRequestAuthObject(self._authRequired)
