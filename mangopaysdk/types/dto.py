@@ -10,8 +10,9 @@ class Dto(object):
             if key.startswith("__"): continue # Skip private fields
 
             value = getattr(self, key)
-            if value is None or isinstance(value,str) or \
-                    isinstance(value,int) or isinstance(value,float):
+            if isinstance(value,bool) or isinstance(value,str) or \
+                    isinstance(value,int) or isinstance(value,float) or \
+                    isinstance(value,unicode):
 
                         data[key] = value
 
