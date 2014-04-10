@@ -9,7 +9,6 @@ class DefaultStorageStrategy(IStorageStrategy):
     """Default storage strategy implementation."""
 
     cache_path = Configuration.TempPath + "cached-data.py"
-    lock_path = Configuration.TempPath + "cached-data.lock"
 
     def Get(self):
         """Gets the currently stored objects as dictionary.
