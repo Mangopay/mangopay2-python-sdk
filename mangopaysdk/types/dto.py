@@ -1,6 +1,25 @@
 class Dto(object):
     """Abstract class for all DTOs (entities and their composites)."""
-    
+
+    def __str__(self):
+        return str(self.__to_dict())
+
+    def __to_dict(self):
+        data = {}
+        for key in dir(self):
+            if key.startswith("__"): continue # Skip private fields
+
+            value = getattr(self, key)
+            if value is None or isinstance(value,str) or \
+                    isinstance(value,int) or isinstance(value,float):
+
+                        data[key] = value
+
+            elif isinstance(value,Dto):
+                data[key] = value.__to_dict()
+
+        return data
+
     def GetSubObjects(self):
         """Get array with mapping which property is object and what type of object.
         To be overridden in child class if has any sub objects.
