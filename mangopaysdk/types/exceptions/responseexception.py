@@ -8,3 +8,6 @@ class ResponseException(MangoPayException):
         self.RequestUrl = requestUrl
         self.Code = responseCode
         self.Message = errorMessage
+
+    def __str__(self):
+        return str(self.Message)
