@@ -5,7 +5,7 @@ from mangopaysdk.types.exceptions.responseexception import ResponseException
 import sys
 
 
-class RestTool:
+class BaseRestTool(object):
     """Class to prepare HTTP request, call the request and decode the response."""
 
     # Root/parent MangoPayApi instance that holds the OAuthToken and Configuration instance
@@ -53,12 +53,10 @@ class RestTool:
 
         return response
 
-    def _runRequest(self, urlMethod, pagination, additionalUrlParams):
-        """Execute request and check response.
-        return object Respons data
-        throws Exception If cURL has error
+    def _generateRequest(self, urlMethod, pagination, additionalUrlParams):
+        """Generate the request object
+        that will be used in the `_runRequest`
         """
-
         urlToolObj = UrlTool(self._root.Config)
         restUrl = urlToolObj.GetRestUrl(urlMethod, self._authRequired, pagination, additionalUrlParams)
         fullUrl = urlToolObj.GetFullUrl(restUrl)
@@ -71,14 +69,31 @@ class RestTool:
         if (self._debugMode): logging.getLogger(__name__).debug('REQUEST: {0} {1}\n  DATA: {2}'.format(self._requestType, fullUrl, self._requestData))
 
         if self._requestType == "POST":
-            response = requests.post(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)
+            request = requests.Request('POST', fullUrl, data=json.dumps(self._requestData), auth=authObj, headers=headersJson)
         elif self._requestType == "GET":
-            response = requests.get(fullUrl, auth = authObj, verify=False)
+            request = requests.Request('GET', fullUrl, auth=authObj)
         elif self._requestType == "PUT":
-            response = requests.put(fullUrl, json.dumps(self._requestData), auth = authObj, verify=False, headers=headersJson)  
+            request = requests.Request('PUT', fullUrl, data=json.dumps(self._requestData), auth=authObj, headers=headersJson)  
         elif self._requestType == "DELETE":
-            response = requests.delete(fullUrl, auth = authObj, verify=False, headers=headers)
-        
+            request = requests.Request('DELETE', fullUrl, auth=authObj, headers=headers)
+
+        return request
+
+    def _sendRequest(self, request):
+        """Prepare and send the request"""
+        prepared_request = request.prepare()
+        session = requests.Session()
+        response = session.send(prepared_request, verify=False)
+        return response
+
+    def _runRequest(self, urlMethod, pagination, additionalUrlParams):
+        """Execute request and check response.
+        return object Respons data
+        throws Exception If cURL has error
+        """
+        request = self._generateRequest(urlMethod, pagination, additionalUrlParams)
+        response = self._sendRequest(request)
+
         if (self._debugMode): logging.getLogger(__name__).debug('RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
 
         decodedResp = json.loads(response.text) if (response.text != '' and 'application/json' in response.headers['content-type']) else None
@@ -125,3 +140,37 @@ class RestTool:
             elif decodedResp != None and decodedResp.get('error') != None:
                 message = decodedResp.get('error')
             raise ResponseException(response.request.url, response.status_code, message)
+
+
+def _getRestTool(root, *args, **kwargs):
+        RestToolClass = root.Config.RestToolClass
+        if RestToolClass is None:
+            RestToolClass = BaseRestTool
+
+        # in the case the user swap for his own class, check it's good enough
+        if not issubclass(RestToolClass, BaseRestTool):
+            raise ValueError("You've swapped the `Configuration.RestToolClass` "
+                             "for you own but you need `%s` to subclass "
+                             "the original class `%s`" % (RestToolClass,
+                                                          BaseRestTool))
+
+        return RestToolClass(root, *args, **kwargs)
+
+
+class RestToolProxy(object):
+    """
+    Wrapper around the `BaseRestTool` class
+    It decides which class should be used based on the `root.Config.RestToolClass`
+    And then proxies the calls to the wrapped class instance
+    """
+
+    def __init__(self, root, *args, **kwargs):
+        resttool = _getRestTool(root, *args, **kwargs)
+        self._resttool = resttool
+
+    def __getattribute__(self, attr):
+        return getattr(object.__getattribute__(self, '_resttool'), attr)
+
+
+# for easy backward compatibility we use the proxy as the main class
+RestTool = RestToolProxy
