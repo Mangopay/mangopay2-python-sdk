@@ -54,6 +54,7 @@ class ApiBase(object):
         'cardregistration_get': ('/cardregistrations/%s', 'GET'),
 
         'card_get': ('/cards/%s', 'GET'),
+        'card_save': ('/cards/%s', 'PUT'),
        
         'crosscurrencytransfers_create' : ('/transfers/%s', 'POST'),
         'crosscurrencytransfers_get' : ('/transfers/%s', 'GET'),

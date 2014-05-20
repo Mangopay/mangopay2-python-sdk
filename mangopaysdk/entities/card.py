@@ -9,6 +9,8 @@ class Card(EntityBase):
         self.ExpirationDate = None	
         # first 6 and last 4 are real card numbers for example: 497010XXXXXX4414
         self.Alias = None
+        # The card provider, it could be CB, VISA, MASTERCARD, etc.
+        self.CardProvider = None
         # CardType enum
         self.CardType = None
         self.Product = None
