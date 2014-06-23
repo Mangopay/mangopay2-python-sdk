@@ -40,3 +40,5 @@ nosetests.xml
 TestResults
 mangopay2-python-sdk.pyproj.user
 _ReSharper.mangopay2-python-sdk
+
+.ve

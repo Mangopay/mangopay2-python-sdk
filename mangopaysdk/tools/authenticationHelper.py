@@ -27,4 +27,6 @@ class AuthenticationHelper:
             if not oauth or not oauth.access_token or not oauth.token_type:
                 raise Exception('OAuthToken is not created (or is invalid) for strong authentication')
             token = {'access_token' : oauth.access_token, 'token_type' : oauth.token_type}
+            print 'AUTH TOKEN'
+            print token
             return OAuth2(token = token, client_id = self._root.Config.ClientID)

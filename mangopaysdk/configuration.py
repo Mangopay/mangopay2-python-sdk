@@ -15,7 +15,7 @@ class Configuration:
     BaseUrl = 'https://api.sandbox.mangopay.com'
 
     # path to temp - required to cache auth tokens
-    TempPath = "c:\Temp\\"
+    TempPath = "/tmp/"
 
     # Constant to switch debug mode (0/1) - display all request and response data
     DebugMode = 0
@@ -25,7 +25,6 @@ class Configuration:
     # RestTool class
     # NB: you can swap this class for one of ours that implement some custom logic
     RestToolClass = None
-
 
 # we use DEBUG level for internal debugging
 if (Configuration.DebugMode):
