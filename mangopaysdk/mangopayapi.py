@@ -11,14 +11,14 @@ class MangoPayApi:
     as well as holds configuration/authorization data.
     """
 
-    def __init__(self, temp_path=None):
+    def __init__(self):
 
         #########################################
         # Config/authorization related fields
         #########################################
 
         # Configuration instance with default settings (to be reset if required).
-        self.Config = Configuration(temp_path=temp_path)
+        self.Config = Configuration()
         self.OAuthTokenManager = AuthorizationTokenManager(self);
 
         #########################################

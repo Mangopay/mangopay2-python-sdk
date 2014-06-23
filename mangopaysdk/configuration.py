@@ -26,11 +26,6 @@ class Configuration:
     # NB: you can swap this class for one of ours that implement some custom logic
     RestToolClass = None
 
-    def __init__(temp_path=None):
-        if temp_path:
-            TempPath = temp_path
-
-
 # we use DEBUG level for internal debugging
 if (Configuration.DebugMode):
     logging.basicConfig(level=logging.DEBUG)
