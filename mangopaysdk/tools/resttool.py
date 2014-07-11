@@ -94,7 +94,7 @@ class BaseRestTool(object):
         request = self._generateRequest(urlMethod, pagination, additionalUrlParams)
         response = self._sendRequest(request)
 
-        if (self._debugMode): logging.getLogger(__name__).debug('RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
+        if (self._debugMode): logging.getLogger(__name__).debug(u'RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))
 
         decodedResp = json.loads(response.text) if (response.text != '' and 'application/json' in response.headers['content-type']) else None
         self._checkResponseCode(response, decodedResp)
