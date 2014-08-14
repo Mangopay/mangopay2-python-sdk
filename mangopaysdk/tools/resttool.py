@@ -136,9 +136,11 @@ class BaseRestTool(object):
         if response.status_code != requests.codes.ok and response.status_code != requests.codes.no_content:
             message = str(response.status_code)
             if decodedResp != None and decodedResp.get('Message') != None:
-                message = decodedResp.get('Message')
-            elif decodedResp != None and decodedResp.get('error') != None:
-                message = decodedResp.get('error')
+                message = decodedResp.get('Message') + u' '
+            if decodedResp != None and decodedResp.get('errors') != None:
+                message = message + u'Errors: '
+                for e in decodedResp.get('errors'):
+                    message = message + u'[' + e + u': ' + decodedResp.get('errors')[e] + u'] '
             raise ResponseException(response.request.url, response.status_code, message)
 
 
