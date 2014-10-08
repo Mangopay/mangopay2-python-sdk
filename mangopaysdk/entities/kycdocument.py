@@ -6,6 +6,7 @@ class KycDocument (EntityBase):
 
     def __init__(self, id = None):
         self.Tag = ''
+        self.UserId = None
         # KycDocumentType:
         self.Type = None
         # KycDocumentStatus

@@ -18,6 +18,7 @@ from tests.testtransfers import Test_Transfers
 from tests.testevents import Test_ApiEvents
 from tests.testcardpreauthorizations import Test_CardPreAuthorization
 from tests.testhooks import Test_Hooks
+from tests.testkycdocuments import Test_KycDocuments
 
 
 suite = unittest.TestSuite()
@@ -27,13 +28,14 @@ suite.addTest(unittest.makeSuite(Test_ApiWallets))
 suite.addTest(unittest.makeSuite(Test_Configurations))
 suite.addTest(unittest.makeSuite(Test_PayIns))
 suite.addTest(unittest.makeSuite(Test_PayOuts))
-suite.addTest(unittest.makeSuite(Test_Tokens))
 suite.addTest(unittest.makeSuite(Test_Transfers))
+suite.addTest(unittest.makeSuite(Test_Tokens))
 suite.addTest(unittest.makeSuite(Test_Refunds))
 suite.addTest(unittest.makeSuite(Test_CardRegistrations))
 suite.addTest(unittest.makeSuite(Test_CardPreAuthorization))
 suite.addTest(unittest.makeSuite(Test_ApiEvents))
 suite.addTest(unittest.makeSuite(Test_Hooks))
+suite.addTest(unittest.makeSuite(Test_KycDocuments))
 
 modules = ['mangopaysdk']
 

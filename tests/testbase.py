@@ -22,6 +22,7 @@ from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsB
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
+from mangopaysdk.types.payinpaymentdetailsdirectdebit import PayInPaymentDetailsDirectDebit
 from mangopaysdk.types.money import Money
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 from mangopaysdk.types.pagination import Pagination
@@ -399,6 +400,7 @@ class TestBase(unittest.TestCase):
             kycDocument = KycDocument()
             kycDocument.Tag = 'test tag 1'
             kycDocument.Type = KycDocumentType.IDENTITY_PROOF
+            kycDocument.UserId = user.Id
             self._johnsKycDocument = self.sdk.users.CreateUserKycDocument(kycDocument, user.Id)
         return self._johnsKycDocument
 
@@ -521,5 +523,17 @@ class TestBase(unittest.TestCase):
         elif (isinstance(entity1, Money)):
             self.assertEqual(entity1.Currency, entity2.Currency)
             self.assertEqual(entity1.Amount, entity2.Amount)
+        elif (isinstance(entity1, KycDocument)):
+            self.assertEqual(entity1.Type, entity2.Type)
+            self.assertEqual(entity1.Status, entity2.Status)
+            self.assertEqual(entity1.UserId, entity2.UserId)
         else:
             raise Exception("Unsupported type")
+
+
+    def getEntityFromList(self, entityId, list):
+        for entity in list:
+            if (entity.Id == entityId):
+                return entity
+
+        return None

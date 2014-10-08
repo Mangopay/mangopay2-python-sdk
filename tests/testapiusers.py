@@ -14,6 +14,7 @@ from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
 from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
 from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
 from mangopaysdk.types.bankaccountdetailsother import BankAccountDetailsOTHER
+from mangopaysdk.tools.sorting import Sorting
 
 
 class Test_ApiUsers(TestBase):
@@ -120,16 +121,16 @@ class Test_ApiUsers(TestBase):
         account.OwnerName = john.FirstName + ' ' + john.LastName
         account.OwnerAddress = john.Address
         account.Details = BankAccountDetailsGB()
-        account.Details.AccountNumber = '234234234234'
-        account.Details.SortCode = '234334'
+        account.Details.AccountNumber = '18329068'
+        account.Details.SortCode = '306541'
         
         createAccount = self.sdk.users.CreateBankAccount(john.Id, account)
         
         self.assertTrue(len(createAccount.Id) > 0)
         self.assertEqual(createAccount.UserId, john.Id)
         self.assertEqual(createAccount.Type, 'GB')
-        self.assertEqual(createAccount.Details.AccountNumber, '234234234234')
-        self.assertEqual(createAccount.Details.SortCode, '234334')
+        self.assertEqual(createAccount.Details.AccountNumber, '18329068')
+        self.assertEqual(createAccount.Details.SortCode, '306541')
     
     
     def test_Users_CreateBankAccount_US(self):
@@ -216,6 +217,19 @@ class Test_ApiUsers(TestBase):
         self.assertTrue(pagination.TotalPages > 0)
         self.assertTrue(pagination.TotalItems > 0)
 
+    def test_Users_BankAccounts_SortByCreationDate(self):
+        john = self.getJohn()
+        self.getJohnsAccount()
+        self._johnsAccount = None
+        self.getJohnsAccount()
+        pagination = Pagination(1, 10)
+        sorting = Sorting()
+        sorting.AddField('CreationDate', SortDirection.DESC)
+
+        list = self.sdk.users.GetBankAccounts(john.Id, pagination, sorting)
+
+        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+
     def test_Users_Cards(self):
        john = self.getJohn()
        payIn = self.getJohnsPayInCardDirect()
@@ -223,6 +237,18 @@ class Test_ApiUsers(TestBase):
        self.assertTrue(len(userCards) == 1)
        self.assertIsNotNone(userCards[0].CardType)
        self.assertIsNotNone(userCards[0].Currency)
+
+    def test_Users_Cards_SortByCreationDate(self):
+        john = self.getJohn()
+        self.getJohnsPayInCardDirect()
+        self.getJohnsPayInCardDirect()
+        pagination = Pagination(1, 10)
+        sorting = Sorting()
+        sorting.AddField('CreationDate', SortDirection.DESC)
+
+        list = self.sdk.users.GetCards(john.Id, pagination, sorting)
+
+        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
 
     def test_Users_Transactions(self):
        john = self.getJohn()
@@ -232,11 +258,24 @@ class Test_ApiUsers(TestBase):
        self.assertIsNotNone(userTransfers[0].Type)
        self.assertIsNotNone(userTransfers[0].Status)
 
+    def test_Users_Transactions_SortByCreationDate(self):
+        john = self.getJohn()
+        self.getJohnsPayInCardDirect()
+        self.getJohnsPayInCardDirect()
+        pagination = Pagination(1, 10)
+        sorting = Sorting()
+        sorting.AddField('CreationDate', SortDirection.DESC)
+
+        list = self.sdk.users.GetTransactions(john.Id, pagination, sorting)
+
+        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+
     def test_Users_CreateKycDocument(self):
         kycDoc = self.getUserKycDocument()
         self.assertNotEqual(kycDoc.Id, None)
         self.assertNotEqual(kycDoc.Id, 0)
         self.assertNotEqual(kycDoc.CreationDate, None)
+        self.assertNotEqual(kycDoc.UserId, None)
         self.assertEqual(kycDoc.Status, KycDocumentStatus.CREATED)
 
     def test_Users_GetKycDocument(self):
@@ -247,6 +286,19 @@ class Test_ApiUsers(TestBase):
         self.assertEqual(kycDoc.Tag, kycDocRes.Tag)
         self.assertEqual(kycDoc.Type, kycDocRes.Type)
         self.assertEqual(kycDoc.Status, kycDocRes.Status)
+        self.assertEqual(kycDoc.UserId, kycDocRes.UserId)
+
+    def test_Users_GetKycDocuments(self):
+        kycDocument = self.getUserKycDocument()
+        user = self.getJohn()
+        pagination = Pagination(1, 10)
+        self.sdk.users.GetKycDocuments(user.Id, pagination)
+        pagination.Page = pagination.TotalPages
+        getKycDocuments = self.sdk.users.GetKycDocuments(user.Id, pagination)
+
+        kycFromList = self.getEntityFromList(kycDocument.Id, getKycDocuments)
+        self.assertIsInstance(kycFromList, KycDocument)
+        self.assertEqualInputProps(kycDocument, kycFromList)
 
     def test_Users_UpdateKycDocument(self):
         john = self.getJohn()

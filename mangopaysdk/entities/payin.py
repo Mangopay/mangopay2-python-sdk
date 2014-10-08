@@ -21,7 +21,8 @@ class PayIn (Transaction):
                     '_property_name': 'PaymentDetails', 
                     'CARD': 'PayInPaymentDetailsCard',
                     'PREAUTHORIZED': 'PayInPaymentDetailsPreAuthorized',
-                    'BANK_WIRE': 'PayInPaymentDetailsBankWire'
+                    'BANK_WIRE': 'PayInPaymentDetailsBankWire',
+                    'DIRECT_DEBIT': 'PayInPaymentDetailsDirectDebit'
                 }, 'ExecutionType': {
                     '_property_name': 'ExecutionDetails', 
                     'WEB': 'PayInExecutionDetailsWeb',

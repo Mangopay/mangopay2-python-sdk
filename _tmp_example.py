@@ -4,9 +4,9 @@ Please ignore it (or take as a simple usage example).
 """
 
 ## run some test
-#import tests.testapiusers
-#t = tests.testapiusers.Test_ApiUsers()
-#t.test_Users_GetNatural()
+import tests.testapiusers
+t = tests.testapiusers.Test_ApiUsers()
+t.test_Users_CreateNatural()
 
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.types.pagination import Pagination

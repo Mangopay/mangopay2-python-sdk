@@ -7,3 +7,4 @@ class PayOutPaymentDetailsBankWire(PayOutPaymentDetails):
     def __init__(self):
         self.BankAccountId = None
         self.Communication = None
+        self.BankWireRef = None

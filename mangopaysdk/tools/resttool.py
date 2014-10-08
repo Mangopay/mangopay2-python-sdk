@@ -42,7 +42,7 @@ class BaseRestTool(object):
         """Call request to MangoPay API.
         param string urlMethod Type of method in REST API
         param MangoPay requestType Type of request
-        param array requestData Data to send in request
+        param array additionalUrlParams Array with additional parameters to URL. Expected keys: "sort" and "filter"
         param MangoPay pagination Pagination object
         return object Response data
         """

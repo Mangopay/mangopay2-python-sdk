@@ -28,6 +28,7 @@ from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
 from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
 from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
+from mangopaysdk.types.payinpaymentdetailsdirectdebit import PayInPaymentDetailsDirectDebit
 from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payoutpaymentdetailsbankwire import PayOutPaymentDetailsBankWire
@@ -47,75 +48,45 @@ class ApiBase(object):
     # Array with REST url and request type
     _methods = {
         'authentication_base' : ('/api/clients/', 'POST'),
-        'authentication_oauth' : ('/api/oauth/token', 'POST'),
-
-        'cardregistration_create': ('/cardregistrations', 'POST'),
-        'cardregistration_save': ('/cardregistrations/%s', 'PUT'),
-        'cardregistration_get': ('/cardregistrations/%s', 'GET'),
-
-        'card_get': ('/cards/%s', 'GET'),
-        'card_save': ('/cards/%s', 'PUT'),
-       
-        'crosscurrencytransfers_create' : ('/transfers/%s', 'POST'),
-        'crosscurrencytransfers_get' : ('/transfers/%s', 'GET'),
+        'authentication_oauth' : ('/oauth/token', 'POST'),
 
         'events_all' : ('/events', 'GET'),
-        'events_gethookcallbacks' : ('/events/%s/hook-callbacks', 'GET'),
 
         'hooks_create' : ('/hooks', 'POST'),
         'hooks_all' : ('/hooks', 'GET'),
         'hooks_get' : ('/hooks/%s', 'GET'),
         'hooks_save' : ('/hooks/%s', 'PUT'),
 
-        'info_get' : ('/info', 'GET'),
-        'info_getfeewallets' : ('/info/fee-wallets', 'GET'),
-        'info_getmeansofpayment' : ('/info/means-of-payment', 'GET'),
+        'cardregistration_create': ('/cardregistrations', 'POST'),
+        'cardregistration_get': ('/cardregistrations/%s', 'GET'),
+        'cardregistration_save': ('/cardregistrations/%s', 'PUT'),
 
-        'paymentcardregistration_create' : ('/payment-card-registration', 'POST'),
-        'paymentcardregistration_get' : ('/payment-card-registration/%s', 'GET'),
+        'preauthorizations_create' : ('/preauthorizations/card/direct', 'POST'),
+        'preauthorizations_get' : ('/preauthorizations/%s', 'GET'),
+        'preauthorizations_save' : ('/preauthorizations/%s', 'PUT'),
+
+        'card_get': ('/cards/%s', 'GET'),
+        'card_save': ('/cards/%s', 'PUT'),
 
         'payins_card-web_create' : ('/payins/card/web/', 'POST'),
         'payins_card-direct_create' : ('/payins/card/direct/', 'POST'),
-        'payins_card-preauthorized_create' : ('/payins/card/preauthorized/', 'POST'),
-        'payins_card-recurrentexecution_create' : ('/payins/card/recurrent-pay-in-execution/', 'POST'),
-
-        'payins_registeredcard-web_create' : ('/payins/registered-card/web/', 'POST'),
-        'payins_registeredcard-direct_create' : ('/payins/registered-card/direct/', 'POST'),
-        'payins_registeredcard-preauthorized_create' : ('/payins/registered-card/preauthorized/', 'POST'),
-        'payins_registeredcard-recurrentexecution_create' : ('/payins/registered-card/recurrent-pay-in-execution/', 'POST'),
-
-        'payins_bankwire-web_create' : ('/payins/bankwire/web/', 'POST'),
-        'payins_bankwire-direct_create' : ('/payins/bankwire/direct/', 'POST'),
-        'payins_bankwire-preauthorized_create' : ('/payins/bankwire/preauthorized/', 'POST'),
-        'payins_bankwire-recurrentexecution_create' : ('/payins/bankwire/recurrent-pay-in-execution/', 'POST'),
-
         'payins_preauthorized-direct_create' : ('/payins/preauthorized/direct/', 'POST'),
 
-        'payins_directcredit-web_create' : ('/payins/direct-credit/web/', 'POST'),
-        'payins_directcredit-direct_create' : ('/payins/direct-credit/direct/', 'POST'),
-        'payins_directcredit-preauthorized_create' : ('/payins/direct-credit/preauthorized/', 'POST'),
-        'payins_directcredit-recurrentexecution_create' : ('/payins/direct-credit/recurrent-pay-in-execution/', 'POST'),
+        'payins_bankwire-direct_create' : ('/payins/bankwire/direct/', 'POST'),
+        
+        'payins_directdebit-web_create' : ('/payins/directdebit/web', 'POST'),
         'payins_get' : ('/payins/%s', 'GET'),
         'payins_getrefunds' : ('/payins/%s/refunds', 'GET'),
         'payins_createrefunds' : ('/payins/%s/refunds', 'POST'),
 
         'payouts_bankwire_create' : ('/payouts/bankwire/', 'POST'),
-        'payouts_merchantexpense_create' : ('/payouts/merchant-expense/', 'POST'),
-        'payouts_amazongiftcard_create' : ('/payouts/amazon-giftcard/', 'POST'),
+        
         'payouts_get' : ('/payouts/%s', 'GET'),
         'payouts_createrefunds' : ('/payouts/%s/refunds', 'POST'),
         'payouts_getrefunds' : ('/payouts/%s/refunds', 'GET'),
-        'preauthorizations_create' : ('/preauthorizations/card/direct', 'POST'),
-        'preauthorizations_save' : ('/preauthorizations/%s', 'PUT'),
-        'preauthorizations_get' : ('/preauthorizations/%s', 'GET'),
-
-        'reccurringpayinorders_create' : ('/reccurring-pay-in-orders', 'POST'),
-        'reccurringpayinorders_get' : ('/reccurring-pay-in-orders/%s', 'GET'),
-        'reccurringpayinorders_gettransactions' : ('/reccurring-pay-in-orders/%s/transactions', 'GET'),
-
+        
         'refunds_get' : ('/refunds/%s', 'GET'),
 
-        'repudiations_get' : ('/repudiations/%s', 'GET'),
 
         'transfers_create' : ('/transfers', 'POST'),
         'transfers_get' : ('/transfers/%s', 'GET'),
@@ -124,7 +95,6 @@ class ApiBase(object):
 
         'users_createnaturals' : ('/users/natural', 'POST'),
         'users_createlegals' : ('/users/legal', 'POST'),
-        'users_createkycrequest' : ('/users/%s/KYC/requests', 'POST'),
         
         'users_createkycpage' : ('/users/%s/KYC/documents/%s/pages', 'POST'),
         'users_createkycdocument' : ('/users/%s/KYC/documents/', 'POST'),
@@ -138,31 +108,23 @@ class ApiBase(object):
         'users_createbankaccounts_other': ('/users/%s/bankaccounts/other', 'POST'),
 
         'users_all' : ('/users', 'GET'),
-        'users_allkyc' : ('/users/%s/KYC', 'GET'),
-        'users_allkycrequests' : ('/users/%s/KYC/requests', 'GET'),
         'users_allwallets' : ('/users/%s/wallets', 'GET'),
         'users_allbankaccount' : ('/users/%s/bankaccounts', 'GET'),
-        'users_allpaymentcards' : ('/users/%s/payment-cards', 'GET'),
+        'users_getcards' : ('/users/%s/cards', 'GET'),
+        'users_transactions' : ('/users/%s/transactions', 'GET'),
+        'users_allkycdocuments' : ('/users/%s/KYC/documents', 'GET'),#new
         'users_get' : ('/users/%s', 'GET'),
         'users_getnaturals' : ('/users/natural/%s', 'GET'),
         'users_getlegals' : ('/users/legal/%s', 'GET'),
-        'users_getkycrequest' : ('/users/%s/KYC/requests/%s', 'GET'),
-        'users_getproofofidentity' : ('/users/%s/ProofOfIdentity', 'GET'),
-        'users_getproofofaddress' : ('/users/%s/ProofOfAddress', 'GET'),
-        'users_getproofofregistration' : ('/users/%s/ProofOfRegistration', 'GET'),
-        'users_getshareholderdeclaration' : ('/users/%s/ShareholderDeclaration', 'GET'),
         'users_getbankaccount' : ('/users/%s/bankaccounts/%s', 'GET'),
-        'users_getcards' : ('/users/%s/cards', 'GET'),
-        'users_transactions' : ('/users/%s/transactions', 'GET'),
-        'users_getpaymentcard' : ('/users/%s/payment-cards/%s', 'GET'),
         'users_savenaturals' : ('/users/natural/%s', 'PUT'),
         'users_savelegals' : ('/users/legal/%s', 'PUT'),
-
         'wallets_create' : ('/wallets', 'POST'),
-        'wallets_allrecurringpayinorders' : ('/wallets/%s/recurring-pay-in-orders', 'GET'),
         'wallets_alltransactions' : ('/wallets/%s/transactions', 'GET'),
         'wallets_get' : ('/wallets/%s', 'GET'),
-        'wallets_save' : ('/wallets/%s', 'PUT')
+        'wallets_save' : ('/wallets/%s', 'PUT'),
+
+        'kyc_documents_all' : ('/KYC/documents', 'GET')
     }
 
 
@@ -242,13 +204,14 @@ class ApiBase(object):
             return self._castResponseToEntity(response, responseClassName)
         return response
 
-    def _getList (self, methodKey, pagination, responseClassName = None, entityId = None, filter = None):
+    def _getList (self, methodKey, pagination, responseClassName = None, entityId = None, filter = None, sorting = None):
         """Get list with entities object from API.
         param string methodKey Key with request data
         param pagination Pagination object
         param object responseClassName Name of entity class from response
         param int entityId Entity identifier
         param object filter Object to filter data
+        param object sorting Object to sort data
         return object Response data
         """
         urlMethod = self._buildUrl(methodKey, entityId)
@@ -257,7 +220,13 @@ class ApiBase(object):
             pagination = Pagination()
 
         rest = RestTool(self._root, True)
-        response = rest.Request(urlMethod, self._getRequestType(methodKey), None, pagination, filter)
+        additionalUrlParams = {}
+        if (filter != None):
+            additionalUrlParams['filter'] = filter
+        if (sorting != None):
+            additionalUrlParams['sort'] = sorting.GetSortParameter()
+
+        response = rest.Request(urlMethod, self._getRequestType(methodKey), None, pagination, additionalUrlParams)
 
         if responseClassName != None:
             return self._castResponseToEntity(response, responseClassName)

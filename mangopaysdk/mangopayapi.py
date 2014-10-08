@@ -1,5 +1,5 @@
 from mangopaysdk.tools import apioauth, apiclients, apiusers, apiwallets, apitransfers, apipayins, apipayouts, apievents, apicardpreauthorizations
-from mangopaysdk.tools import apirefunds, apicardregistrations, apicards, apihooks
+from mangopaysdk.tools import apirefunds, apicardregistrations, apicards, apihooks, apikycdocuments
 from mangopaysdk.configuration import Configuration
 from mangopaysdk.tools.storages.authorizationtokenmanager import AuthorizationTokenManager
 
@@ -38,3 +38,4 @@ class MangoPayApi:
         self.cards = apicards.ApiCards(self)
         self.events = apievents.ApiEvents(self)
         self.hooks = apihooks.ApiHooks(self)
+        self.kycdocuments = apikycdocuments.ApiKycDocuments(self)

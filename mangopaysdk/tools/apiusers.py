@@ -83,13 +83,14 @@ class ApiUsers(ApiBase):
         type = self.GetBankAccountType(bankAccount)
         return self._createObject('users_createbankaccounts_' + type, bankAccount, 'BankAccount', userId)
 
-    def GetBankAccounts(self, userId, pagination = None):
+    def GetBankAccounts(self, userId, pagination = None, sorting = None):
         """Get all bank accounts for user.
         param Int/GUID userId
         param Pagination object
+        param Sorting object
         return array with bank account entities
         """
-        return self._getList('users_allbankaccount', pagination, 'BankAccount', userId)
+        return self._getList('users_allbankaccount', pagination, 'BankAccount', userId, None, sorting)
 
     def GetBankAccount(self, userId, bankAccountId):
         """Get bank account for user.
@@ -99,21 +100,23 @@ class ApiUsers(ApiBase):
         """
         return self._getObject('users_getbankaccount', userId, 'BankAccount', bankAccountId)
 
-    def GetCards(self, userId, pagination = None):
+    def GetCards(self, userId, pagination = None, sorting = None):
         """Get user payment cards.
         param Int/GUID userId
         param Pagination object
+        param Sorting object
         return array or card entities
         """
-        return self._getList('users_getcards', pagination, 'Card', userId)
+        return self._getList('users_getcards', pagination, 'Card', userId, None, sorting)
 
-    def GetTransactions(self, userId, pagination = None):
+    def GetTransactions(self, userId, pagination = None, sorting = None):
         """Get user payment cards.
         param Int/GUID userId
         param Pagination object
+        param Sorting object
         return array or transactions
         """
-        return self._getList('users_transactions', pagination, 'Transaction', userId)
+        return self._getList('users_transactions', pagination, 'Transaction', userId, None, sorting)
 
     def GetUserResponse(self, response):
         """Get correct user object - to be used internally.
@@ -198,10 +201,19 @@ class ApiUsers(ApiBase):
 
         return className
 
-    def GetWallets(self, userId, pagination = None):
+    def GetWallets(self, userId, pagination = None, sorting = None):
         """Get all wallets for user.
         param Int/GUID userId
         param Pagination object
+        param Sorting sorting
         return array with wallet entities
         """
-        return self._getList('users_allwallets', pagination, 'Wallet', userId)
+        return self._getList('users_allwallets', pagination, 'Wallet', userId, None, sorting)
+
+    def GetKycDocuments(self, userId, pagination = None, sorting = None):
+        """Gets all KYC documents gor user.
+        param string userId
+        param Pagination object
+        param Sorting object
+        return array with KYC documents"""
+        return self._getList('users_allkycdocuments', pagination, 'KycDocument', userId, None, sorting)

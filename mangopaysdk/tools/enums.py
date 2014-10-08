@@ -118,6 +118,10 @@ class KycDocumentStatus:
     VALIDATED = 'VALIDATED'
     REFUSED = 'REFUSED'
 
+class SortDirection:
+    DESC = 'desc'
+    ASC = 'asc'
+
 
 #class AuthenticationType:
 #    Basic = 'Basic'

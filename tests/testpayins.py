@@ -8,6 +8,8 @@ from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
 from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
 from mangopaysdk.types.money import Money
+from mangopaysdk.types.payinpaymentdetailsdirectdebit import PayInPaymentDetailsDirectDebit
+from mangopaysdk.types.payintemplateurloptions import PayInTemplateURLOptions
 
 
 class Test_PayIns(TestBase):
@@ -154,3 +156,52 @@ class Test_PayIns(TestBase):
         self.assertEqual(payIn.PaymentDetails.BankAccount.Type, 'IBAN')
         self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.IBAN)
         self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.BIC)  
+
+    def test_PayIns_Create_DirectDebitWeb(self):
+        wallet = self.getJohnsWallet()
+        user = self.getJohn()
+        # create pay-in PRE-AUTHORIZED DIRECT
+        payIn = PayIn()
+        payIn.CreditedWalletId = wallet.Id
+        payIn.AuthorId = user.Id
+        payIn.DebitedFunds = Money()
+        payIn.DebitedFunds.Amount = 10000
+        payIn.DebitedFunds.Currency = 'EUR'
+        payIn.Fees = Money()
+        payIn.Fees.Amount = 100
+        payIn.Fees.Currency = 'EUR'
+        
+        # payment type as CARD
+        payIn.PaymentDetails = PayInPaymentDetailsDirectDebit()
+        payIn.PaymentDetails.DirectDebitType = 'GIROPAY'
+        payIn.ExecutionDetails = PayInExecutionDetailsWeb()
+        payIn.ExecutionDetails.ReturnURL = 'http://www.mysite.com/returnURL/'
+        payIn.ExecutionDetails.Culture = 'FR'
+        payIn.ExecutionDetails.TemplateURLOptions = PayInTemplateURLOptions()
+        payIn.ExecutionDetails.TemplateURLOptions.PAYLINE = 'https://www.maysite.com/payline_template/'
+
+        createPayIn = self.sdk.payIns.Create(payIn)
+
+        self.assertTrue(createPayIn.Id > 0)
+        self.assertEqual(wallet.Id, createPayIn.CreditedWalletId)
+        self.assertEqual('DIRECT_DEBIT', createPayIn.PaymentType)
+        self.assertIsInstance(createPayIn.PaymentDetails, PayInPaymentDetailsDirectDebit)
+        self.assertEqual(createPayIn.PaymentDetails.DirectDebitType, 'GIROPAY')
+        self.assertEqual('WEB', createPayIn.ExecutionType)
+        self.assertIsInstance(createPayIn.ExecutionDetails, PayInExecutionDetailsWeb)
+        self.assertEqual('FR', createPayIn.ExecutionDetails.Culture)
+        self.assertEqual(user.Id, createPayIn.AuthorId)
+        self.assertEqual('CREATED', createPayIn.Status)
+        self.assertEqual('PAYIN', createPayIn.Type)
+        self.assertIsInstance(createPayIn.DebitedFunds, Money)
+        self.assertEqual(10000, createPayIn.DebitedFunds.Amount)
+        self.assertEqual('EUR', createPayIn.DebitedFunds.Currency)
+        self.assertIsInstance(createPayIn.CreditedFunds, Money)
+        self.assertEqual(9900, createPayIn.CreditedFunds.Amount)
+        self.assertEqual('EUR', createPayIn.CreditedFunds.Currency)
+        self.assertIsInstance(createPayIn.Fees, Money)
+        self.assertEqual(100, createPayIn.Fees.Amount)
+        self.assertEqual('EUR', createPayIn.Fees.Currency)
+        self.assertIsNotNone(createPayIn.ExecutionDetails.ReturnURL)
+        self.assertIsNotNone(createPayIn.ExecutionDetails.RedirectURL)
+        self.assertIsNotNone(createPayIn.ExecutionDetails.TemplateURL)

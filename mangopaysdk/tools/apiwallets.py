@@ -27,11 +27,12 @@ class ApiWallets(ApiBase):
         return self._saveObject('wallets_save', wallet, 'Wallet')
 
 
-    def GetTransactions(self, walletId, pagination = None, filter = None):
+    def GetTransactions(self, walletId, pagination = None, filter = None, sorting = None):
         """Get transactions for the wallet.
         param type walletId Wallet identifier
         param Pagination pagination object
         param FilterTransactions filter Object to filter data
+        param Sorting sorting Object to sort data.
         return Transaction[] Transactions for wallet returned from API
         """
-        return self._getList('wallets_alltransactions', pagination, 'Transaction', walletId, filter)
+        return self._getList('wallets_alltransactions', pagination, 'Transaction', walletId, filter, sorting)

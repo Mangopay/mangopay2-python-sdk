@@ -18,7 +18,7 @@ class Configuration:
     TempPath = "c:\Temp\\"
 
     # Constant to switch debug mode (0/1) - display all request and response data
-    DebugMode = 0
+    DebugMode = 1
 
     #AuthenticationType = enums.AuthenticationType.Strong
 

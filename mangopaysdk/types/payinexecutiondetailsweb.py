@@ -9,6 +9,7 @@ class PayInExecutionDetailsWeb (PayInExecutionDetails):
         self.RedirectURL = None
         self.ReturnURL = None
         self.TemplateURL = None
+        self.TemplateURLOptions = None
 
         self.Culture = ''
         # Mode3DSType { DEFAULT, FORCE }
@@ -18,3 +19,8 @@ class PayInExecutionDetailsWeb (PayInExecutionDetails):
         properties = super(PayInExecutionDetailsWeb, self).GetReadOnlyProperties()
         properties.append('RedirectURL' )        
         return properties
+
+    def GetSubObjects(self):
+        return { 
+            'TemplateURLOptions': 'PayInTemplateURLOptions'
+        }

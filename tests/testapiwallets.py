@@ -6,6 +6,7 @@ from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.tools.enums import *
 from mangopaysdk.tools.filtertransactions import FilterTransactions
 from tests.testbase import TestBase
+from mangopaysdk.tools.sorting import Sorting
 
 
 class Test_ApiWallets(TestBase):
@@ -48,3 +49,19 @@ class Test_ApiWallets(TestBase):
         self.assertIsInstance(transactions[0], Transaction)
         self.assertEqual(transactions[0].AuthorId, john.Id)
         self.assertEqualInputProps(transactions[0], payIn)
+
+    def test_Wallets_Transactions_SortByCreationDate(self):
+        wallet = self.getJohnsWallet()
+        #create 2 pay-in objects
+        self.getJohnsPayInCardWeb()
+        self.getJohnsPayInCardWeb()
+
+        sorting = Sorting()
+        sorting.AddField('CreationDate', SortDirection.DESC)
+        pagination = Pagination(1, 20)
+        filter = FilterTransactions()
+        filter.Type = TransactionType.PAYIN
+
+        transactions = self.sdk.wallets.GetTransactions(wallet.Id, pagination, filter, sorting)
+
+        self.assertTrue(transactions[0].CreationDate > transactions[1].CreationDate)
