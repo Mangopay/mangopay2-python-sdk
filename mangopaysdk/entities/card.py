@@ -5,6 +5,7 @@ class Card(EntityBase):
     """Card entity"""
     
     def __init__(self, id = None):
+        self.UserId = None
         # MMYY
         self.ExpirationDate = None	
         # first 6 and last 4 are real card numbers for example: 497010XXXXXX4414
@@ -13,6 +14,7 @@ class Card(EntityBase):
         self.CardProvider = None
         # CardType enum
         self.CardType = None
+        self.Country = None
         self.Product = None
         self.BankCode = None
         # Boolean
