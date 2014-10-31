@@ -1,14 +1,13 @@
 MangoPay SDK
 =================================================
 
-MangoPaySDK is a python client library to work with
+MangoPaySDK is a Python client library to work with
 [MangoPay REST API](http://docs.mangopay.com/api-references/).
 
 
-Installation
+Installation and package dependencies
 -------------------------------------------------
-SDK has been written in Python 3.3
-and requires:
+SDK has been written in Python 2.7 and requires:
 
 	requests
 	requests-oauthlib
@@ -44,10 +43,9 @@ Unit Tests (not included in pip package)
     python -m unittest test_module.TestClass.test_method
 
 
-Contacts
+Contact
 -------------------------------------------------
-Report bugs or suggest features using
-[issue tracker at GitHub](https://github.com/MangoPay/mangopay2-python-sdk).
+Report bugs or suggest features using [issue tracker at GitHub](https://github.com/MangoPay/mangopay2-python-sdk).
 
 
 
@@ -59,32 +57,33 @@ Client creation example (you need to call it only once)
 
     client = api.clients.Create('your-client-id', 'your-client-name', 'your-client-email@sample.org')
     
-    # you receive your password here, note it down and keep in secret
+    # you'll receive your passphrase here, note it down and keep in secret
     print(client.Passphrase)
 
 
-Configuration example
+Configuration
 -------------------------------------------------
-See the example above and call `api.clients.Create` once to get your passphrase.
-Then set `api.Config.ClientID` to your MangoPay Client ID and 
-`api.Config.ClientPassword` to your passphrase.
+See the example above and call `api.clients.Create(...)` to get your passphrase.
+Then set `api.Config.ClientId` to your MangoPay Client ID and `api.Config.ClientPassword` to your passphrase.
 
-You also need to set a folder path in `api.Config.TempPath` that SDK needs 
-to store temporary files. This path should be outside your www folder.
+You also need to set a folder path in `api.Config.TempPath` that SDK needs to store temporary files. 
+This path should be outside your www folder.
 It could be `/tmp/` or `/var/tmp/` or any other location that Python can write to.
 
-`api.Config.BaseUrl` is set to sandbox environment by default. To enable production
-environment, set it to `https://api.mangopay.com`.
+`api.Config.BaseUrl` is set to sandbox environment by default. To enable production environment, set it to `https://api.mangopay.com`.
+
+Below is the example showing how to configure SDK:
 
     from mangopaysdk.mangopayapi import MangoPayApi
     api = MangoPayApi()
 
-    api.Config.ClientID = 'your-client-id'
-    api.Config.ClientPassword = 'your-client-password'
+	# configure client credentials
+    api.Config.ClientId = 'your-client-id'
+    api.Config.ClientPassword = 'your-client-passphrase'
     api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
-    print(api.Config.BaseUrl) # you probably dont have to change it
+	api.Config.BaseUrl = "https://api.sandbox.mangopay.com"
 
-    # call some API methods...
+    # call API methods, i.e.:
     users = api.users.GetAll()
 
 
@@ -93,9 +92,13 @@ Sample usage
 
     from mangopaysdk.mangopayapi import MangoPayApi
     api = MangoPayApi()
+
+	# configuration
+	api.Config.ClientId = 'your-client-id'
+    api.Config.ClientPassword = 'your-client-passphrase'
 	
-    # get some user by id
-    john = api.users.Get(someId)
+    # get some user by ID
+    john = api.users.Get(userId)
 
     # change and update some of his data
     john.LastName += " - CHANGED"
