@@ -25,10 +25,10 @@ class UrlTool:
             if additionalUrlParams != None:
                 url += "&" if (url.count("?") > 0) else "?"
 
-                if (additionalUrlParams.has_key('sort')):
+                if 'sort' in additionalUrlParams:
                     url += "%s=%s&" %(additionalUrlParams['sort'].pop(), additionalUrlParams['sort'].pop())
 
-                if (additionalUrlParams.has_key('filter')):
+                if 'filter' in additionalUrlParams:
                     for key, val in additionalUrlParams['filter'].__dict__.items():
                         url += "%s=%s&" %(key,val)
                     #url += "filter=%s&" %(additionalUrlParams['filter'])

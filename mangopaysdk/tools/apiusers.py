@@ -184,7 +184,7 @@ class ApiUsers(ApiBase):
 
         kycPage = KycPage()
         with open(filePath) as f:
-            encoded = base64.encodestring(f.read())
+            encoded = base64.encodestring(f.read().encode())
         kycPage.File = encoded
 
         if (kycPage.File == None):
