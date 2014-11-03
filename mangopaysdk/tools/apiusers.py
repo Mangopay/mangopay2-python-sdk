@@ -185,7 +185,7 @@ class ApiUsers(ApiBase):
         kycPage = KycPage()
         with open(filePath) as f:
             encoded = base64.encodestring(f.read().encode())
-        kycPage.File = encoded
+        kycPage.File = encoded.decode()
 
         if (kycPage.File == None):
             raise Exception('Content of the file cannot be empty')

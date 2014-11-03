@@ -9,7 +9,7 @@ class Test_Hooks(TestBase):
 
     def test_Hooks_Create(self):
         hook = self.getJohnHook()
-        self.assertTrue(hook.Id > 0);
+        self.assertTrue(int(hook.Id) > 0);
     
     def test_Hooks_Get(self):
         hook = self.getJohnHook()
