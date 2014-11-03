@@ -227,7 +227,7 @@ class Test_ApiUsers(TestBase):
 
         list = self.sdk.users.GetBankAccounts(john.Id, pagination, sorting)
 
-        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+        self.assertTrue(list[0].CreationDate >= list[1].CreationDate)
 
     def test_Users_Cards(self):
        john = self.getJohn()
@@ -267,7 +267,7 @@ class Test_ApiUsers(TestBase):
 
         list = self.sdk.users.GetTransactions(john.Id, pagination, sorting)
 
-        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+        self.assertTrue(list[0].CreationDate >= list[1].CreationDate)
 
     def test_Users_CreateKycDocument(self):
         kycDoc = self.getUserKycDocument()
