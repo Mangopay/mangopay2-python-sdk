@@ -82,9 +82,21 @@ Below is the example showing how to configure SDK:
     api.Config.ClientPassword = 'your-client-passphrase'
     api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
 	api.Config.BaseUrl = "https://api.sandbox.mangopay.com"
+	api.Config.SSLVerification = 'path-to-your-cacert.pem-file'
 
     # call API methods, i.e.:
     users = api.users.GetAll()
+
+
+SSL verification
+-------------------------------------------------
+The default value of `SSLVerification` is `False`, which means there's no verification. In such a case you will be notified about that by the `InsecureRequestWarning` message, i.e.:
+`InsecureRequestWarning: Unverified HTTPS request is being made. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.org/en/latest/security.html`
+
+In order to easily verify your HTTPS requests (and remove warning message), you can put a path to the `cacert.pem` file as the value of `SSLVerification` property.
+You should find that file in `Python_installation_folder\Lib\site-packages\requests`, so setting the path may look similar to the following (for Windows OS):
+
+	sdk.Config.SSLVerification = 'C:\\Python27\\Lib\\site-packages\\requests\\cacert.pem'
 
 
 Sample usage

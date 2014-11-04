@@ -29,6 +29,9 @@ class BaseRestTool(object):
     # bool variable to switch on/off log debugging
     _debugMode = False
 
+    # SSL verification
+    _sslVerification = False
+
     def __init__(self, root = None, authRequired = True):
         """Constructor.
         param bool authRequired Variable to flag that in request the authentication data are required
@@ -37,6 +40,7 @@ class BaseRestTool(object):
         self._authRequired = authRequired
         self._root = root
         self._debugMode = self._root.Config.DebugMode
+        self._sslVerification = self._root.Config.SSLVerification
 
     def Request(self, urlMethod, requestType, requestData = None, pagination = None, additionalUrlParams = None):
         """Call request to MangoPay API.
@@ -83,7 +87,7 @@ class BaseRestTool(object):
         """Prepare and send the request"""
         prepared_request = request.prepare()
         session = requests.Session()
-        response = session.send(prepared_request, verify=False)
+        response = session.send(prepared_request, verify=self._sslVerification)
         return response
 
     def _runRequest(self, urlMethod, pagination, additionalUrlParams):

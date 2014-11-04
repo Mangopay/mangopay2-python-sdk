@@ -20,7 +20,8 @@ class Configuration:
     # Constant to switch debug mode (0/1) - display all request and response data
     DebugMode = 0
 
-    #AuthenticationType = enums.AuthenticationType.Strong
+    # SSL verification (False (no verification) or path to the cacert.pem file)
+    SSLVerification = False
 
     # RestTool class
     # NB: you can swap this class for one of ours that implement some custom logic
