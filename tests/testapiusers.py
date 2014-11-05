@@ -9,7 +9,6 @@ from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.kycpage import KycPage
 from mangopaysdk.tools.enums import *
 import os
-from __builtin__ import Exception
 from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
 from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
 from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
@@ -228,7 +227,7 @@ class Test_ApiUsers(TestBase):
 
         list = self.sdk.users.GetBankAccounts(john.Id, pagination, sorting)
 
-        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+        self.assertTrue(list[0].CreationDate >= list[1].CreationDate)
 
     def test_Users_Cards(self):
        john = self.getJohn()
@@ -268,7 +267,7 @@ class Test_ApiUsers(TestBase):
 
         list = self.sdk.users.GetTransactions(john.Id, pagination, sorting)
 
-        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+        self.assertTrue(list[0].CreationDate >= list[1].CreationDate)
 
     def test_Users_CreateKycDocument(self):
         kycDoc = self.getUserKycDocument()
@@ -352,7 +351,7 @@ class Test_ApiUsers(TestBase):
         try:
             self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, '')
         except Exception as exc:
-            self.assertEqual(exc.message, 'Path of file cannot be empty')
+            self.assertEqual(str(exc), 'Path of file cannot be empty')
         
     def test_Users_CreateKycPage_WrongFilePath(self) :
         user = self.getJohn()
@@ -364,7 +363,7 @@ class Test_ApiUsers(TestBase):
         try:
             self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, 'notExistFileName.tmp')
         except Exception as exc:
-            self.assertEqual(exc.message, 'File not exist')
+            self.assertEqual(str(exc), 'File not exist')
     
     def test_Users_CreateKycPage_CorrectFilePath(self) :
         user = self.getJohn()

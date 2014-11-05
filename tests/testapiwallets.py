@@ -64,4 +64,4 @@ class Test_ApiWallets(TestBase):
 
         transactions = self.sdk.wallets.GetTransactions(wallet.Id, pagination, filter, sorting)
 
-        self.assertTrue(transactions[0].CreationDate > transactions[1].CreationDate)
+        self.assertTrue(transactions[0].CreationDate >= transactions[1].CreationDate)
