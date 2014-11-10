@@ -12,7 +12,7 @@ SDK has been written in Python 2.7 and requires:
 	requests
 	requests-oauthlib
 	lockfile
-
+If you wish to use the SDK with a higher version of Python, [this pull request](https://github.com/MangoPay/mangopay2-python-sdk/pull/18) may be of use.
 	
 If you have problem with using token file based cache (Configuration.TempPath) you can use memory cache:
 	
