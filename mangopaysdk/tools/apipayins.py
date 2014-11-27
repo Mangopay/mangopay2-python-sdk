@@ -1,5 +1,6 @@
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.payin import PayIn
+from mangopaysdk.entities.temporaryimmediatepayin import TemporaryImmediatePayIn
 
 
 class ApiPayIns (ApiBase):
@@ -35,6 +36,17 @@ class ApiPayIns (ApiBase):
         return Refund Object returned by REST API
         """
         return self._getObject('payins_getrefunds', payInId, 'Refund')
+
+    def CreateTemporaryImmediatePayIn(self, immediatePayIn):
+        """WARNING! 
+        This is temporary function and will be removed in future.
+        Contact support before using these features or if have any queries.
+
+        Creates new temporary immediate pay-in.
+        param TemporaryImmediatePayIn Immediate pay-in object to create
+        return TemporaryImmediatePayIn Object returned from API
+        """
+        return self._createObject('temp_immediatepayins_create', immediatePayIn, 'TemporaryImmediatePayIn')
 
     def _getPaymentKey(self, payIn):
 

@@ -37,6 +37,8 @@ from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
 from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
 from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
 from mangopaysdk.types.bankaccountdetailsother import BankAccountDetailsOTHER
+from mangopaysdk.entities.temporarypaymentcard import TemporaryPaymentCard
+from mangopaysdk.entities.temporaryimmediatepayin import TemporaryImmediatePayIn
 
 
 class ApiBase(object):
@@ -124,7 +126,14 @@ class ApiBase(object):
         'wallets_get' : ('/wallets/%s', 'GET'),
         'wallets_save' : ('/wallets/%s', 'PUT'),
 
-        'kyc_documents_all' : ('/KYC/documents', 'GET')
+        'kyc_documents_all' : ('/KYC/documents', 'GET'),
+
+
+        # These are temporary functions and WILL be removed in the future. 
+        # Contact support before using these features or if have any queries.
+        'temp_paymentcards_create' : ('/temp/paymentcards', 'POST'),
+        'temp_paymentcards_get' : ('/temp/paymentcards/%s', 'GET'),
+        'temp_immediatepayins_create' : ('/temp/immediate-payins', 'POST')
     }
 
 

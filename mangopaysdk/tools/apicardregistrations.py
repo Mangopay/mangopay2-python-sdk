@@ -1,5 +1,6 @@
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.cardregistration import CardRegistration
+from mangopaysdk.entities.temporarypaymentcard import TemporaryPaymentCard
 
 
 class ApiCardRegistrations (ApiBase):
@@ -25,3 +26,26 @@ class ApiCardRegistrations (ApiBase):
         return CardRegistration Object returned from API
         """
         return self._saveObject('cardregistration_save', cardRegistration, 'CardRegistration')
+
+
+    def CreateTemporaryPaymentCard(self, paymentCard):
+        """WARNING! 
+        This is temporary function and will be removed in future.
+        Contact support before using these features or if have any queries.
+
+        Creates new temporary payment card.
+        param TemporaryPaymentCard Temporary payment card to be created
+        return TemporaryPaymentCard Object returned from API
+        """
+        return self._createObject('temp_paymentcards_create', paymentCard, 'TemporaryPaymentCard')
+
+    def GetTemporaryPaymentCard(self, paymentCardId):
+        """WARNING! 
+        This is temporary function and will be removed in future.
+        Contact support before using these features or if have any queries.
+
+        Gets temporary payment card.
+        param string Temporary payment card identifier
+        return TemporaryPaymentCard Object returned from API
+        """
+        return self._getObject('temp_paymentcards_get', paymentCardId, 'TemporaryPaymentCard')

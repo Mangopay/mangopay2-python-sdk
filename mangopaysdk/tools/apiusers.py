@@ -180,12 +180,9 @@ class ApiUsers(ApiBase):
             raise Exception('Path of file cannot be empty')
 
         if (not os.path.isfile(filePath)):
-            raise Exception('File not exist')
+            raise Exception('File not exist: ' + filePath)
 
-        kycPage = KycPage()
-        with open(filePath) as f:
-            encoded = base64.encodestring(f.read())
-        kycPage.File = encoded
+        kycPage = KycPage().LoadDocumentFromFile(filePath)
 
         if (kycPage.File == None):
             raise Exception('Content of the file cannot be empty')

@@ -310,37 +310,9 @@ class Test_ApiUsers(TestBase):
     def test_Users_CreateKycDocumentPage(self):
         john = self.getJohn()
         kycDoc = self.getUserKycDocument()
-        kycPage = KycPage().LoadDocumentFromFile(os.path.join(os.path.dirname(__file__),"spacer.gif"))
+        kycPage = KycPage().LoadDocumentFromFile(os.path.join(os.path.dirname(__file__), "TestKycPageFile.png"))
         kycDocRes = self.sdk.users.CreateUserKycPage(kycPage, john.Id, kycDoc.Id)
         self.assertEqual(kycDocRes, None)
-
-    def test_Users_CreateKycPage_EmptyFileString(self):
-        kycDocument = self.getUserKycDocument()
-        user = self.getJohn()
-        kycPage = KycPage()
-        kycPage.File = ''
-        kycPageResponse = self.sdk.users.CreateUserKycPage(kycPage, user.Id, kycDocument.Id)    
-        self.assertEqual(kycPageResponse, None)
-    
-    def test_Users_CreateKycPage_WrongFileString(self):
-        kycDocument = self.getUserKycDocument()
-        user = self.getJohn()
-        kycPage = KycPage()
-        kycPage.File = 'qqqq'
-        kycPageResponse = self.sdk.users.CreateUserKycPage(kycPage, user.Id, kycDocument.Id)
-        self.assertEqual(kycPageResponse, None)
-    
-    def test_Users_CreateKycPage_CorrectFileString(self):
-        user = self.getJohn()
-        kycDocumentInit = KycDocument()
-        kycDocumentInit.Status = KycDocumentStatus.CREATED
-        kycDocumentInit.Type = KycDocumentType.IDENTITY_PROOF
-        kycDocument = self.sdk.users.CreateUserKycDocument(kycDocumentInit, user.Id)
-        kycPage = KycPage()
-        kycPage.File = 'dGVzdCB0ZXN0IHRlc3QgdGVzdA=='
-        
-        kycPageResponse = self.sdk.users.CreateUserKycPage(kycPage, user.Id, kycDocument.Id)
-        self.assertEqual(kycPageResponse, None)
     
     def test_Users_CreateKycPage_EmptyFilePath(self):
         user = self.getJohn()
@@ -364,7 +336,7 @@ class Test_ApiUsers(TestBase):
         try:
             self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, 'notExistFileName.tmp')
         except Exception as exc:
-            self.assertEqual(exc.message, 'File not exist')
+            self.assertTrue(exc.message.find('File not exist') != -1)
     
     def test_Users_CreateKycPage_CorrectFilePath(self) :
         user = self.getJohn()
@@ -373,7 +345,7 @@ class Test_ApiUsers(TestBase):
         kycDocumentInit.Type = KycDocumentType.IDENTITY_PROOF
         kycDocument = self.sdk.users.CreateUserKycDocument(kycDocumentInit, user.Id)
 
-        self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, __file__)
+        self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, os.path.join(os.path.dirname(__file__), "TestKycPageFile.png"))
 
 if __name__ == '__main__':
      Test_ApiUsers().test_Users_GetKycDocument()

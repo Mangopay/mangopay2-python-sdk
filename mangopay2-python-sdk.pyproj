@@ -28,6 +28,8 @@
     <Compile Include="mangopaysdk\entities\bankaccount.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\temporaryimmediatepayin.py" />
+    <Compile Include="mangopaysdk\entities\temporarypaymentcard.py" />
     <Compile Include="mangopaysdk\entities\card.py" />
     <Compile Include="mangopaysdk\entities\cardpreauthorization.py" />
     <Compile Include="mangopaysdk\entities\cardregistration.py" />
@@ -239,6 +241,7 @@
     <Content Include="MANIFEST.in">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="tests\TestKycPageFile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
