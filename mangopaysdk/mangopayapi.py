@@ -18,7 +18,7 @@ class MangoPayApi:
         #########################################
 
         # Configuration instance with default settings (to be reset if required).
-        self.Config = Configuration()
+        self.Config = Configuration
         self.OAuthTokenManager = AuthorizationTokenManager(self);
 
         #########################################

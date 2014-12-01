@@ -8,12 +8,14 @@ import lockfile.mkdirlockfile
 class DefaultStorageStrategy(IStorageStrategy):
     """Default storage strategy implementation."""
 
-    cache_path = Configuration.TempPath + "cached-data.py"
+    cache_path = ''
 
     def Get(self):
         """Gets the currently stored objects as dictionary.
         return stored Token dictionary or null.
         """
+        DefaultStorageStrategy.cache_path = Configuration.TempPath + "cached-data.py"
+
         if not os.path.exists(DefaultStorageStrategy.cache_path):
            return None
         fp = open(DefaultStorageStrategy.cache_path,'rb')
@@ -37,6 +39,8 @@ class DefaultStorageStrategy(IStorageStrategy):
         """Stores authorization token passed as an argument.
         param obj instance to be stored.
         """
+        DefaultStorageStrategy.cache_path = Configuration.TempPath + "cached-data.py"
+
         if obj == None: 
             return
         fp = open(DefaultStorageStrategy.cache_path,'w')
