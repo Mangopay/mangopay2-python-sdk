@@ -106,7 +106,7 @@ Sample usage
     api = MangoPayApi()
 
 	# configuration
-	api.Config.ClientId = 'your-client-id'
+	api.Config.ClientID = 'your-client-id'
     api.Config.ClientPassword = 'your-client-passphrase'
 	
     # get some user by ID
