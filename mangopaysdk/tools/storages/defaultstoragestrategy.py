@@ -14,7 +14,7 @@ class DefaultStorageStrategy(IStorageStrategy):
         """Gets the currently stored objects as dictionary.
         return stored Token dictionary or null.
         """
-        DefaultStorageStrategy.cache_path = Configuration.TempPath + "cached-data.py"
+        DefaultStorageStrategy.cache_path = os.path.join(Configuration.TempPath, "cached-data.py")
 
         if not os.path.exists(DefaultStorageStrategy.cache_path):
            return None
@@ -39,7 +39,7 @@ class DefaultStorageStrategy(IStorageStrategy):
         """Stores authorization token passed as an argument.
         param obj instance to be stored.
         """
-        DefaultStorageStrategy.cache_path = Configuration.TempPath + "cached-data.py"
+        DefaultStorageStrategy.cache_path = os.path.join(Configuration.TempPath, "cached-data.py")
 
         if obj == None: 
             return
