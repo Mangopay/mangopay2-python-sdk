@@ -109,14 +109,14 @@ class ApiUsers(ApiBase):
         """
         return self._getList('users_getcards', pagination, 'Card', userId, None, sorting)
 
-    def GetTransactions(self, userId, pagination = None, sorting = None):
+    def GetTransactions(self, userId, pagination = None, sorting = None, filter = None):
         """Get user payment cards.
         param Int/GUID userId
         param Pagination object
         param Sorting object
         return array or transactions
         """
-        return self._getList('users_transactions', pagination, 'Transaction', userId, None, sorting)
+        return self._getList('users_transactions', pagination, 'Transaction', userId, filter, sorting)
 
     def GetUserResponse(self, response):
         """Get correct user object - to be used internally.
