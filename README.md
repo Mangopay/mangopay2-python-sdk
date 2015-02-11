@@ -52,6 +52,10 @@ Report bugs or suggest features using [issue tracker at GitHub](https://github.c
 Client creation example (you need to call it only once)
 -------------------------------------------------
 
+You can create you MangoPay account on https://docs.mangopay.com/api-references/sandbox-credentials/
+
+or with this code :
+
     from mangopaysdk.mangopayapi import MangoPayApi
     api = MangoPayApi()
 
