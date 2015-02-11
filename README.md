@@ -68,7 +68,7 @@ or with this code :
 Configuration
 -------------------------------------------------
 See the example above and call `api.clients.Create(...)` to get your passphrase.
-Then set `api.Config.ClientId` to your MangoPay Client ID and `api.Config.ClientPassword` to your passphrase.
+Then set `api.Config.ClientID` to your MangoPay Client ID and `api.Config.ClientPassword` to your passphrase.
 
 You also need to set a folder path in `api.Config.TempPath` that SDK needs to store temporary files. 
 This path should be outside your www folder.
@@ -82,7 +82,7 @@ Below is the example showing how to configure SDK:
     api = MangoPayApi()
 
 	# configure client credentials
-    api.Config.ClientId = 'your-client-id'
+    api.Config.ClientID = 'your-client-id'
     api.Config.ClientPassword = 'your-client-passphrase'
     api.Config.TempPath = "C:\Temp\\" # or "/tmp" on linux
 	api.Config.BaseUrl = "https://api.sandbox.mangopay.com"
