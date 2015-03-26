@@ -122,6 +122,11 @@ class SortDirection:
     DESC = 'desc'
     ASC = 'asc'
 
+class InitialTransactionType:
+    PAYIN = 'PAYIN'
+    PAYOUT = 'PAYOUT'
+    TRANSFER = 'TRANSFER'
+
 
 #class AuthenticationType:
 #    Basic = 'Basic'
