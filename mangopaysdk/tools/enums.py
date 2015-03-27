@@ -50,8 +50,6 @@ class ExecutionType:
 
 class PayOutPaymentType:
      BANK_WIRE = 'BANK_WIRE'
-     MERCHANT_EXPENSE = 'MERCHANT_EXPENSE'
-     AMAZON_GIFTCARD = 'AMAZON_GIFTCARD'
 
 
 class Mode3DSType:
@@ -61,7 +59,10 @@ class Mode3DSType:
 
 class CardType:
     CB_VISA_MASTERCARD = 'CB_VISA_MASTERCARD'
-    #AMEX = 'AMEX'
+    AMEX = 'AMEX'
+    DINERS = 'DINERS'
+    MAESTRO = 'MAESTRO'
+    MASTERPASS = 'MASTERPASS'
 
 
 class TransactionNature:
