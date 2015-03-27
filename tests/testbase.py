@@ -151,10 +151,7 @@ class TestBase(unittest.TestCase):
             payIn.Fees.Currency = 'EUR'
             # payment type as CARD
             payIn.PaymentDetails = PayInPaymentDetailsCard()
-            if (card.CardType == 'CB' or card.CardType == 'VISA' or card.CardType == 'MASTERCARD' or card.CardType == CardType.CB_VISA_MASTERCARD):
-                payIn.PaymentDetails.CardType = CardType.CB_VISA_MASTERCARD
-            # elif (card.CardType == CardType.AMEX):
-            #    payIn.PaymentDetails.CardType = CardType.AMEX
+            payIn.PaymentDetails.CardType = card.CardType
 
             # execution type as DIRECT
             payIn.ExecutionDetails = PayInExecutionDetailsDirect()
