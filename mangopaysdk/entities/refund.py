@@ -9,4 +9,5 @@ class Refund(Transaction):
         self.DebitedWalletId = None
         self.CreditedWalletId = None
         self.InitialTransactionType = None
+        self.RefundReason = None
         return super(Refund, self).__init__(id)
