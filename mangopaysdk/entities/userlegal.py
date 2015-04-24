@@ -1,6 +1,7 @@
 from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.entities.user import User
 from mangopaysdk.tools.enums import PersonType
+from mangopaysdk.tools.enums import KYCLevel
 
 
 class UserLegal (User):
@@ -33,5 +34,5 @@ class UserLegal (User):
         properties = super(UserLegal, self).GetReadOnlyProperties()
         properties.append('Statute' )        
         properties.append('ProofOfRegistration' )        
-        properties.append('ShareholderDeclaration' )        
+        properties.append('ShareholderDeclaration' )   
         return properties

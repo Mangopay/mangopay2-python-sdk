@@ -136,6 +136,13 @@ class RefundReasonType:
     INITIALIZED_BY_CLIENT = 'INITIALIZED_BY_CLIENT'
     OTHER = 'OTHER'
 
+class KYCLevel:
+    LIGHT = 'LIGHT'
+    REGULAR = 'REGULAR'
+
+class DepositAccountType:
+    CHECKING = 'CHECKING'
+    SAVINGS = 'SAVINGS'
 
 #class AuthenticationType:
 #    Basic = 'Basic'

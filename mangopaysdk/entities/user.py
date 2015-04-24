@@ -7,8 +7,11 @@ class User(EntityBase):
         super(User, self).__init__(id)
         # Required
         self.Email = None
-        # PersonType
+        # PersonType { LEGAL, NATURAL }
         self.PersonType = None
+
+        # KYCLevel { LIGHT, REGULAR }
+        self.KYCLevel = None
 
     def _setPersonType(self, personType):
         self.PersonType = personType
@@ -16,4 +19,5 @@ class User(EntityBase):
     def GetReadOnlyProperties(self):
         properties = super(User, self).GetReadOnlyProperties()
         properties.append('PersonType' )        
+        properties.append('KYCLevel' )      
         return properties

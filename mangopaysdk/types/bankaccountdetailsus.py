@@ -1,4 +1,5 @@
 from mangopaysdk.types.bankaccountdetails import BankAccountDetails
+from mangopaysdk.tools.enums import DepositAccountType
 
 
 class BankAccountDetailsUS(BankAccountDetails):
@@ -10,3 +11,6 @@ class BankAccountDetailsUS(BankAccountDetails):
 
         self.ABA = None
         """ABA"""
+
+        self.DepositAccountType = None
+        """Deposit account type"""

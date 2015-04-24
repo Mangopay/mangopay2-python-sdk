@@ -1,6 +1,7 @@
 from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.entities.user import User
 from mangopaysdk.tools.enums import PersonType
+from mangopaysdk.tools.enums import KYCLevel
 
 
 class UserNatural(User):
