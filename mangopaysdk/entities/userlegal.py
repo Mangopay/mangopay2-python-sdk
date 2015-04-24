@@ -29,10 +29,12 @@ class UserLegal (User):
         self._statute = None
         self._proofOfRegistration = None
         self._shareholderDeclaration = None
+        self._legalRepresentativeProofOfIdentity = None
 
     def GetReadOnlyProperties(self):
         properties = super(UserLegal, self).GetReadOnlyProperties()
         properties.append('Statute' )        
         properties.append('ProofOfRegistration' )        
-        properties.append('ShareholderDeclaration' )   
+        properties.append('ShareholderDeclaration' )
+        properties.append('LegalRepresentativeProofOfIdentity' )
         return properties
