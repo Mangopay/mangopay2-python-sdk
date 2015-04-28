@@ -1,6 +1,6 @@
 from mangopaysdk.tools.storages.istoragestrategy import IStorageStrategy
 from mangopaysdk.configuration import Configuration
-import os, json
+import os, json, stat
 from mangopaysdk.types.oauthtoken import OAuthToken
 import lockfile.mkdirlockfile
 
@@ -44,6 +44,7 @@ class DefaultStorageStrategy(IStorageStrategy):
         if obj == None: 
             return
         fp = open(DefaultStorageStrategy.cache_path,'w')
+        os.chmod(DefaultStorageStrategy.cache_path, stat.S_IRUSR|stat.S_IWUSR)
         lock = lockfile.mkdirlockfile.MkdirLockFile(DefaultStorageStrategy.cache_path)
         while not lock.i_am_locking():
             try:
