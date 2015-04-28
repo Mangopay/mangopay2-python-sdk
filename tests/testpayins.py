@@ -182,7 +182,7 @@ class Test_PayIns(TestBase):
 
         createPayIn = self.sdk.payIns.Create(payIn)
 
-        self.assertTrue(createPayIn.Id > 0)
+        self.assertTrue(int(createPayIn.Id) > 0)
         self.assertEqual(wallet.Id, createPayIn.CreditedWalletId)
         self.assertEqual('DIRECT_DEBIT', createPayIn.PaymentType)
         self.assertIsInstance(createPayIn.PaymentDetails, PayInPaymentDetailsDirectDebit)

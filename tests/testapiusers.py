@@ -9,7 +9,6 @@ from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.kycpage import KycPage
 from mangopaysdk.tools.enums import *
 import os
-from __builtin__ import Exception
 from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
 from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
 from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
@@ -221,6 +220,7 @@ class Test_ApiUsers(TestBase):
         john = self.getJohn()
         self.getJohnsAccount()
         self._johnsAccount = None
+        time.sleep(2)
         self.getJohnsAccount()
         pagination = Pagination(1, 10)
         sorting = Sorting()
@@ -241,6 +241,7 @@ class Test_ApiUsers(TestBase):
     def test_Users_Cards_SortByCreationDate(self):
         john = self.getJohn()
         self.getJohnsPayInCardDirect()
+        time.sleep(2)
         self.getJohnsPayInCardDirect()
         pagination = Pagination(1, 10)
         sorting = Sorting()
@@ -261,6 +262,7 @@ class Test_ApiUsers(TestBase):
     def test_Users_Transactions_SortByCreationDate(self):
         john = self.getJohn()
         self.getJohnsPayInCardDirect()
+        time.sleep(2)
         self.getJohnsPayInCardDirect()
         pagination = Pagination(1, 10)
         sorting = Sorting()
@@ -324,7 +326,7 @@ class Test_ApiUsers(TestBase):
         try:
             self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, '')
         except Exception as exc:
-            self.assertEqual(exc.message, 'Path of file cannot be empty')
+            self.assertEqual(str(exc), 'Path of file cannot be empty')
         
     def test_Users_CreateKycPage_WrongFilePath(self) :
         user = self.getJohn()
@@ -336,7 +338,7 @@ class Test_ApiUsers(TestBase):
         try:
             self.sdk.users.CreateKycPageFromFile(user.Id, kycDocument.Id, 'notExistFileName.tmp')
         except Exception as exc:
-            self.assertTrue(exc.message.find('File not exist') != -1)
+            self.assertEqual(str(exc), 'File not exist: notExistFileName.tmp')
     
     def test_Users_CreateKycPage_CorrectFilePath(self) :
         user = self.getJohn()

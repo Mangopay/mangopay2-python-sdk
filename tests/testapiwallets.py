@@ -1,3 +1,4 @@
+import time
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.types.pagination import Pagination
 from mangopaysdk.types.money import Money
@@ -54,6 +55,7 @@ class Test_ApiWallets(TestBase):
         wallet = self.getJohnsWallet()
         #create 2 pay-in objects
         self.getJohnsPayInCardWeb()
+        time.sleep(2)
         self.getJohnsPayInCardWeb()
 
         sorting = Sorting()

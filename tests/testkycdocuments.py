@@ -29,4 +29,4 @@ class Test_KycDocuments(TestBase):
 
         list = self.sdk.kycdocuments.GetAll(pagination, sorting)
 
-        self.assertTrue(list[0].CreationDate > list[1].CreationDate)
+        self.assertTrue(list[0].CreationDate >= list[1].CreationDate)

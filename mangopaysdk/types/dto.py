@@ -10,14 +10,10 @@ class Dto(object):
             if key.startswith("__"): continue # Skip private fields
 
             value = getattr(self, key)
-            if isinstance(value,bool) or isinstance(value,str) or \
-                    isinstance(value,int) or isinstance(value,float) or \
-                    isinstance(value,unicode):
-
-                        data[key] = value
-
-            elif isinstance(value,Dto):
+            if isinstance(value, Dto):
                 data[key] = value.__to_dict()
+            else:
+                data[key] = value
 
         return data
 
