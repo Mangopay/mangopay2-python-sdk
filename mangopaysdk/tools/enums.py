@@ -42,10 +42,8 @@ class PayInPaymentType:
 
 class ExecutionType:
     WEB = 'WEB'
-    TOKEN = 'TOKEN'
     DIRECT = 'DIRECT'
     PREAUTHORIZED = 'PREAUTHORIZED'
-    RECURRING_ORDER_EXECUTION = 'RECURRING_ORDER_EXECUTION'
 
 
 class PayOutPaymentType:
