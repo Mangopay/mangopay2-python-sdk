@@ -1,8 +1,8 @@
-MangoPay SDK
+Mangopay SDK
 =================================================
 
-MangoPaySDK is a Python client library to work with
-[MangoPay REST API](http://docs.mangopay.com/api-references/).
+MangopaySDK is a Python client library to work with
+[Mangopay REST API](http://docs.mangopay.com/api-references/).
 
 
 Installation and package dependencies
@@ -26,7 +26,7 @@ We strongly recommend using PIP as installation method:
 
 License
 -------------------------------------------------
-MangoPaySDK is distributed under MIT license, see LICENSE file.
+MangopaySDK is distributed under MIT license, see LICENSE file.
 
 
 Unit Tests (not included in pip package)
@@ -52,7 +52,7 @@ Report bugs or suggest features using [issue tracker at GitHub](https://github.c
 Client creation example (you need to call it only once)
 -------------------------------------------------
 
-You can create you MangoPay account on https://docs.mangopay.com/api-references/sandbox-credentials/
+You can create you Mangopay account on https://docs.mangopay.com/api-references/sandbox-credentials/
 
 or with this code :
 
