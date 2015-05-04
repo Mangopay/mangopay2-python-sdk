@@ -38,6 +38,7 @@ class Transaction (EntityBase):
     def GetReadOnlyProperties(self):
         properties = super(Transaction, self).GetReadOnlyProperties()
         properties.append('Status' )        
-        properties.append('ResultCode' )        
+        properties.append('ResultCode' )   
+        properties.append('ResultMessage' )
         properties.append('ExecutionDate' )        
         return properties
