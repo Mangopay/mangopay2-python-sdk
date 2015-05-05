@@ -72,6 +72,7 @@
     <Compile Include="mangopaysdk\types\bankaccountdetailsiban.py" />
     <Compile Include="mangopaysdk\types\bankaccountdetailsother.py" />
     <Compile Include="mangopaysdk\types\bankaccountdetailsus.py" />
+    <Compile Include="mangopaysdk\types\money.py" />
     <Compile Include="mangopaysdk\types\payintemplateurloptions.py" />
     <Compile Include="mangopaysdk\types\payinexecutiondetailsdirect.py" />
     <Compile Include="mangopaysdk\types\payinpaymentdetailsdirectdebit.py" />
@@ -84,7 +85,7 @@
     <Compile Include="mangopaysdk\types\exceptions\__init__.py" />
     <Compile Include="mangopaysdk\types\exceptions\responseexception.py" />
     <Compile Include="mangopaysdk\types\exceptions\mangopayexception.py" />
-    <Compile Include="mangopaysdk\types\money.py">
+    <Compile Include="mangopaysdk\types\refundreason.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mangopaysdk\entities\payin.py">

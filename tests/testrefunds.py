@@ -1,6 +1,7 @@
 import unittest
 from tests.testbase import TestBase
 from mangopaysdk.entities.refund import Refund
+from mangopaysdk.types.refundreason import RefundReason
 from mangopaysdk.tools.enums import TransactionType, TransactionStatus, InitialTransactionType, RefundReasonType
 
 
@@ -19,7 +20,7 @@ class Test_Refunds(TestBase):
         self.assertEqual(getRefund.AuthorId, user.Id)
         self.assertEqual(getRefund.Type, TransactionType.TRANSFER)
         self.assertEqual(getRefund.InitialTransactionType, InitialTransactionType.TRANSFER)
-        self.assertEqual(getRefund.RefundReason['RefundReasonType'], RefundReasonType.OTHER)
+        self.assertEqual(getRefund.RefundReason.RefundReasonType, RefundReasonType.OTHER)
     
     def test_Refund_GetForPayIn(self):
         payIn = self.getJohnsPayInCardDirect()
@@ -31,4 +32,4 @@ class Test_Refunds(TestBase):
         self.assertEqual(getRefund.AuthorId, user.Id)
         self.assertEqual(getRefund.Type, TransactionType.PAYOUT)
         self.assertEqual(getRefund.InitialTransactionType, InitialTransactionType.PAYIN)
-        self.assertEqual(getRefund.RefundReason['RefundReasonType'], RefundReasonType.INITIALIZED_BY_CLIENT)
+        self.assertEqual(getRefund.RefundReason.RefundReasonType, RefundReasonType.INITIALIZED_BY_CLIENT)

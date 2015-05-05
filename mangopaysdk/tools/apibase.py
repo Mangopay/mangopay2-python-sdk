@@ -37,6 +37,7 @@ from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
 from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
 from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
 from mangopaysdk.types.bankaccountdetailsother import BankAccountDetailsOTHER
+from mangopaysdk.types.refundreason import RefundReason
 from mangopaysdk.entities.temporarypaymentcard import TemporaryPaymentCard
 from mangopaysdk.entities.temporaryimmediatepayin import TemporaryImmediatePayIn
 
