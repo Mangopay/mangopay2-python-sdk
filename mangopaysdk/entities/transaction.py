@@ -23,6 +23,7 @@ class Transaction (EntityBase):
         # TransactionStatus {CREATED, SUCCEEDED, FAILED}
         self.Status = None
         self.ResultCode = None
+        self.ResultMessage = None
         # timestamp
         self.ExecutionDate = None
         return super(Transaction, self).__init__(id)
@@ -37,6 +38,7 @@ class Transaction (EntityBase):
     def GetReadOnlyProperties(self):
         properties = super(Transaction, self).GetReadOnlyProperties()
         properties.append('Status' )        
-        properties.append('ResultCode' )        
+        properties.append('ResultCode' )   
+        properties.append('ResultMessage' )
         properties.append('ExecutionDate' )        
         return properties
