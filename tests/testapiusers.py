@@ -51,6 +51,18 @@ class Test_ApiUsers(TestBase):
         self.assertTrue(int(ret.Id) > 0, "Created successfully after required props set")
         self.assertEqualInputProps(user, ret)
 
+    def test_Users_GetAll(self):
+
+        sorting = Sorting()
+        sorting.AddField("CreationDate", SortDirection.DESC)
+        users = self.sdk.users.GetAll(None, sorting)
+        self.assertTrue(users[0].CreationDate > users[len(users) - 1].CreationDate)
+
+        sorting = Sorting()
+        sorting.AddField("CreationDate", SortDirection.ASC)
+        users = self.sdk.users.GetAll(None, sorting)
+        self.assertTrue(users[0].CreationDate < users[len(users) - 1].CreationDate)
+
     def test_Users_GetNatural(self):
         john = self.getJohn()
 

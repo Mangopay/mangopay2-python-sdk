@@ -1,5 +1,6 @@
 import base64
 from mangopaysdk.tools.apibase import ApiBase
+from mangopaysdk.tools.sorting import Sorting
 from mangopaysdk.entities.userlegal import UserLegal
 from mangopaysdk.entities.usernatural import UserNatural
 from mangopaysdk.entities.bankaccount import BankAccount
@@ -27,12 +28,13 @@ class ApiUsers(ApiBase):
         response = self._createObject(methodKey, user)
         return self.GetUserResponse(response)
 
-    def GetAll(self, pagination = None):
+    def GetAll(self, pagination = None, sorting = None):
         """Get all users.
         param Pagination object
-        return array with users
+        param Sorting object
+        return Array with users
         """
-        usersList = self._getList('users_all', pagination)
+        usersList = self._getList('users_all', pagination, None, None, None, sorting)
         return [self.GetUserResponse(u) for u in usersList]
 
     def Get(self, userId):

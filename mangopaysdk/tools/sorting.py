@@ -1,25 +1,28 @@
 
 
-class Sorting:
+class Sorting(object):
     """Base sorting object."""
 
     SortFieldSeparator = "_"
     SortUrlParameterName = "Sort"
     
-    _sortFields = {}
+    _sortFields = []
+
+    def __init__(self):
+        self._sortFields = []
     
     def AddField(self, fieldName, sortDirection):
-        self._sortFields[fieldName] = sortDirection
+        self._sortFields.append([fieldName, sortDirection])
     
     def GetSortParameter(self):
-        return { self.SortUrlParameterName, self._getFields() }
+        return [self.SortUrlParameterName, self._getFields()]
     
     def _getFields(self):
         sortValues = ""
-        for key, val in self._sortFields.items():
+        for val in self._sortFields:
             if (sortValues != ''):
                 sortValues += self.SortFieldSeparator
      
-            sortValues += key + ":" + val
+            sortValues += val[0] + ":" + val[1]
         
         return sortValues
