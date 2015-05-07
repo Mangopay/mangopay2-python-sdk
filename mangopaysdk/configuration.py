@@ -1,5 +1,6 @@
 from mangopaysdk.tools import enums
 import logging
+import tempfile
 
 
 class Configuration:
@@ -15,7 +16,7 @@ class Configuration:
     BaseUrl = 'https://api.sandbox.mangopay.com'
 
     # path to temp - required to cache auth tokens
-    TempPath = "c:\Temp\\"
+    TempPath = tempfile.tempdir or "c:\Temp"
 
     # Constant to switch debug mode (0/1) - display all request and response data
     DebugMode = 0
