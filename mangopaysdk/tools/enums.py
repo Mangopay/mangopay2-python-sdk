@@ -14,7 +14,10 @@ class LegalPersonType:
     BUSINESS = 'BUSINESS'
     ORGANIZATION = 'ORGANIZATION'
     
-
+class TransactionStatus:
+    CREATED = 'CREATED'
+    SUCCEEDED = 'SUCCEEDED'
+    FAILED = 'FAILED'
 
 class TransactionType:
     PAYIN = 'PAYIN'
