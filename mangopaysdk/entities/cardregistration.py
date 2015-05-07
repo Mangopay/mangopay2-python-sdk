@@ -1,4 +1,5 @@
 from mangopaysdk.entities.entitybase import EntityBase
+from mangopaysdk.tools.enums import CardType
 
 
 class CardRegistration(EntityBase):
@@ -15,6 +16,8 @@ class CardRegistration(EntityBase):
         self.Currency = None
         # CardRegistrationStatus CREATED, ERROR, VALIDATED
         self.Status = None	
+        # Set default card type
+        self.CardType = CardType.CB_VISA_MASTERCARD
         return super(CardRegistration, self).__init__(id)
    
 

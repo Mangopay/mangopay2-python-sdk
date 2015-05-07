@@ -27,12 +27,6 @@ class TransactionType:
     TRANSFER = 'TRANSFER'
 
 
-class TransactionStatus:
-    CREATED = 'CREATED'
-    SUCCEEDED = 'SUCCEEDED'
-    FAILED = 'FAILED'
-
-
 class PayInPaymentType:
     CARD = 'CARD'
     BANK_WIRE = 'BANK_WIRE'

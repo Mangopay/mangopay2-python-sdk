@@ -9,16 +9,29 @@ class Test_CardRegistrations(TestBase):
 
 
     def test_CardRegistrations_Create(self):
-        cardRegistration = self.getJohnsCardRegistration()
         user = self.getJohn()
+
+        cardRegistration_visa = self.getJohnsCardRegistration(CardType.CB_VISA_MASTERCARD)
         
-        self.assertTrue(int(cardRegistration.Id) > 0)
-        self.assertNotEqual(cardRegistration.AccessKey, None)
-        self.assertNotEqual(cardRegistration.PreregistrationData, None)
-        self.assertNotEqual(cardRegistration.CardRegistrationURL, None)
-        self.assertEqual(user.Id, cardRegistration.UserId)
-        self.assertEqual('EUR', cardRegistration.Currency)
-        self.assertEqual('CREATED', cardRegistration.Status)
+        self.assertTrue(int(cardRegistration_visa.Id) > 0)
+        self.assertNotEqual(cardRegistration_visa.AccessKey, None)
+        self.assertNotEqual(cardRegistration_visa.PreregistrationData, None)
+        self.assertNotEqual(cardRegistration_visa.CardRegistrationURL, None)
+        self.assertEqual(user.Id, cardRegistration_visa.UserId)
+        self.assertEqual('EUR', cardRegistration_visa.Currency)
+        self.assertEqual('CREATED', cardRegistration_visa.Status)
+        self.assertEqual(CardType.CB_VISA_MASTERCARD, cardRegistration_visa.CardType)
+
+        cardRegistration_maestro = self.getNewJohnsCardRegistration(CardType.MAESTRO)
+        
+        self.assertTrue(int(cardRegistration_maestro.Id) > 0)
+        self.assertNotEqual(cardRegistration_maestro.AccessKey, None)
+        self.assertNotEqual(cardRegistration_maestro.PreregistrationData, None)
+        self.assertNotEqual(cardRegistration_maestro.CardRegistrationURL, None)
+        self.assertEqual(user.Id, cardRegistration_maestro.UserId)
+        self.assertEqual('EUR', cardRegistration_maestro.Currency)
+        self.assertEqual('CREATED', cardRegistration_maestro.Status)
+        self.assertEqual(CardType.MAESTRO, cardRegistration_maestro.CardType)
 
     def test_CardRegistrations_Get(self):
         cardRegistration = self.getJohnsCardRegistration()

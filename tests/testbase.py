@@ -340,17 +340,25 @@ class TestBase(unittest.TestCase):
         refund.Fees.Currency = payIn.Fees.Currency
         return self.sdk.payIns.CreateRefund(payIn.Id, refund)
         
-    def getJohnsCardRegistration(self):
+    def getJohnsCardRegistration(self, cardType = CardType.CB_VISA_MASTERCARD):
         """Creates card registration object.
         return CardRegistration 
         """
         if (self._johnsCardRegistration == None):
             user = self.getJohn()
             cardRegistration = CardRegistration()
+            cardRegistration.CardType = cardType
             cardRegistration.UserId = user.Id
             cardRegistration.Currency = 'EUR'
             self._johnsCardRegistration = self.sdk.cardRegistrations.Create(cardRegistration)
         return self._johnsCardRegistration
+
+    def getNewJohnsCardRegistration(self, cardType = CardType.CB_VISA_MASTERCARD):
+        """Creates new card registration object.
+        return CardRegistration 
+        """
+        self._johnsCardRegistration = None
+        return self.getJohnsCardRegistration(cardType)
 
     def getJohnsCardPreAuthorization(self):
         """Creates card pre authorization object.
