@@ -13,7 +13,7 @@ class FilterTransactions:
     Direction = None
 
     # Start date in unix format: return only transactions that have CreationDate BEFORE this date
-    BeforeDat = None
+    BeforeDate = None
 
     # End date in unix format: return only transactions that have CreationDate AFTER this date
     AfterDate = None

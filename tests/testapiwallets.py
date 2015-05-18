@@ -1,4 +1,5 @@
 import time
+from datetime import datetime, timedelta
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.types.pagination import Pagination
 from mangopaysdk.types.money import Money
@@ -67,3 +68,32 @@ class Test_ApiWallets(TestBase):
         transactions = self.sdk.wallets.GetTransactions(wallet.Id, pagination, filter, sorting)
 
         self.assertTrue(transactions[0].CreationDate > transactions[1].CreationDate)
+
+    def test_Wallets_Transactions_FilterByBeforeDate(self):
+        wallet = self.getJohnsWallet()
+        #create 2 pay-in objects
+        self.getJohnsPayInCardWeb()
+        time.sleep(2)
+        self.getJohnsPayInCardWeb()
+
+        pagination = Pagination(1, 20)
+        filter = FilterTransactions()
+        filter.Type = TransactionType.PAYIN
+        filter.BeforeDate = datetime(2015, 1, 1).strftime("%s")
+
+        transactions = self.sdk.wallets.GetTransactions(wallet.Id, pagination, filter)
+        self.assertEquals(len(transactions), 0)
+
+    def test_Wallets_Transactions_FilterByBeforeTomorrowDate(self):
+        wallet = self.getJohnsWallet()
+        #create 2 pay-in objects
+        self.getJohnsPayInCardWeb()
+        time.sleep(2)
+        self.getJohnsPayInCardWeb()
+
+        pagination = Pagination(1, 20)
+        filter = FilterTransactions()
+        filter.Type = TransactionType.PAYIN
+        filter.BeforeDate = (datetime.today() + timedelta(days=1)).strftime("%s")
+        transactions = self.sdk.wallets.GetTransactions(wallet.Id, pagination, filter)
+        self.assertEquals(len(transactions), 2)
