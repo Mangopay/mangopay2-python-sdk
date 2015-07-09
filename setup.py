@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 # to build - python setup.py sdist upload
 setup(
@@ -15,5 +15,5 @@ setup(
         "requests-oauthlib>=0.4.0",
         "lockfile>=0.9.1"
     ],
-	keywords="leetchi api sdk mangopay"
+    keywords="leetchi api sdk mangopay"
 )
