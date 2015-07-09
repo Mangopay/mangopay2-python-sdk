@@ -16,7 +16,7 @@ class Configuration:
     BaseUrl = 'https://api.sandbox.mangopay.com'
 
     # path to temp - required to cache auth tokens
-    TempPath = tempfile.tempdir or "c:\Temp"
+    TempPath = tempfile.mkdtemp() or "c:\Temp"
 
     # Constant to switch debug mode (0/1) - display all request and response data
     DebugMode = 0
