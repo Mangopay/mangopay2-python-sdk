@@ -2,6 +2,7 @@ from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.entities.user import User
 from mangopaysdk.tools.enums import PersonType
 from mangopaysdk.tools.enums import KYCLevel
+from mangopaysdk.types.address import Address
 
 
 class UserLegal (User):
@@ -30,6 +31,15 @@ class UserLegal (User):
         self._proofOfRegistration = None
         self._shareholderDeclaration = None
         self._legalRepresentativeProofOfIdentity = None
+
+    def GetSubObjects(self):
+        """Get array with mapping which property is object and what type of object.
+        return dictionary
+        """
+        return {
+            'HeadquartersAddress' : 'Address',
+            'LegalRepresentativeAddress' : 'Address'
+        }
 
     def GetReadOnlyProperties(self):
         properties = super(UserLegal, self).GetReadOnlyProperties()

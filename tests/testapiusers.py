@@ -13,6 +13,7 @@ from mangopaysdk.types.bankaccountdetailsgb import BankAccountDetailsGB
 from mangopaysdk.types.bankaccountdetailsus import BankAccountDetailsUS
 from mangopaysdk.types.bankaccountdetailsca import BankAccountDetailsCA
 from mangopaysdk.types.bankaccountdetailsother import BankAccountDetailsOTHER
+from mangopaysdk.types.address import Address
 from mangopaysdk.tools.sorting import Sorting
 
 
@@ -37,6 +38,13 @@ class Test_ApiUsers(TestBase):
 
     def test_Users_CreateLegal_PassesIfRequiredPropsProvided(self):
         user = UserLegal()
+        user.HeadquartersAddress = Address()
+        user.HeadquartersAddress.AddressLine1 = "AddressLine1"
+        user.HeadquartersAddress.AddressLine2 = "AddressLine2"
+        user.HeadquartersAddress.City = "City"
+        user.HeadquartersAddress.Country = "FR"
+        user.HeadquartersAddress.PostalCode = "11222"
+        user.HeadquartersAddress.Region = "Region"
         user.Name = "SomeOtherSampleOrg"
         user.LegalPersonType = "BUSINESS"
         user.Email = "john.doe@sample.org"

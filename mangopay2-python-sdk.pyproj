@@ -66,6 +66,7 @@
     <Compile Include="mangopaysdk\tools\storages\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\types\address.py" />
     <Compile Include="mangopaysdk\types\bankaccountdetails.py" />
     <Compile Include="mangopaysdk\types\bankaccountdetailsca.py" />
     <Compile Include="mangopaysdk\types\bankaccountdetailsgb.py" />

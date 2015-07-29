@@ -1,4 +1,5 @@
 from mangopaysdk.entities.entitybase import EntityBase
+from mangopaysdk.types.address import Address
 
 
 class BankAccount(EntityBase):
@@ -16,6 +17,12 @@ class BankAccount(EntityBase):
         # example BREXPLPWKRA
         #self.BIC = None
         return super(BankAccount, self).__init__(id)
+
+    def GetSubObjects(self):
+        """Get array with mapping which property is object and what type of object.
+        return dictionary
+        """
+        return {'OwnerAddress' : 'Address'}
 
     def GetReadOnlyProperties(self):
         properties = super(BankAccount, self).GetReadOnlyProperties()

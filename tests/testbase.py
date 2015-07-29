@@ -24,6 +24,7 @@ from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBan
 from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
 from mangopaysdk.types.payinpaymentdetailsdirectdebit import PayInPaymentDetailsDirectDebit
 from mangopaysdk.types.money import Money
+from mangopaysdk.types.address import Address
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 from mangopaysdk.types.pagination import Pagination
 from mangopaysdk.types.bankaccountdetailsiban import BankAccountDetailsIBAN
@@ -55,6 +56,16 @@ class TestBase(unittest.TestCase):
         sdk.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
         return sdk
 
+    def getNewAddress(self):
+        adr = Address()
+        adr.AddressLine1 = "Address line 1"
+        adr.AddressLine2 = "Address line 2"
+        adr.City = "City"
+        adr.Region = "Region"
+        adr.PostalCode = "11222"
+        adr.Country = "PL"
+        return adr
+
     def getJohn(self):
         """Creates TestBase._john (test natural user) if not created yet"""
         if (self._john == None):
@@ -62,7 +73,7 @@ class TestBase(unittest.TestCase):
             user.FirstName = "John"
             user.LastName = "Doe"
             user.Email = "john.doe@sample.org"
-            user.Address = "Some Address"
+            user.Address = self.getNewAddress()
             user.Birthday = int(time.mktime((1975, 12, 21, 0,0,0, -1, -1, -1)))
             user.Nationality = "FR"
             user.CountryOfResidence = "FR"
@@ -80,7 +91,7 @@ class TestBase(unittest.TestCase):
             user.Name = "MartixSampleOrg"
             user.Email = "john.doe@sample.org"
             user.LegalPersonType = "BUSINESS"
-            user.HeadquartersAddress = "Some Address"
+            user.HeadquartersAddress = self.getNewAddress()
             user.LegalRepresentativeFirstName = john.FirstName
             user.LegalRepresentativeLastName = john.LastName
             user.LegalRepresentativeAddress = john.Address
@@ -428,7 +439,12 @@ class TestBase(unittest.TestCase):
             self.assertEqual(entity1.FirstName, entity2.FirstName)
             self.assertEqual(entity1.LastName, entity2.LastName)
             self.assertEqual(entity1.Email, entity2.Email)
-            self.assertEqual(entity1.Address, entity2.Address)
+            self.assertEqual(entity1.Address.AddressLine1, entity2.Address.AddressLine1)
+            self.assertEqual(entity1.Address.AddressLine2, entity2.Address.AddressLine2)
+            self.assertEqual(entity1.Address.City, entity2.Address.City)
+            self.assertEqual(entity1.Address.Country, entity2.Address.Country)
+            self.assertEqual(entity1.Address.PostalCode, entity2.Address.PostalCode)
+            self.assertEqual(entity1.Address.Region, entity2.Address.Region)
             self.assertEqual(entity1.Birthday, entity2.Birthday)
             self.assertEqual(entity1.Nationality, entity2.Nationality)
             self.assertEqual(entity1.CountryOfResidence, entity2.CountryOfResidence)
@@ -439,7 +455,12 @@ class TestBase(unittest.TestCase):
             self.assertEqual(entity1.Tag, entity2.Tag)
             self.assertEqual(entity1.PersonType, entity2.PersonType)
             self.assertEqual(entity1.Name, entity2.Name)
-            self.assertEqual(entity1.HeadquartersAddress, entity2.HeadquartersAddress)
+            self.assertEqual(entity1.HeadquartersAddress.AddressLine1, entity2.HeadquartersAddress.AddressLine1)
+            self.assertEqual(entity1.HeadquartersAddress.AddressLine2, entity2.HeadquartersAddress.AddressLine2)
+            self.assertEqual(entity1.HeadquartersAddress.City, entity2.HeadquartersAddress.City)
+            self.assertEqual(entity1.HeadquartersAddress.Country, entity2.HeadquartersAddress.Country)
+            self.assertEqual(entity1.HeadquartersAddress.PostalCode, entity2.HeadquartersAddress.PostalCode)
+            self.assertEqual(entity1.HeadquartersAddress.Region, entity2.HeadquartersAddress.Region)
             self.assertEqual(entity1.LegalRepresentativeFirstName, entity2.LegalRepresentativeFirstName)
             self.assertEqual(entity1.LegalRepresentativeLastName, entity2.LegalRepresentativeLastName)
             #TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -454,7 +475,12 @@ class TestBase(unittest.TestCase):
             self.assertEqual(entity1.UserId, entity2.UserId)
             self.assertEqual(entity1.Type, entity2.Type)
             self.assertEqual(entity1.OwnerName, entity2.OwnerName)
-            self.assertEqual(entity1.OwnerAddress, entity2.OwnerAddress)
+            self.assertEqual(entity1.OwnerAddress.AddressLine1, entity2.OwnerAddress.AddressLine1)
+            self.assertEqual(entity1.OwnerAddress.AddressLine2, entity2.OwnerAddress.AddressLine2)
+            self.assertEqual(entity1.OwnerAddress.City, entity2.OwnerAddress.City)
+            self.assertEqual(entity1.OwnerAddress.Country, entity2.OwnerAddress.Country)
+            self.assertEqual(entity1.OwnerAddress.PostalCode, entity2.OwnerAddress.PostalCode)
+            self.assertEqual(entity1.OwnerAddress.Region, entity2.OwnerAddress.Region)
             if (entity1.Type == 'IBAN'):
                 self.assertEqual(entity1.Details.IBAN, entity2.Details.IBAN)
                 self.assertEqual(entity1.Details.BIC, entity2.Details.BIC)

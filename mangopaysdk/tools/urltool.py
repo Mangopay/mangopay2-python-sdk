@@ -15,9 +15,9 @@ class UrlTool:
     def GetRestUrl(self, urlKey, addClientId = True, pagination = None, additionalUrlParams = None):
 
         if not addClientId:
-            url = '/v2' + urlKey
+            url = '/v2.01' + urlKey
         else:
-            url = '/v2/' + self._config.ClientID + urlKey
+            url = '/v2.01/' + self._config.ClientID + urlKey
 
             if pagination != None:
                 url += '?page=' + str(pagination.Page) + '&per_page=' + str(pagination.ItemsPerPage)
