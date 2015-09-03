@@ -129,6 +129,7 @@ class ApiBase(object):
         'wallets_save' : ('/wallets/%s', 'PUT'),
 
         'kyc_documents_all' : ('/KYC/documents', 'GET'),
+        'kyc_document_get' : ('/KYC/documents/%s', 'GET'),
 
 
         # These are temporary functions and WILL be removed in the future. 

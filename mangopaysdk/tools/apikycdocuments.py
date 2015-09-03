@@ -11,3 +11,9 @@ class ApiKycDocuments(ApiBase):
         """
         return self._getList('kyc_documents_all', pagination, 'KycDocument', None, None, sorting)
     
+    def Get(self, kycDocumentId):
+        """Gets KYC document.
+        param string KYC document identifier.
+        return KYC document returned from API.
+        """
+        return self._getObject('kyc_document_get', kycDocumentId, 'KycDocument')

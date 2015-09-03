@@ -30,3 +30,11 @@ class Test_KycDocuments(TestBase):
         list = self.sdk.kycdocuments.GetAll(pagination, sorting)
 
         self.assertTrue(list[0].CreationDate >= list[1].CreationDate)
+
+    def test_KycDocuments_Get(self):
+        kycDocument = self.getUserKycDocument()
+        result = self.sdk.kycdocuments.Get(kycDocument.Id)
+
+        self.assertIsNotNone(result)
+        self.assertTrue(kycDocument.Id == result.Id)
+        self.assertEqualInputProps(kycDocument, result)
