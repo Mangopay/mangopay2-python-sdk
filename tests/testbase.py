@@ -113,8 +113,8 @@ class TestBase(unittest.TestCase):
             account.UserId = john.Id
             account.Type = 'IBAN'
             account.Details = BankAccountDetailsIBAN()
-            account.Details.IBAN = 'FR7617906000320008335232973'
-            account.Details.BIC = 'BINAADADXXX'
+            account.Details.IBAN = 'FR7618829754160173622224154'
+            account.Details.BIC = 'CMBRFR2BCME'
             self._johnsAccount = self.sdk.users.CreateBankAccount(john.Id, account)
             self.assertEqualInputProps(self._johnsAccount, account, True)
         return self._johnsAccount
