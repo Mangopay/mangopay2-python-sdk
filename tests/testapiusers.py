@@ -140,16 +140,16 @@ class Test_ApiUsers(TestBase):
         account.OwnerName = john.FirstName + ' ' + john.LastName
         account.OwnerAddress = john.Address
         account.Details = BankAccountDetailsGB()
-        account.Details.AccountNumber = '18329068'
-        account.Details.SortCode = '306541'
+        account.Details.AccountNumber = '63956474'
+        account.Details.SortCode = '200000'
         
         createAccount = self.sdk.users.CreateBankAccount(john.Id, account)
         
         self.assertTrue(len(createAccount.Id) > 0)
         self.assertEqual(createAccount.UserId, john.Id)
         self.assertEqual(createAccount.Type, 'GB')
-        self.assertEqual(createAccount.Details.AccountNumber, '18329068')
-        self.assertEqual(createAccount.Details.SortCode, '306541')
+        self.assertEqual(createAccount.Details.AccountNumber, '63956474')
+        self.assertEqual(createAccount.Details.SortCode, '200000')
     
     
     def test_Users_CreateBankAccount_US(self):
