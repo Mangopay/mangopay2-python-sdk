@@ -52,27 +52,14 @@ Contact
 Report bugs or suggest features using [issue tracker at GitHub](https://github.com/MangoPay/mangopay2-python-sdk).
 
 
-
-Client creation example (you need to call it only once)
+Account creation
 -------------------------------------------------
-
-You can create your Mangopay account on https://docs.mangopay.com/api-references/sandbox-credentials/
-
-or with this code :
-
-    from mangopaysdk.mangopayapi import MangoPayApi
-    api = MangoPayApi()
-
-    client = api.clients.Create('your-client-id', 'your-client-name', 'your-client-email@sample.org')
-    
-    # you'll receive your passphrase here, note it down and keep in secret
-    print(client.Passphrase)
+You can get yourself a [free sandbox account](https://www.mangopay.com/get-started/create-sandbox/) or sign up for a [production account](https://www.mangopay.com/get-started/submit-your-app/create-credentials/) (note that validation of your production account can take a few days, so think about doing it in advance of when you actually want to go live).
 
 
 Configuration
 -------------------------------------------------
-See the example above and call `api.clients.Create(...)` to get your passphrase.
-Then set `api.Config.ClientID` to your MangoPay Client ID and `api.Config.ClientPassword` to your passphrase.
+Using the credential info from the signup process above, you should then set `api.Config.ClientID` to your MangoPay Client ID and `api.Config.ClientPassword` to your passphrase.
 
 You also need to set a folder path in `api.Config.TempPath` that SDK needs to store temporary files. 
 This path should be outside your www folder.
