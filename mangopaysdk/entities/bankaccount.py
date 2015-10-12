@@ -11,11 +11,7 @@ class BankAccount(EntityBase):
         self.Type = None
         self.OwnerName = None
         self.OwnerAddress = None
-        # must be valid ^[a-zA-Z]{2}\d{2}\s*(\w{4}\s*){2,7}\w{1,4}
-        #self.IBAN = None
         self.Details = None
-        # example BREXPLPWKRA
-        #self.BIC = None
         return super(BankAccount, self).__init__(id)
 
     def GetSubObjects(self):
