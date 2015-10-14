@@ -9,9 +9,6 @@ class FilterTransactions:
     #TransactionNature { REGULAR, REFUND, REPUDIATION }
     Nature = None
 
-    # TransactionDirection {DEBIT, CREDIT}
-    Direction = None
-
     # Start date in unix format: return only transactions that have CreationDate BEFORE this date
     BeforeDate = None
 
