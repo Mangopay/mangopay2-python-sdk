@@ -55,6 +55,7 @@ class CardType:
     MASTERPASS = 'MASTERPASS'
     P24 = 'P24'
     IDEAL = 'IDEAL'
+    BCMC = 'BCMC'
 
 
 class TransactionNature:
