@@ -22,6 +22,10 @@ from mangopaysdk.entities.refund import Refund
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
 from mangopaysdk.entities.hook import Hook
+from mangopaysdk.entities.dispute import Dispute
+from mangopaysdk.entities.disputedocument import DisputeDocument
+from mangopaysdk.entities.disputepage import DisputePage
+from mangopaysdk.entities.repudiation import Repudiation
 from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
@@ -130,6 +134,23 @@ class ApiBase(object):
 
         'kyc_documents_all' : ('/KYC/documents', 'GET'),
         'kyc_document_get' : ('/KYC/documents/%s', 'GET'),
+
+        'disputes_get' : ('/disputes/%s', 'GET'),
+        'disputes_save_tag' : ('/disputes/%s', 'PUT'),
+        'disputes_save_contest_funds' : ('/disputes/%s/submit', 'PUT'),
+        'disputes_save_close' : ('/disputes/%s/close', 'PUT'),
+        'disputes_get_transactions' : ('/disputes/%s/transactions', 'GET'),
+        'disputes_get_all' : ('/disputes', 'GET'),
+        'disputes_get_for_wallet' : ('/wallets/%s/disputes', 'GET'),
+        'disputes_get_for_user' : ('/users/%s/disputes', 'GET'),
+        'disputes_document_create' : ('/disputes/%s/documents', 'POST'),
+        'disputes_document_page_create' : ('/disputes/%s/documents/%s/pages', 'POST'),
+        'disputes_document_submit' : ('/disputes/%s/documents/%s', 'PUT'),
+        'disputes_document_get' : ('/dispute-documents/%s', 'GET'),
+        'disputes_document_get_for_dispute' : ('/disputes/%s/documents', 'GET'),
+        'disputes_document_get_for_client' : ('/dispute-documents', 'GET'),
+        'disputes_repudiation_get' : ('/repudiations/%s', 'GET'),
+	    'disputes_repudiation_create_settlement' : ('/repudiations/%s/settlementtransfer', 'POST'),
 
 
         # These are temporary functions and WILL be removed in the future. 

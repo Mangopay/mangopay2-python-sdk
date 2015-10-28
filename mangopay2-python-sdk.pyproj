@@ -31,6 +31,10 @@
     <Compile Include="mangopaysdk\entities\bankaccount.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\repudiation.py" />
+    <Compile Include="mangopaysdk\entities\disputedocument.py" />
+    <Compile Include="mangopaysdk\entities\dispute.py" />
+    <Compile Include="mangopaysdk\entities\disputepage.py" />
     <Compile Include="mangopaysdk\entities\temporaryimmediatepayin.py" />
     <Compile Include="mangopaysdk\entities\temporarypaymentcard.py" />
     <Compile Include="mangopaysdk\entities\card.py" />
@@ -49,6 +53,7 @@
     <Compile Include="mangopaysdk\tools\apicardpreauthorizations.py" />
     <Compile Include="mangopaysdk\tools\apicards.py" />
     <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
+    <Compile Include="mangopaysdk\tools\apidisputes.py" />
     <Compile Include="mangopaysdk\tools\apievents.py" />
     <Compile Include="mangopaysdk\tools\sorting.py" />
     <Compile Include="mangopaysdk\tools\apikycdocuments.py" />
@@ -192,6 +197,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="setup.py" />
+    <Compile Include="tests\testdisputes.py" />
     <Compile Include="tests\testcardpreauthorizations.py" />
     <Compile Include="tests\testevents.py" />
     <Compile Include="tests\testkycdocuments.py" />
