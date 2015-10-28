@@ -15,6 +15,7 @@ from mangopaysdk.entities.kycdocument import KycDocument
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
 from mangopaysdk.entities.hook import Hook
+from mangopaysdk.entities.dispute import Dispute
 from mangopaysdk.tools.enums import *
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
@@ -27,6 +28,7 @@ from mangopaysdk.types.money import Money
 from mangopaysdk.types.address import Address
 from mangopaysdk.tools.storages.memorystoragestrategy import MemoryStorageStrategy
 from mangopaysdk.types.pagination import Pagination
+from mangopaysdk.tools.sorting import Sorting
 from mangopaysdk.types.bankaccountdetailsiban import BankAccountDetailsIBAN
 
 
@@ -47,6 +49,7 @@ class TestBase(unittest.TestCase):
         self._johnsKycDocument = None
         self._johnsCardPreAuthorization = None
         self._johnsHook = None
+        self._clientDisputes = None
 
     def buildNewMangoPayApi(self):
         sdk = MangoPayApi()

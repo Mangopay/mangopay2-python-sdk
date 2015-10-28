@@ -1,19 +1,15 @@
 class FilterTransactions:
 
-    # TransactionStatus {CREATED, SUCCEEDED, FAILED}
     Status = None
 
-    # TransactionType {PAYIN, PAYOUT, TRANSFER}
     Type = None
 
-    #TransactionNature { REGULAR, REFUND, REPUDIATION }
     Nature = None
 
-    # Start date in unix format: return only transactions that have CreationDate BEFORE this date
+    # Start date in unix format: return only objects that have CreationDate BEFORE this date
     BeforeDate = None
 
-    # End date in unix format: return only transactions that have CreationDate AFTER this date
+    # End date in unix format: return only objects that have CreationDate AFTER this date
     AfterDate = None
 
-    # EventType value 
     EventType = None
