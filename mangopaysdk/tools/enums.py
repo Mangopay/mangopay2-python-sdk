@@ -56,6 +56,7 @@ class CardType:
     P24 = 'P24'
     IDEAL = 'IDEAL'
     BCMC = 'BCMC'
+    PAYLIB = 'PAYLIB'
 
 
 class TransactionNature:
