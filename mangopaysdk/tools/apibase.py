@@ -1,4 +1,4 @@
-from mangopaysdk.types.pagination import Pagination
+﻿from mangopaysdk.types.pagination import Pagination
 from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.types.dto import Dto 
 from mangopaysdk.types.money import Money
@@ -16,6 +16,7 @@ from mangopaysdk.entities.usernatural import UserNatural
 from mangopaysdk.entities.transfer import Transfer
 from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.entities.transfer import Transfer
+from mangopaysdk.entities.settlement import Settlement
 from mangopaysdk.entities.client import Client
 from mangopaysdk.entities.card import Card
 from mangopaysdk.entities.refund import Refund
@@ -151,7 +152,10 @@ class ApiBase(object):
         'disputes_document_get_for_client' : ('/dispute-documents', 'GET'),
         'disputes_repudiation_get' : ('/repudiations/%s', 'GET'),
 	    'disputes_repudiation_create_settlement' : ('/repudiations/%s/settlementtransfer', 'POST'),
+        
+        'settlement_get' : ('/settlements/%s', 'GET'),
 
+        'idempotency_response_get' : ('/responses/%s', 'GET'),
 
         # These are temporary functions and WILL be removed in the future. 
         # Contact support before using these features or if have any queries.
@@ -208,13 +212,25 @@ class ApiBase(object):
         param int secondEntityId Releated entity identifier
         return dictionary Response data
         """
+        return self._createObjectIdempotent(None, methodKey, entity, responseClassName, entityId, secondEntityId)
+
+    def _createObjectIdempotent (self, idempotencyKey, methodKey, entity, responseClassName = None, entityId = None, secondEntityId = None):
+        """Create object in API.
+        param string idempotencyKey Idempotency key for this request
+        param string methodKey Key with request data
+        param object entity Entity object
+        param object responseClassName Name of entity class from response
+        param int entityId Entity identifier
+        param int secondEntityId Releated entity identifier
+        return dictionary Response data
+        """
         urlMethod = self._buildUrl(methodKey, entityId, secondEntityId)
 
         if entity != None:
             requestData = self._buildRequestData(entity)
 
         rest = RestTool(self._root, True)
-        response = rest.Request(urlMethod, self._getRequestType(methodKey), requestData)
+        response = rest.RequestIdempotent(idempotencyKey, urlMethod, self._getRequestType(methodKey), requestData)
 
         if responseClassName != None:
             return self._castResponseToEntity(response, responseClassName)

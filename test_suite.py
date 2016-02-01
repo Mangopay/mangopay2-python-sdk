@@ -20,6 +20,7 @@ from tests.testcardpreauthorizations import Test_CardPreAuthorization
 from tests.testhooks import Test_Hooks
 from tests.testkycdocuments import Test_KycDocuments
 from tests.testdisputes import Test_Disputes
+from tests.testidempotency import Test_Idempotency
 
 
 suite = unittest.TestSuite()
@@ -38,6 +39,7 @@ suite.addTest(unittest.makeSuite(Test_ApiEvents))
 suite.addTest(unittest.makeSuite(Test_Hooks))
 suite.addTest(unittest.makeSuite(Test_KycDocuments))
 suite.addTest(unittest.makeSuite(Test_Disputes))
+suite.addTest(unittest.makeSuite(Test_Idempotency))
 
 modules = ['mangopaysdk']
 

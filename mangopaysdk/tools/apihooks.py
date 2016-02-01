@@ -1,4 +1,4 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 
 class ApiHooks(ApiBase):
     """MangoPay API for hooks and notifications."""
@@ -8,7 +8,15 @@ class ApiHooks(ApiBase):
         param Hook hook
         return Newly created hook object returned from API
         """
-        return self._createObject('hooks_create', hook, 'Hook')
+        return self.CreateIdempotent(None, hook)
+
+    def CreateIdempotent(self, idempotencyKey, hook):
+        """Creates a new hook.
+        param string idempotencyKey Idempotency key for this request
+        param Hook hook
+        return Newly created hook object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'hooks_create', hook, 'Hook')
     
     def Get(self, hookId):
         """Gets hook.

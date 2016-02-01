@@ -1,4 +1,4 @@
-import base64
+﻿import base64
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.tools.sorting import Sorting
 from mangopaysdk.entities.userlegal import UserLegal
@@ -18,6 +18,14 @@ class ApiUsers(ApiBase):
         param UserLegal/UserNatural user (list of required fields in coresponding entity class)
         return UserLegal/UserNatural User object returned from API
         """
+        return self.CreateIdempotent(None, user)
+
+    def CreateIdempotent(self, idempotencyKey, user):
+        """Create new user.
+        param string idempotencyKey Idempotency key for this request
+        param UserLegal/UserNatural user (list of required fields in coresponding entity class)
+        return UserLegal/UserNatural User object returned from API
+        """
         if isinstance(user, UserNatural):
             methodKey = 'users_createnaturals'
         elif isinstance(user, UserLegal):
@@ -25,7 +33,7 @@ class ApiUsers(ApiBase):
         else:
             raise Exception('Wrong entity class for user');
 
-        response = self._createObject(methodKey, user)
+        response = self._createObjectIdempotent(idempotencyKey, methodKey, user)
         return self.GetUserResponse(response)
 
     def GetAll(self, pagination = None, sorting = None):
@@ -82,8 +90,17 @@ class ApiUsers(ApiBase):
         param BankAccount Entity of bank account with fields: OwnerName, UserId, Type, OwnerAddress,IBAN, BIC, Tag
         return BankAccount Create bank account object
         """
+        return self.CreateBankAccountIdempotent(None, userId, bankAccount)
+
+    def CreateBankAccountIdempotent(self, idempotencyKey, userId, bankAccount):
+        """Create bank account for user.
+        param string idempotencyKey Idempotency key for this request
+        param Int/GUID userId
+        param BankAccount Entity of bank account with fields: OwnerName, UserId, Type, OwnerAddress,IBAN, BIC, Tag
+        return BankAccount Create bank account object
+        """
         type = self.GetBankAccountType(bankAccount)
-        return self._createObject('users_createbankaccounts_' + type, bankAccount, 'BankAccount', userId)
+        return self._createObjectIdempotent(idempotencyKey, 'users_createbankaccounts_' + type, bankAccount, 'BankAccount', userId)
 
     def GetBankAccounts(self, userId, pagination = None, sorting = None):
         """Get all bank accounts for user.
@@ -142,7 +159,16 @@ class ApiUsers(ApiBase):
         param Int/GUID User identifier
         return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
         """
-        return self._createObject('users_createkycdocument', kycDocument, 'KycDocument', userId)
+        return self.CreateUserKycDocumentIdempotent(None, kycDocument, userId)
+
+    def CreateUserKycDocumentIdempotent(self, idempotencyKey, kycDocument, userId):
+        """Create KycDocument
+        param string idempotencyKey Idempotency key for this request
+        param KycDocument entity with Type and Tag set
+        param Int/GUID User identifier
+        return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'users_createkycdocument', kycDocument, 'KycDocument', userId)
 
     def GetUserKycDocument(self, kycDocumentId, userId):
         """Get KycDocument by ID.
@@ -158,7 +184,16 @@ class ApiUsers(ApiBase):
         param Int/GUID User identifier
         param Int/GUID KycDocument identifier
         """
-        return self._createObject('users_createkycpage', kycPage, None, userId, kycDocumentId)
+        return self.CreateUserKycPageIdempotent(None, kycPage, userId, kycDocumentId)
+
+    def CreateUserKycPageIdempotent(self, idempotencyKey, kycPage, userId, kycDocumentId):
+        """Create KycPage for existing KycDocument
+        param string idempotencyKey Idempotency key for this request
+        param KycPage entity (File should be base64 string)
+        param Int/GUID User identifier
+        param Int/GUID KycDocument identifier
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'users_createkycpage', kycPage, None, userId, kycDocumentId)
 
     def UpdateUserKycDocument(self, kycDocument, userId, kycDocumentId):
         """Updates KycDocument
@@ -171,6 +206,15 @@ class ApiUsers(ApiBase):
 
     def CreateKycPageFromFile(self, userId, kycDocumentId, file):
         """Create page for Kyc document from file
+        param int userId User identifier
+        param KycPage page Kyc
+        """
+
+        self.CreateKycPageFromFileIdempotent(None, userId, kycDocumentId, file)
+
+    def CreateKycPageFromFileIdempotent(self, idempotencyKey, userId, kycDocumentId, file):
+        """Create page for Kyc document from file
+        param string idempotencyKey Idempotency key for this request
         param int userId User identifier
         param KycPage page Kyc
         """
@@ -190,7 +234,7 @@ class ApiUsers(ApiBase):
         if (kycPage.File == None):
             raise Exception('Content of the file cannot be empty')
 
-        self.CreateUserKycPage(kycPage, userId, kycDocumentId)
+        self.CreateUserKycPageIdempotent(idempotencyKey, kycPage, userId, kycDocumentId)
 
     def GetBankAccountType(self, bankAccount):
 

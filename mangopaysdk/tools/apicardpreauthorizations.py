@@ -1,4 +1,4 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.cardpreauthorization import CardPreAuthorization
 
 
@@ -12,7 +12,15 @@ class ApiCardPreAuthorizations (ApiBase):
         param CardPreAuthorization object to create
         return CardPreAuthorization Object returned from API
         """
-        return self._createObject('preauthorizations_create', cardPreAuthorization, 'CardPreAuthorization')
+        return self.CreateIdempotent(None, cardPreAuthorization)
+
+    def CreateIdempotent(self, idempotencyKey, cardPreAuthorization):
+        """Create new card preauthorization
+        param string idempotencyKey Idempotency key for this request
+        param CardPreAuthorization object to create
+        return CardPreAuthorization Object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'preauthorizations_create', cardPreAuthorization, 'CardPreAuthorization')
 
     def Get(self, cardPreAuthorizationId):
         """Get card preauthorization

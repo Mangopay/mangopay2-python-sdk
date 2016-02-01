@@ -31,6 +31,7 @@
     <Compile Include="mangopaysdk\entities\bankaccount.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\idempotencyresponse.py" />
     <Compile Include="mangopaysdk\entities\repudiation.py" />
     <Compile Include="mangopaysdk\entities\disputedocument.py" />
     <Compile Include="mangopaysdk\entities\dispute.py" />
@@ -50,11 +51,14 @@
     <Compile Include="mangopaysdk\entities\entitybase.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mangopaysdk\entities\settlement.py" />
     <Compile Include="mangopaysdk\tools\apicardpreauthorizations.py" />
     <Compile Include="mangopaysdk\tools\apicards.py" />
     <Compile Include="mangopaysdk\tools\apicardregistrations.py" />
     <Compile Include="mangopaysdk\tools\apidisputes.py" />
+    <Compile Include="mangopaysdk\tools\apiidempotency.py" />
     <Compile Include="mangopaysdk\tools\apievents.py" />
+    <Compile Include="mangopaysdk\tools\filterdisputedocuments.py" />
     <Compile Include="mangopaysdk\tools\sorting.py" />
     <Compile Include="mangopaysdk\tools\apikycdocuments.py" />
     <Compile Include="mangopaysdk\tools\apihooks.py" />
@@ -200,6 +204,7 @@
     <Compile Include="tests\testdisputes.py" />
     <Compile Include="tests\testcardpreauthorizations.py" />
     <Compile Include="tests\testevents.py" />
+    <Compile Include="tests\testidempotency.py" />
     <Compile Include="tests\testkycdocuments.py" />
     <Compile Include="tests\testhooks.py" />
     <Compile Include="tests\testrefunds.py">

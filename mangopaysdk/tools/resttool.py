@@ -1,4 +1,4 @@
-import requests, json, logging
+﻿import requests, json, logging
 from mangopaysdk.tools.authenticationHelper import AuthenticationHelper
 from mangopaysdk.tools.urltool import UrlTool
 from mangopaysdk.types.exceptions.responseexception import ResponseException
@@ -50,14 +50,31 @@ class BaseRestTool(object):
         param MangoPay pagination Pagination object
         return object Response data
         """
+        return self.RequestIdempotent(None, urlMethod, requestType, requestData, pagination, additionalUrlParams)
+
+    def RequestIdempotent(self, idempotencyKey, urlMethod, requestType, requestData = None, pagination = None, additionalUrlParams = None):
+        """Call request to MangoPay API.
+        param string idempotencyKey Idempotency key for this request
+        param string urlMethod Type of method in REST API
+        param MangoPay requestType Type of request
+        param array additionalUrlParams Array with additional parameters to URL. Expected keys: "sort" and "filter"
+        param MangoPay pagination Pagination object
+        return object Response data
+        """
         self._requestType = requestType
         self._requestData = requestData
 
-        response = self._runRequest(urlMethod, pagination, additionalUrlParams)
+        response = self._runRequestIdempotent(idempotencyKey, urlMethod, pagination, additionalUrlParams)
 
         return response
 
     def _generateRequest(self, urlMethod, pagination, additionalUrlParams):
+        """Generate the request object
+        that will be used in the `_runRequest`
+        """
+        return self._generateRequestIdempotent(None, urlMethod, pagination, additionalUrlParams)
+
+    def _generateRequestIdempotent(self, idempotencyKey, urlMethod, pagination, additionalUrlParams):
         """Generate the request object
         that will be used in the `_runRequest`
         """
@@ -68,7 +85,11 @@ class BaseRestTool(object):
         authObj = AuthenticationHelper(self._root).GetRequestAuthObject(self._authRequired)
 
         headers = {"Content-Type" : "application/x-www-form-urlencoded", 'Connection':'close'}
-        headersJson = {"Content-Type" : "application/json", 'Connection':'close'}
+
+        if (idempotencyKey != None):
+            headersJson = {"Content-Type" : "application/json", 'Connection':'close', "Idempotency-Key" : idempotencyKey}
+        else:
+            headersJson = {"Content-Type" : "application/json", 'Connection':'close'}
 
         if (self._debugMode): logging.getLogger(__name__).debug('REQUEST: {0} {1}\n  DATA: {2}'.format(self._requestType, fullUrl, self._requestData))
 
@@ -95,7 +116,14 @@ class BaseRestTool(object):
         return object Respons data
         throws Exception If cURL has error
         """
-        request = self._generateRequest(urlMethod, pagination, additionalUrlParams)
+        return self._runRequestIdempotent(None, urlMethod, pagination, additionalUrlParams)
+
+    def _runRequestIdempotent(self, idempotencyKey, urlMethod, pagination, additionalUrlParams):
+        """Execute request and check response.
+        return object Respons data
+        throws Exception If cURL has error
+        """
+        request = self._generateRequestIdempotent(idempotencyKey, urlMethod, pagination, additionalUrlParams)
         response = self._sendRequest(request)
 
         if (self._debugMode): logging.getLogger(__name__).debug(u'RESPONSE: {0}\n  {1}\n  {2}'.format(response.status_code, response.headers, response.text))

@@ -1,9 +1,10 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.tools.resttool import RestTool
 from mangopaysdk.entities.dispute import Dispute
 from mangopaysdk.entities.transaction import Transaction
 from mangopaysdk.entities.repudiation import Repudiation
 from mangopaysdk.entities.transfer import Transfer
+from mangopaysdk.entities.settlement import Settlement
 
 
 class ApiDisputes(ApiBase):
@@ -68,7 +69,16 @@ class ApiDisputes(ApiBase):
         param Dispute identifier
         return DisputeDocument object returned from API
         """
-        return self._createObject('disputes_document_create', disputeDocument, 'DisputeDocument', disputeId)
+        return self.CreateDocumentIdempotent(None, disputeDocument, disputeId)
+
+    def CreateDocumentIdempotent(self, idempotencyKey, disputeDocument, disputeId):
+        """Create dispute document.
+        param string idempotencyKey Idempotency key for this request
+        param DisputeDocument entity
+        param Dispute identifier
+        return DisputeDocument object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'disputes_document_create', disputeDocument, 'DisputeDocument', disputeId)
 
     def CreatePage(self, disputePage, disputeId, disputeDocumentId):
         """Create DisputePage for existing DisputeDocument.
@@ -76,7 +86,16 @@ class ApiDisputes(ApiBase):
         param Dispute identifier
         param DisputeDocument identifier
         """
-        return self._createObject('disputes_document_page_create', disputePage, None, disputeId, disputeDocumentId)
+        return self.CreatePageIdempotent(None, disputePage, disputeId, disputeDocumentId)
+
+    def CreatePageIdempotent(self, idempotencyKey, disputePage, disputeId, disputeDocumentId):
+        """Create DisputePage for existing DisputeDocument.
+        param string idempotencyKey Idempotency key for this request
+        param DisputePage entity (File should be base64 string)
+        param Dispute identifier
+        param DisputeDocument identifier
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'disputes_document_page_create', disputePage, None, disputeId, disputeDocumentId)
 
     def ContestDispute(self, contestedFunds, disputeId):
         """Contest dispute.
@@ -148,7 +167,23 @@ class ApiDisputes(ApiBase):
         param Repudiation identifier
         return Transfer object returned from API
         """
-        return self._createObject('disputes_repudiation_create_settlement', settlementTransfer, 'Transfer', repudiationId)
+        return self.CreateSettlementTransferIdempotent(None, settlementTransfer, repudiationId)
+
+    def CreateSettlementTransferIdempotent(self, idempotencyKey, settlementTransfer, repudiationId):
+        """Create settlement transfer.
+        param string idempotencyKey Idempotency key for this request
+        param Settlement transfer object
+        param Repudiation identifier
+        return Transfer object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'disputes_repudiation_create_settlement', settlementTransfer, 'Transfer', repudiationId)
 
     def ResubmitDispute(self, disputeId):
         return self._saveObject('disputes_save_contest_funds', None, 'Dispute', disputeId)
+
+    def GetSettlementTransfer(self, settlementId):
+        """Get settlement transfer.
+        param string settlementId SettlementTransfer identifier
+        return Settlement instance returned from API
+        """
+        return self._getObject('settlement_get', settlementId, 'Settlement')

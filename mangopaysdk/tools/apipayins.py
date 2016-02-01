@@ -1,4 +1,4 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.payin import PayIn
 from mangopaysdk.entities.temporaryimmediatepayin import TemporaryImmediatePayIn
 
@@ -11,9 +11,17 @@ class ApiPayIns (ApiBase):
         param PayIn payIn object
         return PayIn Object returned from API
         """
+        return self.CreateIdempotent(None, payIn)
+
+    def CreateIdempotent(self, idempotencyKey, payIn):
+        """Create new pay-in object.
+        param string idempotencyKey Idempotency key for this request
+        param PayIn payIn object
+        return PayIn Object returned from API
+        """
         paymentKey = self._getPaymentKey(payIn);
         executionKey = self._getExecutionKey(payIn);
-        return self._createObject('payins_' + paymentKey + '-' + executionKey + '_create', payIn, 'PayIn')
+        return self._createObjectIdempotent(idempotencyKey, 'payins_' + paymentKey + '-' + executionKey + '_create', payIn, 'PayIn')
 
     def Get(self, payInId):
         """Get pay-in object.
@@ -28,7 +36,16 @@ class ApiPayIns (ApiBase):
         param Refund refund object to create
         return Refund Object returned by REST API
         """
-        return self._createObject('payins_createrefunds', refund, 'Refund', payInId)
+        return self.CreateRefundIdempotent(None, payInId, refund)
+
+    def CreateRefundIdempotent(self, idempotencyKey, payInId, refund):
+        """Create refund for pay-in object.
+        param string idempotencyKey Idempotency key for this request
+        param type payInId Pay-in identifier
+        param Refund refund object to create
+        return Refund Object returned by REST API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'payins_createrefunds', refund, 'Refund', payInId)
 
     def GetRefund(self, payInId):
         """Get refund for pay-in object.
@@ -46,7 +63,19 @@ class ApiPayIns (ApiBase):
         param TemporaryImmediatePayIn Immediate pay-in object to create
         return TemporaryImmediatePayIn Object returned from API
         """
-        return self._createObject('temp_immediatepayins_create', immediatePayIn, 'TemporaryImmediatePayIn')
+        return self.CreateTemporaryImmediatePayInIdempotent(None, immediatePayIn)
+
+    def CreateTemporaryImmediatePayInIdempotent(self, idempotencyKey, immediatePayIn):
+        """WARNING! 
+        This is temporary function and will be removed in future.
+        Contact support before using these features or if have any queries.
+
+        Creates new temporary immediate pay-in.
+        param string idempotencyKey Idempotency key for this request
+        param TemporaryImmediatePayIn Immediate pay-in object to create
+        return TemporaryImmediatePayIn Object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'temp_immediatepayins_create', immediatePayIn, 'TemporaryImmediatePayIn')
 
     def _getPaymentKey(self, payIn):
 

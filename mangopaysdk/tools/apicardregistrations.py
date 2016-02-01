@@ -1,4 +1,4 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.cardregistration import CardRegistration
 from mangopaysdk.entities.temporarypaymentcard import TemporaryPaymentCard
 
@@ -11,7 +11,15 @@ class ApiCardRegistrations (ApiBase):
         param CardRegistration object to create
         return CardRegistration Object returned from API
         """
-        return self._createObject('cardregistration_create', cardRegistration, 'CardRegistration')
+        return self.CreateIdempotent(None, cardRegistration)
+
+    def CreateIdempotent(self, idempotencyKey, cardRegistration):
+        """Create new card registration
+        param string idempotencyKey Idempotency key for this request
+        param CardRegistration object to create
+        return CardRegistration Object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'cardregistration_create', cardRegistration, 'CardRegistration')
 
     def Get(self, cardRegistrationId):
         """Get card registration
@@ -37,7 +45,19 @@ class ApiCardRegistrations (ApiBase):
         param TemporaryPaymentCard Temporary payment card to be created
         return TemporaryPaymentCard Object returned from API
         """
-        return self._createObject('temp_paymentcards_create', paymentCard, 'TemporaryPaymentCard')
+        return self.CreateTemporaryPaymentCardIdempotent(None, paymentCard)
+
+    def CreateTemporaryPaymentCardIdempotent(self, idempotencyKey, paymentCard):
+        """WARNING! 
+        This is temporary function and will be removed in future.
+        Contact support before using these features or if have any queries.
+
+        Creates new temporary payment card.
+        param string idempotencyKey Idempotency key for this request
+        param TemporaryPaymentCard Temporary payment card to be created
+        return TemporaryPaymentCard Object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'temp_paymentcards_create', paymentCard, 'TemporaryPaymentCard')
 
     def GetTemporaryPaymentCard(self, paymentCardId):
         """WARNING! 

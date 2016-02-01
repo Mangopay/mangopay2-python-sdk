@@ -1,4 +1,4 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.payout import PayOut
 
 
@@ -10,8 +10,16 @@ class ApiPayOuts (ApiBase):
         param PayOut payOut
         return PayOut Object returned from API
         """
+        return self.CreateIdempotent(None, payOut)
+
+    def CreateIdempotent(self, idempotencyKey, payOut):
+        """Create new pay-out.
+        param string idempotencyKey Idempotency key for this request
+        param PayOut payOut
+        return PayOut Object returned from API
+        """
         paymentKey = self._getPaymentKey(payOut)
-        return self._createObject('payouts_' + paymentKey + '_create', payOut, 'PayOut')
+        return self._createObjectIdempotent(idempotencyKey, 'payouts_' + paymentKey + '_create', payOut, 'PayOut')
 
     def Get(self, payOutId):
         """Get pay-out object.
@@ -26,7 +34,16 @@ class ApiPayOuts (ApiBase):
         param Refund refund Refund object to create
         return Refund Object returned by REST API
         """
-        return self._createObject('payouts_createrefunds', payOutId, 'PayOut', refund)
+        return self.CreateRefundIdempotent(None, payOutId, refund)
+        
+    def CreateRefundIdempotent(self, idempotencyKey, payOutId, refund):
+        """Create refund for pay-out object.
+        param string idempotencyKey Idempotency key for this request
+        param type payOutId Pay-out identifier
+        param Refund refund Refund object to create
+        return Refund Object returned by REST API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'payouts_createrefunds', payOutId, 'PayOut', refund)
 
     def GetRefund(self, payOutId):
         """Get refund for pay-out object.

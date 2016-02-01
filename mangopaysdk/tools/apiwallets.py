@@ -1,4 +1,4 @@
-from mangopaysdk.tools.apibase import ApiBase
+﻿from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.entities.wallet import Wallet
 
 
@@ -10,7 +10,15 @@ class ApiWallets(ApiBase):
         param Wallet wallet with fields: Owners, Descriptio, Currency, Tag
         return Wallet object returned from API
         """
-        return self._createObject('wallets_create', wallet, 'Wallet')
+        return self.CreateIdempotent(None, wallet)
+
+    def CreateIdempotent(self, idempotencyKey, wallet):
+        """Create new wallet.
+        param string idempotencyKey Idempotency key for this request
+        param Wallet wallet with fields: Owners, Descriptio, Currency, Tag
+        return Wallet object returned from API
+        """
+        return self._createObjectIdempotent(idempotencyKey, 'wallets_create', wallet, 'Wallet')
 
     def Get(self, walletId):
         """Get wallet by Id.

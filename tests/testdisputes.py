@@ -1,4 +1,4 @@
-import os
+﻿import os
 from tests.testbase import TestBase
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.types.exceptions.responseexception import ResponseException
@@ -12,7 +12,9 @@ from mangopaysdk.entities.disputedocument import DisputeDocument
 from mangopaysdk.entities.disputepage import DisputePage
 from mangopaysdk.entities.repudiation import Repudiation
 from mangopaysdk.entities.transfer import Transfer
+from mangopaysdk.entities.settlement import Settlement
 from mangopaysdk.tools.filtertransactions import FilterTransactions
+from mangopaysdk.tools.filterdisputedocuments import FilterDisputeDocuments
 import time
 
 
@@ -52,11 +54,11 @@ class Test_Disputes(TestBase):
         dispute = None
 
         for d in self._clientDisputes:
-            if (d.DisputeType != DisputeType.RETRIEVAL):
+            if (d.DisputeType == DisputeType.NOT_CONTESTABLE):
                 dispute = d
                 break
 
-        self.assertIsNotNone(dispute, 'Cannot test getting dispute\'s transactions because there\'s no dispute of non-RETRIEVAL type in the disputes list.')
+        self.assertIsNotNone(dispute, 'Cannot test getting dispute\'s transactions because there\'s no not contestable dispute in the disputes list.')
 
         pagination = Pagination(1, 10)
         transactions = self.sdk.disputes.GetTransactions(dispute.Id, pagination)
@@ -89,11 +91,11 @@ class Test_Disputes(TestBase):
         dispute = None
 
         for d in self._clientDisputes:
-            if (d.DisputeType != DisputeType.RETRIEVAL):
+            if (d.DisputeType == DisputeType.NOT_CONTESTABLE):
                 dispute = d
                 break
 
-        self.assertIsNotNone(dispute, 'Cannot test getting disputes for user because there\'s no dispute of non-RETRIEVAL type in the disputes list.')
+        self.assertIsNotNone(dispute, 'Cannot test getting disputes for user because there\'s no not contestable dispute in the disputes list.')
 
         pagination = Pagination(1, 10)
         transactions = self.sdk.disputes.GetTransactions(dispute.Id, pagination)
@@ -240,6 +242,15 @@ class Test_Disputes(TestBase):
                 dispute = d
                 break
 
+        if (dispute == None):
+            self.test_Disputes_ContestDispute()
+            self.refreshClientDisputes()
+
+            for d in self._clientDisputes:
+                if (d.Status == DisputeStatus.SUBMITTED):
+                    dispute = d
+                    break
+
         self.assertIsNotNone(dispute, 'Cannot test getting dispute\'s documents because there\'s no available disputes with SUBMITTED status in the disputes list.')
 
         result = self.sdk.disputes.GetDocumentsForDispute(dispute.Id)
@@ -254,15 +265,29 @@ class Test_Disputes(TestBase):
         self.refreshClientDisputes()
         
         dispute = None
+        disputeDocument = None
+
+        filter = FilterDisputeDocuments()
+        filter.Status = DisputeDocumentStatus.CREATED
 
         for d in self._clientDisputes:
             if (d.Status == DisputeStatus.PENDING_CLIENT_ACTION or d.Status == DisputeStatus.REOPENED_PENDING_CLIENT_ACTION):
-                dispute = d
-                break
+                dd = self.sdk.disputes.GetDocumentsForDispute(d.Id, Pagination(1, 1), filter)[0]
+                if (dd != None):
+                    dispute = d
+                    disputeDocument = dd
+                    break
+
+        if (dispute == None):
+            for d in self._clientDisputes:
+                if (d.Status == DisputeStatus.PENDING_CLIENT_ACTION or d.Status == DisputeStatus.REOPENED_PENDING_CLIENT_ACTION):
+                    documentPost = DisputeDocument()
+                    documentPost.Type = DisputeDocumentType.DELIVERY_PROOF
+                    disputeDocument = self.sdk.disputes.CreateDocument(documentPost, d.Id)
 
         self.assertIsNotNone(dispute, 'Cannot test submitting dispute\'s documents because there\'s no dispute with expected status in the disputes list.')
 
-        disputeDocument = self.sdk.disputes.GetDocumentsForDispute(dispute.Id)[0]
+        self.assertIsNotNone(disputeDocument, 'Cannot test submitting dispute\'s documents because there\'s no dispute document that can be updated.')
 
         disputeDocumentPut = DisputeDocument()
         disputeDocumentPut.Id = disputeDocument.Id
@@ -271,6 +296,8 @@ class Test_Disputes(TestBase):
         result = self.sdk.disputes.SubmitDisputeDocument(disputeDocumentPut, dispute.Id)
 
         self.assertIsNotNone(result)
+        self.assertTrue(disputeDocument.Type == result.Type)
+        self.assertTrue(result.Status == DisputeDocumentStatus.VALIDATION_ASKED)
 
     def test_Disputes_GetRepudiation(self):
         self.refreshClientDisputes()
@@ -278,11 +305,11 @@ class Test_Disputes(TestBase):
         dispute = None
 
         for d in self._clientDisputes:
-            if (d.DisputeType != DisputeType.RETRIEVAL):
+            if (d.DisputeType == DisputeType.NOT_CONTESTABLE and d.InitialTransactionId != None):
                 dispute = d
                 break
 
-        self.assertIsNotNone(dispute, 'Cannot test getting repudiation because there\'s no dispute of non-RETRIEVAL type in the disputes list.')
+        self.assertIsNotNone(dispute, 'Cannot test getting repudiation because there\'s no not contestable dispute with transaction ID in the disputes list.')
 
         repudiationId = self.sdk.disputes.GetTransactions(dispute.Id)[0].Id
 
@@ -296,7 +323,7 @@ class Test_Disputes(TestBase):
         dispute = None
 
         for d in self._clientDisputes:
-            if (d.Status == DisputeStatus.CLOSED and d.DisputeType != DisputeType.RETRIEVAL):
+            if (d.Status == DisputeStatus.CLOSED and d.DisputeType == DisputeType.NOT_CONTESTABLE):
                 dispute = d
                 break
 
@@ -342,7 +369,7 @@ class Test_Disputes(TestBase):
 
     def test_Disputes_GetFilteredDisputeDocuments(self):
 
-        now = int(time.time())
+        now = int(time.time()) + 100
 
         filterAfter = FilterTransactions()
         filterBefore = FilterTransactions()
@@ -384,3 +411,33 @@ class Test_Disputes(TestBase):
 
         self.assertIsNotNone(result)
         self.assertEqual(result.Status, DisputeStatus.SUBMITTED)
+
+    def test_Disputes_GetSettlementTransfer(self):
+        self.refreshClientDisputes()
+
+        dispute = None
+
+        for d in self._clientDisputes:
+            if (d.Status == DisputeStatus.CLOSED and d.DisputeType == DisputeType.NOT_CONTESTABLE):
+                dispute = d
+                break
+
+        self.assertIsNotNone(dispute, 'Cannot test getting settlement transfer because there\'s no closed and not contestable disputes in the disputes list.')
+
+        repudiationId = self.sdk.disputes.GetTransactions(dispute.Id, Pagination(1, 1))[0].Id
+        repudiation = self.sdk.disputes.GetRepudiation(repudiationId)
+
+        post = Settlement()
+        post.AuthorId = repudiation.AuthorId
+        post.DebitedFunds = Money(1, 'EUR')
+        post.Fees = Money(0, 'EUR')
+
+        transfer = self.sdk.disputes.CreateSettlementTransfer(post, repudiationId)
+
+        self.assertIsNotNone(transfer)
+
+        result = self.sdk.disputes.GetSettlementTransfer(transfer.Id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.RepudiationId)
+        self.assertEqual(result.RepudiationId, repudiation.Id)
