@@ -54,7 +54,7 @@ Report bugs or suggest features using [issue tracker at GitHub](https://github.c
 
 Account creation
 -------------------------------------------------
-You can get yourself a [free sandbox account](https://www.mangopay.com/get-started/create-sandbox/) or sign up for a [production account](https://www.mangopay.com/get-started/submit-your-app/create-credentials/) (note that validation of your production account can take a few days, so think about doing it in advance of when you actually want to go live).
+You can get yourself a [free sandbox account](https://www.mangopay.com/signup/create-sandbox/) or sign up for a [production account](https://www.mangopay.com/signup/submit-your-app/go-live/) (note that validation of your production account can take a few days, so think about doing it in advance of when you actually want to go live).
 
 
 Configuration
