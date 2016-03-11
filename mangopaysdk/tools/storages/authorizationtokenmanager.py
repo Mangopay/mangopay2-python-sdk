@@ -41,4 +41,4 @@ class AuthorizationTokenManager(ApiBase):
          self._storageStrategy = customStorageStrategy
    
     def GetEnvKey(self):
-        return hashlib.md5((self._root.Config.ClientID + self._root.Config.BaseUrl).encode('utf-8')).hexdigest()
+        return hashlib.md5((self._root.Config.ClientID + self._root.Config.BaseUrl + self._root.Config.ClientPassword).encode('utf-8')).hexdigest()
