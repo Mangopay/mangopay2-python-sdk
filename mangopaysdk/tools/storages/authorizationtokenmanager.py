@@ -1,3 +1,5 @@
+﻿import hashlib
+
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.tools.storages.defaultstoragestrategy import DefaultStorageStrategy
 from mangopaysdk.types.oauthtoken import OAuthToken
@@ -16,7 +18,7 @@ class AuthorizationTokenManager(ApiBase):
         If currently stored token is expired, this method creates a new one.
         return Valid OAuthToken instance.
         """
-        token = self._storageStrategy.Get()
+        token = self._storageStrategy.Get(self.GetEnvKey())
         if token == None or token.IsExpired():
             token = self._root.authenticationManager.CreateToken()
             self.StoreToken(token)        
@@ -27,7 +29,7 @@ class AuthorizationTokenManager(ApiBase):
         storage strategy implementation.
         param token Token instance to be stored.
         """
-        self._storageStrategy.Store(token)
+        self._storageStrategy.Store(token, self.GetEnvKey())
     
     def RegisterCustomStorageStrategy(self, customStorageStrategy):
          """Registers custom storage strategy implementation.
@@ -38,3 +40,5 @@ class AuthorizationTokenManager(ApiBase):
          """
          self._storageStrategy = customStorageStrategy
    
+    def GetEnvKey(self):
+        return hashlib.md5((self._root.Config.ClientID + self._root.Config.BaseUrl).encode('utf-8')).hexdigest()

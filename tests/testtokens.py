@@ -1,4 +1,4 @@
-from mangopaysdk.mangopayapi import MangoPayApi
+﻿from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.tools.apioauth import ApiOAuth
 from mangopaysdk.types.pagination import Pagination
 from tests.testbase import TestBase
@@ -26,4 +26,28 @@ class Test_Tokens(TestBase):
         self.sdk.users.GetAll(Pagination(1, 2))
         token1 = self.sdk.OAuthTokenManager.GetToken()
         token2 = api.OAuthTokenManager.GetToken()
-        self.assertEqual(token1.access_token, token2.access_token) 
+        self.assertEqual(token1.access_token, token2.access_token)
+
+    def test_isolateTokensBetweenEnvironments(self):
+        api = MangoPayApi()
+        api.Config.ClientID = "sdk-unit-tests"
+        api.Config.ClientPassword = "cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju"
+        api.Config.BaseUrl = "https://api.sandbox.mangopay.com"
+
+        token1 = api.OAuthTokenManager.GetToken()
+
+        api.Config.ClientID = "sdk_example"
+        api.Config.ClientPassword = "Vfp9eMKSzGkxivCwt15wE082pTTKsx90vBenc9hjLsf5K46ciF"
+        api.Config.BaseUrl = "https://api.sandbox.mangopay.com"
+
+        token2 = api.OAuthTokenManager.GetToken()
+
+        self.assertNotEqual(token1.access_token, token2.access_token)
+
+        api.Config.ClientID = "sdk-unit-tests"
+        api.Config.ClientPassword = "cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju"
+        api.Config.BaseUrl = "https://api.sandbox.mangopay.com"
+
+        token3 = api.OAuthTokenManager.GetToken()
+
+        self.assertEqual(token1.access_token, token3.access_token)
