@@ -21,6 +21,7 @@ from tests.testhooks import Test_Hooks
 from tests.testkycdocuments import Test_KycDocuments
 from tests.testdisputes import Test_Disputes
 from tests.testidempotency import Test_Idempotency
+from tests.testmandates import Test_Mandates
 
 
 suite = unittest.TestSuite()
@@ -40,6 +41,7 @@ suite.addTest(unittest.makeSuite(Test_Hooks))
 suite.addTest(unittest.makeSuite(Test_KycDocuments))
 suite.addTest(unittest.makeSuite(Test_Disputes))
 suite.addTest(unittest.makeSuite(Test_Idempotency))
+suite.addTest(unittest.makeSuite(Test_Mandates))
 
 modules = ['mangopaysdk']
 

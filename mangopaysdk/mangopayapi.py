@@ -1,5 +1,5 @@
 ﻿from mangopaysdk.tools import apioauth, apiclients, apiusers, apiwallets, apitransfers, apipayins, apipayouts, apievents, apicardpreauthorizations
-from mangopaysdk.tools import apirefunds, apicardregistrations, apicards, apihooks, apikycdocuments, apidisputes, apiidempotency
+from mangopaysdk.tools import apirefunds, apicardregistrations, apicards, apihooks, apikycdocuments, apidisputes, apiidempotency, apimandates
 from mangopaysdk.configuration import Configuration
 from mangopaysdk.tools.storages.authorizationtokenmanager import AuthorizationTokenManager
 
@@ -41,3 +41,4 @@ class MangoPayApi:
         self.kycdocuments = apikycdocuments.ApiKycDocuments(self)
         self.disputes = apidisputes.ApiDisputes(self)
         self.idempotency = apiidempotency.ApiIdempotency(self)
+        self.mandates = apimandates.ApiMandates(self)
