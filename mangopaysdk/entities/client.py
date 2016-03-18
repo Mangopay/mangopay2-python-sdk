@@ -1,4 +1,4 @@
-from mangopaysdk.entities.entitybase import EntityBase
+﻿from mangopaysdk.entities.entitybase import EntityBase
 
 
 class Client (EntityBase):
@@ -13,5 +13,11 @@ class Client (EntityBase):
         self.Email = None
         # Password for client
         self.Passphrase = None
+        # Branding colour to use for theme pages
+        self.PrimaryThemeColour = None
+        # Branding colour to use for call to action buttons
+        self.PrimaryButtonColour = None
+        # The URL for MANGOPAY hosted logo
+        self.Logo = None
         return super(Client, self).__init__(id)
     
