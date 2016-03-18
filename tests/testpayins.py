@@ -1,7 +1,8 @@
-import unittest
+﻿import unittest
 from tests.testbase import TestBase
 from mangopaysdk.tools.enums import PayInPaymentType, ExecutionType, TransactionType, TransactionStatus, TransactionNature
 from mangopaysdk.entities.payin import PayIn
+from mangopaysdk.entities.mandate import Mandate
 from mangopaysdk.types.payinexecutiondetailsdirect import PayInExecutionDetailsDirect
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
@@ -38,7 +39,7 @@ class Test_PayIns(TestBase):
        self.assertIsNotNone(getPayIn.ExecutionDetails.RedirectURL)
        self.assertIsNotNone(getPayIn.ExecutionDetails.ReturnURL)
 
-       def test_PayIns_Create_CardDirect(self):
+    def test_PayIns_Create_CardDirect(self):
         johnWallet = self.getJohnsWallet()
         beforeWallet = self.sdk.wallets.Get(johnWallet.Id)
         payIn = self.getJohnsPayInCardDirect()
@@ -205,3 +206,54 @@ class Test_PayIns(TestBase):
         self.assertIsNotNone(createPayIn.ExecutionDetails.ReturnURL)
         self.assertIsNotNone(createPayIn.ExecutionDetails.RedirectURL)
         self.assertIsNotNone(createPayIn.ExecutionDetails.TemplateURL)
+
+    def test_PayIns_Create_DirectDebitDirect(self):
+        wallet = self.getJohnsWallet()
+        user = self.getJohn()
+        bankAccountId = self.getJohnsAccount().Id
+        returnUrl = 'http://test.test'
+        mandatePost = Mandate()
+        mandatePost.BankAccountId = bankAccountId
+        mandatePost.Culture = 'EN'
+        mandatePost.ReturnURL = returnUrl
+        mandate = self.sdk.mandates.Create(mandatePost)
+
+
+        #	! IMPORTANT NOTE !
+		#	
+		#	In order to make this test pass, at this place you have to set a breakpoint,
+		#	navigate to URL the mandate.RedirectURL property points to and click "CONFIRM" button.
+
+
+        payIn = PayIn()
+        payIn.CreditedWalletId = wallet.Id
+        payIn.AuthorId = user.Id
+        payIn.DebitedFunds = Money()
+        payIn.DebitedFunds.Amount = 1000
+        payIn.DebitedFunds.Currency = 'EUR'
+        payIn.Fees = Money()
+        payIn.Fees.Amount = 1
+        payIn.Fees.Currency = 'EUR'
+        
+        payIn.PaymentDetails = PayInPaymentDetailsDirectDebit()
+        payIn.PaymentDetails.MandateId = mandate.Id
+        payIn.ExecutionDetails = PayInExecutionDetailsDirect()
+
+        createPayIn = self.sdk.payIns.Create(payIn)
+
+        self.assertTrue(int(createPayIn.Id) > 0)
+        self.assertEqual(wallet.Id, createPayIn.CreditedWalletId)
+        self.assertEqual('DIRECT_DEBIT', createPayIn.PaymentType)
+        self.assertIsInstance(createPayIn.PaymentDetails, PayInPaymentDetailsDirectDebit)
+        self.assertEqual(createPayIn.PaymentDetails.MandateId, mandate.Id)
+        self.assertEqual('DIRECT', createPayIn.ExecutionType)
+        self.assertIsInstance(createPayIn.ExecutionDetails, PayInExecutionDetailsDirect)
+        self.assertEqual(user.Id, createPayIn.AuthorId)
+        self.assertEqual('CREATED', createPayIn.Status)
+        self.assertEqual('PAYIN', createPayIn.Type)
+        self.assertIsInstance(createPayIn.DebitedFunds, Money)
+        self.assertEqual(1000, createPayIn.DebitedFunds.Amount)
+        self.assertEqual('EUR', createPayIn.DebitedFunds.Currency)
+        self.assertIsInstance(createPayIn.Fees, Money)
+        self.assertEqual(1, createPayIn.Fees.Amount)
+        self.assertEqual('EUR', createPayIn.Fees.Currency)

@@ -85,6 +85,7 @@ class ApiBase(object):
         'payins_bankwire-direct_create' : ('/payins/bankwire/direct/', 'POST'),
         
         'payins_directdebit-web_create' : ('/payins/directdebit/web', 'POST'),
+        'payins_directdebit-direct_create' : ('/payins/directdebit/direct', 'POST'),
         'payins_get' : ('/payins/%s', 'GET'),
         'payins_getrefunds' : ('/payins/%s/refunds', 'GET'),
         'payins_createrefunds' : ('/payins/%s/refunds', 'POST'),
