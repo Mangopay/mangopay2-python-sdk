@@ -27,6 +27,7 @@ from mangopaysdk.entities.dispute import Dispute
 from mangopaysdk.entities.disputedocument import DisputeDocument
 from mangopaysdk.entities.disputepage import DisputePage
 from mangopaysdk.entities.repudiation import Repudiation
+from mangopaysdk.entities.mandate import Mandate
 from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
 from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
@@ -84,6 +85,7 @@ class ApiBase(object):
         'payins_bankwire-direct_create' : ('/payins/bankwire/direct/', 'POST'),
         
         'payins_directdebit-web_create' : ('/payins/directdebit/web', 'POST'),
+        'payins_directdebit-direct_create' : ('/payins/directdebit/direct', 'POST'),
         'payins_get' : ('/payins/%s', 'GET'),
         'payins_getrefunds' : ('/payins/%s/refunds', 'GET'),
         'payins_createrefunds' : ('/payins/%s/refunds', 'POST'),
@@ -161,7 +163,14 @@ class ApiBase(object):
         # Contact support before using these features or if have any queries.
         'temp_paymentcards_create' : ('/temp/paymentcards', 'POST'),
         'temp_paymentcards_get' : ('/temp/paymentcards/%s', 'GET'),
-        'temp_immediatepayins_create' : ('/temp/immediate-payins', 'POST')
+        'temp_immediatepayins_create' : ('/temp/immediate-payins', 'POST'),
+
+        'mandate_create' : ('/mandates/directdebit/web', 'POST'),
+        'mandate_cancel' : ('/mandates/%s/cancel', 'PUT'),
+        'mandate_get' : ('/mandates/%s', 'GET'),
+        'mandates_get_all' : ('/mandates', 'GET'),
+        'mandates_get_for_user' : ('/users/%s/mandates', 'GET'),
+        'mandates_get_for_bank_account' : ('/users/%s/bankaccounts/%s/mandates', 'GET'),
     }
 
 
@@ -253,17 +262,18 @@ class ApiBase(object):
             return self._castResponseToEntity(response, responseClassName)
         return response
 
-    def _getList (self, methodKey, pagination, responseClassName = None, entityId = None, filter = None, sorting = None):
+    def _getList (self, methodKey, pagination, responseClassName = None, entityId = None, filter = None, sorting = None, secondEntityId = None):
         """Get list with entities object from API.
         param string methodKey Key with request data
         param pagination Pagination object
         param object responseClassName Name of entity class from response
-        param int entityId Entity identifier
+        param string entityId Entity identifier
         param object filter Object to filter data
         param object sorting Object to sort data
+        param string secondEntityId Second entity identifier
         return object Response data
         """
-        urlMethod = self._buildUrl(methodKey, entityId)
+        urlMethod = self._buildUrl(methodKey, entityId, secondEntityId)
 
         if pagination == None:
             pagination = Pagination()
