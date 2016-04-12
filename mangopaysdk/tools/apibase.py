@@ -57,6 +57,10 @@ class ApiBase(object):
 
     # Array with REST url and request type
     _methods = {
+        'client_get' : ('/clients', 'GET'),
+        'client_save' : ('/clients', 'PUT'),
+        'client_upload_logo' : ('/clients/logo', 'PUT'),
+
         'authentication_base' : ('/api/clients/', 'POST'),
         'authentication_oauth' : ('/oauth/token', 'POST'),
 
