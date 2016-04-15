@@ -1,4 +1,4 @@
-import unittest, logging, time, requests
+﻿import unittest, logging, time, requests
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.entities.wallet import Wallet
 from mangopaysdk.entities.usernatural import UserNatural
@@ -287,7 +287,6 @@ class TestBase(unittest.TestCase):
             payOut.DebitedWalletId = wallet.Id
             payOut.MeanOfPaymentDetails = PayOutPaymentDetailsBankWire()
             payOut.MeanOfPaymentDetails.BankAccountId = account.Id
-            payOut.MeanOfPaymentDetails.Communication = 'Communication text'
 
             self._johnsPayOutBankWire = self.sdk.payOuts.Create(payOut)
         return self._johnsPayOutBankWire
@@ -542,7 +541,6 @@ class TestBase(unittest.TestCase):
             
         elif (isinstance(entity1, PayOutPaymentDetailsBankWire)):
             self.assertEqual(entity1.BankAccountId, entity2.BankAccountId)
-            self.assertEqual(entity1.Communication, entity2.Communication)
             
         elif (isinstance(entity1, Transaction)):
             self.assertEqual(entity1.Tag, entity2.Tag)

@@ -1,4 +1,4 @@
-class RequestType:
+﻿class RequestType:
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'
@@ -166,6 +166,7 @@ class DisputeDocumentStatus:
     VALIDATED = 'VALIDATED'
     REFUSED = 'REFUSED'
 
-#class AuthenticationType:
-#    Basic = 'Basic'
-#    Strong = 'Strong'
+class FundsType:
+    DEFAULT = 'DEFAULT'
+    FEES = 'FEES'
+    CREDIT = 'CREDIT'

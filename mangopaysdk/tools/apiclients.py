@@ -2,6 +2,8 @@
 from mangopaysdk.tools.resttool import RestTool
 from mangopaysdk.entities.client import Client
 from mangopaysdk.entities.clientlogo import ClientLogo
+from mangopaysdk.tools.enums import FundsType
+from mangopaysdk.tools.filtertransactions import FilterTransactions
 import os
 
 class ApiClients(ApiBase):
@@ -47,3 +49,42 @@ class ApiClients(ApiBase):
             raise Exception('Content of the file cannot be empty')
 
         self._saveObject('client_upload_logo', clientLogo)
+
+    def GetWallets(self, fundsType, pagination = None):
+        
+        if (fundsType == None):
+            return None
+
+        if (fundsType == FundsType.DEFAULT):
+            return self._getList('client_get_wallets_default', pagination, 'Wallet')
+        else:
+            if (fundsType == FundsType.FEES):
+                return self._getList('client_get_wallets_fees', pagination, 'Wallet')
+            else:
+                if (fundsType == FundsType.CREDIT):
+                    return self._getList('client_get_wallets_credit', pagination, 'Wallet')
+
+        return None
+
+    def GetWallet(self, fundsType, currency):
+
+        if (fundsType == None or currency == None):
+            return None
+
+        if (fundsType == FundsType.DEFAULT):
+            return self._getObject('client_get_wallets_default_with_currency', currency, 'Wallet')
+        else:
+            if (fundsType == FundsType.FEES):
+                return self._getObject('client_get_wallets_fees_with_currency', currency, 'Wallet')
+            else:
+                if (fundsType == FundsType.CREDIT):
+                    return self._getObject('client_get_wallets_credit_with_currency', currency, 'Wallet')
+
+        return None
+
+    def GetWalletTransactions(self, fundsType, currency, pagination = None, filter = None, sorting = None):
+
+        if (filter == None):
+            filter = FilterTransactions()
+
+        return self._getList('client_get_wallet_transactions', pagination, 'Transaction', fundsType, filter, sorting, currency)

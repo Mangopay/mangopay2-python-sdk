@@ -61,7 +61,15 @@ class ApiBase(object):
         'client_save' : ('/clients', 'PUT'),
         'client_upload_logo' : ('/clients/logo', 'PUT'),
 
-        'authentication_base' : ('/api/clients/', 'POST'),
+        'client_get_wallets_default' : ('/clients/wallets', 'GET'),
+        'client_get_wallets_fees' : ('/clients/wallets/fees', 'GET'),
+        'client_get_wallets_credit' : ('/clients/wallets/credit', 'GET'),
+        'client_get_wallets_default_with_currency' : ('/clients/wallets/%s', 'GET'),
+        'client_get_wallets_fees_with_currency' : ('/clients/wallets/fees/%s', 'GET'),
+        'client_get_wallets_credit_with_currency' : ('/clients/wallets/credit/%s', 'GET'),
+        'client_get_wallet_transactions' : ('/clients/wallets/%s/%s/transactions', 'GET'),
+
+        'authentication_base' : ('/clients/', 'POST'),
         'authentication_oauth' : ('/oauth/token', 'POST'),
 
         'events_all' : ('/events', 'GET'),

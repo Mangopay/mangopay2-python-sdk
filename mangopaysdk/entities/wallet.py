@@ -1,4 +1,4 @@
-from mangopaysdk.entities.entitybase import EntityBase
+﻿from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.types.money import Money
 
 
@@ -12,6 +12,8 @@ class Wallet(EntityBase):
         self.Balance = None
         # Currency code in ISO
         self.Currency = None
+        # The funds usage type
+        self.FundsType = None
         return super(Wallet, self).__init__(id)
     
     def GetSubObjects(self):
