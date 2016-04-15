@@ -28,7 +28,6 @@ class Test_Idempotency(TestBase):
         payOutPost.MeanOfPaymentDetails = PayOutPaymentDetailsBankWire()
         payOutPost.MeanOfPaymentDetails.BankAccountId = account.Id
         payOutPost.MeanOfPaymentDetails.BankWireRef = 'Johns bank wire ref'
-        payOutPost.MeanOfPaymentDetails.Communication = 'Communication text'
         payOutPost.Tag = 'DefaultTag'
         payOutPost.CreditedUserId = user.Id
 

@@ -1,4 +1,4 @@
-from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
+﻿from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
 
 
 class PayOutPaymentDetailsBankWire(PayOutPaymentDetails):
@@ -6,5 +6,4 @@ class PayOutPaymentDetailsBankWire(PayOutPaymentDetails):
 
     def __init__(self):
         self.BankAccountId = None
-        self.Communication = None
         self.BankWireRef = None
