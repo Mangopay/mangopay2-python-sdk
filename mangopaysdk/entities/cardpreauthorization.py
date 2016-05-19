@@ -35,7 +35,8 @@ class CardPreAuthorization(EntityBase):
         # How the PreAuthorization has been executed. 
         self.ExecutionType = None
         # The date when the payment is processed
-        self.ExpirationDate = None       
+        self.ExpirationDate = None
+        self.StatementDescriptor = None
 
         return super(CardPreAuthorization, self).__init__(id)
 
