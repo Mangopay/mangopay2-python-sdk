@@ -7,3 +7,4 @@ class PayInPaymentDetailsCard(PayInPaymentDetails):
     def __init__(self):
         # CardType enum
         self.CardType = None
+        self.StatementDescriptor = None
