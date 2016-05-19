@@ -10,3 +10,4 @@ class PayInExecutionDetailsDirect(PayInExecutionDetails):
         self.SecureModeRedirectURL = None
         # Mode3DSType { DEFAULT, FORCE }
         self.SecureMode = None
+        self.StatementDescriptor = None
