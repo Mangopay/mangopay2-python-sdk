@@ -2,7 +2,7 @@
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'
-    DELETE = 'DELETE'
+
 
 
 class PersonType:
@@ -13,6 +13,7 @@ class PersonType:
 class LegalPersonType:
     BUSINESS = 'BUSINESS'
     ORGANIZATION = 'ORGANIZATION'
+    SOLETRADER = 'SOLETRADER'
     
 class TransactionStatus:
     CREATED = 'CREATED'

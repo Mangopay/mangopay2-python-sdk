@@ -12,7 +12,7 @@ class UserLegal (User):
         self._setPersonType(PersonType.Legal)
 
         self.Name = None
-        # Required  LegalPersonType: BUSINESS, ORGANIZATION
+        # Required  LegalPersonType: BUSINESS, ORGANIZATION, SOLETRADER
         self.LegalPersonType = None
         self.HeadquartersAddress = None
         # Required
