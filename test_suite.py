@@ -39,9 +39,20 @@ suite.addTest(unittest.makeSuite(Test_CardPreAuthorization))
 suite.addTest(unittest.makeSuite(Test_ApiEvents))
 suite.addTest(unittest.makeSuite(Test_Hooks))
 suite.addTest(unittest.makeSuite(Test_KycDocuments))
-suite.addTest(unittest.makeSuite(Test_Disputes))
 suite.addTest(unittest.makeSuite(Test_Idempotency))
 suite.addTest(unittest.makeSuite(Test_Mandates))
+
+# IMPORTANT NOTE!
+# 
+# Due to the fact the disputes CANNOT be created on user's side,
+# a special approach in testing is needed. 
+# In order to get the tests below pass, a bunch of disputes has
+# to be prepared on the API's side - if it's not, the tests won't pass.
+# 
+# Uncomment "suite.addTest(unittest.makeSuite(Test_Disputes))" line below 
+# to include disputes unit tests into the testing queue.
+
+#suite.addTest(unittest.makeSuite(Test_Disputes))
 
 modules = ['mangopaysdk']
 

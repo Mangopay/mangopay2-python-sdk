@@ -22,12 +22,15 @@ class Test_Disputes(TestBase):
 
 
     # IMPORTANT NOTE!
-    # 
-    # Due to the fact the disputes CANNOT be created on user's side,
-    # a special approach in testing is needed. 
-    # In order to get the tests below pass, a bunch of disputes has
-    # to be prepared on the API's side - if it is not, you can
-    # just skip these tests, as they won't pass.
+	# 
+	# Due to the fact the disputes CANNOT be created on user's side,
+	# a special approach in testing is needed. 
+	# In order to get the tests below pass, a bunch of disputes has
+	# to be prepared on the API's side - if it's not, the tests won't pass.
+	# 
+	# Uncomment "suite.addTest(unittest.makeSuite(Test_Disputes))" line in 
+    # test_suite.py file to include disputes unit tests into the testing queue.
+	# 
 
 
     def refreshClientDisputes(self):
