@@ -40,6 +40,12 @@ class Test_Mandates(TestBase):
         self.assertTrue(mandate.Id == mandateCreated.Id)
     
     def test_Mandate_Cancel(self):
+        #	! IMPORTANT NOTE !
+        #
+		# This test needs your manual confirmation on the web page (see note below)
+        # Comment out the line below to test mandate cancellation.
+        return
+		
         bankAccountId = self.getJohnsAccount().Id
         returnUrl = 'http://test.test'
 

@@ -208,6 +208,12 @@ class Test_PayIns(TestBase):
         self.assertIsNotNone(createPayIn.ExecutionDetails.TemplateURL)
 
     def test_PayIns_Create_DirectDebitDirect(self):
+        #	! IMPORTANT NOTE !
+        #
+		# This test needs your manual confirmation on the web page (see note below)
+        # Comment out line below to test payins with a mandate.
+        return
+
         wallet = self.getJohnsWallet()
         user = self.getJohn()
         bankAccountId = self.getJohnsAccount().Id
