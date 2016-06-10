@@ -129,6 +129,7 @@ class ApiBase(object):
         'users_createbankaccounts_us': ('/users/%s/bankaccounts/us', 'POST'),
         'users_createbankaccounts_ca': ('/users/%s/bankaccounts/ca', 'POST'),
         'users_createbankaccounts_other': ('/users/%s/bankaccounts/other', 'POST'),
+        'users_updatebankaccount' : ('/users/%s/bankaccounts/%s', 'PUT'),
 
         'users_all' : ('/users', 'GET'),
         'users_allwallets' : ('/users/%s/wallets', 'GET'),

@@ -1,4 +1,4 @@
-import random, string, time
+﻿import random, string, time
 from tests.testbase import TestBase
 from mangopaysdk.mangopayapi import MangoPayApi
 from mangopaysdk.types.pagination import Pagination
@@ -213,6 +213,25 @@ class Test_ApiUsers(TestBase):
         self.assertEqual(createAccount.Details.AccountNumber, '234234234234')
         self.assertEqual(createAccount.Details.BIC, 'BINAADADXXX')
     
+
+    def test_Users_UpdateBankAccount(self):
+        john = self.getJohn()
+        account = self.getJohnsAccount()
+
+        self.assertTrue(int(account.Id) > 0)
+        self.assertEqual(account.UserId, john.Id)
+        self.assertTrue(account.Active == True)
+
+        # update bank account
+        update = BankAccount()
+        update.Active = False
+
+        result = self.sdk.users.UpdateBankAccount(john.Id, update, account.Id)
+
+        self.assertIsNotNone(result)
+        self.assertTrue(account.Id == result.Id)
+        self.assertTrue(result.Active == False)
+
 
     def test_Users_BankAccount(self):
         john = self.getJohn()

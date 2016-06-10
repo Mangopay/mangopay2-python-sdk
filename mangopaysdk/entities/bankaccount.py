@@ -1,4 +1,4 @@
-from mangopaysdk.entities.entitybase import EntityBase
+﻿from mangopaysdk.entities.entitybase import EntityBase
 from mangopaysdk.types.address import Address
 
 
@@ -11,6 +11,7 @@ class BankAccount(EntityBase):
         self.Type = None
         self.OwnerName = None
         self.OwnerAddress = None
+        self.Active = None
         self.Details = None
         return super(BankAccount, self).__init__(id)
 

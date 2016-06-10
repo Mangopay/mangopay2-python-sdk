@@ -92,6 +92,15 @@ class ApiUsers(ApiBase):
         """
         return self.CreateBankAccountIdempotent(None, userId, bankAccount)
 
+    def UpdateBankAccount(self, userId, bankAccount, bankAccountId):
+        """Update bank account.
+        param Int/GUID userId
+        param BankAccount Entity of bank account with two (optional) fields: Tag and Active (the latter one if provided has to be boolean False)
+        param Int/GUID bankAccountId
+        return BankAccount Updated bank account object
+        """
+        return self._saveObject('users_updatebankaccount', bankAccount, 'BankAccount', userId, bankAccountId)
+
     def CreateBankAccountIdempotent(self, idempotencyKey, userId, bankAccount):
         """Create bank account for user.
         param string idempotencyKey Idempotency key for this request
