@@ -16,7 +16,7 @@ SDK has been written in Python 2.7+ and requires:
 
 	requests
 	requests-oauthlib
-  fasteners
+	fasteners
 
 If you have problem with using token file based cache (Configuration.TempPath) you can use memory cache:
 
