@@ -13,7 +13,7 @@ setup(
     install_requires=[
         "requests>=2.4.3",
         "requests-oauthlib>=0.4.0",
-        "lockfile>=0.9.1"
+        "fasteners>=0.14.1"
     ],
     keywords="leetchi api sdk mangopay"
 )
