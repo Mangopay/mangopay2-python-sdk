@@ -16,10 +16,10 @@ SDK has been written in Python 2.7+ and requires:
 
 	requests
 	requests-oauthlib
-	lockfile
-	
+	fasteners
+
 If you have problem with using token file based cache (Configuration.TempPath) you can use memory cache:
-	
+
 	sdk = MangoPayApi()
 	sdk.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
 
@@ -61,7 +61,7 @@ Configuration
 -------------------------------------------------
 Using the credential info from the signup process above, you should then set `api.Config.ClientID` to your MangoPay Client ID and `api.Config.ClientPassword` to your passphrase.
 
-You also need to set a folder path in `api.Config.TempPath` that SDK needs to store temporary files. 
+You also need to set a folder path in `api.Config.TempPath` that SDK needs to store temporary files.
 This path should be outside your www folder.
 It could be `/tmp/` or `/var/tmp/` or any other location that Python can write to.
 
@@ -103,7 +103,7 @@ Sample usage
 	# configuration
 	api.Config.ClientID = 'your-client-id'
     api.Config.ClientPassword = 'your-client-passphrase'
-	
+
     # get some user by ID
     john = api.users.Get(userId)
 

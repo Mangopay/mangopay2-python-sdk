@@ -2,7 +2,7 @@
 from mangopaysdk.configuration import Configuration
 import os, json, stat
 from mangopaysdk.types.oauthtoken import OAuthToken
-import lockfile.mkdirlockfile
+import fasteners
 
 
 class DefaultStorageStrategy(IStorageStrategy):
@@ -18,21 +18,15 @@ class DefaultStorageStrategy(IStorageStrategy):
 
         if not os.path.exists(DefaultStorageStrategy.cache_path):
            return None
-        fp = open(DefaultStorageStrategy.cache_path,'rb')
-        lock = lockfile.mkdirlockfile.MkdirLockFile(DefaultStorageStrategy.cache_path)
-        while not lock.i_am_locking():
+        lock = fasteners.ReaderWriterLock()
+        with lock.read_lock():
+            fp = open(DefaultStorageStrategy.cache_path,'rb')
+            serializedObj = fp.read().decode('UTF-8')
             try:
-                lock.acquire(timeout=2) 
-            except LockTimeout:
-                lock.break_lock()
-                lock.acquire()
-        serializedObj = fp.read().decode('UTF-8')
-        try:
-           cached = json.loads(serializedObj[1:])
-        except:
-           cached = None
-        fp.close()
-        lock.release()     
+               cached = json.loads(serializedObj[1:])
+            except:
+               cached = None
+            fp.close()
         return OAuthToken(cached)
 
     def Store(self, obj, envKey):
@@ -41,20 +35,14 @@ class DefaultStorageStrategy(IStorageStrategy):
         """
         DefaultStorageStrategy.cache_path = os.path.join(Configuration.TempPath, "cached-data." + envKey + ".py")
 
-        if obj == None: 
+        if obj == None:
             return
-        fp = open(DefaultStorageStrategy.cache_path,'w')
-        os.chmod(DefaultStorageStrategy.cache_path, stat.S_IRUSR|stat.S_IWUSR)
-        lock = lockfile.mkdirlockfile.MkdirLockFile(DefaultStorageStrategy.cache_path)
-        while not lock.i_am_locking():
-            try:
-                lock.acquire(timeout=2) 
-            except LockTimeout:
-                lock.break_lock()
-                lock.acquire()
-        # Write it to the result to the file as a json
-        serializedObj = "#" + json.dumps(obj.__dict__)
-        # add hash to prevent download token file via http when path is invalid 
-        fp.write(serializedObj)
-        fp.close()
-        lock.release()        
+        lock = fasteners.ReaderWriterLock()
+        with lock.write_lock():
+            fp = open(DefaultStorageStrategy.cache_path,'w')
+            os.chmod(DefaultStorageStrategy.cache_path, stat.S_IRUSR|stat.S_IWUSR)
+            # Write it to the result to the file as a json
+            serializedObj = "#" + json.dumps(obj.__dict__)
+            # add hash to prevent download token file via http when path is invalid
+            fp.write(serializedObj)
+            fp.close()
