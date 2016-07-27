@@ -28,6 +28,9 @@ class Configuration:
     # NB: you can swap this class for one of ours that implement some custom logic
     RestToolClass = None
 
+    # Session object from the `requests` library
+    Session = None
+
 
 # we use DEBUG level for internal debugging
 if (Configuration.DebugMode):

@@ -41,6 +41,7 @@ class BaseRestTool(object):
         self._root = root
         self._debugMode = self._root.Config.DebugMode
         self._sslVerification = self._root.Config.SSLVerification
+        self._session = self._root.Config.Session
 
     def Request(self, urlMethod, requestType, requestData = None, pagination = None, additionalUrlParams = None):
         """Call request to MangoPay API.
@@ -107,7 +108,7 @@ class BaseRestTool(object):
     def _sendRequest(self, request):
         """Prepare and send the request"""
         prepared_request = request.prepare()
-        session = requests.Session()
+        session = self._session or requests.Session()
         response = session.send(prepared_request, verify=self._sslVerification)
         return response
 

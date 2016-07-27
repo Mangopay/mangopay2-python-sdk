@@ -94,6 +94,18 @@ You should find that file in `Python_installation_folder\Lib\site-packages\reque
 	sdk.Config.SSLVerification = 'C:\\Python27\\Lib\\site-packages\\requests\\cacert.pem'
 
 
+Connection pooling
+-------------------------------------------------
+To benefit from HTTP connection reuse you need to set `api.Config.Session` like this:
+
+    import requests
+    api.Config.Session = requests.Session()
+
+WARNING: sessions are not guaranteed to be thread-safe!
+
+See the upstream [Session Objects](http://docs.python-requests.org/en/master/user/advanced/#session-objects) documentation for more details.
+
+
 Sample usage
 -------------------------------------------------
 
