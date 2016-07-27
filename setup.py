@@ -8,7 +8,7 @@ setup(
     author_email='support@mangopay.com',
     packages=['mangopaysdk', 'mangopaysdk.entities', 'mangopaysdk.tools', 'mangopaysdk.tools.storages', 'mangopaysdk.types', 'mangopaysdk.types.exceptions'],
     url='https://pypi.python.org/pypi/mangopaysdk/',
-    description='MangoPay API',
+    description='MANGOPAY API',
     long_description=open('README.md').read(),
     install_requires=[
         "requests>=2.4.3",
