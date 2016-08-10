@@ -85,12 +85,12 @@ class BaseRestTool(object):
 
         authObj = AuthenticationHelper(self._root).GetRequestAuthObject(self._authRequired)
 
-        headers = {"Content-Type" : "application/x-www-form-urlencoded", 'Connection':'close'}
+        headers = {"Content-Type" : "application/x-www-form-urlencoded"}
 
         if (idempotencyKey != None):
-            headersJson = {"Content-Type" : "application/json", 'Connection':'close', "Idempotency-Key" : idempotencyKey}
+            headersJson = {"Content-Type" : "application/json", "Idempotency-Key" : idempotencyKey}
         else:
-            headersJson = {"Content-Type" : "application/json", 'Connection':'close'}
+            headersJson = {"Content-Type" : "application/json"}
 
         if (self._debugMode): logging.getLogger(__name__).debug('REQUEST: {0} {1}\n  DATA: {2}'.format(self._requestType, fullUrl, self._requestData))
 
