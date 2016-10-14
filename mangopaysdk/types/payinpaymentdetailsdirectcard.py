@@ -1,9 +1,8 @@
-from mangopaysdk.types.payinexecutiondetails import PayInExecutionDetails
+from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
 
 
-class PayInPaymentDetailsDirectCard(PayInExecutionDetails):
-    
-    def __init__(self):    
+class PayInPaymentDetailsDirectCard(PayInPaymentDetails):
+    def __init__(self):
         # CardType enum
-        self.CardType = None    
+        self.CardType = None
         self.SecureModeReturnURL = None
