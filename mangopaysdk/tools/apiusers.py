@@ -204,11 +204,10 @@ class ApiUsers(ApiBase):
         """
         return self._createObjectIdempotent(idempotencyKey, 'users_createkycpage', kycPage, None, userId, kycDocumentId)
 
-    def UpdateUserKycDocument(self, kycDocument, userId, kycDocumentId):
+    def UpdateUserKycDocument(self, kycDocument, userId):
         """Updates KycDocument
         param KycDocument entity (field Status should be set)
         param Int/GUID User identifier
-        param Int/GUID KycDocument identifier
         return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
         """
         return self._saveObject('users_savekycdocument', kycDocument, 'KycDocument', userId, kycDocument.Id)
