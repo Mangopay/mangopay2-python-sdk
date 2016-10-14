@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import argparse
 import doctest
 import unittest
 import sys
@@ -24,6 +25,11 @@ from tests.testidempotency import Test_Idempotency
 from tests.testmandates import Test_Mandates
 
 
+# parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--failfast', action='store_true')
+cliargs = parser.parse_args()
+
 suite = unittest.TestSuite()
 suite.addTest(unittest.makeSuite(Test_ApiClients))
 suite.addTest(unittest.makeSuite(Test_ApiUsers))
@@ -43,13 +49,13 @@ suite.addTest(unittest.makeSuite(Test_Idempotency))
 suite.addTest(unittest.makeSuite(Test_Mandates))
 
 # IMPORTANT NOTE!
-# 
+#
 # Due to the fact the disputes CANNOT be created on user's side,
-# a special approach in testing is needed. 
+# a special approach in testing is needed.
 # In order to get the tests below pass, a bunch of disputes has
 # to be prepared on the API's side - if it's not, the tests won't pass.
-# 
-# Uncomment "suite.addTest(unittest.makeSuite(Test_Disputes))" line below 
+#
+# Uncomment "suite.addTest(unittest.makeSuite(Test_Disputes))" line below
 # to include disputes unit tests into the testing queue.
 
 #suite.addTest(unittest.makeSuite(Test_Disputes))
@@ -59,7 +65,7 @@ modules = ['mangopaysdk']
 for module in modules:
     m = __import__(module, fromlist=[module])
 
-runner = unittest.TextTestRunner(verbosity=1)
+runner = unittest.TextTestRunner(verbosity=1, failfast=cliargs.failfast)
 result = runner.run(suite)
 
 #if not result.wasSuccessful():
