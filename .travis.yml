@@ -5,10 +5,10 @@ python:
 
 install:
   - pip install .
-  - pip install requests --use-mirrors
-  - pip install requests-oauthlib --use-mirrors
-  - pip install fasteners --use-mirrors
-  - pip install coveralls --use-mirrors
+  - pip install requests
+  - pip install requests-oauthlib
+  - pip install fasteners
+  - pip install coveralls
 
 script:
   - make coverage
