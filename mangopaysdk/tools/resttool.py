@@ -85,8 +85,6 @@ class BaseRestTool(object):
 
         authObj = AuthenticationHelper(self._root).GetRequestAuthObject(self._authRequired)
 
-        headers = {"Content-Type" : "application/x-www-form-urlencoded"}
-
         if (idempotencyKey != None):
             headersJson = {"Content-Type" : "application/json", "Idempotency-Key" : idempotencyKey}
         else:
@@ -100,8 +98,6 @@ class BaseRestTool(object):
             request = requests.Request('GET', fullUrl, auth=authObj)
         elif self._requestType == "PUT":
             request = requests.Request('PUT', fullUrl, data=json.dumps(self._requestData), auth=authObj, headers=headersJson)  
-        elif self._requestType == "DELETE":
-            request = requests.Request('DELETE', fullUrl, auth=authObj, headers=headers)
 
         return request
 
