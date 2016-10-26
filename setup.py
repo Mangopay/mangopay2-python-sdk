@@ -3,7 +3,7 @@ from setuptools import setup
 # to build - python setup.py sdist upload
 setup(
     name='mangopaysdk',
-    version='2.1.0',
+    version='2.1.1',
     author='Mangopay (www.mangopay.com)',
     author_email='support@mangopay.com',
     packages=['mangopaysdk', 'mangopaysdk.entities', 'mangopaysdk.tools', 'mangopaysdk.tools.storages', 'mangopaysdk.types', 'mangopaysdk.types.exceptions'],
