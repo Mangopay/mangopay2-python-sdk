@@ -11,6 +11,7 @@ from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetai
 from mangopaysdk.types.money import Money
 from mangopaysdk.types.payinpaymentdetailsdirectdebit import PayInPaymentDetailsDirectDebit
 from mangopaysdk.types.payintemplateurloptions import PayInTemplateURLOptions
+from mangopaysdk.types.payinpaymentdetailspaypal import PayInPaymentDetailsPayPal
 
 
 class Test_PayIns(TestBase):
@@ -156,7 +157,29 @@ class Test_PayIns(TestBase):
         self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Type)
         self.assertEqual(payIn.PaymentDetails.BankAccount.Type, 'IBAN')
         self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.IBAN)
-        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.BIC)  
+        self.assertIsNotNone(payIn.PaymentDetails.BankAccount.Details.BIC) 
+        
+    def test_PayIns_Create_PayPal_Web(self):
+        wallet = self.getJohnsWallet()
+        user = self.getJohn()
+
+        payInPost = PayIn()
+        payInPost.AuthorId = user.Id
+        payInPost.DebitedFunds = Money()
+        payInPost.DebitedFunds.Amount = 1000
+        payInPost.DebitedFunds.Currency = 'EUR'
+        payInPost.Fees = Money()
+        payInPost.Fees.Amount = 0
+        payInPost.Fees.Currency = 'EUR'
+        payInPost.CreditedWalletId = wallet.Id
+        payInPost.PaymentDetails = PayInPaymentDetailsPayPal()
+        payInPost.ExecutionDetails = PayInExecutionDetailsWeb()
+        payInPost.ExecutionDetails.ReturnURL = 'http://test.test'
+
+        payIn = self.sdk.payIns.Create(payInPost)
+
+        self.assertIsNotNone(payIn)
+        self.assertTrue(payIn.PaymentType == 'PAYPAL')
 
     def test_PayIns_Create_DirectDebitWeb(self):
         wallet = self.getJohnsWallet()

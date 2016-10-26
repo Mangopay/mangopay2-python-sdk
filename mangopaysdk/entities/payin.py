@@ -1,11 +1,11 @@
-from mangopaysdk.entities.transaction import Transaction
+﻿from mangopaysdk.entities.transaction import Transaction
 
 
 class PayIn (Transaction):
 
     def __init__(self, id = None):
         self.CreditedWalletId = None
-        # PayInPaymentType {CARD, BANK_WIRE, AUTOMATIC_DEBIT, DIRECT_DEBIT, PREAUTHORIZED }
+        # PayInPaymentType {CARD, BANK_WIRE, AUTOMATIC_DEBIT, DIRECT_DEBIT, PREAUTHORIZED, PAYPAL }
         self.PaymentType = None
         # One of PayInPaymentDetails implementations, depending on PaymentType
         self.PaymentDetails = None
@@ -22,7 +22,8 @@ class PayIn (Transaction):
                     'CARD': 'PayInPaymentDetailsCard',
                     'PREAUTHORIZED': 'PayInPaymentDetailsPreAuthorized',
                     'BANK_WIRE': 'PayInPaymentDetailsBankWire',
-                    'DIRECT_DEBIT': 'PayInPaymentDetailsDirectDebit'
+                    'DIRECT_DEBIT': 'PayInPaymentDetailsDirectDebit',
+                    'PAYPAL': 'PayInPaymentDetailsPayPal'
                 }, 'ExecutionType': {
                     '_property_name': 'ExecutionDetails', 
                     'WEB': 'PayInExecutionDetailsWeb',

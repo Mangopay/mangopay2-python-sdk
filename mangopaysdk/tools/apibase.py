@@ -33,6 +33,7 @@ from mangopaysdk.types.payinexecutiondetailsweb import PayInExecutionDetailsWeb
 from mangopaysdk.types.payinpaymentdetails import PayInPaymentDetails
 from mangopaysdk.types.payinpaymentdetailspreauthorized import PayInPaymentDetailsPreAuthorized
 from mangopaysdk.types.payinpaymentdetailsbankwire import PayInPaymentDetailsBankWire
+from mangopaysdk.types.payinpaymentdetailspaypal import PayInPaymentDetailsPayPal
 from mangopaysdk.types.payinpaymentdetailscard import PayInPaymentDetailsCard
 from mangopaysdk.types.payinpaymentdetailsdirectdebit import PayInPaymentDetailsDirectDebit
 from mangopaysdk.types.payoutpaymentdetails import PayOutPaymentDetails
@@ -95,6 +96,7 @@ class ApiBase(object):
         'payins_preauthorized-direct_create' : ('/payins/preauthorized/direct/', 'POST'),
 
         'payins_bankwire-direct_create' : ('/payins/bankwire/direct/', 'POST'),
+        'payins_paypal-web_create' : ('/payins/paypal/web/', 'POST'),
         
         'payins_directdebit-web_create' : ('/payins/directdebit/web', 'POST'),
         'payins_directdebit-direct_create' : ('/payins/directdebit/direct', 'POST'),
