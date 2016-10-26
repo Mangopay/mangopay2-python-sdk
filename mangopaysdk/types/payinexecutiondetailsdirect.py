@@ -8,6 +8,7 @@ class PayInExecutionDetailsDirect(PayInExecutionDetails):
         self.CardId = None
         self.SecureModeReturnURL = None
         self.SecureModeRedirectURL = None
+        self.SecureModeNeeded = None
         # Mode3DSType { DEFAULT, FORCE }
         self.SecureMode = None
         self.StatementDescriptor = None
