@@ -1,0 +1,16 @@
+{
+    "Id": "1169423",
+    "Tag": null,
+    "CreationDate": 1383408863,
+    "UserId": "1167492",
+    "AccessKey": "1X0m87dmM2LiwFgxPLBJ",
+    "PreregistrationData": "S8HjKhXaPXeNlzbaHMqIv5ahx5EnS5jTkJowsAs6NUgDqe8Z5LhdNwnl__UmARcgr2CJUbxdzg0r9MqKdI2YGg",
+    "RegistrationData": null,
+    "CardId": null,
+    "CardRegistrationURL": "https://homologation-webpayment.payline.com/webpayment/getToken",
+    "CardType": "CB_VISA_MASTERCARD",
+    "ResultCode": null,
+    "ResultMessage": null,
+    "Currency": "EUR",
+    "Status": "CREATED"
+}

@@ -1,0 +1,14 @@
+{
+    "Owners": [
+        "1167492"
+    ],
+    "Description": "A very cool wallet",
+    "Balance": {
+        "Currency": "EUR",
+        "Amount": 0
+    },
+    "Currency": "EUR",
+    "Id": "1169421",
+    "Tag": "your custom tag",
+    "CreationDate": 1383323329
+}

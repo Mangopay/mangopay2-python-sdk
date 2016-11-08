@@ -1,8 +1,8 @@
-# These targets are not files
-.PHONY: coverage test
+install:
+	pip install -r requirements/base.txt
 
 test:
-	python test_suite.py
+	nosetests -s tests --with-coverage --cover-erase --cover-package=tests
 
-coverage:
-	coverage run --source=mangopaysdk test_suite.py	
+release:
+	python setup.py sdist register upload -s

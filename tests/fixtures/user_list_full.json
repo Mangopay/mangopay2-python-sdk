@@ -1,0 +1,82 @@
+[
+    {
+        "PersonType": "NATURAL",
+        "Email": "arnaud@ulule.com",
+        "Id": "1167495",
+        "Tag": null,
+        "CreationDate": 1382605938,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "LEGAL",
+        "Email": "mmdp@ulule.com",
+        "Id": "1167496",
+        "Tag": null,
+        "CreationDate": 1382607639,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "alexandre@ulule.com",
+        "Id": "1167497",
+        "Tag": "",
+        "CreationDate": 1382627263,
+        "KYCLevel": "REGULAR"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "sarah@ulule.com",
+        "Id": "1167498",
+        "Tag": null,
+        "CreationDate": 1383143870,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "florent@ulule.com",
+        "Id": "1167499",
+        "Tag": null,
+        "CreationDate": 1382605938,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "LEGAL",
+        "Email": "tsilla@ulule.com",
+        "Id": "1167500",
+        "Tag": null,
+        "CreationDate": 1382607639,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "annika@ulule.com",
+        "Id": "1167501",
+        "Tag": "",
+        "CreationDate": 1382627263,
+        "KYCLevel": "REGULAR"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "margaux@ulule.com",
+        "Id": "1167502",
+        "Tag": null,
+        "CreationDate": 1383143870,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "adele@ulule.com",
+        "Id": "1167503",
+        "Tag": null,
+        "CreationDate": 1382605938,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "LEGAL",
+        "Email": "shana@ulule.com",
+        "Id": "1167504",
+        "Tag": null,
+        "CreationDate": 1382607639,
+        "KYCLevel": "LIGHT"
+    }
+]
