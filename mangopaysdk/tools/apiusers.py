@@ -1,6 +1,4 @@
 ﻿import base64
-import warnings
-
 from mangopaysdk.tools.apibase import ApiBase
 from mangopaysdk.tools.sorting import Sorting
 from mangopaysdk.entities.userlegal import UserLegal
@@ -206,19 +204,12 @@ class ApiUsers(ApiBase):
         """
         return self._createObjectIdempotent(idempotencyKey, 'users_createkycpage', kycPage, None, userId, kycDocumentId)
 
-    def UpdateUserKycDocument(self, kycDocument, userId, kycDocumentId=None):
+    def UpdateUserKycDocument(self, kycDocument, userId):
         """Updates KycDocument
         param KycDocument entity (field Status should be set)
         param Int/GUID User identifier
-        param Int/GUID KycDocument identifier
         return KycDocument from API with fileds: Id, Tag, CreationDate, Type, Status, RefusedReasonType, RefusedReasonMessage
         """
-        if kycDocumentId is not None:
-            warnings.warn(
-                ("The kycDocumentId argument in the UpdateUserKycDocument "
-                 "method has been deprecated and will be removed in the next "
-                 "version"),
-                DeprecationWarning)
         return self._saveObject('users_savekycdocument', kycDocument, 'KycDocument', userId, kycDocument.Id)
 
     def CreateKycPageFromFile(self, userId, kycDocumentId, file):
