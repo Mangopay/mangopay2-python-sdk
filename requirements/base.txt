@@ -3,3 +3,4 @@ simplejson==3.6.5
 blinker==1.2
 six==1.8.0
 fasteners==0.14.1
+pytz
