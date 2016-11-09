@@ -38,7 +38,7 @@ class ReportsTestLive(BaseTestLive):
         self.assertEqual(report.id, result.id)
 
     def test_Reports_All(self):
-        time.sleep(1)
+        time.sleep(3)
         report = BaseTestLive.get_johns_report(recreate=True)
 
         result = Report.all(page=1, per_page=1, sort='CreationDate:DESC')
