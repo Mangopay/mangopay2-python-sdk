@@ -12,7 +12,7 @@ class Dto(object):
             value = getattr(self, key)
             if isinstance(value, Dto):
                 data[key] = value.__to_dict()
-            else:
+            elif not callable(value):
                 data[key] = value
 
         return data
