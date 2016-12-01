@@ -1,17 +1,8 @@
 language: python
 python:
   - "2.7"
-  - "3.3"
-
+  - "3.4"
 install:
-  - pip install .
-  - pip install requests
-  - pip install requests-oauthlib
-  - pip install fasteners
-  - pip install coveralls
-
-script:
-  - make coverage
-
-after_success:
-  - coveralls
+  - "pip install -r requirements/base.txt"
+  - "pip install -r requirements/development.txt"
+script: nosetests

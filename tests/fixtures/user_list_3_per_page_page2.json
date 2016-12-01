@@ -1,0 +1,26 @@
+[
+    {
+        "PersonType": "NATURAL",
+        "Email": "sarah@ulule.com",
+        "Id": "1167498",
+        "Tag": null,
+        "CreationDate": 1383143870,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "NATURAL",
+        "Email": "florent@ulule.com",
+        "Id": "1167499",
+        "Tag": null,
+        "CreationDate": 1382605938,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "LEGAL",
+        "Email": "tsilla@ulule.com",
+        "Id": "1167500",
+        "Tag": null,
+        "CreationDate": 1382607639,
+        "KYCLevel": "LIGHT"
+    }
+]

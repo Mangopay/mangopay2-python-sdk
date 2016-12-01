@@ -1,0 +1,14 @@
+{
+    "Id": "1169423",
+    "CreationDate": 1382608290,
+    "UserId": "1167495",
+    "AccessKey": "1X0m87dmM2LiwFgxPLBJ",
+    "PreregistrationData": "pMUiqKEKexdo_NolxfBzia17hQaTN8l5vuRqz172Ft0NIm66nMP1VN2Ph6WS3Z34r2CJUbxdzg0r9MqKdI2YGg",
+    "RegistrationData": "data=gcpSOxwNHZutpFWmFCAYQu1kk25qPfJFdPaHT9kM3gKumDF3GeqSw8f-k8nh-s5OC3GNnhGoFONuAyg1RZQW6rVXooQ_ysKsz09HxQFEJfb-6H4zbY2Nnp1TliwkEFi4",
+    "CardId": "1167507",
+    "CardRegistrationURL": "https://homologation-webpayment.payline.com/webpayment/getToken",
+    "ResultCode": "000000",
+    "ResultMessage": "Success",
+    "Currency": "EUR",
+    "Status": "VALIDATED"
+}

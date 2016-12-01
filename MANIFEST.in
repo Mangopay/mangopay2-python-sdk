@@ -1,2 +1,8 @@
-include *.txt
+include LICENSE
+include MANIFEST.in
 include README.md
+include DESCRIPTION.md
+include Makefile
+
+recursive-include mangopay *
+recursive-include tests *

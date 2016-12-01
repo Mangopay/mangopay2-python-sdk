@@ -1,0 +1,18 @@
+[
+    {
+        "PersonType": "NATURAL",
+        "Email": "arnaud@ulule.com",
+        "Id": "1167495",
+        "Tag": null,
+        "CreationDate": 1382605938,
+        "KYCLevel": "LIGHT"
+    },
+    {
+        "PersonType": "LEGAL",
+        "Email": "mmdp@ulule.com",
+        "Id": "1167496",
+        "Tag": null,
+        "CreationDate": 1382607639,
+        "KYCLevel": "LIGHT"
+    }
+]
