@@ -14,7 +14,7 @@ deploy:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
     branch: release
-    tags: true
+    tags: false
     condition: $TRAVIS_PYTHON_VERSION = "3.4"
 env:
   global:
