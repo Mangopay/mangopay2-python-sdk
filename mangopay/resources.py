@@ -263,7 +263,6 @@ class CardRegistration(BaseModel):
     currency = CharField(api_name='Currency', required=True)
     card_type = CharField(api_name='CardType', choices=constants.CARD_TYPE_CHOICES, default=None)
     card_registration_url = CharField(api_name='CardRegistrationURL')
-    registation_data = CharField(api_name='RegistrationData')
     access_key = CharField(api_name='AccessKey')
     preregistration_data = CharField(api_name='PreregistrationData')
     registration_data = CharField(api_name='RegistrationData')
