@@ -336,7 +336,7 @@ class PayIn(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
-    type = CharField(api_name='Type', choices=constants.TRANSFER_TYPE_CHOICES, default=None)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
@@ -567,7 +567,7 @@ class BankWirePayOut(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
-    type = CharField(api_name='Type', choices=constants.TRANSFER_TYPE_CHOICES, default=None)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
@@ -596,13 +596,13 @@ class Refund(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
-    type = CharField(api_name='Type', choices=constants.TRANSFER_TYPE_CHOICES, default=None)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     refund_reason = RefundReasonField(api_name='RefundReason')
     initial_transaction_id = CharField(api_name='InitialTransactionId')
-    initial_transaction_type = CharField(api_name='InitialTransactionType', choices=constants.TRANSFER_TYPE_CHOICES,
+    initial_transaction_type = CharField(api_name='InitialTransactionType', choices=constants.TRANSACTION_TYPE_CHOICES,
                                          default=None)
 
     class Meta:
@@ -698,7 +698,7 @@ class Transaction(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
-    type = CharField(api_name='Type', choices=constants.TRANSFER_TYPE_CHOICES, default=None)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
@@ -776,7 +776,7 @@ class ClientWallet(Wallet):
 
 class Dispute(BaseModel):
     initial_transaction_id = CharField(api_name='InitialTransactionId')
-    initial_transaction_type = CharField(api_name='InitialTransactionType', choices=constants.TRANSFER_TYPE_CHOICES,
+    initial_transaction_type = CharField(api_name='InitialTransactionType', choices=constants.TRANSACTION_TYPE_CHOICES,
                                          default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
@@ -955,7 +955,7 @@ class SettlementTransfer(BaseModel):
     execution_date = DateTimeField(api_name='ExecutionDate')
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    type = CharField(api_name='Type', choices=constants.TRANSFER_TYPE_CHOICES, default=None)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     repudiation = ForeignKeyField(Repudiation, api_name='RepudiationId')
     creation_date = DateTimeField(api_name='CreationDate')
 
