@@ -449,6 +449,7 @@ class DirectDebitDirectPayIn(PayIn):
     credited_user = ForeignKeyField(User, api_name='CreditedUserId', required=True, related_name='credited_users')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
 
     class Meta:
         verbose_name = 'direct_debit_direct_payin'
