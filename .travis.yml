@@ -6,6 +6,8 @@ install:
 - pip install -r requirements/base.txt
 - pip install -r requirements/development.txt
 script: nosetests
+sudo: required
+dist: precise
 deploy:
   provider: pypi
   user: $USER

@@ -44,7 +44,7 @@ VALIDITY_CHOICES = Choices(
     ('INVALID', 'invalid', 'Invalid')
 )
 
-TRANSFER_TYPE_CHOICES = Choices(
+TRANSACTION_TYPE_CHOICES = Choices(
     ('PAYIN', 'payin', 'Pay In'),
     ('PAYOUT', 'payout', 'Pay out'),
     ('TRANSFER', 'transfer', 'Transfer')

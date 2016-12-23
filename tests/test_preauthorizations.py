@@ -284,7 +284,7 @@ class PreAuthorizationsTest(BaseTest):
                     "ResultMessage": "Success",
                     "SecureMode": "DEFAULT",
                     "CardId": "1208983",
-                    "SecureModeRedirectURL": "https://api-test.mangopay.com:443/Redirect/ACSWithoutValidation?token=8139ca555fd74fbbba14a50b7151a3e9",
+                    "SecureModeRedirectURL": "https://api.sandbox.mangopay.com:443/Redirect/ACSWithoutValidation?token=8139ca555fd74fbbba14a50b7151a3e9",
                     "SecureModeNeeded": True,
                     "PaymentType": "CARD",
                     "ExecutionType": "DIRECT"
