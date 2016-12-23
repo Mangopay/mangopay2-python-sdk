@@ -1,10 +1,24 @@
 language: python
 python:
-  - "2.7"
-  - "3.4"
+- '2.7'
+- '3.4'
 install:
-  - "pip install -r requirements/base.txt"
-  - "pip install -r requirements/development.txt"
+- pip install -r requirements/base.txt
+- pip install -r requirements/development.txt
 script: nosetests
 sudo: required
 dist: precise
+deploy:
+  provider: pypi
+  user: $USER
+  password: $PASS
+  on:
+    distributions: sdist bdist_wheel
+    repo: Mangopay/mangopay2-python-sdk
+    branch: release
+    tags: false
+    condition: $TRAVIS_PYTHON_VERSION = "3.4"
+env:
+  global:
+  - secure: C7WuiEuB8OVeNEo1fdzKO5zS+cUfsPv0ZdZD167YezW9JOrD4Ujd2Jk1uqEJvq2xQpC8SQ5yFAR36s8JE5WO0DDL4Uxzzx+s83WsYnBqE73FnehpI5cXGqJVG6RpHFX1fAx0v88jFfiUE3dY2wF/NcQRACY5n/EMA4rEvt+rpIM=
+  - secure: RMpouHDn2h3+YCpgfs9wUspM58L/9BetulTVx4WfgnnSeqgvivhXKmmDPhOD4KhE7Wsd+89iBVQ5ltpWQT6//qapS1lIfOK7UJVKOeE3m/uFS9O0YmCA+vUETrbXcF4k7COViyQ/XoRKTygeC4hffsLrZhs7JsM/hPexB6BnIqg=

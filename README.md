@@ -8,7 +8,7 @@ MangopaySDK is a Python client library to work with
 Installation
 ------------
 
-python-mangopay requires: 
+mangopaysdk requires: 
 
 * [requests](https://pypi.python.org/pypi/requests)
 * [blinker](https://pypi.python.org/pypi/blinker)
@@ -16,7 +16,7 @@ python-mangopay requires:
 To install the package:
 
 ```
-    pip install python-mangopay
+    pip install mangopaysdk
 ```
 
 By installing this package with [pip](https://pypi.python.org/pypi/pip), all dependencies will be installed for you.
@@ -27,7 +27,7 @@ Documentation
 
 For documentation and examples of usage for the Mangopay API please refer to: [API references](https://docs.mangopay.com/api-references/)
 
-See [docs](https://github.com/mangopay/mangopay2-python-sdk-v2/tree/master/docs) to find examples.
+See [docs](https://github.com/mangopay/mangopay2-python-sdk/tree/v3/docs) to find examples.
 
 License
 -------------------------------------------------

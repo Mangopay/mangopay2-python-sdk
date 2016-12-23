@@ -11,7 +11,7 @@ setup(
     name='mangopaysdk',
     version='3.0.1',
     description='A client library written in python to work with mangopay v2 api',
-    long_description=long_description,
+    long_description='This SDK is a client library for interacting with the Mangopay API.',
     url='https://github.com/Mangopay/mangopay2-python-sdk',
     author='Mangopay (www.mangopay.com)',
     author_email='support@mangopay.com',
