@@ -1,10 +1,10 @@
-import tempfile
+
 
 client_id = None
 passphrase = None
 api_url = 'https://api.mangopay.com/v2.01/'
 api_sandbox_url = 'https://api.sandbox.mangopay.com/v2.01/'
-temp_dir = tempfile.gettempdir()
+temp_dir = None
 api_version = 2.01
 sandbox = True
 
