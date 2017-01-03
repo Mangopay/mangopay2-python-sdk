@@ -36,7 +36,22 @@ Let's get to work, we will create our first handler with the sandbox host:
 Now we have a new handler which is using the sandbox host.
 
 If you are not specifying that you are using the sandbox host nor an existing host,
-it will use the production host by default.
+it will use the sandbox host by default.
+
+Using storage strategy
+----------------------
+
+The storage strategy used for OAuth token.
+
+StaticStorageStrategy() - saves token in memory
+
+FileStorageStrategy() - saves token in temporary file
+
+.. code-block:: python
+
+    handler = APIRequest(sandbox=True, storage_strategy=StaticStorageStrategy())
+    handler = APIRequest(sandbox=True, storage_strategy=FileStorageStrategy())
+
 
 Using resources
 ---------------
