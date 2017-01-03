@@ -354,6 +354,7 @@ class DirectPayIn(PayIn):
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
     card = ForeignKeyField(Card, api_name='CardId', required=True)
+    secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
     secure_mode = CharField(api_name='SecureMode',
                             choices=constants.SECURE_MODE_CHOICES,
                             default=constants.SECURE_MODE_CHOICES.default)
