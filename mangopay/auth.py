@@ -4,6 +4,7 @@ import json
 import stat
 
 import os
+import tempfile
 
 import fasteners as fasteners
 import six
@@ -35,8 +36,11 @@ class StaticStorageStrategy(StorageStrategyBase):
 
 class FileStorageStrategy(StorageStrategyBase):
 
-    def get(self, env_key):
+    def __init__(self):
+        if mangopay.temp_dir is None:
+            mangopay.temp_dir = tempfile.gettempdir()
 
+    def get(self, env_key):
         cache_path = os.path.join(mangopay.temp_dir, "cached-data." + env_key + ".py")
 
         if not os.path.exists(cache_path):
@@ -53,7 +57,6 @@ class FileStorageStrategy(StorageStrategyBase):
         return cached
 
     def store(self, token, env_key):
-
         cache_path = os.path.join(mangopay.temp_dir, "cached-data." + env_key + ".py")
 
         if token is None:
