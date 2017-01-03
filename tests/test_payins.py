@@ -143,6 +143,7 @@ class PayInsTest(BaseTest):
         direct_payin.save()
         self.assertIsInstance(direct_payin, DirectPayIn)
         self.assertEqual(direct_payin.status, 'SUCCEEDED')
+        self.assertEqual(direct_payin.secure_mode_needed, False)
 
         self.assertEqual(direct_payin.secure_mode_return_url, None)
         direct_payin_params.pop('secure_mode_return_url')
