@@ -52,6 +52,7 @@ FileStorageStrategy() - saves token in temporary file
     handler = APIRequest(sandbox=True, storage_strategy=StaticStorageStrategy())
     handler = APIRequest(sandbox=True, storage_strategy=FileStorageStrategy())
 
+If no strategy is specified, StaticStorageStrategy will be used.
 
 Using resources
 ---------------
