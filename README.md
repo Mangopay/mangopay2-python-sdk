@@ -27,7 +27,7 @@ Documentation
 
 For documentation and examples of usage for the Mangopay API please refer to: [API references](https://docs.mangopay.com/api-references/)
 
-See [docs](https://github.com/mangopay/mangopay2-python-sdk/tree/v3/docs) to find examples.
+See [docs](https://github.com/Mangopay/mangopay2-python-sdk/blob/master/docs/usage.rst) to find examples.
 
 License
 -------------------------------------------------
