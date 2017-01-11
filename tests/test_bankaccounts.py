@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from mangopay.utils import Address
+from tests import settings
 from .resources import BankAccount
 from .test_base import BaseTest, BaseTestLive
 
@@ -15,7 +16,7 @@ class BankAccountsTest(BaseTest):
         self.mock_natural_user()
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/IBAN',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/IBAN',
             'body': {
                 "UserId": "1169419",
                 "Type": "IBAN",
@@ -64,7 +65,7 @@ class BankAccountsTest(BaseTest):
         self.mock_natural_user()
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/GB',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/GB',
             'body': {
                 "UserId": "1169419",
                 "Type": "GB",
@@ -113,7 +114,7 @@ class BankAccountsTest(BaseTest):
         self.mock_natural_user()
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/US',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/US',
             'body': {
                 "UserId": "1169419",
                 "OwnerName": "Victor Hugo",
@@ -164,7 +165,7 @@ class BankAccountsTest(BaseTest):
         self.mock_natural_user()
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/CA',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/CA',
             'body': {
                 "UserId": "1169419",
                 "OwnerName": "Victor Hugo",
@@ -217,7 +218,7 @@ class BankAccountsTest(BaseTest):
         self.mock_natural_user()
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/OTHER',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/OTHER',
             'body': {
                 "UserId": "1169419",
                 "OwnerName": "Victor Hugo",
@@ -269,7 +270,7 @@ class BankAccountsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/IBAN',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/IBAN',
                 'body': {
                     "UserId": "1169419",
                     "Type": "IBAN",
@@ -292,7 +293,7 @@ class BankAccountsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/1169675',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/1169675',
                 'body': {
                     "UserId": "1169419",
                     "Type": "IBAN",
@@ -315,7 +316,7 @@ class BankAccountsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts',
                 'body': [
                     {
                         "UserId": "1169419",
@@ -340,7 +341,7 @@ class BankAccountsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419',
                 'body': {
                     "Id": '1169419',
                     "FirstName": "Victor",
@@ -399,7 +400,7 @@ class BankAccountsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts/IBAN',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts/IBAN',
                 'body': {
                     "UserId": "1167502",
                     "Type": "IBAN",
@@ -422,7 +423,7 @@ class BankAccountsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/bankaccounts',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/bankaccounts',
                 'body': [
                     {
                         "UserId": "1167502",

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from tests import settings
+
 try:
     import urllib.parse as urlrequest
 except ImportError:
@@ -28,7 +30,7 @@ class CardsTest(BaseTest):
         self.mock_tokenization_request()
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/cards',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/cards',
             'body': [
                 {
                     "ExpirationDate": "1214",

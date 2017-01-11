@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 
+from tests import settings
 from .resources import (User, NaturalUser, Wallet,
                         LegalUser, Transfer, Transaction)
 from .test_base import BaseTest, BaseTestLive
@@ -22,7 +23,7 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             "method": responses.PUT,
-            "url": re.compile(r'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/natural/\d+'),
+            "url": re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/\d+'),
             "body": {
                 "FirstName": "Victor",
                 "LastName": "Claver",
@@ -92,7 +93,7 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             'method': responses.PUT,
-            'url': re.compile(r'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/legal/\d+'),
+            'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/\d+'),
             'body': {
                 "Name": "MangoPay edited",
                 "LegalPersonType": "BUSINESS",
@@ -168,7 +169,7 @@ class UsersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/natural/1169419',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/1169419',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -198,7 +199,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/natural/1169420',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/1169420',
                 'body': {"errors": []},
                 'status': 404
             }])
@@ -241,7 +242,7 @@ class UsersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/legal/1169420',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/1169420',
                 'body': {
                     "Name": "MangoPay",
                     "LegalPersonType": "BUSINESS",
@@ -274,7 +275,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/legal/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/1169421',
                 'body': {"errors": []},
                 'status': 404
             }])
@@ -318,7 +319,7 @@ class UsersTest(BaseTest):
     def test_retrieve_all_users(self):
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users',
             'body': [
                 {
                     "PersonType": "NATURAL",
@@ -397,7 +398,7 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             'method': responses.GET,
-            'url': re.compile(r'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/\d+'),
+            'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/\d+'),
             'body': {
                 "FirstName": "Victor",
                 "LastName": "Hugo",
@@ -460,7 +461,7 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             'method': responses.GET,
-            'url': re.compile(r'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/\d+'),
+            'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/\d+'),
             'body': {
                 "Name": "MangoPay",
                 "LegalPersonType": "BUSINESS",
@@ -539,7 +540,7 @@ class UsersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -569,7 +570,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/transfers',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers',
                 'body': {
                     "Id": "1169434",
                     "Tag": "DefaultTag",
@@ -601,7 +602,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/transactions',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/transactions',
                 'body': [
                     {
                         "Id": "1174837",
