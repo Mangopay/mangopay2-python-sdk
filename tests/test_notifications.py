@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 import pytz
 
+from tests import settings
 from .resources import Notification, Event
 from .test_base import BaseTest
 
@@ -16,7 +17,7 @@ class NotificationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "DISABLED",
@@ -30,7 +31,7 @@ class NotificationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks/1248727',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks/1248727',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "DISABLED",
@@ -44,7 +45,7 @@ class NotificationsTest(BaseTest):
             },
             {
                 'method': responses.PUT,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks/1248727',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks/1248727',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "ENABLED",
@@ -84,7 +85,7 @@ class NotificationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "DISABLED",
@@ -98,7 +99,7 @@ class NotificationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks/1248727',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks/1248727',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "DISABLED",
@@ -112,7 +113,7 @@ class NotificationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks/1248728',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks/1248728',
                 'body': {"errors": []},
                 'status': 404
             }])
@@ -141,7 +142,7 @@ class NotificationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "DISABLED",
@@ -155,7 +156,7 @@ class NotificationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks',
                 'body': [
                     {
                         "Url": "http://requestb.in/s6koy4s6ZLKJZLEKAJZE",
@@ -208,7 +209,7 @@ class NotificationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/hooks',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/hooks',
                 'body': {
                     "Url": "http://wwww.mynotificationurl.com",
                     "Status": "DISABLED",
@@ -222,7 +223,7 @@ class NotificationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/events',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/events',
                 'body': [
                     {
                         "RessourceId": "88263",
@@ -262,7 +263,7 @@ class NotificationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/events',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/events',
                 'body': {
                     "RessourceId": "88263",
                     "EventType": "PAYIN_NORMAL_CREATED",

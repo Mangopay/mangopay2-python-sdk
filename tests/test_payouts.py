@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from tests import settings
 from .resources import BankAccount, BankWirePayOut
 from .test_base import BaseTest
 
@@ -16,7 +17,7 @@ class PayOutsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/bankaccounts/IBAN',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/bankaccounts/IBAN',
                 'body': {
                     "UserId": "1169420",
                     "Type": "IBAN",
@@ -39,7 +40,7 @@ class PayOutsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payouts/bankwire',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payouts/bankwire',
                 'body': {
                     "Id": 30047,
                     "CreditedFunds": None,
@@ -55,7 +56,7 @@ class PayOutsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payouts/30047',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payouts/30047',
                 'body': {
                     "Id": 30047,
                     "Tag": "custom tag",

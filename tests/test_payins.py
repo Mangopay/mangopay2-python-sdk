@@ -2,6 +2,7 @@
 import unittest
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate
+from tests import settings
 from .resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn,
                         CardWebPayIn, DirectDebitWebPayIn)
 from .test_base import BaseTest, BaseTestLive
@@ -25,7 +26,7 @@ class PayInsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -55,7 +56,7 @@ class PayInsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/direct',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -85,7 +86,7 @@ class PayInsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/6784288',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/6784288',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -115,7 +116,7 @@ class PayInsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
                 'body': {
                     "Owners": ["6784283"],
                     "Description":"Wallet of Victor Hugo",
@@ -178,7 +179,7 @@ class PayInsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/bankwire/direct',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/bankwire/direct',
             'body': {
                 "Id": "117609",
                 "Tag": "Custom data",
@@ -259,7 +260,7 @@ class PayInsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/card/web',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/web',
             'body': {
                 "Id": "1169430",
                 "Tag": "Custom tag",
@@ -339,7 +340,7 @@ class PayInsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/directdebit/web',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/directdebit/web',
             'body': {
                 "Id": "1169430",
                 "Tag": "Custom tag",

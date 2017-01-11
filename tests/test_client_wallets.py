@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from tests import settings
 from .resources import ClientWallet
 from .test_base import BaseTest, BaseTestLive
 
@@ -13,7 +14,7 @@ class ClientWalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/clients/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets',
                 'body': [
                     {
                         "Balance": {
@@ -53,7 +54,7 @@ class ClientWalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/clients/wallets/FEES/EUR/',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets/FEES/EUR/',
                 'body':
                     {
                         "Balance": {
@@ -70,7 +71,7 @@ class ClientWalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/clients/wallets/CREDIT',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets/CREDIT',
                 'body': [
                     {
                         "Balance": {
@@ -99,7 +100,7 @@ class ClientWalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/clients/wallets/FEES',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets/FEES',
                 'body': [
                     {
                         "Balance": {

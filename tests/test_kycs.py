@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from tests import settings
 from .resources import Document, Page, KYC
 from .test_base import BaseTest
 
@@ -16,7 +17,7 @@ class KYCSTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents',
                 'body': {
                     "Id": "1173359",
                     "Tag": "custom tag",
@@ -30,7 +31,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169419/KYC/documents',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/KYC/documents',
                 'body': {
                     "Id": "1173360",
                     "Tag": "custom tag",
@@ -44,7 +45,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.PUT,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents/1173359',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents/1173359',
                 'body': {
                     "Id": "1173359",
                     "Tag": "My CNI",
@@ -58,7 +59,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/KYC/documents/1173359',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/KYC/documents/1173359',
                 'body': {
                     "Id": "1173359",
                     "Tag": "My CNI",
@@ -72,7 +73,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents',
                 'body': {
                     "Id": "1173360",
                     "Tag": "My CNI",
@@ -86,7 +87,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents',
                 'body': [
                     {
                         "Id": "1173360",
@@ -103,7 +104,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents?per_page=1&page=2',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents?per_page=1&page=2',
                 'body': [
                     {
                         "Id": "1173359",
@@ -129,7 +130,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/KYC/documents',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/KYC/documents',
                 'body': [
                     {
                         "Id": "1167831",
@@ -155,7 +156,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/KYC/documents?per_page=2&page=1',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/KYC/documents?per_page=2&page=1',
                 'body': [
                     {
                         "Id": "1167831",
@@ -266,7 +267,7 @@ class KYCSTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents',
                 'body': {
                     "Id": "1173359",
                     "Tag": "custom tag",
@@ -280,7 +281,7 @@ class KYCSTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1169420/KYC/documents/1173359/pages',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/KYC/documents/1173359/pages',
                 'body': {
                     "File": decoded_string
                 },

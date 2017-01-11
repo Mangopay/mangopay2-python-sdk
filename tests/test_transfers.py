@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from tests import settings
 from .resources import Transfer, Wallet, DirectPayIn
 from .test_base import BaseTest
 
@@ -21,7 +22,7 @@ class TransfersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -51,7 +52,7 @@ class TransfersTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/direct',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -81,7 +82,7 @@ class TransfersTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/transfers',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers',
                 'body': {
                     "Id": "1169434",
                     "Tag": "custom tag",
@@ -113,7 +114,7 @@ class TransfersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/transfers/1169434',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers/1169434',
                 'body': {
                     "Id": "1169434",
                     "Tag": "DefaultTag",
