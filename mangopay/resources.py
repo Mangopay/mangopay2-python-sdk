@@ -160,7 +160,7 @@ class LegalUser(User):
         url = '/users/legal'
 
     def __str__(self):
-        return self.name
+        return '%s' % self.email
 
 
 @python_2_unicode_compatible
