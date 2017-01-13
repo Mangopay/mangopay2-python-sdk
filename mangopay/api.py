@@ -8,6 +8,7 @@ import six
 import copy
 import mangopay
 
+
 from mangopay.auth import AuthorizationTokenManager
 from .exceptions import APIError, DecodeError
 from .signals import request_finished, request_started, request_error
@@ -46,6 +47,8 @@ class APIRequest(object):
         params = params or {}
 
         headers = {}
+
+        headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
         if oauth_request:
             headers['Authorization'] = self.auth_manager.basic_token()
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
