@@ -376,7 +376,7 @@ the uploaded documents for this particular user
 
 .. code-block:: python
 
-    documents = Document.all(user_id=legal_user.get_pk())
+    documents = legal_user.documents.all()
 
 To get the list of all the uploaded documents for all users:
 
