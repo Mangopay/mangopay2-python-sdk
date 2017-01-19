@@ -54,6 +54,17 @@ FileStorageStrategy() - saves token in temporary file
 
 If no strategy is specified, StaticStorageStrategy will be used.
 
+API requests timeout
+--------------------
+
+When you create a new handler you can set the amount of time (in seconds) after that the requests will timeout.
+
+.. code-block:: python
+
+    handler = APIRequest(sandbox=True, timeout=30.0)
+
+The default timeout is 30 seconds.
+
 Using resources
 ---------------
 
