@@ -33,7 +33,8 @@ requests_session = requests.Session()
 
 
 class APIRequest(object):
-    def __init__(self, client_id=None, passphrase=None, api_url=None, api_sandbox_url=None, sandbox=True, storage_strategy=None):
+    def __init__(self, client_id=None, passphrase=None, api_url=None, api_sandbox_url=None, sandbox=True, storage_strategy=None,
+                 proxies=None):
         if sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
@@ -42,6 +43,7 @@ class APIRequest(object):
         self.client_id = client_id or mangopay.client_id
         self.passphrase = passphrase or mangopay.passphrase
         self.auth_manager = AuthorizationTokenManager(self, storage_strategy)
+        self.proxies = proxies
 
     def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
         params = params or {}
@@ -83,7 +85,8 @@ class APIRequest(object):
         try:
             result = requests_session.request(method, url,
                                               data=data,
-                                              headers=headers)
+                                              headers=headers,
+                                              proxies=self.proxies)
         except ConnectionError as e:
             msg = '{}'.format(e)
 
