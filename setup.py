@@ -27,7 +27,7 @@ setup(
     ],
     keywords='mangopay api development emoney sdk',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    install_requires=['requests', 'simplejson', 'blinker', 'six', 'fasteners'],
+    install_requires=['requests', 'simplejson', 'blinker', 'six' ],
     extras_require={
         'dev': ['responses', 'nose', 'coverage', 'httplib2',
                 'pyopenssl', 'ndg-httpsclient', 'pyasn1', 'exam'],
