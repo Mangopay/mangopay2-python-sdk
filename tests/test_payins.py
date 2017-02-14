@@ -412,6 +412,20 @@ class PayInsTest(BaseTest):
         self.assertEqual(card_payin.status, 'CREATED')
         self.assertEqual(card_payin.payment_type, 'DIRECT_DEBIT')
 
+    def test_using_api_names_as_payin_attributes(self):
+        payin = BankWirePayIn(
+            AuthorId=1,
+            declared_debited_funds=Money(100, 'EUR'),
+            DeclaredFees=Money(1, 'EUR'),
+            credited_wallet=Wallet(Id=1),
+        )
+        self.assertEqual(payin.AuthorId, 1)
+        self.assertIs(payin.declared_debited_funds, payin.DeclaredDebitedFunds)
+        self.assertIs(payin.DeclaredFees, payin.declared_fees)
+        self.assertEqual(payin.credited_wallet.id, payin.CreditedWalletId)
+        payin.Tag = 'x'
+        self.assertIs(payin.Tag, payin.tag)
+
 
 class PayInsTestLive(BaseTestLive):
     @unittest.skip('Set a breakpoint after creating the mandate, navigate to mandate.redirect_url and confirm')
