@@ -13,15 +13,11 @@ class BaseQuery(object):
     def handler(self):
         return self._handler or get_default_handler()
 
-    def get_field_transcription(self, model_klass=None):
-        model_klass = model_klass or self.model
-        return dict((field.api_name, field.name) for field in model_klass._meta.fields.values())
-
     def parse_result(self, result, model_klass=None):
         pairs = {}
         model_klass = model_klass or self.model
 
-        for api_name, field_name in self.get_field_transcription(model_klass).items():
+        for api_name, field_name in model_klass._meta.api_names.items():
             field = model_klass._meta.get_field_by_name(field_name)
             if result and api_name in result:
                 pairs[field_name] = field.python_value(result[api_name])
