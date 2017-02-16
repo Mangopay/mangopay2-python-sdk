@@ -160,7 +160,7 @@ class LegalUser(User):
         url = '/users/legal'
 
     def __str__(self):
-        return self.name
+        return '%s' % self.email
 
 
 @python_2_unicode_compatible
@@ -345,6 +345,20 @@ class PayIn(BaseModel):
         verbose_name = 'payin'
         verbose_name_plural = 'payins'
         url = '/payins'
+
+    @classmethod
+    def cast(cls, result):
+        payment_type = result.get('PaymentType')
+        execution_type = result.get('ExecutionType')
+        types = {
+            ("CARD", "DIRECT"): DirectPayIn,
+            ("CARD", "WEB"): CardWebPayIn,
+            ("DIRECT_DEBIT", "DIRECT"): DirectDebitDirectPayIn,
+            ("DIRECT_DEBIT", "WEB"): DirectDebitWebPayIn,
+            ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
+            ("BANK_WIRE", "DIRECT"): BankWirePayIn,
+        }
+        return types.get((payment_type, execution_type), cls)
 
 
 @python_2_unicode_compatible

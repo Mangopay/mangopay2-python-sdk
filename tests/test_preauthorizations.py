@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from tests import settings
 from .resources import (PreAuthorization, PreAuthorizedPayIn)
 from .test_base import BaseTest
 
@@ -19,7 +20,7 @@ class PreAuthorizationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -49,7 +50,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/card/direct',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -78,7 +79,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/1209003',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/1209003',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -107,7 +108,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.PUT,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/1209003',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/1209003',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -136,7 +137,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.PUT,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/1209003',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/1209003',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -165,7 +166,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/1209003',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/1209003',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -235,7 +236,7 @@ class PreAuthorizationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -265,7 +266,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/card/direct',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -293,7 +294,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/1209003',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/1209003',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -319,7 +320,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/1209004',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/1209004',
                 'body': {"errors": []},
                 'status': 404
             }])
@@ -361,7 +362,7 @@ class PreAuthorizationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -391,7 +392,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/card/direct',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -419,7 +420,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/PreAuthorized/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/PreAuthorized/direct',
                 'body': {
                     "Id": "1209008",
                     "Tag": None,
@@ -503,7 +504,7 @@ class PreAuthorizationsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -533,7 +534,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/preauthorizations/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/preauthorizations/card/direct',
                 'body': {
                     "Id": "1209003",
                     "Tag": None,
@@ -561,7 +562,7 @@ class PreAuthorizationsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/payins/PreAuthorized/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/PreAuthorized/direct',
                 'body': {
                     "Id": "1209008",
                     "Tag": None,

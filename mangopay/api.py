@@ -8,12 +8,13 @@ import six
 import copy
 import mangopay
 
+
 from mangopay.auth import AuthorizationTokenManager
 from .exceptions import APIError, DecodeError
 from .signals import request_finished, request_started, request_error
 from .utils import reraise_as, truncatechars
 
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, ConnectTimeout, Timeout
 
 try:
     import urllib.parse as urlrequest
@@ -32,7 +33,8 @@ requests_session = requests.Session()
 
 
 class APIRequest(object):
-    def __init__(self, client_id=None, passphrase=None, api_url=None, api_sandbox_url=None, sandbox=True, storage_strategy=None):
+    def __init__(self, client_id=None, passphrase=None, api_url=None, api_sandbox_url=None, sandbox=True,
+                 timeout=30.0, storage_strategy=None, proxies=None):
         if sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
@@ -41,11 +43,15 @@ class APIRequest(object):
         self.client_id = client_id or mangopay.client_id
         self.passphrase = passphrase or mangopay.passphrase
         self.auth_manager = AuthorizationTokenManager(self, storage_strategy)
+        self.timeout = timeout
+        self.proxies = proxies
 
     def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
         params = params or {}
 
         headers = {}
+
+        headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
         if oauth_request:
             headers['Authorization'] = self.auth_manager.basic_token()
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -80,7 +86,9 @@ class APIRequest(object):
         try:
             result = requests_session.request(method, url,
                                               data=data,
-                                              headers=headers)
+                                              headers=headers,
+                                              timeout=self.timeout,
+                                              proxies=self.proxies)
         except ConnectionError as e:
             msg = '{}'.format(e)
 
@@ -91,6 +99,15 @@ class APIRequest(object):
 
             reraise_as(APIError(msg))
 
+        except Timeout as e:
+            msg = '{}'.format(e)
+
+            if msg:
+                msg = '%s: %s' % (type(e).__name__, msg)
+            else:
+                msg = type(e).__name__
+
+            reraise_as(APIError(msg))
         laps = time.time() - ts
 
         # signal:

@@ -11,6 +11,8 @@ import os
 
 import responses
 
+from tests import settings
+
 
 def get_fixture(name):
     path = os.path.abspath(__file__)
@@ -51,7 +53,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_oauth(self):
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/oauth/token',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+'oauth/token',
             'body': {
                 "access_token": "67b036bd007c40378d4be5a934f197e6",
                 "token_type": "Bearer",
@@ -63,7 +65,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_natural_user(self):
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/natural',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural',
             'body': get_fixture('natural_user') % time.mktime(date.today().timetuple()),
             'status': 200
         })
@@ -71,7 +73,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_legal_user(self):
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users/legal',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal',
             'body': get_fixture('legal_user') % time.mktime(date.today().timetuple()),
             'status': 200
         })
@@ -79,7 +81,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_user_wallet(self):
         self.register_mock({
             'method': responses.POST,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
             'body': get_fixture('user_wallet'),
             'status': 200
         })
@@ -88,13 +90,13 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
                 'body': get_fixture('natural_user_wallet'),
                 'status': 200
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets/1169420',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169420',
                 'body': get_fixture('natural_user_wallet'),
                 'status': 200
             }])
@@ -103,13 +105,13 @@ class RegisteredMocks(unittest.TestCase):
         return self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
                 'body': get_fixture('legal_user_wallet'),
                 'status': 200
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
                 'body': get_fixture('legal_user_wallet'),
                 'status': 200
             }])
@@ -118,13 +120,13 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
                 'body': get_fixture('natural_user_wallet_9'),
                 'status': 200
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets/1169420',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169420',
                 'body': get_fixture('natural_user_wallet_9'),
                 'status': 200
             }])
@@ -133,13 +135,13 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
                 'body': get_fixture('legal_user_wallet_89'),
                 'status': 200
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
                 'body': get_fixture('legal_user_wallet_89'),
                 'status': 200
             }])
@@ -148,13 +150,13 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
                 'body': get_fixture('legal_user_wallet_99'),
                 'status': 200
             },
             {
                 'method': responses.GET,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
                 'body': get_fixture('legal_user_wallet_99'),
                 'status': 200
             }])
@@ -163,19 +165,19 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/cardregistrations',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/cardregistrations',
                 'body': get_fixture('cardregistrations'),
                 'status': 200
             },
             {
                 'method': responses.PUT,
-                'url': re.compile(r'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/cardregistrations/\d+'),
+                'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/cardregistrations/\d+'),
                 'body': get_fixture('cardregistrations_update'),
                 'status': 200
             },
             {
                 'method': responses.GET,
-                'url': re.compile(r'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/cards/\d+'),
+                'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/cards/\d+'),
                 'body': get_fixture('card'),
                 'status': 200
             }])
@@ -191,7 +193,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_user_list_full(self):
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users',
             'body': get_fixture('user_list_full'),
             'status': 200,
             'match_querystring': True
@@ -200,7 +202,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_user_list_2_per_page_page1(self):
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users?page=1&per_page=2',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users?page=1&per_page=2',
             'body': get_fixture('user_list_2_per_page_page1'),
             'status': 200,
             'match_querystring': True
@@ -209,7 +211,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_user_list_3_per_page_page2(self):
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users?page=2&per_page=3',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users?page=2&per_page=3',
             'body': get_fixture('user_list_3_per_page_page2'),
             'status': 200,
             'match_querystring': True
@@ -218,7 +220,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_user_list_page1(self):
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users?page=1',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users?page=1',
             'body': get_fixture('user_list_page1'),
             'status': 200,
             'match_querystring': True
@@ -227,7 +229,7 @@ class RegisteredMocks(unittest.TestCase):
     def mock_user_list_2_per_page(self):
         self.register_mock({
             'method': responses.GET,
-            'url': 'https://api.sandbox.mangopay.com/v2.01/sdk-unit-tests/users?per_page=2',
+            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users?per_page=2',
             'body': get_fixture('user_list_2_per_page'),
             'status': 200,
             'match_querystring': True

@@ -17,6 +17,7 @@ class BaseModelOptions(object):
     def __init__(self, model_class, options=None):
         self.rel_fields = {}
         self.fields = {}
+        self.api_names = {}
         self.options = options or {}
         self.reverse_relations = {}
         self.defaults = {}
@@ -123,6 +124,7 @@ class ApiObjectBase(type):
 
             attr.add_to_class(cls, name)
             _meta.fields[attr.name] = attr
+            _meta.api_names[attr.api_name] = attr.name
 
             if isinstance(attr, PrimaryKeyField):
                 orig_primary_key = attr
@@ -172,6 +174,12 @@ class BaseApiModelMethods(object):
 
 
 class BaseApiModel(BaseApiModelMethods):
+
+    def __getattr__(self, name):
+        return object.__getattribute__(self, self._meta.api_names.get(name, name))
+
+    def __setattr__(self, name, value):
+        super(BaseApiModel, self).__setattr__(self._meta.api_names.get(name, name), value)
 
     def save(self, handler=None, cls=None, idempotency_key=None):
         self._handler = handler or self.handler

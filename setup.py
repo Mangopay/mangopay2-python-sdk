@@ -9,7 +9,7 @@ with open(path.join(here, 'DESCRIPTION.md'), encoding='utf-8') as f:
 
 setup(
     name='mangopaysdk',
-    version='3.0.3',
+    version='3.0.4',
     description='A client library written in python to work with mangopay v2 api',
     long_description='This SDK is a client library for interacting with the Mangopay API.',
     url='https://github.com/Mangopay/mangopay2-python-sdk',
@@ -27,7 +27,7 @@ setup(
     ],
     keywords='mangopay api development emoney sdk',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    install_requires=['requests', 'simplejson', 'blinker', 'six', 'fasteners'],
+    install_requires=['requests', 'simplejson', 'blinker', 'six' ],
     extras_require={
         'dev': ['responses', 'nose', 'coverage', 'httplib2',
                 'pyopenssl', 'ndg-httpsclient', 'pyasn1', 'exam'],

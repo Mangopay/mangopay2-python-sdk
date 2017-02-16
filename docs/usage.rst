@@ -38,6 +38,27 @@ Now we have a new handler which is using the sandbox host.
 If you are not specifying that you are using the sandbox host nor an existing host,
 it will use the sandbox host by default.
 
+API proxy support
+-----------------
+
+When you are creating a new handler you can use proxies for https, http and ftp protocols.
+
+.. code-block:: python
+
+    http_proxy  = "http://10.10.1.10:3128"
+    https_proxy = "https://10.10.1.11:1080"
+    ftp_proxy   = "ftp://10.10.1.10:3128"
+
+    proxyDict = {
+              "http": http_proxy,
+              "https": https_proxy,
+              "ftp": ftp_proxy
+                }
+                
+     handler = APIRequest(sandbox=True, proxies=proxyDict)
+ 
+This parameter is optional and by default it is None.
+
 Using storage strategy
 ----------------------
 
@@ -53,6 +74,17 @@ FileStorageStrategy() - saves token in temporary file
     handler = APIRequest(sandbox=True, storage_strategy=FileStorageStrategy())
 
 If no strategy is specified, StaticStorageStrategy will be used.
+
+API requests timeout
+--------------------
+
+When you create a new handler you can set the amount of time (in seconds) after that the requests will timeout.
+
+.. code-block:: python
+
+    handler = APIRequest(sandbox=True, timeout=30.0)
+
+The default timeout is 30 seconds.
 
 Using resources
 ---------------
@@ -376,7 +408,7 @@ the uploaded documents for this particular user
 
 .. code-block:: python
 
-    documents = Document.all(user_id=legal_user.get_pk())
+    documents = legal_user.documents.all()
 
 To get the list of all the uploaded documents for all users:
 

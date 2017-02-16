@@ -6,7 +6,6 @@ import stat
 import os
 import tempfile
 
-import fasteners as fasteners
 import six
 import time
 
@@ -45,31 +44,25 @@ class FileStorageStrategy(StorageStrategyBase):
 
         if not os.path.exists(cache_path):
             return None
-        lock = fasteners.ReaderWriterLock()
-        with lock.read_lock():
-            fp = open(cache_path, 'rb')
-            serialized_obj = fp.read().decode('UTF-8')
+
+        with open(cache_path, 'rb') as f:
+            serialized_obj = f.read().decode('UTF-8')
             try:
                 cached = json.loads(serialized_obj[1:])
             except:
                 cached = None
-            fp.close()
+
         return cached
 
     def store(self, token, env_key):
         cache_path = os.path.join(mangopay.temp_dir, "cached-data." + env_key + ".py")
-
         if token is None:
             return
-        lock = fasteners.ReaderWriterLock()
-        with lock.write_lock():
-            fp = open(cache_path, 'w')
+
+        with open(cache_path, 'w') as f:
             os.chmod(cache_path, stat.S_IRUSR | stat.S_IWUSR)
-            # Write it to the result to the file as a json
             serialized_obj = "#" + json.dumps(token)
-            # add hash to prevent download token file via http when path is invalid
-            fp.write(serialized_obj)
-            fp.close()
+            f.write(serialized_obj)
 
 
 class AuthorizationTokenManager(object):

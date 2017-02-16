@@ -24,6 +24,27 @@ elif six.PY2:
     urllib.URLopener.open_https = orig
 
 
+class AliasProperty(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
+
+    def __set__(self, instance, value):
+        return setattr(instance, self.name, value)
+
+
+def add_camelcase_aliases(cls):
+    for name in cls().__dict__.keys():
+        if name[0] == '_':
+            continue
+        setattr(cls, name.title().replace('_', ''), AliasProperty(name))
+    return cls
+
+
+@add_camelcase_aliases
 @python_2_unicode_compatible
 class Money(object):
     __hash__ = None
@@ -200,6 +221,7 @@ class Money(object):
         return self.__class__(round(self.amount, ndigits), self.currency)
 
 
+@add_camelcase_aliases
 class Address(object):
 
     def __init__(self, address_line_1=None, address_line_2=None, city=None, region=None,
@@ -227,6 +249,7 @@ class Address(object):
         return False
 
 
+@add_camelcase_aliases
 class ReportFilters(object):
 
     def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
