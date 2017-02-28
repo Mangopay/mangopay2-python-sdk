@@ -33,9 +33,9 @@ requests_session = requests.Session()
 
 
 class APIRequest(object):
-    def __init__(self, client_id=None, passphrase=None, api_url=None, api_sandbox_url=None, sandbox=True,
+    def __init__(self, client_id=None, passphrase=None, api_url=None, api_sandbox_url=None, sandbox=None,
                  timeout=30.0, storage_strategy=None, proxies=None):
-        if sandbox:
+        if sandbox or mangopay.sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
             self.api_url = api_url or mangopay.api_url
