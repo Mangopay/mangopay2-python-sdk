@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from datetime import date
+from datetime import datetime
 
 import json
 import time
@@ -12,6 +12,12 @@ import os
 import responses
 
 from tests import settings
+
+from mangopay.utils import timestamp_from_date
+
+
+today = datetime.utcnow().date()
+today_timestamp = timestamp_from_date(today)
 
 
 def get_fixture(name):
@@ -66,7 +72,7 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock({
             'method': responses.POST,
             'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural',
-            'body': get_fixture('natural_user') % time.mktime(date.today().timetuple()),
+            'body': get_fixture('natural_user') % today_timestamp,
             'status': 200
         })
 
@@ -74,7 +80,7 @@ class RegisteredMocks(unittest.TestCase):
         self.register_mock({
             'method': responses.POST,
             'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal',
-            'body': get_fixture('legal_user') % time.mktime(date.today().timetuple()),
+            'body': get_fixture('legal_user') % today_timestamp,
             'status': 200
         })
 
