@@ -196,8 +196,8 @@ Create a transfer from a wallet to another one
 
     transfer = Transfer(author=legal_user,
                         credited_user=natural_user,
-                        debited_funds=Money(amount=10, currency='EUR'),  # Create a EUR 10.00 transfer
-                        fees=Money(amount=1, currency='EUR'),  # With EUR 1.00 of fees
+                        debited_funds=Money(amount=1000, currency='EUR'),  # Create a EUR 10.00 transfer
+                        fees=Money(amount=100, currency='EUR'),  # With EUR 1.00 of fees
                         debited_wallet=legal_user_wallet,
                         credited_wallet=natural_user_wallet)
 
