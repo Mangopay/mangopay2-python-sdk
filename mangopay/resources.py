@@ -97,6 +97,7 @@ class User(BaseModel):
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
         self.disputes = RelatedManager(self, Dispute)
+        self.emoney = RelatedManager(self, EMoney)
 
     @classmethod
     def cast(cls, result):
@@ -162,6 +163,18 @@ class LegalUser(User):
     def __str__(self):
         return '%s' % self.email
 
+@python_2_unicode_compatible
+class EMoney(BaseModel):
+    user = ForeignKeyField(User, api_name='UserId', related_name='emoney')
+    credited_emoney = MoneyField(api_name='CreditedEMoney')
+    debited_emoney = MoneyField(api_name='DebitedEMoney')
+
+    class Meta:
+        verbose_name = 'emoney'
+        url = '/users/%(user_id)s/emoney'
+
+    def __str__(self):
+        return 'EMoney for user %s' % self.user_id
 
 @python_2_unicode_compatible
 class Wallet(BaseModel):
