@@ -295,7 +295,10 @@ class DisputeReasonField(Field):
 class RefundReasonField(Field):
     def python_value(self, value):
         if value is not None:
-            return Reason(type=value['RefusedReasonType'], message=value['RefusedReasonMessage'])
+            return Reason(
+                type=value.get('RefundReasonType') or value['RefusedReasonType'],
+                message=value.get('RefundReasonMessage') or value['RefusedReasonMessage']
+            )
 
         return value
 
