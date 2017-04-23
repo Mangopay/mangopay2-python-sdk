@@ -97,7 +97,6 @@ class User(BaseModel):
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
         self.disputes = RelatedManager(self, Dispute)
-        self.emoney = RelatedManager(self, EMoney)
 
     @classmethod
     def cast(cls, result):
@@ -108,6 +107,9 @@ class User(BaseModel):
                 return LegalUser
 
         return cls
+
+    def get_emoney(self):
+        return self.emoney.get('', **{'user_id': self.get_pk()})
 
     def __str__(self):
         return '%s' % self.email
@@ -1045,4 +1047,3 @@ class Report(BaseModel):
             SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/transactions/'
         }
-

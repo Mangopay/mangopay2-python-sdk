@@ -13,7 +13,7 @@ class EMoneyTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/emoney',
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/emoney/',
                 'body': {
                     "UserId": 1169420,
                     "CreditedEMoney": {
@@ -29,8 +29,7 @@ class EMoneyTest(BaseTest):
                 'match_querystring': True
             }])
 
-        # List user's emoney
-        user_emoney = self.legal_user.emoney.get(1)
+        user_emoney = self.legal_user.get_emoney()
         self.assertIsNotNone(user_emoney.credited_emoney)
         self.assertIsNotNone(user_emoney.debited_emoney)
         self.assertIsInstance(user_emoney, EMoney)
