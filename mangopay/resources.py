@@ -108,6 +108,9 @@ class User(BaseModel):
 
         return cls
 
+    def get_emoney(self):
+        return self.emoney.get('', **{'user_id': self.get_pk()})
+
     def __str__(self):
         return '%s' % self.email
 
@@ -162,6 +165,18 @@ class LegalUser(User):
     def __str__(self):
         return '%s' % self.email
 
+@python_2_unicode_compatible
+class EMoney(BaseModel):
+    user = ForeignKeyField(User, api_name='UserId', related_name='emoney')
+    credited_emoney = MoneyField(api_name='CreditedEMoney')
+    debited_emoney = MoneyField(api_name='DebitedEMoney')
+
+    class Meta:
+        verbose_name = 'emoney'
+        url = '/users/%(user_id)s/emoney'
+
+    def __str__(self):
+        return 'EMoney for user %s' % self.user_id
 
 @python_2_unicode_compatible
 class Wallet(BaseModel):
@@ -1032,4 +1047,3 @@ class Report(BaseModel):
             SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/transactions/'
         }
-
