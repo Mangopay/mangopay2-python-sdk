@@ -343,7 +343,7 @@ class Mandate(BaseModel):
 
 
 class PayIn(BaseModel):
-    credited_user = ForeignKeyField(User, api_name='CreditedUserId', required=True, related_name='credited_users')
+    credited_user = ForeignKeyField(User, api_name='CreditedUserId', related_name='credited_users')
     credited_funds = MoneyField(api_name='CreditedFunds')
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
