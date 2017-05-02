@@ -65,3 +65,4 @@ tests/credentials.py
 .vscode
 
 local_examples/
+credited_user_id.py
