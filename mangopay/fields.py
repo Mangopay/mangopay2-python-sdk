@@ -366,7 +366,7 @@ class ForeignKeyField(CharField):
             self.related_name = klass._meta.verbose_name + '_set'
 
         klass._meta.rel_fields[name] = self.name
-        setattr(klass, self.descriptor, ForeignRelatedObject(self.to, self.name))
+        setattr(klass, self.descriptor, ForeignRelatedObject(self.to, self.name, getattr(klass, self.descriptor)))
         setattr(klass, self.name, None)
 
         reverse_rel = ReverseForeignRelatedObject(klass, self.name)

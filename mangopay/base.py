@@ -2,7 +2,7 @@ import six
 
 from copy import deepcopy
 
-from .fields import PrimaryKeyField, FieldDescriptor, Field
+from .fields import PrimaryKeyField, FieldDescriptor, Field, ForeignRelatedObject
 from .query import UpdateQuery, InsertQuery, SelectQuery
 from .signals import pre_save, post_save
 from .utils import force_text, force_str
@@ -104,6 +104,8 @@ class ApiObjectBase(type):
                     meta_options[k] = v
 
             for (k, attr) in b.__dict__.items():
+                if isinstance(attr, ForeignRelatedObject) and isinstance(getattr(attr, 'old_field'), Field):
+                    attrs[k] = deepcopy(getattr(attr, 'old_field'))
                 if not isinstance(attr, FieldDescriptor) or attr in attrs:
                     continue
 
