@@ -366,7 +366,7 @@ class ForeignKeyField(CharField):
             self.related_name = klass._meta.verbose_name + '_set'
 
         klass._meta.rel_fields[name] = self.name
-        setattr(klass, self.descriptor, ForeignRelatedObject(self.to, self.name))
+        setattr(klass, self.descriptor, ForeignRelatedObject(self.to, self.name, getattr(klass, self.descriptor)))
         setattr(klass, self.name, None)
 
         reverse_rel = ReverseForeignRelatedObject(klass, self.name)
@@ -404,10 +404,11 @@ class OneToOneField(ForeignKeyField):
 
 
 class ForeignRelatedObject(object):
-    def __init__(self, to, name):
+    def __init__(self, to, name, old_field):
         self.field_name = name
         self.to = to
         self.cache_name = '_cache_%s' % name
+        self.old_field = old_field
 
     def __get__(self, instance, instance_type=None):
         if not getattr(instance, self.cache_name, None):
