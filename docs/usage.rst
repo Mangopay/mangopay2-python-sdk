@@ -54,9 +54,9 @@ When you are creating a new handler you can use proxies for https, http and ftp 
               "https": https_proxy,
               "ftp": ftp_proxy
                 }
-                
+
      handler = APIRequest(sandbox=True, proxies=proxyDict)
- 
+
 This parameter is optional and by default it is None.
 
 Using storage strategy
@@ -101,7 +101,9 @@ Create a natural user
 
 .. code-block:: python
 
-    from mangopay.resources import User
+    from mangopay.resources import User, NaturalUser
+    from mangopay.utils import Address
+
 
     natural_user = NaturalUser(first_name='Victor',
                                last_name='Hugo',
@@ -153,6 +155,16 @@ Retrieve users with a pagination
 
     users = User.all(page=1, per_page=2)
 
+Retrieve a users's EMoney
+
+.. code-block:: python
+
+    natural_user = NaturalUser.get(1)
+    emoney = natural_user.get_emoney()
+
+    print emoney.credited_emoney
+    print emoney.debited_emoney
+
 Wallet
 ------
 
@@ -196,8 +208,8 @@ Create a transfer from a wallet to another one
 
     transfer = Transfer(author=legal_user,
                         credited_user=natural_user,
-                        debited_funds=Money(amount=10, currency='EUR'),  # Create a EUR 10.00 transfer
-                        fees=Money(amount=1, currency='EUR'),  # With EUR 1.00 of fees
+                        debited_funds=Money(amount=1000, currency='EUR'),  # Create a EUR 10.00 transfer
+                        fees=Money(amount=100, currency='EUR'),  # With EUR 1.00 of fees
                         debited_wallet=legal_user_wallet,
                         credited_wallet=natural_user_wallet)
 
@@ -426,7 +438,7 @@ Get details about client.
 .. code-block:: python
 
     client = Client.get()
-    
+
 2.Update Client:
 
 .. code-block:: python
@@ -441,7 +453,7 @@ Dispute
 1. View disputes
 
 .. code-block:: python
-    
+
     #view a dispute
     dispute = Dispute.get('dispute_id')
     #view all disputes
@@ -450,30 +462,30 @@ Dispute
 2. Get disputes transactions
 
 .. code-block:: python
-    
+
     #dispute status must be 'NOT_CONTESTABLE'
     transactions = dispute.transactions.all()
 
 3. Get wallet disputes
 
 .. code-block:: python
-    
+
     #connection flow : dispute->initial_transaction->credited_wallet
     wallet.disputes.all()
 
 4. Get user disputes
 
 .. code-block:: python
-    
+
     #connection flow : dispute -> transactions -> author
     user.disputes.all()
 
 5. Contest dispute:
     In order to contest a dispute, its status must be 'PENDING_CLIENT_ACTION' or 'REOPENED_PENDING_CLIENT_ACTION'
     and its type must be either 'CONTESTABLE' or 'RETRIEVAL'
-    
+
 .. code-block:: python
-    
+
     if dispute.status == 'REOPENED_PENDING_CLIENT_ACTION':
     money = Money(100, 'EUR')
 
@@ -482,29 +494,29 @@ Dispute
 6. Update a disputes tag
 
 .. code-block:: python
-    
+
     new_tag = 'New tag ' + str(int(time.time()))
     dispute.tag = new_tag
     result = dispute.save()
 
 7. Close a dispute
     In order to close a dispute, its status must be 'PENDING_CLIENT_ACTION' or 'REOPENED_PENDING_CLIENT_ACTION'
-    
+
 .. code-block:: python
-    
+
     result = dispute.close()
 
 8. Get repudiation
 
 .. code-block:: python
-    
+
     #dispute type must be 'not_contestable' and its initial_transaction_id != None
     repudiation = dispute.transactions.all()
 
 9. Create Settlement Transfer
 
 .. code-block:: python
-    
+
     #dispute status must be 'CLOSED' and its type must be 'NOT_CONTESTABLE'
     repudiation = dispute.transactions.all()[0]
     debit_funds = Money()
@@ -524,7 +536,7 @@ Dispute
 10. Resubmit dispute:
 
 .. code-block:: python
-    
+
     #dispute type must be 'REOPENED_PENDING_CLIENT_ACTION'
     result = dispute.resubmit()
 
@@ -535,7 +547,7 @@ To make a request with idempotency support, just add 'idempotency_key' parameter
 For example:
 
 .. code-block:: python
-    
+
     pay_out_post = BankWirePayOut()
     pay_out_post.author = john #john must be a valid user
     pay_out_post.debited_wallet = johns_wallet #valid wallet of johns
@@ -554,9 +566,9 @@ For example:
     pay_out = pay_out_post.save(idempotency_key=key)
 
 In order to get the current idempotency response:
-    
+
 .. code-block:: python
-    
+
     result = IdempotencyResponse.get(key)
 
 Mandate
@@ -565,12 +577,12 @@ Mandate
 1.Create mandate
 
 .. code-block:: python
-    
+
     mandate = Mandate()
-    mandate.bank_account_id = bank_account # valid BankAccount 
+    mandate.bank_account_id = bank_account # valid BankAccount
     mandate.return_url = 'http://test.test'
     mandate.culture = 'FR'
-    mandate = Mandate(**mandate.save()) #mandate.save() will return a dict Mandate(**mandate.save()) 
+    mandate = Mandate(**mandate.save()) #mandate.save() will return a dict Mandate(**mandate.save())
                                         #will create a Mandate object
 
 2.Get mandates for bank account:
@@ -597,6 +609,5 @@ For example with a transaction list:
 * **status** - a specific filter
 * **sort** - a sorting parameter
 
-Please refer to the `documentation <https://docs.mangopay.com/api-references/sort-lists/>`_ 
+Please refer to the `documentation <https://docs.mangopay.com/api-references/sort-lists/>`_
 to know the specific format parameters.
-

@@ -108,6 +108,9 @@ class User(BaseModel):
 
         return cls
 
+    def get_emoney(self):
+        return self.emoney.get('', **{'user_id': self.get_pk()})
+
     def __str__(self):
         return '%s' % self.email
 
@@ -162,6 +165,18 @@ class LegalUser(User):
     def __str__(self):
         return '%s' % self.email
 
+@python_2_unicode_compatible
+class EMoney(BaseModel):
+    user = ForeignKeyField(User, api_name='UserId', related_name='emoney')
+    credited_emoney = MoneyField(api_name='CreditedEMoney')
+    debited_emoney = MoneyField(api_name='DebitedEMoney')
+
+    class Meta:
+        verbose_name = 'emoney'
+        url = '/users/%(user_id)s/emoney'
+
+    def __str__(self):
+        return 'EMoney for user %s' % self.user_id
 
 @python_2_unicode_compatible
 class Wallet(BaseModel):
@@ -328,7 +343,7 @@ class Mandate(BaseModel):
 
 
 class PayIn(BaseModel):
-    credited_user = ForeignKeyField(User, api_name='CreditedUserId', required=True, related_name='credited_users')
+    credited_user = ForeignKeyField(User, api_name='CreditedUserId', related_name='credited_users')
     credited_funds = MoneyField(api_name='CreditedFunds')
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
@@ -366,7 +381,7 @@ class DirectPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
-    secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
     card = ForeignKeyField(Card, api_name='CardId', required=True)
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
     secure_mode = CharField(api_name='SecureMode',
@@ -1032,4 +1047,3 @@ class Report(BaseModel):
             SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/transactions/'
         }
-

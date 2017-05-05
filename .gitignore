@@ -62,3 +62,7 @@ tests/credentials.py
 
 #PyCharm
 .idea
+.vscode
+
+local_examples/
+credited_user_id.py

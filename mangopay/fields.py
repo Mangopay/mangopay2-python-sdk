@@ -295,7 +295,10 @@ class DisputeReasonField(Field):
 class RefundReasonField(Field):
     def python_value(self, value):
         if value is not None:
-            return Reason(type=value['RefusedReasonType'], message=value['RefusedReasonMessage'])
+            return Reason(
+                type=value.get('RefundReasonType') or value['RefusedReasonType'],
+                message=value.get('RefundReasonMessage') or value['RefusedReasonMessage']
+            )
 
         return value
 
@@ -363,7 +366,7 @@ class ForeignKeyField(CharField):
             self.related_name = klass._meta.verbose_name + '_set'
 
         klass._meta.rel_fields[name] = self.name
-        setattr(klass, self.descriptor, ForeignRelatedObject(self.to, self.name))
+        setattr(klass, self.descriptor, ForeignRelatedObject(self.to, self.name, getattr(klass, self.descriptor)))
         setattr(klass, self.name, None)
 
         reverse_rel = ReverseForeignRelatedObject(klass, self.name)
@@ -401,10 +404,11 @@ class OneToOneField(ForeignKeyField):
 
 
 class ForeignRelatedObject(object):
-    def __init__(self, to, name):
+    def __init__(self, to, name, old_field):
         self.field_name = name
         self.to = to
         self.cache_name = '_cache_%s' % name
+        self.old_field = old_field
 
     def __get__(self, instance, instance_type=None):
         if not getattr(instance, self.cache_name, None):
