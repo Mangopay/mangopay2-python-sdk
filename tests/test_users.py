@@ -328,7 +328,8 @@ class UsersTest(BaseTest):
                     "Id": "1167495",
                     "Tag": None,
                     "CreationDate": 1382605938,
-                    "KYCLevel": "LIGHT"
+                    "KYCLevel": "LIGHT",
+                    "FirstName": "Victor"
                 },
                 {
                     "PersonType": "LEGAL",
@@ -363,6 +364,7 @@ class UsersTest(BaseTest):
 
         self.assertIsInstance(users[0], NaturalUser)
         self.assertEqual(users[0].email, 'victor@hugo.com')
+        self.assertIsNotNone(users[0].first_name)
 
     @responses.activate
     def test_retrieve_paginated_users(self):
