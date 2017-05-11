@@ -775,7 +775,11 @@ class ClientWallet(Wallet):
     class Meta:
         verbose_name = 'client_wallets'
         verbose_name_plural = 'client_wallets'
-        fund_type_url = {'CREDIT': 'SELECT_BY_CREDIT', 'FEES': 'SELECT_BY_FEES', 'DEFAULT': 'SELECT_BY_DEFAULT'}
+        fund_type_url = {
+            'CREDIT': 'SELECT_BY_CREDIT',
+            'FEES': 'SELECT_BY_FEES',
+            'DEFAULT': 'SELECT_BY_DEFAULT'
+        }
         url = {
             SelectQuery.identifier: '/clients/wallets',
             'SELECT_CLIENT_WALLET': '/clients/wallets/%(fund_type)s/%(currency)s',
@@ -1046,4 +1050,57 @@ class Report(BaseModel):
         url = {
             SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/transactions/'
+        }
+
+
+class BankingAlias(BaseModel):
+    tag = CharField(api_name='Tag')
+    credited_user = ForeignKeyField(User, api_name='CreditedUserId')
+    wallet = ForeignKeyField(Wallet, api_name='WalletId', related_name='wallet_id')
+    type = CharField(api_name='Type')
+    owner_name = CharField(api_name='OwnerName')
+    active = BooleanField(api_name='Active')
+
+    class Meta:
+        verbose_name = 'bankingalias'
+        verbose_name_plural = 'bankingaliases'
+        url = '/bankingaliases'
+        url = {
+            InsertQuery.identifier: '/bankingaliases/',
+            SelectQuery.identifier: '/bankingaliases/%(id)s',
+            UpdateQuery.identifier: '/bankingaliases/%(id)s',
+            'SELECT_ALL_BANKING_ALIASES': '/wallets/%(wallet_id)s/bankingaliases'
+        }
+
+    @classmethod
+    def cast(cls, result):
+        if 'Type' in result:
+            if result['Type'] == 'IBAN':
+                return BankingAliasIBAN
+            else:
+                return BankingAlias
+
+    def __str__(self):
+        return '%s banking alias account of user %s' % (self.type, self.credited_user)
+    
+    def all(self, *args, **kwargs):
+        kwargs['wallet_id'] = self.wallet_id
+        select = SelectQuery(self.__class__, *args, **kwargs)
+        select.identifier = 'SELECT_ALL_BANKING_ALIASES'
+        return select.all(*args, **kwargs)
+
+
+class BankingAliasIBAN(BankingAlias):
+    type = CharField(api_name='Type', default='IBAN', required=True)
+    iban = CharField(api_name='IBAN')
+    bic = CharField(api_name='BIC')
+    country = CharField(api_name='Country', required=True)
+
+    class Meta:
+        verbose_name = 'bankingalias'
+        verbose_name_plural = 'bankingaliases'
+        url = {
+            InsertQuery.identifier: '/wallets/%(wallet_id)s/bankingaliases/iban',
+            SelectQuery.identifier: '/bankingaliases/%(id)s',
+            UpdateQuery.identifier: '/bankingaliases/%(id)s'
         }
