@@ -9,7 +9,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
-                     RefundReasonField, ListField, ReportFiltersField)
+                     RefundReasonField, ListField, ReportTransactionsFiltersField, ReportWalletsFiltersField)
 
 from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
@@ -1038,10 +1038,9 @@ class Report(BaseModel):
     download_url = CharField(api_name='DownloadURL')
     callback_url = CharField(api_name='CallbackURL')
     download_format = CharField(api_name='DownloadFormat', choices=constants.DOWNLOAD_FORMAT, default='CSV')
-    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='TRANSACTIONS')
+    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions', related_name='report_type')
     sort = CharField(api_name='Sort')
     preview = BooleanField(api_name='Preview')
-    filters = ReportFiltersField(api_name='Filters')
     columns = ListField(api_name='Columns')
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
@@ -1051,7 +1050,52 @@ class Report(BaseModel):
         verbose_name_plural = 'reports'
         url = {
             SelectQuery.identifier: '/reports/',
+            InsertQuery.identifier: '/reports/%(report_type)s/'
+        }
+
+class ReportTransactions(BaseModel):
+    creation_date = CharField(api_name='CreationDate')
+    report_date = CharField(api_name='ReportDate')
+    download_url = CharField(api_name='DownloadURL')
+    callback_url = CharField(api_name='CallbackURL')
+    download_format = CharField(api_name='DownloadFormat', choices=constants.DOWNLOAD_FORMAT, default='CSV')
+    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions', related_name='report_type')
+    sort = CharField(api_name='Sort')
+    preview = BooleanField(api_name='Preview')
+    columns = ListField(api_name='Columns')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    filters = ReportTransactionsFiltersField(api_name='Filters')
+
+    class Meta:
+        verbose_name = 'report'
+        verbose_name_plural = 'reports'
+        url = {
+            SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/transactions/'
+        }
+    
+
+class ReportWallets(BaseModel):
+    creation_date = CharField(api_name='CreationDate')
+    report_date = CharField(api_name='ReportDate')
+    download_url = CharField(api_name='DownloadURL')
+    callback_url = CharField(api_name='CallbackURL')
+    download_format = CharField(api_name='DownloadFormat', choices=constants.DOWNLOAD_FORMAT, default='CSV')
+    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions', related_name='report_type')
+    sort = CharField(api_name='Sort')
+    preview = BooleanField(api_name='Preview')
+    columns = ListField(api_name='Columns')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    filters = ReportWalletsFiltersField(api_name='Filters')
+
+    class Meta:
+        verbose_name = 'report'
+        verbose_name_plural = 'reports'
+        url = {
+            SelectQuery.identifier: '/reports/',
+            InsertQuery.identifier: '/reports/wallets/'
         }
 
 
