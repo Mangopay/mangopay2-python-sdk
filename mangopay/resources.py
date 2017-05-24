@@ -300,6 +300,7 @@ class Mandate(BaseModel):
     redirect_url = CharField(api_name='RedirectURL')
     document_url = CharField(api_name='DocumentURL')
     culture = CharField(api_name='Culture')
+    bank_reference = CharField(api_name='BankReference')
 
     scheme = CharField(api_name='Scheme', choices=constants.MANDATE_SCHEME_CHOICES, default=None)
 
@@ -480,6 +481,7 @@ class DirectDebitDirectPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     statement_descriptor = CharField(api_name='StatementDescriptor')
+    charge_date = CharField(api_name='ChargeDate')
 
     class Meta:
         verbose_name = 'direct_debit_direct_payin'
