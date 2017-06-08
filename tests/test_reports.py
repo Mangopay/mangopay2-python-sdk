@@ -1,6 +1,6 @@
 import time
 
-from mangopay.resources import Report
+from mangopay.resources import ReportTransactions, Report
 from mangopay.utils import ReportTransactionsFilters
 from tests.test_base import BaseTestLive
 
