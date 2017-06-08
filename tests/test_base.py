@@ -208,7 +208,7 @@ class BaseTestLive(unittest.TestCase):
             report.report_type = 'transactions'
             report.filters = ReportTransactionsFilters()
             report.filters.author_id = BaseTestLive._john.id
-            BaseTestLive._johns_report = Report(**report.save())
+            BaseTestLive._johns_report = ReportTransactions(**report.save())
         return BaseTestLive._johns_report
 
     @staticmethod
