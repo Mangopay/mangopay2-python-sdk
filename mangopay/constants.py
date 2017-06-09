@@ -215,7 +215,8 @@ DOWNLOAD_FORMAT = Choices(
 )
 
 REPORT_TYPE = Choices(
-    ('TRANSACTIONS', 'transactions', 'Transactions')
+    ('TRANSACTIONS', 'transactions', 'Transactions'),
+    ('WALLETS', 'wallets', 'Wallets')
 )
 
 PAYIN_PAYMENT_TYPE = Choices(

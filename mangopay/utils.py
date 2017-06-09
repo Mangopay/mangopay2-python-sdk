@@ -250,39 +250,66 @@ class Address(object):
 
 
 @add_camelcase_aliases
-class ReportFilters(object):
-
-    def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
+class ReportTransactionsFilters(object):
+        def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
                  min_debited_funds_amount=None, min_debited_funds_currency=None, max_debited_funds_amount=None,
                  max_debited_funds_currency=None, author_id=None, wallet_id=None):
-        self.before_date = before_date
-        self.after_date = after_date
-        self.transaction_type = transaction_type
-        self.status = status
-        self.nature = nature
-        self.min_debited_funds_amount = min_debited_funds_amount
-        self.min_debited_funds_currency = min_debited_funds_currency
-        self.max_debited_funds_amount = max_debited_funds_amount
-        self.max_debited_funds_currency = max_debited_funds_currency
-        self.author_id = author_id
-        self.wallet_id = wallet_id
+            self.before_date = before_date
+            self.after_date = after_date
+            self.transaction_type = transaction_type
+            self.status = status
+            self.nature = nature
+            self.min_debited_funds_amount = min_debited_funds_amount
+            self.min_debited_funds_currency = min_debited_funds_currency
+            self.max_debited_funds_amount = max_debited_funds_amount
+            self.max_debited_funds_currency = max_debited_funds_currency
+            self.author_id = author_id
+            self.wallet_id = wallet_id
 
-    def __eq__(self, other):
-        if isinstance(other, ReportFilters):
-            stat = ((self.before_date == other.before_date) and
-                    (self.after_date == other.after_date) and
-                    (self.transaction_type == other.transaction_type) and
-                    (self.status == other.status) and
-                    (self.nature == other.nature) and
-                    (self.min_debited_funds_amount == other.min_debited_funds_amount) and
-                    (self.min_debited_funds_currency == other.min_debited_funds_currency) and
-                    (self.max_debited_funds_amount == other.max_debited_funds_amount) and
-                    (self.max_debited_funds_currency == other.max_debited_funds_currency) and
-                    (self.author_id == other.author_id) and
-                    (self.wallet_id == other.wallet_id)
-                    )
-            return stat
-        return False
+        def __eq__(self, other):
+            if isinstance(other, ReportTransactionsFilters):
+                stat = ((self.before_date == other.before_date) and
+                        (self.after_date == other.after_date) and
+                        (self.transaction_type == other.transaction_type) and
+                        (self.status == other.status) and
+                        (self.nature == other.nature) and
+                        (self.min_debited_funds_amount == other.min_debited_funds_amount) and
+                        (self.min_debited_funds_currency == other.min_debited_funds_currency) and
+                        (self.max_debited_funds_amount == other.max_debited_funds_amount) and
+                        (self.max_debited_funds_currency == other.max_debited_funds_currency) and
+                        (self.author_id == other.author_id) and
+                        (self.wallet_id == other.wallet_id)
+                        )
+                return stat
+            return False
+
+@add_camelcase_aliases
+class ReportWalletsFilters(object):
+        def __init__(self, before_date=None, after_date=None, owner_id=None, currency=None,
+                    min_balance_amount=None, min_balance_currency=None, max_balance_amount=None,
+                    max_balance_currency=None):
+            self.before_date = before_date
+            self.after_date = after_date
+            self.owner_id = owner_id
+            self.currency = currency
+            self.min_balance_amount = min_balance_amount
+            self.min_balance_currency = min_balance_currency
+            self.max_balance_amount = max_balance_amount
+            self.max_balance_currency = max_balance_currency
+
+        def __eq__(self, other):
+            if isinstance(other, ReportWalletsFilters):
+                stat = ((self.before_date == other.before_date) and
+                        (self.after_date == other.after_date) and
+                        (self.owner_id == other.owner_id) and
+                        (self.currency == other.currency) and
+                        (self.min_balance_amount == other.min_balance_amount) and
+                        (self.min_balance_currency == other.min_balance_currency) and
+                        (self.max_balance_amount == other.max_balance_amount) and
+                        (self.max_balance_currency == other.max_balance_currency)
+                        )
+                return stat
+            return False
 
 
 class Reason(object):
