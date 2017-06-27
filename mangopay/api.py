@@ -76,7 +76,7 @@ class APIRequest(object):
 
             data = json.dumps(data)
 
-        logger.info('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s' % (url, headers, truncated_data))
+        logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s' % (url, headers, truncated_data))
 
         ts = time.time()
 
@@ -118,7 +118,7 @@ class APIRequest(object):
                               result=result,
                               laps=laps)
 
-        logger.info('DATA[OUT -> %s][%2.3f seconds]\n\t- status_code: %s\n\t- headers: %s\n\t- content: %s' % (
+        logger.debug('DATA[OUT -> %s][%2.3f seconds]\n\t- status_code: %s\n\t- headers: %s\n\t- content: %s' % (
             url,
             laps,
             result.status_code,
