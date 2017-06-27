@@ -80,10 +80,6 @@ class CharField(Field):
         if self.python_value_callback:
             value = self.python_value_callback(value)
 
-        if isinstance(value, six.string_types):
-            if sys.version_info < (3, 0) and isinstance(value, unicode):
-                return value.encode('utf-8')
-
         return value
 
     def api_value(self, value):
@@ -229,10 +225,10 @@ class ReportTransactionsFiltersField(Field):
             if 'WalletId' in value:
                 wallet_id = value['WalletId']
 
-            return ReportTransactionsFilters(before_date=value['BeforeDate'], 
+            return ReportTransactionsFilters(before_date=value['BeforeDate'],
                                              after_date=value['AfterDate'],
-                                             transaction_type=value['Type'], 
-                                             status=value['Status'], 
+                                             transaction_type=value['Type'],
+                                             status=value['Status'],
                                              nature=value['Nature'],
                                              min_debited_funds_amount=local_min_debited_funds_amount,
                                              min_debited_funds_currency=value['MinDebitedFundsCurrency'],
@@ -286,9 +282,9 @@ class ReportWalletsFiltersField(Field):
             if 'MaxBalanceAmount' in value and value['MaxBalanceAmount']:
                 local_max_balance_amount = int(value['MaxBalanceAmount'])
 
-            return ReportWalletsFilters(before_date=value['BeforeDate'], 
+            return ReportWalletsFilters(before_date=value['BeforeDate'],
                                  after_date=value['AfterDate'],
-                                 owner_id=value['OwnerId'], 
+                                 owner_id=value['OwnerId'],
                                  currency=value['Currency'],
                                  min_balance_amount=local_min_balance_amount,
                                  min_balance_currency=value['MinBalanceCurrency'],
