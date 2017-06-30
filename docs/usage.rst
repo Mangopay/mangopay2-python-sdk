@@ -591,6 +591,31 @@ Mandate
 
     bank_account.get_mandates() #bank_account must be a valid BankAccount
 
+Banking Aliases
+------
+
+1.Create IBAN Bankig Alias
+
+.. code-block:: python
+
+    bankingAlias = BankingAliasIBAN(
+        wallet = natural_user_wallet,
+        credited_user = natural_user,
+        owner_name = natural_user.first_name,
+        country ='LU'
+    )
+    bankingAlias.save()
+
+2. Get all banking aliases for a wallet
+
+.. code-block:: python
+
+    walletBankingAliases = BankingAlias(
+        wallet = natural_user_wallet
+    )
+
+    allBankingAliases = walletBankingAliases.all()
+
 Sort and filter lists
 ---------------------
 

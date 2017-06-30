@@ -4,7 +4,7 @@ import time
 import datetime
 import six
 
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, Address, Reason, ReportFilters
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, Address, Reason, ReportTransactionsFilters, ReportWalletsFilters
 import sys
 
 
@@ -79,10 +79,6 @@ class CharField(Field):
     def python_value(self, value):
         if self.python_value_callback:
             value = self.python_value_callback(value)
-
-        if isinstance(value, six.string_types):
-            if sys.version_info < (3, 0) and isinstance(value, unicode):
-                return value.encode('utf-8')
 
         return value
 
@@ -210,19 +206,18 @@ class MoneyField(Field):
         return value
 
 
-class ReportFiltersField(Field):
+class ReportTransactionsFiltersField(Field):
     def python_value(self, value):
         if value is not None:
+            local_min_debited_funds_amount = ''
+            local_max_debited_funds_amount = ''
 
-            if value['MinDebitedFundsAmount'] is not None:
+            if 'MinDebitedFundsAmount' in value and value['MinDebitedFundsAmount']:
                 local_min_debited_funds_amount = int(value['MinDebitedFundsAmount'])
-            else:
-                local_min_debited_funds_amount = value['MinDebitedFundsAmount']
 
-            if value['MaxDebitedFundsAmount'] is not None:
+            if 'MaxDebitedFundsAmount' in value and value['MaxDebitedFundsAmount']:
                 local_max_debited_funds_amount = int(value['MaxDebitedFundsAmount'])
-            else:
-                local_max_debited_funds_amount = value['MaxDebitedFundsAmount']
+
             author_id = None
             wallet_id = None
             if 'AuthorId' in value:
@@ -230,21 +225,23 @@ class ReportFiltersField(Field):
             if 'WalletId' in value:
                 wallet_id = value['WalletId']
 
-            return ReportFilters(before_date=value['BeforeDate'], after_date=value['AfterDate'],
-                                 transaction_type=value['Type'], status=value['Status'], nature=value['Nature'],
-                                 min_debited_funds_amount=local_min_debited_funds_amount,
-                                 min_debited_funds_currency=value['MinDebitedFundsCurrency'],
-                                 max_debited_funds_amount=local_max_debited_funds_amount,
-                                 max_debited_funds_currency=value['MaxDebitedFundsCurrency'],
-                                 author_id=author_id, wallet_id=wallet_id
-                                 )
-
+            return ReportTransactionsFilters(before_date=value['BeforeDate'],
+                                             after_date=value['AfterDate'],
+                                             transaction_type=value['Type'],
+                                             status=value['Status'],
+                                             nature=value['Nature'],
+                                             min_debited_funds_amount=local_min_debited_funds_amount,
+                                             min_debited_funds_currency=value['MinDebitedFundsCurrency'],
+                                             max_debited_funds_amount=local_max_debited_funds_amount,
+                                             max_debited_funds_currency=value['MaxDebitedFundsCurrency'],
+                                             author_id=author_id, wallet_id=wallet_id
+                                            )
         return value
 
     def api_value(self, value):
-        value = super(ReportFiltersField, self).api_value(value)
+        value = super(ReportTransactionsFiltersField, self).api_value(value)
 
-        if isinstance(value, ReportFilters):
+        if isinstance(value, ReportTransactionsFilters):
 
             if isinstance(value.before_date, datetime.datetime):
                 local_before_date = timestamp_from_datetime(value.before_date)
@@ -267,7 +264,60 @@ class ReportFiltersField(Field):
                 'MaxDebitedFundsAmount': value.max_debited_funds_amount,
                 'MaxDebitedFundsCurrency': value.max_debited_funds_currency,
                 'AuthorId': value.author_id,
-                'WalletId': value.wallet_id
+                'WalletId': value.wallet_id,
+            }
+
+        return value
+
+class ReportWalletsFiltersField(Field):
+    def python_value(self, value):
+        if value is not None:
+
+            local_min_balance_amount = ''
+            local_max_balance_amount = ''
+
+            if 'MinBalanceAmount' in value and value['MinBalanceAmount']:
+                local_min_balance_amount = int(value['MinBalanceAmount'])
+
+            if 'MaxBalanceAmount' in value and value['MaxBalanceAmount']:
+                local_max_balance_amount = int(value['MaxBalanceAmount'])
+
+            return ReportWalletsFilters(before_date=value['BeforeDate'],
+                                 after_date=value['AfterDate'],
+                                 owner_id=value['OwnerId'],
+                                 currency=value['Currency'],
+                                 min_balance_amount=local_min_balance_amount,
+                                 min_balance_currency=value['MinBalanceCurrency'],
+                                 max_balance_amount=local_max_balance_amount,
+                                 max_balance_currency=value['MaxBalanceCurrency']
+                                 )
+
+        return value
+
+    def api_value(self, value):
+        value = super(ReportWalletsFiltersField, self).api_value(value)
+
+        if isinstance(value, ReportWalletsFilters):
+
+            if isinstance(value.before_date, datetime.datetime):
+                local_before_date = timestamp_from_datetime(value.before_date)
+            else:
+                local_before_date = value.before_date
+
+            if isinstance(value.after_date, datetime.datetime):
+                local_after_date = timestamp_from_datetime(value.after_date)
+            else:
+                local_after_date = value.after_date
+
+            value = {
+                'BeforeDate': local_before_date,
+                'AfterDate': local_after_date,
+                'OwnerId': value.owner_id,
+                'Currency': value.currency,
+                'MinBalanceAmount': value.min_balance_amount,
+                'MinBalanceCurrency': value.min_balance_currency,
+                'MaxBalanceAmount': value.max_balance_amount,
+                'MaxBalanceCurrency': value.max_balance_currency,
             }
 
         return value
@@ -296,8 +346,8 @@ class RefundReasonField(Field):
     def python_value(self, value):
         if value is not None:
             return Reason(
-                type=value.get('RefundReasonType') or value['RefusedReasonType'],
-                message=value.get('RefundReasonMessage') or value['RefusedReasonMessage']
+                type=value.get('RefundReasonType'),
+                message=value.get('RefundReasonMessage')
             )
 
         return value

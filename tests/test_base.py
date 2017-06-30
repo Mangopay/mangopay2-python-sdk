@@ -4,7 +4,7 @@ import requests
 from datetime import date
 from exam.decorators import fixture
 
-from mangopay.utils import Address, ReportFilters
+from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
@@ -16,7 +16,7 @@ import unittest
 
 from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
-from mangopay.resources import BankAccount, Document, Report
+from mangopay.resources import BankAccount, Document, ReportTransactions
 
 _activate = responses.activate
 
@@ -204,11 +204,11 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_johns_report(recreate=False):
         if BaseTestLive._johns_report is None or recreate:
-            report = Report()
-            report.report_type = 'TRANSACTION'
-            report.filters = ReportFilters()
+            report = ReportTransactions()
+            report.report_type = 'transactions'
+            report.filters = ReportTransactionsFilters()
             report.filters.author_id = BaseTestLive._john.id
-            BaseTestLive._johns_report = Report(**report.save())
+            BaseTestLive._johns_report = ReportTransactions(**report.save())
         return BaseTestLive._johns_report
 
     @staticmethod
