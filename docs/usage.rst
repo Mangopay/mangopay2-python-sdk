@@ -129,7 +129,7 @@ Retrieve an existing user
 
 .. code-block:: python
 
-    natural_user = NaturalUser.get(1)
+    natural_user = NaturalUser.get(1) # 1 is an ID value, not an array index
 
     print natural_user.first_name # Victor
 
