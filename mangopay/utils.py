@@ -220,6 +220,20 @@ class Money(object):
     def __round__(self, ndigits=0):
         return self.__class__(round(self.amount, ndigits), self.currency)
 
+@add_camelcase_aliases
+class DebitedBankAccount(object):
+    def __init__(self, owner_name=None):
+        self.owner_name = owner_name
+
+    def __str__(self):
+        return 'DebitedBankAccount: %s' % \
+                (self.owner_name)
+    def __eq__(self, other):
+        if isinstance(other, DebitedBankAccount):
+            stat = (self.owner_name == other.owner_name)
+
+            return stat
+        return False
 
 @add_camelcase_aliases
 class Address(object):

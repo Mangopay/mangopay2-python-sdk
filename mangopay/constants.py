@@ -59,7 +59,8 @@ NATURE_CHOICES = Choices(
 
 EXECUTION_TYPE_CHOICES = Choices(
     ('WEB', 'web', 'Web'),
-    ('DIRECT', 'direct', 'Direct')
+    ('DIRECT', 'direct', 'Direct'),
+    ('EXTERNAL_INSTRUCTION', 'external_instruction', 'External instruction')
 )
 
 SECURE_MODE_CHOICES = Choices(
