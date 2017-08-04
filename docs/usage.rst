@@ -363,6 +363,23 @@ And pay by bank wire
 
     print legal_user_wallet.balance  # EUR 99.00
 
+PaypalPayIn
+-------------
+
+Pay by paypal
+
+.. code-block:: python
+
+    paypal_payin = PayPalPayIn(author=natural_user,
+                               debited_funds=Money(amount=100, currency='EUR'),
+                               fees=Money(amount=1, currency='EUR'),
+                               return_url = 'http://test.test',
+                               credited_wallet_id=natural_user_wallet)
+
+    paypal_payin.save()
+
+    print natural_user_wallet.balance  # EUR 99.00
+
 Refund
 ------
 

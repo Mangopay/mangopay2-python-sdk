@@ -3,11 +3,11 @@ import unittest
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate
 from tests import settings
-from .resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn,
+from .resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
                         CardWebPayIn, DirectDebitWebPayIn)
 from .test_base import BaseTest, BaseTestLive
 
-from mangopay.utils import Money
+from mangopay.utils import (Money, ShippingAddress)
 
 from datetime import date
 
@@ -26,7 +26,7 @@ class PayInsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -56,7 +56,7 @@ class PayInsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/card/direct',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -86,7 +86,7 @@ class PayInsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/6784288',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/6784288',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -116,11 +116,11 @@ class PayInsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
                 'body': {
                     "Owners": ["6784283"],
-                    "Description":"Wallet of Victor Hugo",
-                    "Balance":{"Currency": "EUR", "Amount": 9900},
+                    "Description": "Wallet of Victor Hugo",
+                    "Balance": {"Currency": "EUR", "Amount": 9900},
                     "Currency": "EUR",
                     "Id": "6784284",
                     "Tag": "My custom tag",
@@ -179,7 +179,7 @@ class PayInsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/bankwire/direct',
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/bankwire/direct',
             'body': {
                 "Id": "117609",
                 "Tag": "Custom data",
@@ -253,6 +253,169 @@ class PayInsTest(BaseTest):
         self.assertIsNotNone(bank_wire_payin.get_pk())
 
     @responses.activate
+    def test_create_paypal_payin_without_shipping_address(self):
+        self.mock_natural_user()
+        self.mock_legal_user()
+        self.mock_user_wallet()
+
+        self.register_mock({
+            'method': responses.POST,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/paypal/web',
+            'body': {
+                "Id": "6784288",
+                "CreationDate": 1387805409,
+                "Tag": "Custom data",
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 900
+                },
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 100
+                },
+                "DebitedWalletId": None,
+                "CreditedWalletId": "95898",
+                "CreditedUserId": "95897",
+                "AuthorId": "95897",
+                "Nature": "REGULAR",
+                "Status": "CREATED",
+                "ResultCode": None,
+                "ResultMessage": None,
+                "ExecutionDate": None,
+                "Type": "PAYIN",
+                "PaymentType": "Paypal",
+                "ExecutionType": "DIRECT",
+                "ReturnURL": "http://www.ulule.com/?transactionId=1169430"
+            },
+            'status': 200
+        })
+
+        paypal_payin_params = {
+            "author": self.natural_user,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=100, currency="EUR"),
+            "return_url": "http://www.ulule.com/",
+            "credited_wallet": self.legal_user_wallet
+        }
+
+        paypal_payin = PayPalPayIn(**paypal_payin_params)
+
+        self.assertIsNone(paypal_payin.get_pk())
+        paypal_payin.save()
+        self.assertIsInstance(paypal_payin, PayPalPayIn)
+        self.assertEqual(paypal_payin.status, 'CREATED')
+        self.assertEqual(paypal_payin.type, 'PAYIN')
+        self.assertEqual(paypal_payin.payment_type, 'Paypal')
+        self.assertIsNotNone(paypal_payin.get_pk())
+
+        self.assertTrue(paypal_payin.return_url.startswith('http://www.ulule.com/?transactionId='))
+        paypal_payin_params.pop('return_url')
+
+        self.assertEqual(paypal_payin.debited_funds.amount, 1000)
+        paypal_payin_params.pop('debited_funds')
+
+        self.assertEqual(paypal_payin.fees.amount, 100)
+        paypal_payin_params.pop('fees')
+
+        self.assertIsNone(paypal_payin.shipping_address)
+
+        for key, value in paypal_payin_params.items():
+            self.assertEqual(getattr(paypal_payin, key), value)
+
+    @responses.activate
+    def test_create_paypal_payin_with_shipping_address(self):
+
+        self.mock_natural_user()
+        self.mock_legal_user()
+        self.mock_user_wallet()
+
+        self.register_mock({
+            'method': responses.POST,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/paypal/web',
+            'body': {
+                "Id": "117609",
+                "CreationDate": 1387805409,
+                "Tag": "Custom data",
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 900
+                },
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 100
+                },
+                "DebitedWalletId": None,
+                "CreditedWalletId": "95898",
+                "CreditedUserId": "95897",
+                "AuthorId": "95897",
+                "Nature": "REGULAR",
+                "Status": "CREATED",
+                "ResultCode": None,
+                "ResultMessage": None,
+                "ExecutionDate": None,
+                "Type": "PAYIN",
+                "PaymentType": "Paypal",
+                "ExecutionType": "DIRECT",
+                "ReturnURL": "http://www.ulule.com/?transactionId=1169430",
+                "ShippingAddress": {
+                    "RecipientName": "Unittests User",
+                    "Address": {
+                        "AddressLine1": "AddressLine1",
+                        "AddressLine2": "AddressLine2",
+                        "City": "City",
+                        "Region": "Region",
+                        "PostalCode": "11222",
+                        "Country": "FR"
+                    }
+                }
+            },
+            'status': 200
+        })
+
+        shipping_address = ShippingAddress(recipient_name="Unittests User",
+                                           address={"AddressLine1": "AddressLine1", "AddressLine2": "AddressLine2",
+                                                    "City": "City", "Region": "Region", "PostalCode": "11222",
+                                                    "Country": "FR"})
+        paypal_payin_params = {
+            "author": self.natural_user,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=100, currency="EUR"),
+            "return_url": "http://www.ulule.com/",
+            "credited_wallet": self.legal_user_wallet,
+            "shipping_address": shipping_address
+        }
+
+        paypal_payin = PayPalPayIn(**paypal_payin_params)
+
+        self.assertIsNone(paypal_payin.get_pk())
+        paypal_payin.save()
+        self.assertIsInstance(paypal_payin, PayPalPayIn)
+        self.assertEqual(paypal_payin.status, 'CREATED')
+        self.assertEqual(paypal_payin.type, 'PAYIN')
+        self.assertEqual(paypal_payin.payment_type, 'Paypal')
+        self.assertIsNotNone(paypal_payin.get_pk())
+
+        self.assertTrue(paypal_payin.return_url.startswith('http://www.ulule.com/?transactionId='))
+        paypal_payin_params.pop('return_url')
+
+        self.assertEqual(paypal_payin.debited_funds.amount, 1000)
+        paypal_payin_params.pop('debited_funds')
+
+        self.assertEqual(paypal_payin.fees.amount, 100)
+        paypal_payin_params.pop('fees')
+
+        for key, value in paypal_payin_params.items():
+            self.assertEqual(getattr(paypal_payin, key), value)
+
+    @responses.activate
     def test_create_card_via_web_interface_payin(self):
         self.mock_natural_user()
         self.mock_legal_user()
@@ -260,7 +423,7 @@ class PayInsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/web',
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/card/web',
             'body': {
                 "Id": "1169430",
                 "Tag": "Custom tag",
@@ -340,7 +503,7 @@ class PayInsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/directdebit/web',
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/directdebit/web',
             'body': {
                 "Id": "1169430",
                 "Tag": "Custom tag",
