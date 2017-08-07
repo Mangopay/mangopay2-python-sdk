@@ -16,16 +16,17 @@ from .compat import python_2_unicode_compatible
 
 if six.PY3:
     from urllib import request
+
     orig = request.URLopener.open_https
-    request.URLopener.open_https = orig   # uncomment this line back and forth
+    request.URLopener.open_https = orig  # uncomment this line back and forth
 elif six.PY2:
     import urllib
+
     orig = urllib.URLopener.open_https
     urllib.URLopener.open_https = orig
 
 
 class AliasProperty(object):
-
     def __init__(self, name):
         self.name = name
 
@@ -237,7 +238,6 @@ class DebitedBankAccount(object):
 
 @add_camelcase_aliases
 class Address(object):
-
     def __init__(self, address_line_1=None, address_line_2=None, city=None, region=None,
                  postal_code=None, country=None):
         self.address_line_1 = address_line_1
@@ -264,66 +264,82 @@ class Address(object):
 
 
 @add_camelcase_aliases
+class ShippingAddress(object):
+    def __init__(self, recipient_name=None, address=None):
+        self.recipient_name = recipient_name
+        self.address = address
+
+    def __str__(self):
+        return 'Recipient name: %s, %s' % (self.recipient_name, self.address)
+
+    def __eq__(self, other):
+        if isinstance(other, ShippingAddress):
+            return self.recipient_name == other.recipient_name and self.address == other.address
+        return False
+
+
+@add_camelcase_aliases
 class ReportTransactionsFilters(object):
-        def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
+    def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
                  min_debited_funds_amount=None, min_debited_funds_currency=None, max_debited_funds_amount=None,
                  max_debited_funds_currency=None, author_id=None, wallet_id=None):
-            self.before_date = before_date
-            self.after_date = after_date
-            self.transaction_type = transaction_type
-            self.status = status
-            self.nature = nature
-            self.min_debited_funds_amount = min_debited_funds_amount
-            self.min_debited_funds_currency = min_debited_funds_currency
-            self.max_debited_funds_amount = max_debited_funds_amount
-            self.max_debited_funds_currency = max_debited_funds_currency
-            self.author_id = author_id
-            self.wallet_id = wallet_id
+        self.before_date = before_date
+        self.after_date = after_date
+        self.transaction_type = transaction_type
+        self.status = status
+        self.nature = nature
+        self.min_debited_funds_amount = min_debited_funds_amount
+        self.min_debited_funds_currency = min_debited_funds_currency
+        self.max_debited_funds_amount = max_debited_funds_amount
+        self.max_debited_funds_currency = max_debited_funds_currency
+        self.author_id = author_id
+        self.wallet_id = wallet_id
 
-        def __eq__(self, other):
-            if isinstance(other, ReportTransactionsFilters):
-                stat = ((self.before_date == other.before_date) and
-                        (self.after_date == other.after_date) and
-                        (self.transaction_type == other.transaction_type) and
-                        (self.status == other.status) and
-                        (self.nature == other.nature) and
-                        (self.min_debited_funds_amount == other.min_debited_funds_amount) and
-                        (self.min_debited_funds_currency == other.min_debited_funds_currency) and
-                        (self.max_debited_funds_amount == other.max_debited_funds_amount) and
-                        (self.max_debited_funds_currency == other.max_debited_funds_currency) and
-                        (self.author_id == other.author_id) and
-                        (self.wallet_id == other.wallet_id)
-                        )
-                return stat
-            return False
+    def __eq__(self, other):
+        if isinstance(other, ReportTransactionsFilters):
+            stat = ((self.before_date == other.before_date) and
+                    (self.after_date == other.after_date) and
+                    (self.transaction_type == other.transaction_type) and
+                    (self.status == other.status) and
+                    (self.nature == other.nature) and
+                    (self.min_debited_funds_amount == other.min_debited_funds_amount) and
+                    (self.min_debited_funds_currency == other.min_debited_funds_currency) and
+                    (self.max_debited_funds_amount == other.max_debited_funds_amount) and
+                    (self.max_debited_funds_currency == other.max_debited_funds_currency) and
+                    (self.author_id == other.author_id) and
+                    (self.wallet_id == other.wallet_id)
+                    )
+            return stat
+        return False
+
 
 @add_camelcase_aliases
 class ReportWalletsFilters(object):
-        def __init__(self, before_date=None, after_date=None, owner_id=None, currency=None,
-                    min_balance_amount=None, min_balance_currency=None, max_balance_amount=None,
-                    max_balance_currency=None):
-            self.before_date = before_date
-            self.after_date = after_date
-            self.owner_id = owner_id
-            self.currency = currency
-            self.min_balance_amount = min_balance_amount
-            self.min_balance_currency = min_balance_currency
-            self.max_balance_amount = max_balance_amount
-            self.max_balance_currency = max_balance_currency
+    def __init__(self, before_date=None, after_date=None, owner_id=None, currency=None,
+                 min_balance_amount=None, min_balance_currency=None, max_balance_amount=None,
+                 max_balance_currency=None):
+        self.before_date = before_date
+        self.after_date = after_date
+        self.owner_id = owner_id
+        self.currency = currency
+        self.min_balance_amount = min_balance_amount
+        self.min_balance_currency = min_balance_currency
+        self.max_balance_amount = max_balance_amount
+        self.max_balance_currency = max_balance_currency
 
-        def __eq__(self, other):
-            if isinstance(other, ReportWalletsFilters):
-                stat = ((self.before_date == other.before_date) and
-                        (self.after_date == other.after_date) and
-                        (self.owner_id == other.owner_id) and
-                        (self.currency == other.currency) and
-                        (self.min_balance_amount == other.min_balance_amount) and
-                        (self.min_balance_currency == other.min_balance_currency) and
-                        (self.max_balance_amount == other.max_balance_amount) and
-                        (self.max_balance_currency == other.max_balance_currency)
-                        )
-                return stat
-            return False
+    def __eq__(self, other):
+        if isinstance(other, ReportWalletsFilters):
+            stat = ((self.before_date == other.before_date) and
+                    (self.after_date == other.after_date) and
+                    (self.owner_id == other.owner_id) and
+                    (self.currency == other.currency) and
+                    (self.min_balance_amount == other.min_balance_amount) and
+                    (self.min_balance_currency == other.min_balance_currency) and
+                    (self.max_balance_amount == other.max_balance_amount) and
+                    (self.max_balance_currency == other.max_balance_currency)
+                    )
+            return stat
+        return False
 
 
 class Reason(object):
@@ -339,6 +355,7 @@ class Reason(object):
             return ((self.type == other.type) and
                     (self.message == other.message))
         return False
+
 
 # This code belongs to https://github.com/carljm/django-model-utils
 class Choices(object):
@@ -591,6 +608,7 @@ def memoize(func, cache, num_args):
     keys.
     Only the first num_args are considered when creating the key.
     """
+
     @wraps(func)
     def wrapper(*args):
         mem_args = args[:num_args]
@@ -599,6 +617,7 @@ def memoize(func, cache, num_args):
         result = func(*args)
         cache[mem_args] = result
         return result
+
     return wrapper
 
 

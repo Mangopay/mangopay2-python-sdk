@@ -4,7 +4,8 @@ import time
 import datetime
 import six
 
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, Reason, ReportTransactionsFilters, ReportWalletsFilters
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters \
+
 import sys
 
 
@@ -251,7 +252,7 @@ class ReportTransactionsFiltersField(Field):
                                              max_debited_funds_amount=local_max_debited_funds_amount,
                                              max_debited_funds_currency=value['MaxDebitedFundsCurrency'],
                                              author_id=author_id, wallet_id=wallet_id
-                                            )
+                                             )
         return value
 
     def api_value(self, value):
@@ -285,6 +286,7 @@ class ReportTransactionsFiltersField(Field):
 
         return value
 
+
 class ReportWalletsFiltersField(Field):
     def python_value(self, value):
         if value is not None:
@@ -299,14 +301,14 @@ class ReportWalletsFiltersField(Field):
                 local_max_balance_amount = int(value['MaxBalanceAmount'])
 
             return ReportWalletsFilters(before_date=value['BeforeDate'],
-                                 after_date=value['AfterDate'],
-                                 owner_id=value['OwnerId'],
-                                 currency=value['Currency'],
-                                 min_balance_amount=local_min_balance_amount,
-                                 min_balance_currency=value['MinBalanceCurrency'],
-                                 max_balance_amount=local_max_balance_amount,
-                                 max_balance_currency=value['MaxBalanceCurrency']
-                                 )
+                                        after_date=value['AfterDate'],
+                                        owner_id=value['OwnerId'],
+                                        currency=value['Currency'],
+                                        min_balance_amount=local_min_balance_amount,
+                                        min_balance_currency=value['MinBalanceCurrency'],
+                                        max_balance_amount=local_max_balance_amount,
+                                        max_balance_currency=value['MaxBalanceCurrency']
+                                        )
 
         return value
 
@@ -403,6 +405,18 @@ class AddressField(Field):
             }
 
         return value
+
+
+class ShippingAddressField(Field):
+    def python_value(self, value):
+        return value if value is None else ShippingAddress(recipient_name=value['RecipientName'],
+                                                           address=value['Address'])
+
+    def api_value(self, value):
+        value = super(ShippingAddressField, self).api_value(value)
+
+        if isinstance(value, ShippingAddress):
+            return {'RecipientName': value.recipient_name, 'Address': value.address}
 
 
 class ReverseOneToOneRelatedObject(object):
