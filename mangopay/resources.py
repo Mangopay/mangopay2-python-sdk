@@ -8,8 +8,6 @@ from .base import BaseApiModel, BaseApiModelMethods
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
-                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField, DebitedBankAccountField,
-                     RefundReasonField, ListField, ReportTransactionsFiltersField, ReportWalletsFiltersField)
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField, DebitedBankAccountField
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField)
