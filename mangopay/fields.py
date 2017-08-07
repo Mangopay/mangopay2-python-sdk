@@ -4,7 +4,7 @@ import time
 import datetime
 import six
 
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters \
 
 import sys
 
