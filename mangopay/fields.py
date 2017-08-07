@@ -4,8 +4,8 @@ import time
 import datetime
 import six
 
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, Address, ShippingAddress, Reason, \
-    ReportTransactionsFilters, ReportWalletsFilters
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters \
+
 import sys
 
 
@@ -206,6 +206,22 @@ class MoneyField(Field):
 
         return value
 
+class DebitedBankAccountField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return DebitedBankAccount(owner_name=value['OwnerName'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(DebitedBankAccountField, self).api_value(value)
+
+        if isinstance(value, DebitedBankAccount):
+            value = {
+                'OwnerName': value.owner_name
+            }
+
+        return value
 
 class ReportTransactionsFiltersField(Field):
     def python_value(self, value):

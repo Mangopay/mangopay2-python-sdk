@@ -8,7 +8,7 @@ from .base import BaseApiModel, BaseApiModelMethods
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
-                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
+                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField, DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField)
 
@@ -377,6 +377,7 @@ class PayIn(BaseModel):
             ("DIRECT_DEBIT", "WEB"): DirectDebitWebPayIn,
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
+            ("BANK_WIRE", "EXTERNAL_INSTRUCTION"):BankWirePayInExternalInstruction,
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -430,6 +431,22 @@ class BankWirePayIn(PayIn):
 
     def __str__(self):
         return 'Bank Wire Payin: %s to %s' % (self.author_id, self.credited_user_id)
+
+@python_2_unicode_compatible
+class BankWirePayInExternalInstruction(PayIn):
+    banking_alias_id = CharField(api_name='BankingAliasId')
+    wire_reference = CharField(api_name='WireReference')
+    debited_bank_account = DebitedBankAccountField(api_name='DebitedBankAccount')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            SelectQuery.identifier: '/payins'
+        }
+
+    def __str__(self):
+        return 'Bank Wire Payin External Instruction'
 
 
 @python_2_unicode_compatible
