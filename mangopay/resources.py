@@ -8,8 +8,9 @@ from .base import BaseApiModel, BaseApiModelMethods
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
-                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
-                     RefundReasonField, ListField, ReportTransactionsFiltersField, ReportWalletsFiltersField)
+                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField, DebitedBankAccountField,
+                     ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
+                     ReportWalletsFiltersField)
 
 from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
@@ -151,7 +152,8 @@ class LegalUser(User):
     legal_representative_email = EmailField(api_name='LegalRepresentativeEmail')
     legal_representative_birthday = DateField(api_name='LegalRepresentativeBirthday', required=True)
     legal_representative_nationality = CharField(api_name='LegalRepresentativeNationality', required=True)
-    legal_representative_country_of_residence = CharField(api_name='LegalRepresentativeCountryOfResidence', required=True)
+    legal_representative_country_of_residence = CharField(api_name='LegalRepresentativeCountryOfResidence',
+                                                          required=True)
     legal_representative_proof_of_identity = CharField(api_name='LegalRepresentativeProofOfIdentity')
     statute = CharField(api_name='Statute')
     proof_of_registration = CharField(api_name='ProofOfRegistration')
@@ -165,6 +167,7 @@ class LegalUser(User):
     def __str__(self):
         return '%s' % self.email
 
+
 @python_2_unicode_compatible
 class EMoney(BaseModel):
     user = ForeignKeyField(User, api_name='UserId', related_name='emoney')
@@ -177,6 +180,7 @@ class EMoney(BaseModel):
 
     def __str__(self):
         return 'EMoney for user %s' % self.user_id
+
 
 @python_2_unicode_compatible
 class Wallet(BaseModel):
@@ -373,6 +377,7 @@ class PayIn(BaseModel):
             ("DIRECT_DEBIT", "WEB"): DirectDebitWebPayIn,
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
+            ("BANK_WIRE", "EXTERNAL_INSTRUCTION"):BankWirePayInExternalInstruction,
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -426,6 +431,43 @@ class BankWirePayIn(PayIn):
 
     def __str__(self):
         return 'Bank Wire Payin: %s to %s' % (self.author_id, self.credited_user_id)
+
+@python_2_unicode_compatible
+class BankWirePayInExternalInstruction(PayIn):
+    banking_alias_id = CharField(api_name='BankingAliasId')
+    wire_reference = CharField(api_name='WireReference')
+    debited_bank_account = DebitedBankAccountField(api_name='DebitedBankAccount')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            SelectQuery.identifier: '/payins'
+        }
+
+    def __str__(self):
+        return 'Bank Wire Payin External Instruction'
+
+
+@python_2_unicode_compatible
+class PayPalPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    shipping_address = ShippingAddressField(api_name='ShippingAddress')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/payins/paypal/web',
+            SelectQuery.identifier: '/payins'
+        }
+
+    def __str__(self):
+        return 'Paypal Payin: %s to %s' % (self.author_id, self.credited_user_id)
 
 
 class CardWebPayIn(PayIn):
@@ -933,7 +975,7 @@ class DisputeDocument(BaseModel):
             'SUBMIT_DOCUMENT',
             params={'dispute_id': self.dispute_id},
             **{'Status': submit_status}
-            )
+        )
         return action.execute(handler)
 
 
@@ -1038,7 +1080,8 @@ class Report(BaseModel):
     download_url = CharField(api_name='DownloadURL')
     callback_url = CharField(api_name='CallbackURL')
     download_format = CharField(api_name='DownloadFormat', choices=constants.DOWNLOAD_FORMAT, default='CSV')
-    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions', related_name='report_type')
+    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions',
+                            related_name='report_type')
     sort = CharField(api_name='Sort')
     preview = BooleanField(api_name='Preview')
     columns = ListField(api_name='Columns')
@@ -1053,13 +1096,15 @@ class Report(BaseModel):
             InsertQuery.identifier: '/reports/%(report_type)s/'
         }
 
+
 class ReportTransactions(BaseModel):
     creation_date = CharField(api_name='CreationDate')
     report_date = CharField(api_name='ReportDate')
     download_url = CharField(api_name='DownloadURL')
     callback_url = CharField(api_name='CallbackURL')
     download_format = CharField(api_name='DownloadFormat', choices=constants.DOWNLOAD_FORMAT, default='CSV')
-    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions', related_name='report_type')
+    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions',
+                            related_name='report_type')
     sort = CharField(api_name='Sort')
     preview = BooleanField(api_name='Preview')
     columns = ListField(api_name='Columns')
@@ -1074,7 +1119,7 @@ class ReportTransactions(BaseModel):
             SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/transactions/'
         }
-    
+
 
 class ReportWallets(BaseModel):
     creation_date = CharField(api_name='CreationDate')
@@ -1082,7 +1127,8 @@ class ReportWallets(BaseModel):
     download_url = CharField(api_name='DownloadURL')
     callback_url = CharField(api_name='CallbackURL')
     download_format = CharField(api_name='DownloadFormat', choices=constants.DOWNLOAD_FORMAT, default='CSV')
-    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions', related_name='report_type')
+    report_type = CharField(api_name='ReportType', choices=constants.REPORT_TYPE, default='transactions',
+                            related_name='report_type')
     sort = CharField(api_name='Sort')
     preview = BooleanField(api_name='Preview')
     columns = ListField(api_name='Columns')
@@ -1128,7 +1174,7 @@ class BankingAlias(BaseModel):
 
     def __str__(self):
         return '%s banking alias account of user %s' % (self.type, self.credited_user)
-    
+
     def all(self, *args, **kwargs):
         kwargs['wallet_id'] = self.wallet_id
         select = SelectQuery(self.__class__, *args, **kwargs)
