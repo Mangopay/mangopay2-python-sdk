@@ -311,6 +311,12 @@ Retrieve user's cards
 
     print user.cards.get(card.id)  # CB_VISA_MASTERCARD of user 6641810
 
+Retrieve cards by fingerprint
+
+.. code-block:: python
+
+    cards = Card.get_by_fingerprint(fingerprint) #return a list of card objects that matches with specified fingerprint.
+
 PayIn
 -----
 
