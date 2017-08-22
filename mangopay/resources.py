@@ -451,10 +451,13 @@ class BankWirePayInExternalInstruction(PayIn):
 
 @python_2_unicode_compatible
 class PayPalPayIn(PayIn):
+    tag = CharField(api_name='Tag')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_user = ForeignKeyField(User, api_name='CreditedUserId', related_name='credited_users')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
-    return_url = CharField(api_name='ReturnURL', required=True)
+    return_url = CharField(api_name='ReturnURL', required=False)
+    redirect_url = CharField(api_name='RedirectURL', required=False)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     shipping_address = ShippingAddressField(api_name='ShippingAddress')
 
@@ -465,9 +468,6 @@ class PayPalPayIn(PayIn):
             InsertQuery.identifier: '/payins/paypal/web',
             SelectQuery.identifier: '/payins'
         }
-
-    def __str__(self):
-        return 'Paypal Payin: %s to %s' % (self.author_id, self.credited_user_id)
 
 
 class CardWebPayIn(PayIn):
