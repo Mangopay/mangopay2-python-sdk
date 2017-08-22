@@ -8,7 +8,8 @@ from .base import BaseApiModel, BaseApiModelMethods
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
-                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField, DebitedBankAccountField,
+                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
+                     DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField)
 
@@ -267,11 +268,21 @@ class Card(BaseModel):
                          choices=constants.VALIDITY_CHOICES,
                          default=constants.VALIDITY_CHOICES.unknown)
     user = ForeignKeyField(User, api_name='UserId', required=True, related_name='cards')
+    fingerprint = CharField(api_name='Fingerprint')
+
+    @classmethod
+    def get_by_fingerprint(cls, fingerprint, *args, **kwargs):
+        kwargs['fingerprint'] = fingerprint
+        select = SelectQuery(cls, *args, **kwargs)
+        select.identifier = 'CARDS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
-        url = '/cards'
+        url = {
+            SelectQuery.identifier: '/cards',
+            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s'}
 
     def __str__(self):
         return '%s of user %s' % (self.card_type, self.user_id)
@@ -377,7 +388,7 @@ class PayIn(BaseModel):
             ("DIRECT_DEBIT", "WEB"): DirectDebitWebPayIn,
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
-            ("BANK_WIRE", "EXTERNAL_INSTRUCTION"):BankWirePayInExternalInstruction,
+            ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -431,6 +442,7 @@ class BankWirePayIn(PayIn):
 
     def __str__(self):
         return 'Bank Wire Payin: %s to %s' % (self.author_id, self.credited_user_id)
+
 
 @python_2_unicode_compatible
 class BankWirePayInExternalInstruction(PayIn):
