@@ -253,81 +253,7 @@ class PayInsTest(BaseTest):
         self.assertIsNotNone(bank_wire_payin.get_pk())
 
     @responses.activate
-    def test_create_paypal_payin_without_shipping_address(self):
-        self.mock_natural_user()
-        self.mock_legal_user()
-        self.mock_user_wallet()
-
-        self.register_mock({
-            'method': responses.POST,
-            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/paypal/web',
-            'body': {
-                "Id": "6784288",
-                "CreationDate": 1387805409,
-                "Tag": "Custom data",
-                "DebitedFunds": {
-                    "Currency": "EUR",
-                    "Amount": 1000
-                },
-                "CreditedFunds": {
-                    "Currency": "EUR",
-                    "Amount": 900
-                },
-                "Fees": {
-                    "Currency": "EUR",
-                    "Amount": 100
-                },
-                "DebitedWalletId": None,
-                "CreditedWalletId": "95898",
-                "CreditedUserId": "95897",
-                "AuthorId": "95897",
-                "Nature": "REGULAR",
-                "Status": "CREATED",
-                "ResultCode": None,
-                "ResultMessage": None,
-                "ExecutionDate": None,
-                "Type": "PAYIN",
-                "PaymentType": "Paypal",
-                "ExecutionType": "DIRECT",
-                "ReturnURL": "http://www.ulule.com/?transactionId=1169430"
-            },
-            'status': 200
-        })
-
-        paypal_payin_params = {
-            "author": self.natural_user,
-            "debited_funds": Money(amount=1000, currency='EUR'),
-            "fees": Money(amount=100, currency="EUR"),
-            "return_url": "http://www.ulule.com/",
-            "credited_wallet": self.legal_user_wallet
-        }
-
-        paypal_payin = PayPalPayIn(**paypal_payin_params)
-
-        self.assertIsNone(paypal_payin.get_pk())
-        paypal_payin.save()
-        self.assertIsInstance(paypal_payin, PayPalPayIn)
-        self.assertEqual(paypal_payin.status, 'CREATED')
-        self.assertEqual(paypal_payin.type, 'PAYIN')
-        self.assertEqual(paypal_payin.payment_type, 'Paypal')
-        self.assertIsNotNone(paypal_payin.get_pk())
-
-        self.assertTrue(paypal_payin.return_url.startswith('http://www.ulule.com/?transactionId='))
-        paypal_payin_params.pop('return_url')
-
-        self.assertEqual(paypal_payin.debited_funds.amount, 1000)
-        paypal_payin_params.pop('debited_funds')
-
-        self.assertEqual(paypal_payin.fees.amount, 100)
-        paypal_payin_params.pop('fees')
-
-        self.assertIsNone(paypal_payin.shipping_address)
-
-        for key, value in paypal_payin_params.items():
-            self.assertEqual(getattr(paypal_payin, key), value)
-
-    @responses.activate
-    def test_create_paypal_payin_with_shipping_address(self):
+    def test_create_paypal_payin(self):
 
         self.mock_natural_user()
         self.mock_legal_user()
@@ -362,9 +288,10 @@ class PayInsTest(BaseTest):
                 "ResultMessage": None,
                 "ExecutionDate": None,
                 "Type": "PAYIN",
-                "PaymentType": "Paypal",
+                "PaymentType": "PAYPAL",
                 "ExecutionType": "DIRECT",
                 "ReturnURL": "http://www.ulule.com/?transactionId=1169430",
+                "RedirectURL" :"https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-68L249465R9617720",
                 "ShippingAddress": {
                     "RecipientName": "Unittests User",
                     "Address": {
@@ -400,8 +327,9 @@ class PayInsTest(BaseTest):
         self.assertIsInstance(paypal_payin, PayPalPayIn)
         self.assertEqual(paypal_payin.status, 'CREATED')
         self.assertEqual(paypal_payin.type, 'PAYIN')
-        self.assertEqual(paypal_payin.payment_type, 'Paypal')
+        self.assertEqual(paypal_payin.payment_type, 'PAYPAL')
         self.assertIsNotNone(paypal_payin.get_pk())
+        self.assertTrue(paypal_payin.redirect_url.startswith('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token'))
 
         self.assertTrue(paypal_payin.return_url.startswith('http://www.ulule.com/?transactionId='))
         paypal_payin_params.pop('return_url')
