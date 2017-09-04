@@ -178,5 +178,6 @@ class ActionQuery(BaseQuery):
         result, data = handler.request(self.method,
                                        url,
                                        data=data)
-
+        if isinstance(data, list):
+            return [self.parse_result(d) for d in data]
         return self.parse_result(data)

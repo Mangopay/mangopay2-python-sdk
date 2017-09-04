@@ -1006,6 +1006,32 @@ class DisputeDocumentPage(BaseModel):
         return 'Page of dispute document %s for dispute %s' % (self.document_id, self.dispute_id)
 
 
+class DocumentConsult(BaseModel):
+    url = CharField(api_name='Url')
+    expiration_date = DateField(api_name='ExpirationDate')
+
+    class Meta:
+        verbose_name = 'consult_page'
+        verbose_name_plural = 'consult_pages'
+        url = {
+            'DISPUTE_CONSULT': '/dispute-documents/%(id)s/consult',
+            'KYC_CONSULT': '/KYC/documents/%(id)s/consult'
+        }
+
+    @classmethod
+    def _get_document_consult(cls, id, identifier, handler=None):
+        query = ActionQuery(cls, id, identifier, 'POST')
+        return query.execute(handler)
+
+    @classmethod
+    def get_kyc_document_consult(cls, KYCDocId, handler=None):
+        return DocumentConsult._get_document_consult(KYCDocId, 'KYC_CONSULT', handler)
+
+    @classmethod
+    def get_dispute_document_consult(cls, disputeDocId, handler=None):
+        return DocumentConsult._get_document_consult(disputeDocId, 'DISPUTE_CONSULT', handler)
+
+
 class Repudiation(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId')
     disputed_funds = MoneyField(api_name='DisputedFunds')
