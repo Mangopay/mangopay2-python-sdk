@@ -85,10 +85,6 @@ class ClientLogo(BaseModel):
 @python_2_unicode_compatible
 class User(BaseModel):
     email = EmailField(api_name='Email', required=True)
-    person_type = CharField(api_name='PersonType',
-                            choices=constants.USER_TYPE_CHOICES,
-                            default=constants.USER_TYPE_CHOICES.natural,
-                            required=True)
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
 
     class Meta:
@@ -119,6 +115,10 @@ class User(BaseModel):
 
 @python_2_unicode_compatible
 class NaturalUser(User):
+    person_type = CharField(api_name='PersonType',
+                            choices=constants.USER_TYPE_CHOICES,
+                            default=constants.USER_TYPE_CHOICES.natural,
+                            required=True)
     first_name = CharField(api_name='FirstName', required=True)
     last_name = CharField(api_name='LastName', required=True)
     address = AddressField(api_name='Address')
@@ -141,6 +141,10 @@ class NaturalUser(User):
 
 @python_2_unicode_compatible
 class LegalUser(User):
+    person_type = CharField(api_name='PersonType',
+                            choices=constants.USER_TYPE_CHOICES,
+                            default=constants.USER_TYPE_CHOICES.legal,
+                            required=True)
     name = CharField(api_name='Name', required=True)
     legal_person_type = CharField(api_name='LegalPersonType',
                                   choices=constants.LEGAL_USER_TYPE_CHOICES,
