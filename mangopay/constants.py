@@ -232,3 +232,32 @@ CARD_STATUS_CHOICES = Choices(
     ("VALIDATED", "validated", "Validated"),
     ("ERROR", "error", "Error")
 )
+
+UBO_DECLARATION_STATUS_CHOICES = Choices(
+    ("CREATED", "created", "Created"),
+    ("VALIDATION_ASKED", "validation_asked", "Validation Asked"),
+    ("VALIDATED", "validated", "Validated"),
+    ("REFUSED", "refused", "Refused")
+)
+
+UBO_DECLARATION_REFUSED_REASON_CHOICES = Choices(
+    ("MISSING_UBO", "missing_ubo", "Missing UBO"),
+    ("INVALID_DECLARED_UBO", "invalid_declared_ubo", "Invalid Declared UBO"),
+    ("INVALID_UBO_DETAILS", "invalid_ubo_details", "Invalid UBO Details")
+)
+
+DECLARED_UBO_STATUS_CHOICES = Choices(
+    ("CREATED", "created", "Created"),
+    ("VALIDATED", "validated", "Validated"),
+    ("REFUSED", "refused", "Refused")
+)
+
+DECLARED_UBO_REFUSED_REASON_CHOICES = Choices(
+    ("INVALID_DECLARED_UBO", "invalid_declared_ubo", "Invalid Declared UBO"),
+    ("INVALID_UBO_DETAILS", "invalid_ubo_details", "Invalid UBO Details")
+)
+
+NATURAL_USER_CAPACITY_CHOICES = Choices(
+    ("NORMAL", "normal", "Normal"),
+    ("DECLARATIVE", "declarative", "Declarative")
+)
