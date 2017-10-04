@@ -749,6 +749,7 @@ class Document(KYC):
     status = CharField(api_name='Status', choices=constants.DOCUMENTS_STATUS_CHOICES, default=None)
     refused_reason_type = CharField(api_name='RefusedReasonType')
     refused_reason_message = CharField(api_name='RefusedReasonMessage')
+    processedDate = DateTimeField(api_name='ProcessedDate')
 
     class Meta:
         verbose_name = 'KYC/document'
@@ -966,6 +967,7 @@ class DisputeDocument(BaseModel):
     refused_reason_type = CharField(api_name='RefusedReasonType', choices=constants.REFUSED_REASON_TYPE_CHOICES,
                                     default=None)
     creation_date = DateTimeField(api_name='CreationDate')
+    processed_date = DateTimeField(api_name='ProcessedDate')
 
     class Meta:
         verbose_name = 'document'
