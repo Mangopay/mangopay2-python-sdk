@@ -1,14 +1,15 @@
 import six
 
 from mangopay.signals import pre_save, post_save
-from mangopay.utils import Money
+from mangopay.utils import Money, DeclaredUbo
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
 
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
-                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField, DebitedBankAccountField,
+                     MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
+                     DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField)
 
@@ -84,10 +85,6 @@ class ClientLogo(BaseModel):
 @python_2_unicode_compatible
 class User(BaseModel):
     email = EmailField(api_name='Email', required=True)
-    person_type = CharField(api_name='PersonType',
-                            choices=constants.USER_TYPE_CHOICES,
-                            default=constants.USER_TYPE_CHOICES.natural,
-                            required=True)
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
 
     class Meta:
@@ -118,6 +115,10 @@ class User(BaseModel):
 
 @python_2_unicode_compatible
 class NaturalUser(User):
+    person_type = CharField(api_name='PersonType',
+                            choices=constants.USER_TYPE_CHOICES,
+                            default=constants.USER_TYPE_CHOICES.natural,
+                            required=True)
     first_name = CharField(api_name='FirstName', required=True)
     last_name = CharField(api_name='LastName', required=True)
     address = AddressField(api_name='Address')
@@ -128,6 +129,7 @@ class NaturalUser(User):
     income_range = CharField(api_name='IncomeRange')
     proof_of_identity = CharField(api_name='ProofOfIdentity')
     proof_of_address = CharField(api_name='ProofOfAddress')
+    capacity = CharField(api_name='Capacity', choices=constants.NATURAL_USER_CAPACITY_CHOICES)
 
     class Meta:
         verbose_name = 'user'
@@ -140,6 +142,10 @@ class NaturalUser(User):
 
 @python_2_unicode_compatible
 class LegalUser(User):
+    person_type = CharField(api_name='PersonType',
+                            choices=constants.USER_TYPE_CHOICES,
+                            default=constants.USER_TYPE_CHOICES.legal,
+                            required=True)
     name = CharField(api_name='Name', required=True)
     legal_person_type = CharField(api_name='LegalPersonType',
                                   choices=constants.LEGAL_USER_TYPE_CHOICES,
@@ -267,11 +273,21 @@ class Card(BaseModel):
                          choices=constants.VALIDITY_CHOICES,
                          default=constants.VALIDITY_CHOICES.unknown)
     user = ForeignKeyField(User, api_name='UserId', required=True, related_name='cards')
+    fingerprint = CharField(api_name='Fingerprint')
+
+    @classmethod
+    def get_by_fingerprint(cls, fingerprint, *args, **kwargs):
+        kwargs['fingerprint'] = fingerprint
+        select = SelectQuery(cls, *args, **kwargs)
+        select.identifier = 'CARDS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
-        url = '/cards'
+        url = {
+            SelectQuery.identifier: '/cards',
+            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s'}
 
     def __str__(self):
         return '%s of user %s' % (self.card_type, self.user_id)
@@ -377,7 +393,7 @@ class PayIn(BaseModel):
             ("DIRECT_DEBIT", "WEB"): DirectDebitWebPayIn,
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
-            ("BANK_WIRE", "EXTERNAL_INSTRUCTION"):BankWirePayInExternalInstruction,
+            ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -431,6 +447,7 @@ class BankWirePayIn(PayIn):
 
     def __str__(self):
         return 'Bank Wire Payin: %s to %s' % (self.author_id, self.credited_user_id)
+
 
 @python_2_unicode_compatible
 class BankWirePayInExternalInstruction(PayIn):
@@ -733,6 +750,7 @@ class Document(KYC):
     status = CharField(api_name='Status', choices=constants.DOCUMENTS_STATUS_CHOICES, default=None)
     refused_reason_type = CharField(api_name='RefusedReasonType')
     refused_reason_message = CharField(api_name='RefusedReasonMessage')
+    processedDate = DateTimeField(api_name='ProcessedDate')
 
     class Meta:
         verbose_name = 'KYC/document'
@@ -950,6 +968,7 @@ class DisputeDocument(BaseModel):
     refused_reason_type = CharField(api_name='RefusedReasonType', choices=constants.REFUSED_REASON_TYPE_CHOICES,
                                     default=None)
     creation_date = DateTimeField(api_name='CreationDate')
+    processed_date = DateTimeField(api_name='ProcessedDate')
 
     class Meta:
         verbose_name = 'document'
@@ -992,6 +1011,32 @@ class DisputeDocumentPage(BaseModel):
 
     def __str__(self):
         return 'Page of dispute document %s for dispute %s' % (self.document_id, self.dispute_id)
+
+
+class DocumentConsult(BaseModel):
+    url = CharField(api_name='Url')
+    expiration_date = DateField(api_name='ExpirationDate')
+
+    class Meta:
+        verbose_name = 'consult_page'
+        verbose_name_plural = 'consult_pages'
+        url = {
+            'DISPUTE_CONSULT': '/dispute-documents/%(id)s/consult',
+            'KYC_CONSULT': '/KYC/documents/%(id)s/consult'
+        }
+
+    @classmethod
+    def _get_document_consult(cls, id, identifier, handler=None):
+        query = ActionQuery(cls, id, identifier, 'POST')
+        return query.execute(handler)
+
+    @classmethod
+    def get_kyc_document_consult(cls, KYCDocId, handler=None):
+        return DocumentConsult._get_document_consult(KYCDocId, 'KYC_CONSULT', handler)
+
+    @classmethod
+    def get_dispute_document_consult(cls, disputeDocId, handler=None):
+        return DocumentConsult._get_document_consult(disputeDocId, 'DISPUTE_CONSULT', handler)
 
 
 class Repudiation(BaseModel):
@@ -1196,3 +1241,77 @@ class BankingAliasIBAN(BankingAlias):
             SelectQuery.identifier: '/bankingaliases/%(id)s',
             UpdateQuery.identifier: '/bankingaliases/%(id)s'
         }
+
+
+class UboDeclaration(BaseModel):
+    creation_date = DateField(api_name='CreationDate')
+    user_id = CharField(api_name='UserId')
+    status = CharField(api_name='Status', choices=constants.UBO_DECLARATION_STATUS_CHOICES, default=None)
+    refused_reason_types = ListField(api_name='RefusedReasonTypes')
+    refused_reason_message = CharField(api_name='RefusedReasonMessage')
+    declared_ubos = ListField(api_name='DeclaredUBOs')
+
+    class Meta:
+        verbose_name = 'ubodeclaration'
+        verbose_name_plural = 'ubodeclarations'
+        url = {
+            InsertQuery.identifier: '/users/legal/%(user_id)s/ubodeclarations',
+            UpdateQuery.identifier: '/ubodeclarations'
+        }
+
+    def save(self, handler=None, cls=None, idempotency_key=None):
+        self._handler = handler or self.handler
+
+        field_dict = dict(self._data)
+        field_dict.update(self.get_field_dict())
+        field_dict.pop(self._meta.pk_name)
+
+        all_fields = self._meta.fields
+
+        if cls is None:
+            cls = self.__class__
+
+        created = False
+
+        pre_save.send(cls, instance=self)
+
+        if self.get_pk():
+            declared_ubo_ids = []
+            for ubo in field_dict['declared_ubos']:
+                declared_ubo_ids.append(ubo.user_id)
+            field_dict['declared_ubos'] = declared_ubo_ids
+            update = self.update(
+                self.get_pk(),
+                **field_dict
+            )
+            result = update.execute(handler)
+        else:
+            for k, v in all_fields.items():
+                if v.required is True and field_dict[v.name] is None:
+                    raise ValueError('Missing mandatory field: ' + v.name)
+
+            insert = self.insert(idempotency_key=idempotency_key, **field_dict)
+            result = insert.execute(handler)
+
+            created = True
+
+        post_save.send(cls, instance=self, created=created)
+
+        for key, value in result.items():
+            setattr(self, key, value)
+
+        declared_ubo_objects = []
+        for ubo in result['declared_ubos']:
+            ubo_object = DeclaredUbo()
+            ubo_object.user_id = ubo['UserId']
+            ubo_object.status = ubo['Status']
+            if (hasattr(ubo, 'RefusedReasonType')):
+                ubo_object.refused_reason_type = ubo['RefusedReasonType']
+            if (hasattr(ubo, 'RefusedReasonMessage')):
+                ubo_object.refused_reason_message = ubo['RefusedReasonMessage']
+            declared_ubo_objects.append(ubo_object)
+
+        setattr(self, 'declared_ubos', declared_ubo_objects)
+        result['declared_ubos'] = declared_ubo_objects
+
+        return result

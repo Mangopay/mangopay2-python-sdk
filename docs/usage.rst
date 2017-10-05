@@ -311,6 +311,12 @@ Retrieve user's cards
 
     print user.cards.get(card.id)  # CB_VISA_MASTERCARD of user 6641810
 
+Retrieve cards by fingerprint
+
+.. code-block:: python
+
+    cards = Card.get_by_fingerprint(fingerprint) #return a list of card objects that matches with specified fingerprint.
+
 PayIn
 -----
 
@@ -445,6 +451,12 @@ To get the list of all the uploaded documents for all users:
 
     documents = Document.all()
 
+To get the list of KYC documents pages
+
+.. code-block:: python
+
+    document_consult = DocumentConsult.get_kyc_document_consult(document.id)
+
 Client
 ------
 
@@ -556,6 +568,12 @@ Dispute
 
     #dispute type must be 'REOPENED_PENDING_CLIENT_ACTION'
     result = dispute.resubmit()
+
+11. To get the list of Dispute documents pages
+
+.. code-block:: python
+
+    document_consult = DocumentConsult.get_dispute_document_consult(dispute_document.id)
 
 Idempotency Support
 -------------------

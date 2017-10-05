@@ -84,6 +84,14 @@ class RegisteredMocks(unittest.TestCase):
             'status': 200
         })
 
+    def mock_declarative_user(self):
+        self.register_mock({
+            'method': responses.POST,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/natural',
+            'body': get_fixture('declarative_user') % today_timestamp,
+            'status': 200
+        })
+
     def mock_user_wallet(self):
         self.register_mock({
             'method': responses.POST,
@@ -240,3 +248,12 @@ class RegisteredMocks(unittest.TestCase):
             'status': 200,
             'match_querystring': True
         })
+
+    def mock_ubo_declaration(self):
+
+        self.register_mock({
+                'method': responses.POST,
+                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/1169420/ubodeclarations',
+                'body': get_fixture('ubo_declaration') % '"Default Tag"',
+                'status': 200
+            })
