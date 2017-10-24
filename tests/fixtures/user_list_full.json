@@ -5,7 +5,8 @@
         "Id": "1167495",
         "Tag": null,
         "CreationDate": 1382605938,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "FirstName": "Arnaud"
     },
     {
         "PersonType": "LEGAL",
@@ -13,7 +14,8 @@
         "Id": "1167496",
         "Tag": null,
         "CreationDate": 1382607639,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "Name": "MMDP United"
     },
     {
         "PersonType": "NATURAL",
@@ -21,7 +23,8 @@
         "Id": "1167497",
         "Tag": "",
         "CreationDate": 1382627263,
-        "KYCLevel": "REGULAR"
+        "KYCLevel": "REGULAR",
+        "FirstName": "Alex"
     },
     {
         "PersonType": "NATURAL",
@@ -29,7 +32,8 @@
         "Id": "1167498",
         "Tag": null,
         "CreationDate": 1383143870,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "FirstName": "Sarah"
     },
     {
         "PersonType": "NATURAL",
@@ -37,7 +41,8 @@
         "Id": "1167499",
         "Tag": null,
         "CreationDate": 1382605938,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "FirstName": "Florent"
     },
     {
         "PersonType": "LEGAL",
@@ -45,7 +50,8 @@
         "Id": "1167500",
         "Tag": null,
         "CreationDate": 1382607639,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "Name": "Tsilla Ltd"
     },
     {
         "PersonType": "NATURAL",
@@ -53,7 +59,8 @@
         "Id": "1167501",
         "Tag": "",
         "CreationDate": 1382627263,
-        "KYCLevel": "REGULAR"
+        "KYCLevel": "REGULAR",
+        "FirstName": "Annika"
     },
     {
         "PersonType": "NATURAL",
@@ -61,7 +68,8 @@
         "Id": "1167502",
         "Tag": null,
         "CreationDate": 1383143870,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "FirstName": "Margaux"
     },
     {
         "PersonType": "NATURAL",
@@ -69,7 +77,8 @@
         "Id": "1167503",
         "Tag": null,
         "CreationDate": 1382605938,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "FirstName": "Adele"
     },
     {
         "PersonType": "LEGAL",
@@ -77,6 +86,7 @@
         "Id": "1167504",
         "Tag": null,
         "CreationDate": 1382607639,
-        "KYCLevel": "LIGHT"
+        "KYCLevel": "LIGHT",
+        "Name": "Shana Co"
     }
 ]
