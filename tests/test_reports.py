@@ -1,24 +1,24 @@
 import time
 
-from mangopay.resources import Report
-from mangopay.utils import ReportFilters
+from mangopay.resources import ReportTransactions, Report
+from mangopay.utils import ReportTransactionsFilters
 from tests.test_base import BaseTestLive
 
 
 class ReportsTestLive(BaseTestLive):
 
     def test_ReportCreate(self):
-        report = Report()
-        report.report_type = 'TRANSACTIONS'
+        report = ReportTransactions()
+        report.report_type = 'transactions'
         result = report.save()
 
         self.assertIsNotNone(result)
         self.assertTrue(result['id'])
 
     def test_ReportFilteredCreate(self):
-        report = Report()
-        report.report_type = 'TRANSACTIONS'
-        report.filters = ReportFilters()
+        report = ReportTransactions()
+        report.report_type = 'transactions'
+        report.filters = ReportTransactionsFilters()
         report.filters.author_id = BaseTestLive.get_john().id
         report.filters.wallet_id = BaseTestLive.get_johns_wallet().id
         result = report.save()

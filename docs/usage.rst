@@ -129,7 +129,7 @@ Retrieve an existing user
 
 .. code-block:: python
 
-    natural_user = NaturalUser.get(1)
+    natural_user = NaturalUser.get(1) # 1 is an ID value, not an array index
 
     print natural_user.first_name # Victor
 
@@ -311,6 +311,12 @@ Retrieve user's cards
 
     print user.cards.get(card.id)  # CB_VISA_MASTERCARD of user 6641810
 
+Retrieve cards by fingerprint
+
+.. code-block:: python
+
+    cards = Card.get_by_fingerprint(fingerprint) #return a list of card objects that matches with specified fingerprint.
+
 PayIn
 -----
 
@@ -362,6 +368,23 @@ And pay by bank wire
     bank_wire_payin.save()
 
     print legal_user_wallet.balance  # EUR 99.00
+
+PaypalPayIn
+-------------
+
+Pay by paypal
+
+.. code-block:: python
+
+    paypal_payin = PayPalPayIn(author=natural_user,
+                               debited_funds=Money(amount=100, currency='EUR'),
+                               fees=Money(amount=1, currency='EUR'),
+                               return_url = 'http://test.test',
+                               credited_wallet_id=natural_user_wallet)
+
+    paypal_payin.save()
+
+    print natural_user_wallet.balance  # EUR 99.00
 
 Refund
 ------
@@ -427,6 +450,12 @@ To get the list of all the uploaded documents for all users:
 .. code-block:: python
 
     documents = Document.all()
+
+To get the list of KYC documents pages
+
+.. code-block:: python
+
+    document_consult = DocumentConsult.get_kyc_document_consult(document.id)
 
 Client
 ------
@@ -540,6 +569,12 @@ Dispute
     #dispute type must be 'REOPENED_PENDING_CLIENT_ACTION'
     result = dispute.resubmit()
 
+11. To get the list of Dispute documents pages
+
+.. code-block:: python
+
+    document_consult = DocumentConsult.get_dispute_document_consult(dispute_document.id)
+
 Idempotency Support
 -------------------
 
@@ -590,6 +625,31 @@ Mandate
 .. code-block:: python
 
     bank_account.get_mandates() #bank_account must be a valid BankAccount
+
+Banking Aliases
+------
+
+1.Create IBAN Bankig Alias
+
+.. code-block:: python
+
+    bankingAlias = BankingAliasIBAN(
+        wallet = natural_user_wallet,
+        credited_user = natural_user,
+        owner_name = natural_user.first_name,
+        country ='LU'
+    )
+    bankingAlias.save()
+
+2. Get all banking aliases for a wallet
+
+.. code-block:: python
+
+    walletBankingAliases = BankingAlias(
+        wallet = natural_user_wallet
+    )
+
+    allBankingAliases = walletBankingAliases.all()
 
 Sort and filter lists
 ---------------------

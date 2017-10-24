@@ -64,5 +64,4 @@ tests/credentials.py
 .idea
 .vscode
 
-local_examples/
-credited_user_id.py
+local_test_example_*.py

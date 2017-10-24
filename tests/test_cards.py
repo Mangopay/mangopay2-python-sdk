@@ -30,7 +30,7 @@ class CardsTest(BaseTest):
         self.mock_tokenization_request()
         self.register_mock({
             'method': responses.GET,
-            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/cards',
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/cards',
             'body': [
                 {
                     "ExpirationDate": "1214",
@@ -98,6 +98,87 @@ class CardsTest(BaseTest):
         self.assertEqual(len(self.natural_user.cards.all()), 1)
         self.assertEqual(self.natural_user.cards.all()[0], card)
         self.assertEqual(self.natural_user.cards.get(card.id), card)
+
+    @responses.activate
+    def test_cards_for_fingerprint(self):
+        self.mock_natural_user()
+        self.mock_card()
+        self.mock_tokenization_request()
+        self.register_mock([{
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/cards',
+            'body': [
+                {
+                    "ExpirationDate": "1214",
+                    "Alias": "497010XXXXXX4406",
+                    "CardType": "CB",
+                    "Country": "",
+                    "Product": "",
+                    "BankCode": "",
+                    "Active": True,
+                    "Currency": "XXX",
+                    "Validity": "VALID",
+                    "UserId": "1167495",
+                    "Id": "1167507",
+                    "Tag": None,
+                    "CreationDate": 1382608428
+                }
+            ],
+            'status': 200
+        }, {
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/cards/fingerprints/c188a617d3ed42169a7d91f7485c65f3',
+            'body': [
+                {
+                    "ExpirationDate": "1214",
+                    "Alias": "497010XXXXXX4406",
+                    "CardType": "CB",
+                    "Country": "",
+                    "Product": "",
+                    "BankCode": "",
+                    "Active": True,
+                    "Currency": "XXX",
+                    "Validity": "VALID",
+                    "UserId": "1167495",
+                    "Id": "1167507",
+                    "Tag": None,
+                    "CreationDate": 1382608428,
+                    "Fingerprint": "c188a617d3ed42169a7d91f7485c65f3"
+                }
+            ],
+            'status': 200
+        }])
+
+        card_params = {
+            "user": self.natural_user,
+            "currency": 'EUR'
+        }
+        card_registration = CardRegistration(**card_params)
+        card_registration.save()
+
+        for key, value in card_params.items():
+            self.assertEqual(getattr(card_registration, key), value)
+
+        self.assertIsNotNone(card_registration.get_pk())
+
+        response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
+            'cardNumber': '4970100000000154',
+            'cardCvx': '123',
+            'cardExpirationDate': '0120',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }))
+
+        card_registration.registration_data = response.text
+        card_registration.save()
+
+        card = Card.get(card_registration.card_id)
+        cards = Card.get_by_fingerprint(card.fingerprint)
+
+        self.assertTrue(len(cards) > 0)
+
+        for c in cards:
+            self.assertEqual(c.fingerprint, card.fingerprint)
 
     def test_desactive_card(self):
         # self.card.active = False

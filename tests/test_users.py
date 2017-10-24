@@ -2,12 +2,13 @@
 from datetime import datetime
 
 from tests import settings
-from tests.mocks import today, today_timestamp
-from mangopay.resources import (User, NaturalUser, Wallet,
-                                LegalUser, Transfer, Transaction)
-from tests.test_base import BaseTest, BaseTestLive
+from tests.mocks import get_fixture
+from .mocks import today, today_timestamp
+from .resources import (User, NaturalUser, Wallet,
+                                LegalUser, Transfer, Transaction, UboDeclaration)
+from .test_base import BaseTest, BaseTestLive
 
-from mangopay.utils import Money, Address
+from mangopay.utils import Money, Address, DeclaredUbo
 
 import responses
 import requests
@@ -674,6 +675,97 @@ class UsersTest(BaseTest):
 
         self.assertEqual(len(transactions), 1)
         self.assertEqual(transactions[0].type, 'TRANSFER')
+
+    @responses.activate
+    def test_create_ubo_declaration(self):
+        self.mock_legal_user()
+        self.mock_declarative_user()
+        self.mock_ubo_declaration()
+
+        params = {
+            "first_name": "Victor",
+            "last_name": "Hugo",
+            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR'),
+            "birthday": today,
+            "nationality": "FR",
+            "country_of_residence": "FR",
+            "occupation": "Writer",
+            "income_range": 6,
+            "proof_of_identity": None,
+            "proof_of_address": None,
+            "person_type": "NATURAL",
+            "email": "victor@hugo.com",
+            "tag": "custom tag",
+            "capacity": "DECLARATIVE"
+        }
+        user = NaturalUser(**params)
+        user.save()
+
+        params = {
+            "user_id": "1169420",
+            "declared_ubos": ["11694190"]
+        }
+        ubo_declaration = UboDeclaration(**params)
+        ubo_declaration.save()
+
+        self.assertTrue(isinstance(ubo_declaration, UboDeclaration))
+        self.assertTrue(ubo_declaration.id == "1169420")
+        self.assertTrue(len(ubo_declaration.declared_ubos) == 1)
+        ubo = ubo_declaration.declared_ubos[0]
+        self.assertTrue(isinstance(ubo, DeclaredUbo))
+        self.assertTrue(ubo.user_id == '11694190')
+        self.assertTrue(ubo.status == 'CREATED')
+
+    @responses.activate
+    def test_update_ubo_declaration(self):
+        self.mock_legal_user()
+        self.mock_declarative_user()
+        self.mock_ubo_declaration()
+
+        params = {
+            "first_name": "Victor",
+            "last_name": "Hugo",
+            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR'),
+            "birthday": today,
+            "nationality": "FR",
+            "country_of_residence": "FR",
+            "occupation": "Writer",
+            "income_range": 6,
+            "proof_of_identity": None,
+            "proof_of_address": None,
+            "person_type": "NATURAL",
+            "email": "victor@hugo.com",
+            "tag": "custom tag",
+            "capacity": "DECLARATIVE"
+        }
+        user = NaturalUser(**params)
+        user.save()
+
+        params = {
+            "user_id": "1169420",
+            "declared_ubos": ["11694190"]
+        }
+        ubo_declaration = UboDeclaration(**params)
+        ubo_declaration.save()
+
+        updated_value = 'Updated Tag'
+
+        self.register_mock({
+            "method": responses.PUT,
+            "url": settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/ubodeclarations/1169420',
+            "body": get_fixture('ubo_declaration') % ('"' + updated_value + '"'),
+            "status": 200
+        })
+
+        ubo_declaration.tag = updated_value
+        ubo_declaration.save()
+
+        self.assertTrue(ubo_declaration.id == "1169420")
+        self.assertTrue(ubo_declaration.tag == updated_value)
 
 
 class UserTestLive(BaseTestLive):
