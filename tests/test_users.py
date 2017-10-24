@@ -3,10 +3,10 @@ from datetime import datetime
 
 from tests import settings
 from tests.mocks import get_fixture
-from .mocks import today, today_timestamp
-from .resources import (User, NaturalUser, Wallet,
+from tests.mocks import today, today_timestamp
+from mangopay.resources import (User, NaturalUser, Wallet,
                                 LegalUser, Transfer, Transaction, UboDeclaration)
-from .test_base import BaseTest, BaseTestLive
+from tests.test_base import BaseTest, BaseTestLive
 
 from mangopay.utils import Money, Address, DeclaredUbo
 
