@@ -2,10 +2,10 @@
 from datetime import datetime
 
 from tests import settings
-from .mocks import today, today_timestamp
-from .resources import (User, NaturalUser, Wallet,
-                        LegalUser, Transfer, Transaction)
-from .test_base import BaseTest, BaseTestLive
+from tests.mocks import today, today_timestamp
+from mangopay.resources import (User, NaturalUser, Wallet,
+                                LegalUser, Transfer, Transaction)
+from tests.test_base import BaseTest, BaseTestLive
 
 from mangopay.utils import Money, Address
 
@@ -24,7 +24,8 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             "method": responses.PUT,
-            "url": re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/\d+'),
+            "url": re.compile(
+                r'' + settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/natural/\d+'),
             "body": {
                 "FirstName": "Victor",
                 "LastName": "Claver",
@@ -94,7 +95,8 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             'method': responses.PUT,
-            'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/\d+'),
+            'url': re.compile(
+                r'' + settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/legal/\d+'),
             'body': {
                 "Name": "MangoPay edited",
                 "LegalPersonType": "BUSINESS",
@@ -170,7 +172,7 @@ class UsersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/1169419',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/natural/1169419',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -200,7 +202,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/1169420',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/natural/1169420',
                 'body': {"errors": []},
                 'status': 404
             }])
@@ -243,7 +245,7 @@ class UsersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/1169420',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/legal/1169420',
                 'body': {
                     "Name": "MangoPay",
                     "LegalPersonType": "BUSINESS",
@@ -276,7 +278,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/legal/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/legal/1169421',
                 'body': {"errors": []},
                 'status': 404
             }])
@@ -320,7 +322,7 @@ class UsersTest(BaseTest):
     def test_retrieve_all_users(self):
         self.register_mock({
             'method': responses.GET,
-            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users',
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users',
             'body': [
                 {
                     "PersonType": "NATURAL",
@@ -376,6 +378,12 @@ class UsersTest(BaseTest):
 
         users = User.all()
         self.assertEqual(len(users), 10)
+        for user in users:
+            if isinstance(user, NaturalUser):
+                self.assertIsNotNone(user.first_name)
+            else:
+                self.assertIsInstance(user, LegalUser)
+                self.assertIsNotNone(user.name)
 
         users = User.all(page=1, per_page=2)
         self.assertEqual(len(users), 2)
@@ -401,7 +409,7 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             'method': responses.GET,
-            'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/\d+'),
+            'url': re.compile(r'' + settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/\d+'),
             'body': {
                 "FirstName": "Victor",
                 "LastName": "Hugo",
@@ -464,7 +472,7 @@ class UsersTest(BaseTest):
 
         self.register_mock({
             'method': responses.GET,
-            'url': re.compile(r''+settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/\d+'),
+            'url': re.compile(r'' + settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/\d+'),
             'body': {
                 "Name": "MangoPay",
                 "LegalPersonType": "BUSINESS",
@@ -543,7 +551,7 @@ class UsersTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -573,7 +581,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/transfers',
                 'body': {
                     "Id": "1169434",
                     "Tag": "DefaultTag",
@@ -605,7 +613,7 @@ class UsersTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/transactions',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/transactions',
                 'body': [
                     {
                         "Id": "1174837",
@@ -669,7 +677,6 @@ class UsersTest(BaseTest):
 
 
 class UserTestLive(BaseTestLive):
-
     def test_Users_GetKycDocuments(self):
         user = BaseTestLive.get_john()
         BaseTestLive.get_johns_kyc_document()
