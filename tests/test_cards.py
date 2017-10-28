@@ -6,8 +6,8 @@ try:
 except ImportError:
     import urllib as urlrequest
 
-from .resources import Card, CardRegistration
-from .test_base import BaseTest
+from mangopay.resources import Card, CardRegistration
+from tests.test_base import BaseTest
 
 import requests
 import responses
@@ -180,7 +180,80 @@ class CardsTest(BaseTest):
         for c in cards:
             self.assertEqual(c.fingerprint, card.fingerprint)
 
+    @responses.activate
     def test_desactive_card(self):
-        # self.card.active = False
-        # self.card.save()
-        pass
+        self.mock_natural_user()
+        self.mock_card()
+        self.mock_tokenization_request()
+        self.register_mock({
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/cards',
+            'body': [
+                {
+                    "ExpirationDate": "1214",
+                    "Alias": "497010XXXXXX4406",
+                    "CardType": "CB",
+                    "Country": "",
+                    "Product": "",
+                    "BankCode": "",
+                    "Active": True,
+                    "Currency": "XXX",
+                    "Validity": "VALID",
+                    "UserId": "1167495",
+                    "Id": "1167507",
+                    "Tag": None,
+                    "CreationDate": 1382608428
+                }
+            ],
+            'status': 200
+        })
+        self.register_mock({
+            'method': responses.PUT,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/cards/1167507',
+            'body': {
+                "ExpirationDate": "1214",
+                "Alias": "497010XXXXXX4406",
+                "CardType": "CB",
+                "Country": "",
+                "Product": "",
+                "BankCode": "",
+                "Active": False,
+                "Currency": "XXX",
+                "Validity": "VALID",
+                "UserId": "1167495",
+                "Id": "1167507",
+                "Tag": None,
+                "CreationDate": 1382608428
+            },
+            'status': 200
+        })
+
+        # Create a CardRegistration object
+        card_params = {
+            "user": self.natural_user,
+            "currency": 'EUR'
+        }
+        card_registration = CardRegistration(**card_params)
+        card_registration.save()
+
+        # Send card details to the Tokenization server
+        response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
+            'cardNumber': '4970100000000154',
+            'cardCvx': '123',
+            'cardExpirationDate': '0120',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }))
+
+        # Edit the CardRegistration with received RegistrationData
+        previous_pk = card_registration.get_pk()
+
+        card_registration.registration_data = response.text
+        card_registration.save()
+
+        card = Card.get(card_registration.card_id)
+
+        card.active = False
+        card.save()
+
+        self.assertIs(card.active, False)

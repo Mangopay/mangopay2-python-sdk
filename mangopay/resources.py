@@ -287,6 +287,7 @@ class Card(BaseModel):
         verbose_name_plural = 'cards'
         url = {
             SelectQuery.identifier: '/cards',
+            UpdateQuery.identifier: '/cards',
             'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s'}
 
     def __str__(self):
