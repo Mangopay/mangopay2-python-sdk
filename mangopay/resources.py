@@ -897,7 +897,8 @@ class Dispute(BaseModel):
             UpdateQuery.identifier: '/disputes',
             'CLOSE_DISPUTE': '/disputes/%(id)s/close/',
             'SUBMIT_DISPUTE': '/disputes/%(id)s/submit/',
-            'RE_SUBMIT_DISPUTE': '/disputes/%(id)s/submit/'
+            'RE_SUBMIT_DISPUTE': '/disputes/%(id)s/submit/',
+            'PENDING_SETTLEMENT': '/disputes/pending-settlement'
         }
 
     def __init__(self, *args, **kwargs):
@@ -958,6 +959,12 @@ class Dispute(BaseModel):
             'RE_SUBMIT_DISPUTE'
         )
         return action.execute(handler)
+
+    @classmethod
+    def get_pending_settlement(cls, *args, **kwargs):
+        select = SelectQuery(cls, *args, **kwargs)
+        select.identifier = 'PENDING_SETTLEMENT'
+        return select.all(*args, **kwargs)
 
 
 class DisputeDocument(BaseModel):
