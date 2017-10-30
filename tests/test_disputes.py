@@ -75,6 +75,12 @@ class DisputeTest(BaseTestLive):
         self.assertIsNotNone(disputes)
         self.assertTrue(disputes)
 
+    def test_GetDisputesPendingSettlement(self):
+        disputes_pending = Dispute.get_pending_settlement()
+
+        self.assertTrue(disputes_pending)
+
+
     def test_CreateDisputeDocument(self):
         dispute = None
 

@@ -88,7 +88,7 @@ class SelectQuery(BaseQuery):
 
         for entry in data:
             model_klass = cast(entry)
-            results.append(model_klass(handler=handler, **dict(self.parse_result(entry))))
+            results.append(model_klass(handler=handler, **dict(self.parse_result(entry, model_klass))))
 
         return results
 
