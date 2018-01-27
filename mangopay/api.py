@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from __future__ import unicode_literals
 
 import requests
@@ -154,7 +155,9 @@ class APIRequest(object):
 
                     return result, json.loads(content)
                 except ValueError:
-                    if isinstance(result.content, str) and result.content.startswith('data='):
+                    is_cardregistration_result = isinstance(result.content, str) and result.content.startswith('data=')
+                    print(is_cardregistration_result)
+                    if is_cardregistration_result:
                         return result.content
                     self._create_decodeerror(result, url=url)
             else:
