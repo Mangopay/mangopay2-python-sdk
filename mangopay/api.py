@@ -47,29 +47,41 @@ class APIRequest(object):
         self.proxies = proxies
 
     def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
+        return self.custom_request(method, url, data, idempotency_key, oauth_request, True, **params)
+
+    def custom_request(self, method, url, data=None, idempotency_key=None, oauth_request=False,
+                       is_mangopay_request=False, **params):
         params = params or {}
 
         headers = {}
 
-        headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
-        if oauth_request:
-            headers['Authorization'] = self.auth_manager.basic_token()
-            headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        else:
-            headers['Authorization'] = self.auth_manager.get_token()
-            headers['Content-Type'] = 'application/json'
+        if is_mangopay_request:
+            headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
+            if oauth_request:
+                headers['Authorization'] = self.auth_manager.basic_token()
+                headers['Content-Type'] = 'application/x-www-form-urlencoded'
+            else:
+                headers['Authorization'] = self.auth_manager.get_token()
+                headers['Content-Type'] = 'application/json'
 
-        if idempotency_key:
-            headers['Idempotency-Key'] = idempotency_key
+            if idempotency_key:
+                headers['Idempotency-Key'] = idempotency_key
+        else:
+            if "data_XXX" in params:
+                params[str("data")] = params[str("data_XXX")]
+                params.__delitem__(str("data_XXX"))
 
         truncated_data = None
 
         encoded_params = urlrequest.urlencode(params)
 
-        if oauth_request:
-            url = self.api_url + url
+        if is_mangopay_request:
+            if oauth_request:
+                url = self.api_url + url
+            else:
+                url = self._absolute_url(url, encoded_params)
         else:
-            url = self._absolute_url(url, encoded_params)
+            url = '%s?%s' % (url, encoded_params)
 
         if data or data == {}:
             truncated_data = truncatechars(copy.copy(data))
@@ -142,6 +154,8 @@ class APIRequest(object):
 
                     return result, json.loads(content)
                 except ValueError:
+                    if isinstance(result.content, str) and result.content.startswith('data='):
+                        return result.content
                     self._create_decodeerror(result, url=url)
             else:
                 self._create_decodeerror(result, url=url)

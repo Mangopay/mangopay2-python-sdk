@@ -4,6 +4,7 @@ import requests
 from datetime import date
 from exam.decorators import fixture
 
+from mangopay import APIRequest
 from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
@@ -197,6 +198,7 @@ class BaseTestLive(unittest.TestCase):
     _johns_kyc_document = None
     _oauth_manager = AuthorizationTokenManager(get_default_handler(), StaticStorageStrategy())
     _johns_report = None
+    _johns_card = None
 
     def setUp(self):
         BaseTestLive.get_john()
@@ -261,6 +263,30 @@ class BaseTestLive(unittest.TestCase):
             wallet.description = 'WALLET IN EUR'
             BaseTestLive._johns_wallet = Wallet(**wallet.save())
         return BaseTestLive._johns_wallet
+
+    @staticmethod
+    def get_johns_card(recreate=False):
+        if BaseTestLive._johns_card is None or recreate:
+            card_params = {
+                "user": BaseTestLive.get_john(),
+                "currency": 'EUR'
+            }
+            card_registration = CardRegistration(**card_params)
+            card_registration.save()
+
+            params = {
+                "data_XXX": card_registration.preregistration_data,
+                "accessKeyRef": card_registration.access_key,
+                "cardNumber": '4970101122334422',
+                "cardExpirationDate": '1224',
+                "cardCvx": '123'
+            }
+            response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
+                                                   False, **params)
+            card_registration.registration_data = response
+            card_registration.save()
+            BaseTestLive._johns_card = card_registration.card
+        return BaseTestLive._johns_card
 
     @staticmethod
     def get_oauth_manager():
