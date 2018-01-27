@@ -155,7 +155,7 @@ class APIRequest(object):
 
                     return result, json.loads(content)
                 except ValueError:
-                    is_cardregistration_result = isinstance(result.content, str) and result.content.startswith('data=')
+                    is_cardregistration_result = isinstance(result.content, six.string_types) and result.content.startswith('data=')
                     print(is_cardregistration_result)
                     if is_cardregistration_result:
                         return result.content
