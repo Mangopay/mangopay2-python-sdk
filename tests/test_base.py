@@ -8,7 +8,7 @@ from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
-                        CardRegistration, Card)
+                        CardRegistration, Card, BankWirePayOut, Money)
 
 import responses
 import time
@@ -197,6 +197,7 @@ class BaseTestLive(unittest.TestCase):
     _johns_kyc_document = None
     _oauth_manager = AuthorizationTokenManager(get_default_handler(), StaticStorageStrategy())
     _johns_report = None
+    _johns_payout = None
 
     def setUp(self):
         BaseTestLive.get_john()
@@ -261,6 +262,26 @@ class BaseTestLive(unittest.TestCase):
             wallet.description = 'WALLET IN EUR'
             BaseTestLive._johns_wallet = Wallet(**wallet.save())
         return BaseTestLive._johns_wallet
+
+    @staticmethod
+    def get_johns_payout(recreate=False):
+        if BaseTestLive._johns_payout is None or recreate:
+            john = BaseTestLive.get_john()
+            wallet = BaseTestLive.get_johns_wallet()
+            account = BaseTestLive.get_johns_account()
+
+            payout = BankWirePayOut()
+            payout.debited_wallet = wallet
+            payout.author = john
+            payout.credited_user = john
+            payout.tag = 'DefaultTag'
+            payout.debited_funds = Money(amount=10, currency='EUR')
+            payout.fees = Money(amount=5, currency='EUR')
+            payout.bank_account = account
+            payout.bank_wire_ref = 'User payment'
+            payout.payment_type = 'BANK_WIRE'
+            BaseTestLive._johns_payout = BankWirePayOut(**payout.save())
+        return BaseTestLive._johns_payout
 
     @staticmethod
     def get_oauth_manager():

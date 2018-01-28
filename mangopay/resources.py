@@ -667,6 +667,12 @@ class BankWirePayOut(BaseModel):
     bank_wire_ref = CharField(api_name='BankWireRef')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
 
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'PAYOUT_GET_REFUNDS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'payout'
         verbose_name_plural = 'payouts'
@@ -701,7 +707,12 @@ class Refund(BaseModel):
     class Meta:
         verbose_name = 'refund'
         verbose_name_plural = 'refunds'
-        url = '/refunds'
+        url = {
+            SelectQuery.identifier: '/refunds',
+            InsertQuery.identifier: '/refunds',
+            UpdateQuery.identifier: '/refunds',
+            'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds'
+        }
 
 
 @python_2_unicode_compatible
