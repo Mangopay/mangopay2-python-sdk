@@ -777,6 +777,8 @@ class UserTestLive(BaseTestLive):
 
         self.assertTrue(documents)
 
+
+class PayInsTestLive(BaseTestLive):
     def test_PayIn_GetRefunds(self):
         payin = BaseTestLive.get_johns_payin()
 
