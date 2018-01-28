@@ -8,7 +8,7 @@ from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
-                        CardRegistration, Card)
+                        CardRegistration, Card, CardWebPayIn, Money)
 
 import responses
 import time
@@ -197,6 +197,7 @@ class BaseTestLive(unittest.TestCase):
     _johns_kyc_document = None
     _oauth_manager = AuthorizationTokenManager(get_default_handler(), StaticStorageStrategy())
     _johns_report = None
+    _johns_payin = None
 
     def setUp(self):
         BaseTestLive.get_john()
@@ -256,11 +257,28 @@ class BaseTestLive(unittest.TestCase):
     def get_johns_wallet(recreate=False):
         if BaseTestLive._johns_wallet is None or recreate:
             wallet = Wallet()
-            wallet.owners = (BaseTestLive._john, )
+            wallet.owners = (BaseTestLive.get_john(),)
             wallet.currency = 'EUR'
             wallet.description = 'WALLET IN EUR'
             BaseTestLive._johns_wallet = Wallet(**wallet.save())
         return BaseTestLive._johns_wallet
+
+    @staticmethod
+    def get_johns_payin(recreate=False):
+        if BaseTestLive._johns_payin is None or recreate:
+            wallet = BaseTestLive.get_johns_wallet()
+            payin = CardWebPayIn()
+            payin.credited_wallet = wallet
+            payin.author = BaseTestLive.get_john()
+            payin.debited_funds = Money(amount=10000, currency='EUR')
+            payin.fees = Money(amount=0, currency='EUR')
+            payin.card_type = 'CB_VISA_MASTERCARD'
+            payin.return_url = 'https://test.com'
+            payin.template_url = 'https://TemplateURL.com'
+            payin.secure_mode = 'DEFAULT'
+            payin.culture = 'fr'
+            BaseTestLive._johns_payin = CardWebPayIn(**payin.save())
+        return BaseTestLive._johns_payin
 
     @staticmethod
     def get_oauth_manager():

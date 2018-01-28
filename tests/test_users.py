@@ -776,3 +776,11 @@ class UserTestLive(BaseTestLive):
         documents = user.documents.all()
 
         self.assertTrue(documents)
+
+    def test_PayIn_GetRefunds(self):
+        payin = BaseTestLive.get_johns_payin()
+
+        get_refunds = payin.get_refunds()
+
+        self.assertIsNotNone(get_refunds)
+        self.assertIsInstance(get_refunds, list)
