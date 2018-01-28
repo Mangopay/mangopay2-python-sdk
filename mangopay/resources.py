@@ -246,6 +246,12 @@ class Transfer(BaseModel):
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
 
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'TRANSFER_GET_REFUNDS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'transfer'
         verbose_name_plural = 'transfers'
@@ -701,7 +707,12 @@ class Refund(BaseModel):
     class Meta:
         verbose_name = 'refund'
         verbose_name_plural = 'refunds'
-        url = '/refunds'
+        url = {
+            SelectQuery.identifier: '/refunds',
+            InsertQuery.identifier: '/refunds',
+            UpdateQuery.identifier: '/refunds',
+            'TRANSFER_GET_REFUNDS': '/transfers/%(id)s/refunds'
+        }
 
 
 @python_2_unicode_compatible

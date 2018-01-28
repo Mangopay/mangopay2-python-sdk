@@ -8,7 +8,7 @@ from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
-                        CardRegistration, Card)
+                        CardRegistration, Card, Transfer, Money)
 
 import responses
 import time
@@ -197,6 +197,7 @@ class BaseTestLive(unittest.TestCase):
     _johns_kyc_document = None
     _oauth_manager = AuthorizationTokenManager(get_default_handler(), StaticStorageStrategy())
     _johns_report = None
+    _johns_transfer = None
 
     def setUp(self):
         BaseTestLive.get_john()
@@ -255,12 +256,34 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_johns_wallet(recreate=False):
         if BaseTestLive._johns_wallet is None or recreate:
-            wallet = Wallet()
-            wallet.owners = (BaseTestLive._john, )
-            wallet.currency = 'EUR'
-            wallet.description = 'WALLET IN EUR'
-            BaseTestLive._johns_wallet = Wallet(**wallet.save())
+            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet()
         return BaseTestLive._johns_wallet
+
+    @staticmethod
+    def create_new_wallet():
+        wallet = Wallet()
+        wallet.owners = (BaseTestLive._john,)
+        wallet.currency = 'EUR'
+        wallet.description = 'WALLET IN EUR'
+        return Wallet(**wallet.save())
+
+    @staticmethod
+    def get_johns_transfer(recreate=False):
+        if BaseTestLive._johns_transfer is None or recreate:
+            john = BaseTestLive.get_john()
+            wallet1 = BaseTestLive.get_johns_wallet()
+            wallet2 = BaseTestLive.create_new_wallet()
+
+            transfer = Transfer()
+            transfer.author = john
+            transfer.tag = 'DefaultTag'
+            transfer.credited_user = john
+            transfer.debited_funds = Money(amount=1, currency='EUR')
+            transfer.fees = Money(amount=0, currency='EUR')
+            transfer.debited_wallet = wallet1
+            transfer.credited_wallet = wallet2
+            BaseTestLive._johns_transfer = Transfer(**transfer.save())
+        return BaseTestLive._johns_transfer
 
     @staticmethod
     def get_oauth_manager():
