@@ -701,7 +701,12 @@ class Refund(BaseModel):
     class Meta:
         verbose_name = 'refund'
         verbose_name_plural = 'refunds'
-        url = '/refunds'
+        url = {
+            SelectQuery.identifier: '/refunds',
+            InsertQuery.identifier: '/refunds',
+            UpdateQuery.identifier: '/refunds',
+            'REPUDIATION_GET_REFUNDS': '/repudiations/%(id)s/refunds'
+        }
 
 
 @python_2_unicode_compatible
@@ -1062,6 +1067,12 @@ class Repudiation(BaseModel):
     result_message = CharField(api_name='ResultMessage')
 
     creation_date = DateTimeField(api_name='CreationDate')
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'REPUDIATION_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'repudiation'
