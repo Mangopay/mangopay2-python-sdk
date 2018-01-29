@@ -288,6 +288,12 @@ class Card(BaseModel):
         select.identifier = 'CARDS_FOR_FINGERPRINT'
         return select.all(*args, **kwargs)
 
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'CARD_PRE_AUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
@@ -584,7 +590,8 @@ class PreAuthorization(BaseModel):
             InsertQuery.identifier: '/preauthorizations/card/direct',
             UpdateQuery.identifier: '/preauthorizations',
             SelectQuery.identifier: '/preauthorizations',
-            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations'
+            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations',
+            'CARD_PRE_AUTHORIZATIONS': '/cards/%(id)s/preauthorizations'
         }
 
 
