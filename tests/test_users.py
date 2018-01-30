@@ -786,3 +786,12 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertIsNotNone(get_refunds)
         self.assertIsInstance(get_refunds, list)
+
+    def test_User_GetPreAuthorizationss(self):
+        user = BaseTestLive.get_john()
+
+        get_preauthorizations = user.get_pre_authorizations()
+
+        self.assertIsNotNone(get_preauthorizations)
+        self.assertIsInstance(get_preauthorizations, list)
+
