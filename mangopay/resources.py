@@ -109,6 +109,12 @@ class User(BaseModel):
     def get_emoney(self):
         return self.emoney.get('', **{'user_id': self.get_pk()})
 
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'USER_GET_PREAUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
     def __str__(self):
         return '%s' % self.email
 
@@ -282,6 +288,12 @@ class Card(BaseModel):
         select.identifier = 'CARDS_FOR_FINGERPRINT'
         return select.all(*args, **kwargs)
 
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'CARD_PRE_AUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
@@ -377,6 +389,12 @@ class PayIn(BaseModel):
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, args, kwargs)
+        select.identifier = 'PAYIN_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'payin'
@@ -577,7 +595,9 @@ class PreAuthorization(BaseModel):
         url = {
             InsertQuery.identifier: '/preauthorizations/card/direct',
             UpdateQuery.identifier: '/preauthorizations',
-            SelectQuery.identifier: '/preauthorizations'
+            SelectQuery.identifier: '/preauthorizations',
+            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations',
+            'CARD_PRE_AUTHORIZATIONS': '/cards/%(id)s/preauthorizations'
         }
 
 
@@ -711,7 +731,8 @@ class Refund(BaseModel):
             SelectQuery.identifier: '/refunds',
             InsertQuery.identifier: '/refunds',
             UpdateQuery.identifier: '/refunds',
-            'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds'
+            'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds',
+            'PAYIN_GET_REFUNDS': '/payins/%(id)s/refunds'
         }
 
 
