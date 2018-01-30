@@ -109,6 +109,12 @@ class User(BaseModel):
     def get_emoney(self):
         return self.emoney.get('', **{'user_id': self.get_pk()})
 
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'USER_GET_PREAUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
     def __str__(self):
         return '%s' % self.email
 
@@ -584,6 +590,7 @@ class PreAuthorization(BaseModel):
             InsertQuery.identifier: '/preauthorizations/card/direct',
             UpdateQuery.identifier: '/preauthorizations',
             SelectQuery.identifier: '/preauthorizations',
+            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations',
             'CARD_PRE_AUTHORIZATIONS': '/cards/%(id)s/preauthorizations'
         }
 
