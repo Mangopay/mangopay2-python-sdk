@@ -777,6 +777,16 @@ class UserTestLive(BaseTestLive):
 
         self.assertTrue(documents)
 
+
+class PayInsTestLive(BaseTestLive):
+    def test_PayIn_GetRefunds(self):
+        payin = BaseTestLive.get_johns_payin()
+
+        get_refunds = payin.get_refunds()
+
+        self.assertIsNotNone(get_refunds)
+        self.assertIsInstance(get_refunds, list)
+
     def test_User_GetPreAuthorizationss(self):
         user = BaseTestLive.get_john()
 
@@ -784,3 +794,4 @@ class UserTestLive(BaseTestLive):
 
         self.assertIsNotNone(get_preauthorizations)
         self.assertIsInstance(get_preauthorizations, list)
+
