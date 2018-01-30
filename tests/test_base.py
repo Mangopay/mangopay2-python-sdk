@@ -9,7 +9,7 @@ from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
-                        CardRegistration, Card, CardWebPayIn, Money)
+                        CardRegistration, Card, BankWirePayOut, CardWebPayIn, Money)
 
 import responses
 import time
@@ -198,6 +198,7 @@ class BaseTestLive(unittest.TestCase):
     _johns_kyc_document = None
     _oauth_manager = AuthorizationTokenManager(get_default_handler(), StaticStorageStrategy())
     _johns_report = None
+    _johns_payout = None
     _johns_payin = None
     _johns_card = None
 
@@ -266,6 +267,26 @@ class BaseTestLive(unittest.TestCase):
         return BaseTestLive._johns_wallet
 
     @staticmethod
+    def get_johns_payout(recreate=False):
+        if BaseTestLive._johns_payout is None or recreate:
+            john = BaseTestLive.get_john()
+            wallet = BaseTestLive.get_johns_wallet()
+            account = BaseTestLive.get_johns_account()
+
+            payout = BankWirePayOut()
+            payout.debited_wallet = wallet
+            payout.author = john
+            payout.credited_user = john
+            payout.tag = 'DefaultTag'
+            payout.debited_funds = Money(amount=10, currency='EUR')
+            payout.fees = Money(amount=5, currency='EUR')
+            payout.bank_account = account
+            payout.bank_wire_ref = 'User payment'
+            payout.payment_type = 'BANK_WIRE'
+            BaseTestLive._johns_payout = BankWirePayOut(**payout.save())
+        return BaseTestLive._johns_payout
+    
+    @staticmethod
     def get_johns_payin(recreate=False):
         if BaseTestLive._johns_payin is None or recreate:
             wallet = BaseTestLive.get_johns_wallet()
@@ -305,7 +326,6 @@ class BaseTestLive(unittest.TestCase):
             card_registration.save()
             BaseTestLive._johns_card = card_registration.card
         return BaseTestLive._johns_card
-
 
     @staticmethod
     def get_oauth_manager():
