@@ -109,6 +109,12 @@ class User(BaseModel):
     def get_emoney(self):
         return self.emoney.get('', **{'user_id': self.get_pk()})
 
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'USER_GET_PREAUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
     def __str__(self):
         return '%s' % self.email
 
@@ -246,6 +252,12 @@ class Transfer(BaseModel):
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
 
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'TRANSFER_GET_REFUNDS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'transfer'
         verbose_name_plural = 'transfers'
@@ -280,6 +292,12 @@ class Card(BaseModel):
         kwargs['fingerprint'] = fingerprint
         select = SelectQuery(cls, *args, **kwargs)
         select.identifier = 'CARDS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
+
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'CARD_PRE_AUTHORIZATIONS'
         return select.all(*args, **kwargs)
 
     class Meta:
@@ -377,6 +395,12 @@ class PayIn(BaseModel):
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, args, kwargs)
+        select.identifier = 'PAYIN_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'payin'
@@ -577,7 +601,9 @@ class PreAuthorization(BaseModel):
         url = {
             InsertQuery.identifier: '/preauthorizations/card/direct',
             UpdateQuery.identifier: '/preauthorizations',
-            SelectQuery.identifier: '/preauthorizations'
+            SelectQuery.identifier: '/preauthorizations',
+            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations',
+            'CARD_PRE_AUTHORIZATIONS': '/cards/%(id)s/preauthorizations'
         }
 
 
@@ -667,6 +693,12 @@ class BankWirePayOut(BaseModel):
     bank_wire_ref = CharField(api_name='BankWireRef')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
 
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'PAYOUT_GET_REFUNDS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'payout'
         verbose_name_plural = 'payouts'
@@ -706,6 +738,9 @@ class Refund(BaseModel):
             InsertQuery.identifier: '/refunds',
             UpdateQuery.identifier: '/refunds',
             'REPUDIATION_GET_REFUNDS': '/repudiations/%(id)s/refunds'
+            'TRANSFER_GET_REFUNDS': '/transfers/%(id)s/refunds',
+            'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds',
+            'PAYIN_GET_REFUNDS': '/payins/%(id)s/refunds'
         }
 
 
