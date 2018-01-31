@@ -737,7 +737,7 @@ class Refund(BaseModel):
             SelectQuery.identifier: '/refunds',
             InsertQuery.identifier: '/refunds',
             UpdateQuery.identifier: '/refunds',
-            'REPUDIATION_GET_REFUNDS': '/repudiations/%(id)s/refunds'
+            'REPUDIATION_GET_REFUNDS': '/repudiations/%(id)s/refunds',
             'TRANSFER_GET_REFUNDS': '/transfers/%(id)s/refunds',
             'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds',
             'PAYIN_GET_REFUNDS': '/payins/%(id)s/refunds'
