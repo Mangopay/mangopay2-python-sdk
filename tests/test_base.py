@@ -4,11 +4,12 @@ import requests
 from datetime import date
 from exam.decorators import fixture
 
+from mangopay import APIRequest
 from mangopay.utils import Address, ReportTransactionsFilters
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
-                        CardRegistration, Card, Transfer, Money)
+                        CardRegistration, Card, BankWirePayOut, CardWebPayIn, Transfer, Money)
 
 import responses
 import time
@@ -198,6 +199,9 @@ class BaseTestLive(unittest.TestCase):
     _oauth_manager = AuthorizationTokenManager(get_default_handler(), StaticStorageStrategy())
     _johns_report = None
     _johns_transfer = None
+    _johns_payout = None
+    _johns_payin = None
+    _johns_card = None
 
     def setUp(self):
         BaseTestLive.get_john()
@@ -284,6 +288,67 @@ class BaseTestLive(unittest.TestCase):
             transfer.credited_wallet = wallet2
             BaseTestLive._johns_transfer = Transfer(**transfer.save())
         return BaseTestLive._johns_transfer
+
+    @staticmethod
+    def get_johns_payout(recreate=False):
+        if BaseTestLive._johns_payout is None or recreate:
+            john = BaseTestLive.get_john()
+            wallet = BaseTestLive.get_johns_wallet()
+            account = BaseTestLive.get_johns_account()
+
+            payout = BankWirePayOut()
+            payout.debited_wallet = wallet
+            payout.author = john
+            payout.credited_user = john
+            payout.tag = 'DefaultTag'
+            payout.debited_funds = Money(amount=10, currency='EUR')
+            payout.fees = Money(amount=5, currency='EUR')
+            payout.bank_account = account
+            payout.bank_wire_ref = 'User payment'
+            payout.payment_type = 'BANK_WIRE'
+            BaseTestLive._johns_payout = BankWirePayOut(**payout.save())
+        return BaseTestLive._johns_payout
+    
+    @staticmethod
+    def get_johns_payin(recreate=False):
+        if BaseTestLive._johns_payin is None or recreate:
+            wallet = BaseTestLive.get_johns_wallet()
+            payin = CardWebPayIn()
+            payin.credited_wallet = wallet
+            payin.author = BaseTestLive.get_john()
+            payin.debited_funds = Money(amount=10000, currency='EUR')
+            payin.fees = Money(amount=0, currency='EUR')
+            payin.card_type = 'CB_VISA_MASTERCARD'
+            payin.return_url = 'https://test.com'
+            payin.template_url = 'https://TemplateURL.com'
+            payin.secure_mode = 'DEFAULT'
+            payin.culture = 'fr'
+            BaseTestLive._johns_payin = CardWebPayIn(**payin.save())
+        return BaseTestLive._johns_payin
+
+    @staticmethod
+    def get_johns_card(recreate=False):
+        if BaseTestLive._johns_card is None or recreate:
+            card_params = {
+                "user": BaseTestLive.get_john(),
+                "currency": 'EUR'
+            }
+            card_registration = CardRegistration(**card_params)
+            card_registration.save()
+
+            params = {
+                "data_XXX": card_registration.preregistration_data,
+                "accessKeyRef": card_registration.access_key,
+                "cardNumber": '4970101122334422',
+                "cardExpirationDate": '1224',
+                "cardCvx": '123'
+            }
+            response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
+                                                   False, **params)
+            card_registration.registration_data = response
+            card_registration.save()
+            BaseTestLive._johns_card = card_registration.card
+        return BaseTestLive._johns_card
 
     @staticmethod
     def get_oauth_manager():
