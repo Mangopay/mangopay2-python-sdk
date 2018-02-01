@@ -657,6 +657,12 @@ class BankAccount(BaseModel):
     bic = CharField(api_name='BIC')
     active = BooleanField(api_name='Active', default=True)
 
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'BANK_ACCOUNT_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'bankaccount'
         verbose_name_plural = 'bankaccounts'
@@ -851,7 +857,8 @@ class Transaction(BaseModel):
             SelectQuery.identifier: '/users/%(user_id)s/transactions',
             InsertQuery.identifier: '/users/%(user_id)s/transactions',
             UpdateQuery.identifier: '/users/%(user_id)s/transactions',
-            'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions'
+            'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
+            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions'
         }
 
     def __str__(self):
