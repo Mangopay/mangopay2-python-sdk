@@ -269,3 +269,11 @@ class CardsLiveTest(BaseTestLive):
 
         self.assertIsNotNone(get_preauthorizations)
         self.assertIsInstance(get_preauthorizations, list)
+
+    def test_getCardTransactions(self):
+        card = BaseTestLive.get_johns_card()
+
+        get_transactions = card.get_transactions()
+
+        self.assertIsNotNone(get_transactions)
+        self.assertIsInstance(get_transactions, list)
