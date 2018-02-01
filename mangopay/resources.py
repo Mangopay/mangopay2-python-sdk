@@ -361,6 +361,12 @@ class Mandate(BaseModel):
 
     creation_date = DateTimeField(api_name='CreationDate')
 
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'MANDATE_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'mandate'
         verbose_name_plural = 'mandates'
@@ -857,6 +863,7 @@ class Transaction(BaseModel):
             SelectQuery.identifier: '/users/%(user_id)s/transactions',
             InsertQuery.identifier: '/users/%(user_id)s/transactions',
             UpdateQuery.identifier: '/users/%(user_id)s/transactions',
+            'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions',
             'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
             'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions'
         }
