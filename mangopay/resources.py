@@ -355,6 +355,12 @@ class Mandate(BaseModel):
 
     creation_date = DateTimeField(api_name='CreationDate')
 
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'MANDATE_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'mandate'
         verbose_name_plural = 'mandates'
@@ -841,7 +847,12 @@ class Transaction(BaseModel):
     class Meta:
         verbose_name = 'transaction'
         verbose_name_plural = 'transactions'
-        url = '/users/%(user_id)s/transactions'
+        url = {
+            SelectQuery.identifier: '/users/%(user_id)s/transactions',
+            InsertQuery.identifier: '/users/%(user_id)s/transactions',
+            UpdateQuery.identifier: '/users/%(user_id)s/transactions',
+            'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions'
+        }
 
     def __str__(self):
         return 'Transaction n.%s' % self.id
