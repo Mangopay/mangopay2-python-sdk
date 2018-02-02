@@ -524,7 +524,6 @@ class RelatedManager(object):
         return self.instance.get(pk, self.instance.handler, self.related_model, **kwargs)
 
     def all(self, **kwargs):
-        kwargs.update(self.fixed_kwargs)
         return self.instance.list(self.related_model, **kwargs)
 
 
