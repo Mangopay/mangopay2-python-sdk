@@ -183,6 +183,9 @@ class BaseApiModel(BaseApiModelMethods):
     def __setattr__(self, name, value):
         super(BaseApiModel, self).__setattr__(self._meta.api_names.get(name, name), value)
 
+    def fixed_kwargs(self):
+        return {}
+
     def save(self, handler=None, cls=None, idempotency_key=None):
         self._handler = handler or self.handler
 
