@@ -87,6 +87,9 @@ class User(BaseModel):
     email = EmailField(api_name='Email', required=True)
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
 
+    def fixed_kwargs(self):
+        return {"user_id": self.id}
+
     class Meta:
         verbose_name = 'user'
         verbose_name_plural = 'users'
