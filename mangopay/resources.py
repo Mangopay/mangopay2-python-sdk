@@ -87,6 +87,9 @@ class User(BaseModel):
     email = EmailField(api_name='Email', required=True)
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
 
+    def fixed_kwargs(self):
+        return {"user_id": self.id}
+
     class Meta:
         verbose_name = 'user'
         verbose_name_plural = 'users'
@@ -108,6 +111,12 @@ class User(BaseModel):
 
     def get_emoney(self):
         return self.emoney.get('', **{'user_id': self.get_pk()})
+
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'USER_GET_PREAUTHORIZATIONS'
+        return select.all(*args, **kwargs)
 
     def __str__(self):
         return '%s' % self.email
@@ -246,6 +255,12 @@ class Transfer(BaseModel):
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateField(api_name='ExecutionDate')
 
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'TRANSFER_GET_REFUNDS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'transfer'
         verbose_name_plural = 'transfers'
@@ -280,6 +295,18 @@ class Card(BaseModel):
         kwargs['fingerprint'] = fingerprint
         select = SelectQuery(cls, *args, **kwargs)
         select.identifier = 'CARDS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
+
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'CARD_PRE_AUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
     class Meta:
@@ -337,6 +364,12 @@ class Mandate(BaseModel):
 
     creation_date = DateTimeField(api_name='CreationDate')
 
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'MANDATE_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'mandate'
         verbose_name_plural = 'mandates'
@@ -377,6 +410,12 @@ class PayIn(BaseModel):
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, args, kwargs)
+        select.identifier = 'PAYIN_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'payin'
@@ -577,7 +616,9 @@ class PreAuthorization(BaseModel):
         url = {
             InsertQuery.identifier: '/preauthorizations/card/direct',
             UpdateQuery.identifier: '/preauthorizations',
-            SelectQuery.identifier: '/preauthorizations'
+            SelectQuery.identifier: '/preauthorizations',
+            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations',
+            'CARD_PRE_AUTHORIZATIONS': '/cards/%(id)s/preauthorizations'
         }
 
 
@@ -625,6 +666,12 @@ class BankAccount(BaseModel):
     bic = CharField(api_name='BIC')
     active = BooleanField(api_name='Active', default=True)
 
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'BANK_ACCOUNT_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'bankaccount'
         verbose_name_plural = 'bankaccounts'
@@ -667,6 +714,12 @@ class BankWirePayOut(BaseModel):
     bank_wire_ref = CharField(api_name='BankWireRef')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
 
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'PAYOUT_GET_REFUNDS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'payout'
         verbose_name_plural = 'payouts'
@@ -701,7 +754,15 @@ class Refund(BaseModel):
     class Meta:
         verbose_name = 'refund'
         verbose_name_plural = 'refunds'
-        url = '/refunds'
+        url = {
+            SelectQuery.identifier: '/refunds',
+            InsertQuery.identifier: '/refunds',
+            UpdateQuery.identifier: '/refunds',
+            'REPUDIATION_GET_REFUNDS': '/repudiations/%(id)s/refunds',
+            'TRANSFER_GET_REFUNDS': '/transfers/%(id)s/refunds',
+            'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds',
+            'PAYIN_GET_REFUNDS': '/payins/%(id)s/refunds'
+        }
 
 
 @python_2_unicode_compatible
@@ -801,7 +862,14 @@ class Transaction(BaseModel):
     class Meta:
         verbose_name = 'transaction'
         verbose_name_plural = 'transactions'
-        url = '/users/%(user_id)s/transactions'
+        url = {
+            SelectQuery.identifier: '/users/%(user_id)s/transactions',
+            InsertQuery.identifier: '/users/%(user_id)s/transactions',
+            UpdateQuery.identifier: '/users/%(user_id)s/transactions',
+            'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions',
+            'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
+            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions'
+        }
 
     def __str__(self):
         return 'Transaction n.%s' % self.id
@@ -1062,6 +1130,12 @@ class Repudiation(BaseModel):
     result_message = CharField(api_name='ResultMessage')
 
     creation_date = DateTimeField(api_name='CreationDate')
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'REPUDIATION_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'repudiation'

@@ -8,6 +8,7 @@ except ImportError:
 
 from mangopay.resources import Card, CardRegistration
 from tests.test_base import BaseTest
+from tests.test_base import BaseTestLive
 
 import requests
 import responses
@@ -257,3 +258,22 @@ class CardsTest(BaseTest):
         card.save()
 
         self.assertIs(card.active, False)
+
+
+class CardsLiveTest(BaseTestLive):
+
+    def test_getCardPreAuthorizations(self):
+        card = BaseTestLive.get_johns_card()
+
+        get_preauthorizations = card.get_pre_authorizations()
+
+        self.assertIsNotNone(get_preauthorizations)
+        self.assertIsInstance(get_preauthorizations, list)
+
+    def test_getCardTransactions(self):
+        card = BaseTestLive.get_johns_card()
+
+        get_transactions = card.get_transactions()
+
+        self.assertIsNotNone(get_transactions)
+        self.assertIsInstance(get_transactions, list)

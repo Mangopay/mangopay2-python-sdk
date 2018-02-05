@@ -82,3 +82,15 @@ class MandatesTestLive(BaseTestLive):
         self.assertIsNotNone(mandates[0])
         self.assertTrue(mandates[0].id)
         self.assertEqual(mandates[0].id, mandate_created.id)
+
+    def test_Mandate_GetTransactions(self):
+        mandate = Mandate()
+        mandate.bank_account_id = BaseTestLive.get_johns_account().id
+        mandate.return_url = 'http://test.test'
+        mandate.culture = 'FR'
+        mandate = Mandate(**mandate.save())
+
+        get_transactions = mandate.get_transactions()
+
+        self.assertIsNotNone(get_transactions)
+        self.assertIsInstance(get_transactions, list)

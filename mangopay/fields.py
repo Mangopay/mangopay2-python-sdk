@@ -509,15 +509,18 @@ class ReverseForeignRelatedObject(object):
         self.related_model = related_model
 
     def __get__(self, instance, instance_type=None):
-        return RelatedManager(instance, self.related_model)
+        fixed_kwargs = instance.fixed_kwargs()
+        return RelatedManager(instance, self.related_model, fixed_kwargs)
 
 
 class RelatedManager(object):
-    def __init__(self, instance, related_model):
+    def __init__(self, instance, related_model, fixed_kwargs=None):
         self.instance = instance
         self.related_model = related_model
+        self.fixed_kwargs = fixed_kwargs
 
     def get(self, pk, **kwargs):
+        kwargs.update(self.fixed_kwargs)
         return self.instance.get(pk, self.instance.handler, self.related_model, **kwargs)
 
     def all(self, **kwargs):
