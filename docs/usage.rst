@@ -22,6 +22,18 @@ multiple environment hosts already registered.
 
 Let's get to work, we will create our first handler with the sandbox host:
 
+V2
+
+.. code-block:: python
+
+    from mangopaysdk.mangopayapi import MangoPayApi
+
+    api = MangoPayApi()
+    api.Config.ClientID = 'sdk-unit-tests'
+    api.Config.ClientPassword = 'cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju'
+
+V3
+
 .. code-block:: python
 
     import mangopay
@@ -42,6 +54,8 @@ API proxy support
 -----------------
 
 When you are creating a new handler you can use proxies for https, http and ftp protocols.
+
+V3 only
 
 .. code-block:: python
 
@@ -64,9 +78,17 @@ Using storage strategy
 
 The storage strategy used for OAuth token.
 
-StaticStorageStrategy() - saves token in memory
+StaticStorageStrategy() - saves token in memory (MemoryStorageStrategy from V2)
 
-FileStorageStrategy() - saves token in temporary file
+FileStorageStrategy() - saves token in temporary file (DefaultStorageStrategy from V2)
+
+V2
+
+.. code-block:: python
+
+    api.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
+
+V3
 
 .. code-block:: python
 
@@ -79,6 +101,8 @@ API requests timeout
 --------------------
 
 When you create a new handler you can set the amount of time (in seconds) after that the requests will timeout.
+
+V3 only
 
 .. code-block:: python
 
@@ -102,6 +126,10 @@ Create a natural user
 V2
 
 .. code-block:: python
+
+
+    from mangopaysdk.types.address import Address
+    from mangopaysdk.entities.usernatural import UserNatural
 
     user = UserNatural()
     user.FirstName = "John"
