@@ -99,6 +99,31 @@ User
 
 Create a natural user
 
+V2
+
+.. code-block:: python
+
+    user = UserNatural()
+    user.FirstName = "John"
+    user.LastName = "Doe"
+    user.Email = "john.doe@sample.org"
+    address = Address()
+    address.AddressLine1 = "Address line 1"
+    address.AddressLine2 = "Address line 2"
+    address.City = "City"
+    address.Region = "Region"
+    address.PostalCode = "11222"
+    address.Country = "PL"
+    user.Address = address
+    user.Birthday = 1300186358
+    user.Nationality = "FR"
+    user.CountryOfResidence = "FR"
+    user.Occupation = "programmer"
+    user.IncomeRange = 3
+    saved_user = api.users.Create(user)
+
+V3
+
 .. code-block:: python
 
     from mangopay.resources import User, NaturalUser
