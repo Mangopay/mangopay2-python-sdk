@@ -87,6 +87,9 @@ V2
 .. code-block:: python
 
     api.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
+    api.OAuthTokenManager.RegisterCustomStorageStrategy(DefaultStorageStrategy())
+
+If no strategy is sepcified, DefaultStorageStrategy will be used.
 
 V3
 
