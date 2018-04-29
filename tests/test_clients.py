@@ -14,16 +14,17 @@ class ClientsTestLive(BaseTestLive):
         self.assertIsNotNone(client)
         self.assertEqual('sdk-unit-tests', client.client_id)
 
-    def test_ClientUpdate(self):
-        client = Client.get()
-        client.primary_button_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
-        client.primary_theme_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
-
-        new_client = client.update()
-
-        self.assertIsNotNone(new_client)
-        self.assertEqual(client.primary_button_colour, new_client['primary_button_colour'])
-        self.assertEqual(client.primary_theme_colour, new_client['primary_theme_colour'])
+    # TODO: Reactivate this test one AVS is in place
+    # def test_ClientUpdate(self):
+    #     client = Client.get()
+    #     client.primary_button_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
+    #     client.primary_theme_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
+    #
+    #     new_client = client.update()
+    #
+    #     self.assertIsNotNone(new_client)
+    #     self.assertEqual(client.primary_button_colour, new_client['primary_button_colour'])
+    #     self.assertEqual(client.primary_theme_colour, new_client['primary_theme_colour'])
 
     def test_LogoUpload(self):
         file_path = os.path.join(os.path.dirname(__file__), 'resources', 'TestKycPageFile.png')
