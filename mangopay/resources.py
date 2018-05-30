@@ -11,7 +11,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField)
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField)
 
 from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
@@ -453,6 +453,8 @@ class DirectPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
 
     class Meta:
         verbose_name = 'payin'
@@ -609,6 +611,8 @@ class PreAuthorization(BaseModel):
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
     expiration_date = DateField(api_name='ExpirationDate')
     payin = ForeignKeyField(PayIn, api_name='PayinId')
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
 
     class Meta:
         verbose_name = 'preauthorization'

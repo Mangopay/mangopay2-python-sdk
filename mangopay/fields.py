@@ -4,8 +4,9 @@ import time
 import datetime
 import six
 
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo \
-
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
+    Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo, \
+    Billing, SecurityInfo
 import sys
 
 
@@ -205,6 +206,43 @@ class MoneyField(Field):
             }
 
         return value
+
+
+class BillingField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return Billing(address=value['Address'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(BillingField, self).api_value(value)
+
+        if isinstance(value, Billing):
+            value = {
+                'Address': value.address
+            }
+
+        return value
+
+
+class SecurityInfoField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return SecurityInfo(avs_result=value['AVSResult'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(SecurityInfoField, self).api_value(value)
+
+        if isinstance(value, SecurityInfo):
+            value = {
+                'AVSResult': value.avs_result
+            }
+
+        return value
+
 
 class DebitedBankAccountField(Field):
     def python_value(self, value):
