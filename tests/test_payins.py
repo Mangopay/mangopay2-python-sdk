@@ -562,8 +562,8 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual(mandate.id, result['mandate_id'])
 
     def test_PayIns_CardDirect_CreateWithAvs(self):
-        user = BaseTestLive.get_john()
-        debited_wallet = BaseTestLive.get_johns_wallet()
+        user = BaseTestLive.get_john(True)
+        debited_wallet = BaseTestLive.get_johns_wallet(True)
 
         # create wallet
         credited_wallet = Wallet()
@@ -571,7 +571,7 @@ class PayInsTestLive(BaseTestLive):
         credited_wallet.currency = 'EUR'
         credited_wallet.description = 'WALLET IN EUR'
         credited_wallet = Wallet(**credited_wallet.save())
-        card = BaseTestLive.get_johns_card()
+        card = BaseTestLive.get_johns_card(True)
 
         pay_in = DirectPayIn()
         pay_in.author = user
