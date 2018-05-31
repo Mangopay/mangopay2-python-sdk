@@ -223,6 +223,16 @@ class Money(object):
 
 
 @add_camelcase_aliases
+class PlatformCategorization(object):
+    def __init__(self, business_type=None, sector=None):
+        self.business_type = business_type
+        self.sector = sector
+
+    def __str__(self):
+        return 'PlatformCategorization: %s %s' % (self.business_type, self.sector)
+
+
+@add_camelcase_aliases
 class DebitedBankAccount(object):
     def __init__(self, owner_name=None):
         self.owner_name = owner_name

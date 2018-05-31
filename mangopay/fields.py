@@ -1,12 +1,13 @@
+import datetime
 import json
 import re
+import sys
 import time
-import datetime
+
 import six
 
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo \
-
-import sys
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
+    Reason, ReportTransactionsFilters, ReportWalletsFilters, PlatformCategorization
 
 
 class FieldDescriptor(object):
@@ -206,6 +207,26 @@ class MoneyField(Field):
 
         return value
 
+
+class PlatformCategorizationField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PlatformCategorization(business_type=value['BusinessType'], sector=value['Sector'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(PlatformCategorizationField, self).api_value(value)
+
+        if isinstance(value, PlatformCategorization):
+            value = {
+                'BusinessType': value.business_type,
+                'Sector': value.sector
+            }
+
+        return value
+
+
 class DebitedBankAccountField(Field):
     def python_value(self, value):
         if value is not None:
@@ -222,6 +243,7 @@ class DebitedBankAccountField(Field):
             }
 
         return value
+
 
 class ReportTransactionsFiltersField(Field):
     def python_value(self, value):
