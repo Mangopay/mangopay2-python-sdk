@@ -221,6 +221,8 @@ class PlatformCategorizationField(Field):
             value = {
                 'BusinessType': value.business_type,
                 'Sector': value.sector
+            }
+
         return value  
               
               
