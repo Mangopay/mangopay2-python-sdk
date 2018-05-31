@@ -1,13 +1,12 @@
 import datetime
 import json
 import re
-import sys
 import time
-
 import six
-
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
-    Reason, ReportTransactionsFilters, ReportWalletsFilters, PlatformCategorization
+    Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo, \
+PlatformCategorization, Billing, SecurityInfo
+import sys
 
 
 class FieldDescriptor(object):
@@ -212,16 +211,49 @@ class PlatformCategorizationField(Field):
     def python_value(self, value):
         if value is not None:
             return PlatformCategorization(business_type=value['BusinessType'], sector=value['Sector'])
-
+          
         return value
-
-    def api_value(self, value):
+           
+        def api_value(self, value):
         value = super(PlatformCategorizationField, self).api_value(value)
 
         if isinstance(value, PlatformCategorization):
             value = {
                 'BusinessType': value.business_type,
                 'Sector': value.sector
+        return value  
+              
+              
+class BillingField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return Billing(address=value['Address'])
+        return value  
+
+    def api_value(self, value):
+        value = super(BillingField, self).api_value(value)
+
+        if isinstance(value, Billing):
+            value = {
+                'Address': value.address
+            }
+
+        return value
+
+
+class SecurityInfoField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return SecurityInfo(avs_result=value['AVSResult'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(SecurityInfoField, self).api_value(value)
+
+        if isinstance(value, SecurityInfo):
+            value = {
+                'AVSResult': value.avs_result
             }
 
         return value
