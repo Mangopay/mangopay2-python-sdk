@@ -214,7 +214,7 @@ class PlatformCategorizationField(Field):
           
         return value
            
-        def api_value(self, value):
+    def api_value(self, value):
         value = super(PlatformCategorizationField, self).api_value(value)
 
         if isinstance(value, PlatformCategorization):
