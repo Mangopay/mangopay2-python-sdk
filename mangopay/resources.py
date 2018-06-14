@@ -11,7 +11,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField, BillingField, SecurityInfoField)
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
 
 from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
@@ -35,7 +35,7 @@ class Client(BaseApiModel):
     fraud_emails = ListField(api_name='FraudEmails')
     billing_emails = ListField(api_name='BillingEmails')
     platform_description = ListField(api_name='PlatformDescription')
-    platform_type = CharField(api_name='PlatformType', choices=constants.PLATFORM_TYPE)
+    platform_categorization = PlatformCategorizationField(api_name='PlatformCategorization')
     platform_url = CharField(api_name='PlatformURL')
     headquarters_address = AddressField(api_name='HeadquartersAddress')
     tax_number = CharField(api_name='TaxNumber')
