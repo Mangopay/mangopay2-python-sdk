@@ -242,7 +242,7 @@ class WalletsTest(BaseTest):
                 'body': {
                     "Id": "1169434",
                     "Tag": "custom tag",
-                    "CreationDate": "2015-05-15",
+                    "CreationDate": 1431648000,
                     "AuthorId": "1167495",
                     "CreditedUserId": "1167502",
                     "DebitedFunds": {

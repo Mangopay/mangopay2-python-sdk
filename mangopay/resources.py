@@ -858,6 +858,7 @@ class Transaction(BaseModel):
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
     wallet = ForeignKeyField(Wallet, related_name='transactions')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'transaction'
