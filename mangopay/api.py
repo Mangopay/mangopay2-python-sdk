@@ -87,7 +87,7 @@ class APIRequest(object):
         if data or data == {}:
             truncated_data = truncatechars(copy.copy(data))
 
-            data = json.dumps(data)
+            data = json.dumps(data, default=lambda x: x.to_api_json())
 
         logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s' % (url, headers, truncated_data))
 

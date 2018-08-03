@@ -11,7 +11,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField)
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
 
 from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
@@ -35,7 +35,7 @@ class Client(BaseApiModel):
     fraud_emails = ListField(api_name='FraudEmails')
     billing_emails = ListField(api_name='BillingEmails')
     platform_description = ListField(api_name='PlatformDescription')
-    platform_type = CharField(api_name='PlatformType', choices=constants.PLATFORM_TYPE)
+    platform_categorization = PlatformCategorizationField(api_name='PlatformCategorization')
     platform_url = CharField(api_name='PlatformURL')
     headquarters_address = AddressField(api_name='HeadquartersAddress')
     tax_number = CharField(api_name='TaxNumber')
@@ -173,6 +173,7 @@ class LegalUser(User):
     statute = CharField(api_name='Statute')
     proof_of_registration = CharField(api_name='ProofOfRegistration')
     shareholder_declaration = CharField(api_name='ShareholderDeclaration')
+    company_number = CharField(api_name='CompanyName')
 
     class Meta:
         verbose_name = 'user'
@@ -453,6 +454,8 @@ class DirectPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
 
     class Meta:
         verbose_name = 'payin'
@@ -609,6 +612,8 @@ class PreAuthorization(BaseModel):
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
     expiration_date = DateField(api_name='ExpirationDate')
     payin = ForeignKeyField(PayIn, api_name='PayinId')
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
 
     class Meta:
         verbose_name = 'preauthorization'
@@ -858,6 +863,7 @@ class Transaction(BaseModel):
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
     wallet = ForeignKeyField(Wallet, related_name='transactions')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'transaction'

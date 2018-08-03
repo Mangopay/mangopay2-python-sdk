@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import (PreAuthorization, PreAuthorizedPayIn)
-from .test_base import BaseTest
+from .resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
+from .test_base import BaseTest, BaseTestLive
 
-from mangopay.utils import Money
+try:
+    import urllib.parse as urlrequest
+except ImportError:
+    import urllib as urlrequest
+
+from mangopay.utils import Money, Billing, Address, SecurityInfo
 
 from datetime import date
 
+import requests
 import responses
 import time
 
@@ -622,3 +628,47 @@ class PreAuthorizationsTest(BaseTest):
 
         self.assertEqual(preauthorized_payin.status, 'FAILED')
         self.assertEqual(preauthorized_payin.payment_type, 'PREAUTHORIZED')
+
+
+class PreAuthorizationsTestLive(BaseTestLive):
+
+    def test_PreAuthorizations_CreateWithAvs(self):
+        user = BaseTestLive.get_john()
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = "EUR"
+
+        saved_registration = card_registration.save()
+        registration_data_response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
+            'cardNumber': '4970100000000154',
+            'cardCvx': '123',
+            'cardExpirationDate': '0120',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }))
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+
+        card = Card.get(updated_registration['card_id'])
+        pre_authorization = PreAuthorization()
+        pre_authorization.card = card
+        pre_authorization.author = user
+        pre_authorization.debited_funds = Money()
+        pre_authorization.debited_funds.currency = "EUR"
+        pre_authorization.debited_funds.amount = 500
+        pre_authorization.secure_mode_return_url = "http://www.example.com/"
+        billing = Billing()
+        billing.address = Address()
+        billing.address.address_line_1 = "Main Street"
+        billing.address.address_line_2 = "no. 5 ap. 6"
+        billing.address.country = "FR"
+        billing.address.city = "Lyon"
+        billing.address.postal_code = "65400"
+        pre_authorization.billing = billing
+
+        saved_pre_authorization = pre_authorization.save()
+
+        self.assertIsNotNone(saved_pre_authorization)
+        security_info = saved_pre_authorization['security_info']
+        self.assertIsInstance(security_info, SecurityInfo)
+        self.assertEqual(security_info.avs_result, "ADDRESS_MATCH_ONLY")

@@ -22,6 +22,18 @@ multiple environment hosts already registered.
 
 Let's get to work, we will create our first handler with the sandbox host:
 
+V2
+
+.. code-block:: python
+
+    from mangopaysdk.mangopayapi import MangoPayApi
+
+    api = MangoPayApi()
+    api.Config.ClientID = 'sdk-unit-tests'
+    api.Config.ClientPassword = 'cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju'
+
+V3
+
 .. code-block:: python
 
     import mangopay
@@ -42,6 +54,8 @@ API proxy support
 -----------------
 
 When you are creating a new handler you can use proxies for https, http and ftp protocols.
+
+V3 only
 
 .. code-block:: python
 
@@ -64,9 +78,20 @@ Using storage strategy
 
 The storage strategy used for OAuth token.
 
-StaticStorageStrategy() - saves token in memory
+StaticStorageStrategy() - saves token in memory (MemoryStorageStrategy from V2)
 
-FileStorageStrategy() - saves token in temporary file
+FileStorageStrategy() - saves token in temporary file (DefaultStorageStrategy from V2)
+
+V2
+
+.. code-block:: python
+
+    api.OAuthTokenManager.RegisterCustomStorageStrategy(MemoryStorageStrategy())
+    api.OAuthTokenManager.RegisterCustomStorageStrategy(DefaultStorageStrategy())
+
+If no strategy is sepcified, DefaultStorageStrategy will be used.
+
+V3
 
 .. code-block:: python
 
@@ -80,6 +105,8 @@ API requests timeout
 
 When you create a new handler you can set the amount of time (in seconds) after that the requests will timeout.
 
+V3 only
+
 .. code-block:: python
 
     handler = APIRequest(sandbox=True, timeout=30.0)
@@ -89,7 +116,9 @@ The default timeout is 30 seconds.
 Using resources
 ---------------
 
-To manipulate your resources, this library is heavily inspired from `peewee <https://github.com/coleifer/peewee/>`_,
+Following are a number of example API calls made through the SDK, with comparison V2 and V3 methods.
+
+To manipulate your resources, the V3 library is heavily inspired from `peewee <https://github.com/coleifer/peewee/>`_,
 so every operations will be like manipulating your favorite ORM.
 
 For required parameters you can refer to the `reference api <https://docs.mangopay.com/api-references/>`_.
@@ -98,6 +127,35 @@ User
 ----
 
 Create a natural user
+
+V2
+
+.. code-block:: python
+
+
+    from mangopaysdk.types.address import Address
+    from mangopaysdk.entities.usernatural import UserNatural
+
+    user = UserNatural()
+    user.FirstName = "John"
+    user.LastName = "Doe"
+    user.Email = "john.doe@sample.org"
+    address = Address()
+    address.AddressLine1 = "Address line 1"
+    address.AddressLine2 = "Address line 2"
+    address.City = "City"
+    address.Region = "Region"
+    address.PostalCode = "11222"
+    address.Country = "PL"
+    user.Address = address
+    user.Birthday = 1300186358
+    user.Nationality = "FR"
+    user.CountryOfResidence = "FR"
+    user.Occupation = "programmer"
+    user.IncomeRange = 3
+    saved_user = api.users.Create(user)
+
+V3
 
 .. code-block:: python
 
@@ -127,6 +185,16 @@ Create a natural user
 
 Retrieve an existing user
 
+V2
+
+.. code-block:: python
+
+    user = api.users.Get(1)
+
+    print user.FirstName # Victor
+
+V3
+
 .. code-block:: python
 
     natural_user = NaturalUser.get(1) # 1 is an ID value, not an array index
@@ -134,6 +202,18 @@ Retrieve an existing user
     print natural_user.first_name # Victor
 
 Detect a user which does not exist
+
+V2
+
+.. code-block:: python
+
+    try:
+        user = api.users.Get(1)
+    except ResponseException as e:
+        if (e.Code == 404)
+            print 'The user 1 does not exist'
+
+V3
 
 .. code-block:: python
 
@@ -144,6 +224,15 @@ Detect a user which does not exist
 
 Retrieve all users
 
+V2
+
+.. code-block:: python
+
+    users = api.users.GetAll()
+    print users # [<NaturalUser: victor@hugo.com>, <LegalUser: support@ulule.com>]
+
+V3
+
 .. code-block:: python
 
     users = User.all()
@@ -151,11 +240,22 @@ Retrieve all users
 
 Retrieve users with a pagination
 
+V2
+
+.. code-block:: python
+
+    pagination = Pagination(Page=1, ItemsPerPage=2)
+    users = User.all(pagination)
+
+V3
+
 .. code-block:: python
 
     users = User.all(page=1, per_page=2)
 
 Retrieve a users's EMoney
+
+V3 only
 
 .. code-block:: python
 
@@ -169,6 +269,23 @@ Wallet
 ------
 
 Create a wallet
+
+V2
+
+.. code-block:: python
+
+    user = api.users.Get(1)
+
+    from mangopaysdk.entities.wallet import Wallet
+
+    wallet = Wallet()
+    wallet.Owners = [john.Id]
+    wallet.Currency = 'EUR'
+    wallet.Description = 'WALLET IN EUR'
+
+    saved_wallet = api.wallets.Create(wallet)
+
+V3
 
 .. code-block:: python
 
@@ -189,6 +306,14 @@ Create a wallet
 
 Retrieve user's wallets
 
+V2
+
+.. code-block:: python
+
+    wallets = api.users.GetWallets(userId=1)
+
+V3
+
 .. code-block:: python
 
     natural_user = NaturalUser.get(1)
@@ -199,6 +324,31 @@ Transfer
 --------
 
 Create a transfer from a wallet to another one
+
+V2
+
+.. code-block:: python
+
+    print debited_wallet.Balance # EUR 99.00
+    print credited_wallet.Balance # EUR 0.00
+
+    transfer = Transfer()
+    transfer.AuthorId = debited_wallet.Owners[0]
+    transfer.DebitedFunds = Money()
+    transfer.DebitedFunds.Currency = 'EUR'
+    transfer.DebitedFunds.Amount = 1000
+    transfer.Fees = Money()
+    transfer.Fees.Currency = 'EUR'
+    transfer.Fees.Amount = 100
+    transfer.DebitedWalletId = debited_wallet.Id
+    transfer.CreditedWalletId = credited_wallet.Id
+
+    saved_ransfer = api.transfers.Create(transfer)
+
+    print debited_wallet.Balance # EUR 89.00
+    print credited_wallet.Balance # EUR 9.00
+
+V3
 
 .. code-block:: python
 
@@ -224,6 +374,28 @@ Transfer refund
 
 Transfer money back to the wallet where it came from (transfer refund)
 
+V2
+
+.. code-block:: python
+
+    print debited_wallet.Balance # EUR 89.00
+    print credited_wallet.Balance # EUR 9.00
+
+    refund = Refund()
+    refund.DebitedWalletId = transfer.DebitedWalletId
+    refund.CreditedWalletId = transfer.CreditedWalletId
+    refund.AuthorId = transfer.AuthorId
+    refund.DebitedFunds = Money()
+    refund.DebitedFunds.Amount = transfer.DebitedFunds.Amount
+    refund.DebitedFunds.Currency = transfer.DebitedFunds.Currency
+    refund.Fees = Money()
+    refund.Fees.Amount = transfer.Fees.Amount
+    refund.Fees.Currency = transfer.Fees.Currency
+
+    saved_refund = api.transfers.CreateRefund(transfer.Id, refund)
+
+V3
+
 .. code-block:: python
 
     print legal_user_wallet.balance  # EUR 89.00
@@ -244,17 +416,48 @@ Transactions
 
 Retrieve wallet's transactions
 
+V2
+
+.. code-block:: python
+
+    transactions = api.wallets.GetTransactions(wallet.Id)
+
+    print transactions # [<Transaction: Transaction n.1174821>]
+
+V3
+
 .. code-block:: python
 
     print legal_user_wallet.transactions.all()  # [<Transaction: Transaction n.1174821>]
 
 Retrieve user's transactions
 
+V2
+
+.. code-block:: python
+
+    transactions = api.users.GetTransactions(user.Id)
+
+    print transactions # [<Transaction: Transaction n.1174821>]
+
+V3
+
 .. code-block:: python
 
     print legal_user.transactions.all()  # [<Transaction: Transaction n.1174821>]
 
 List all transactions made by a user (you can filter transactions by status)
+
+V2
+
+.. code-block:: python
+
+    filter = FilterTransactions()
+    filter.status = 'SUCCEEDED'
+
+    transactions = api.users.GetTransactions(user.Id, None, None, filter)
+
+V3
 
 .. code-block:: python
 
@@ -267,6 +470,19 @@ Card
 
 To register a card for a user you have to create a RegistrationCard
 object with the user and his currency as params
+
+V2
+
+.. code-block:: python
+
+    card_registration = CardRegistration()
+    card_registration.CardType = cardType
+    card_registration.UserId = user.Id
+    card_registration.Currency = 'EUR'
+
+    saved_card_registration = api.cardRegistrations.Create(card_registration)
+
+V3
 
 .. code-block:: python
 
@@ -291,6 +507,15 @@ And hidden field:
 Update the `card_registration` instance with the response
 provided by the Mangopay Tokenization server.
 
+V2
+
+.. code-block:: python
+
+    saved_card_registration.RegistrationData = response
+    updated_card_registration = api.cardRegistrations.Update(saved_card_registration)
+
+V3
+
 .. code-block:: python
 
     card_registration.registration_data = response
@@ -298,12 +523,30 @@ provided by the Mangopay Tokenization server.
 
 Now, we have a `card_id` and you can retrieve the new card
 
+V2
+
+.. code-block:: python
+
+    print updated_card_registration.CardId # 1
+
+    card = api.cards.Get(updated_card_registration.CardId) # CB_VISA_MASTERCARD of user 6641810
+
+V3
+
 .. code-block:: python
 
     print card_registration.card_id  # 1
     print card_registration.card  # CB_VISA_MASTERCARD of user 6641810
 
 Retrieve user's cards
+
+V2
+
+.. code-block:: python
+
+    print api.users.GetCards(user.Id) # [<Card: CB_VISTA_MASTERCARD of user 6641810>]
+
+V3
 
 .. code-block:: python
 
@@ -313,6 +556,8 @@ Retrieve user's cards
 
 Retrieve cards by fingerprint
 
+V3 only
+
 .. code-block:: python
 
     cards = Card.get_by_fingerprint(fingerprint) #return a list of card objects that matches with specified fingerprint.
@@ -321,6 +566,31 @@ PayIn
 -----
 
 Direct payment on a user's wallet
+
+V2
+
+.. code-block:: python
+
+    pay_in = PayIn()
+    pay_in.CreditedWalletId = credited_wallet.Id
+    pay_in.AuthorId = credited_wallet.Owners[0]
+    pay_in.DebitedFunds = Money()
+    pay_in.DebitedFunds.Amount = 10000
+    pay_in.DebitedFunds.Currency = 'EUR'
+    pay_in.Fees = Money()
+    pay_in.Fees.Amount = 0
+    pay_in.Fees.Currency = 'EUR'
+    # payment type as CARD
+    pay_in.PaymentDetails = PayInPaymentDetailsCard()
+    pay_in.PaymentDetails.CardType = card.CardType
+    # execution type as DIRECT
+    pay_in.ExecutionDetails = PayInExecutionDetailsDirect()
+    pay_in.ExecutionDetails.CardId = card.Id
+    pay_in.ExecutionDetails.SecureModeReturnURL = 'http://test.com'
+
+    saved_pay_in = api.payIns.Create(pay_in)
+
+V3
 
 .. code-block:: python
 
@@ -341,6 +611,23 @@ BankAccount
 
 Register a bank account
 
+V2
+
+.. code-block:: python
+
+    account = BankAccount()
+    account.OwnerName = user.FirstName + ' ' +  user.LastName
+    account.OwnerAddress = user.Address
+    account.UserId = user.Id
+    account.Type = 'IBAN'
+    account.Details = BankAccountDetailsIBAN()
+    account.Details.IBAN = 'FR7618829754160173622224154'
+    account.Details.BIC = 'CMBRFR2BCME'
+
+    saved_account = api.users.CreateBankAccount(user.Id, account)
+
+V3
+
 .. code-block:: python
 
     bankaccount = BankAccountIBAN(owner_name="Victor Hugo",
@@ -358,6 +645,31 @@ BankWirePayIn
 
 And pay by bank wire
 
+V2
+
+.. code-block:: python
+
+    pay_in = PayIn()
+    pay_in.CreditedWalletId = wallet.Id
+    pay_in.AuthorId = wallet.Owners[0]
+
+    # payment type as CARD
+    pay_in.PaymentDetails = PayInPaymentDetailsBankWire()
+    pay_in.PaymentDetails.DeclaredDebitedFunds = Money()
+    pay_in.PaymentDetails.DeclaredFees = Money()
+    pay_in.PaymentDetails.DeclaredDebitedFunds.Currency = 'EUR'
+    pay_in.PaymentDetails.DeclaredFees.Currency = 'EUR'
+    pay_in.PaymentDetails.DeclaredDebitedFunds.Amount = 10000
+    pay_in.PaymentDetails.DeclaredFees.Amount = 1000
+
+    # execution type as DIRECT
+    pay_in.ExecutionDetails = PayInExecutionDetailsDirect()
+    pay_in.ExecutionType = ExecutionType.DIRECT
+
+    saved_pay_in = api.payIns.Create(payIn)
+
+V3
+
 .. code-block:: python
 
     bank_wire_payin = BankWirePayIn(credited_user_id=legal_user,
@@ -373,6 +685,8 @@ PaypalPayIn
 -------------
 
 Pay by paypal
+
+V3 only
 
 .. code-block:: python
 
@@ -391,6 +705,24 @@ Refund
 
 Refund a user on his payment card
 
+V2
+
+.. code-block:: python
+
+    refund = Refund()
+    refund.CreditedWalletId = pay_in.CreditedWalletId
+    refund.AuthorId = pay_in.AuthorId
+    refund.DebitedFunds = Money()
+    refund.DebitedFunds.Amount = pay_in.DebitedFunds.Amount
+    refund.DebitedFunds.Currency = pay_in.DebitedFunds.Currency
+    refund.Fees = Money()
+    refund.Fees.Amount = pay_in.Fees.Amount
+    refund.Fees.Currency = pay_in.Fees.Currency
+
+    saved_refund = api.payIns.CreateRefund(pay_in.Id, refund)
+
+V3
+
 .. code-block:: python
 
     payin_refund = PayInRefund(author=natural_user,
@@ -403,6 +735,29 @@ PayOut
 ------
 
 Withdraw money from a wallet to a bank account
+
+V2
+
+.. code-block:: python
+
+    pay_out = PayOut()
+    pay_out.Tag = 'DefaultTag'
+    pay_out.AuthorId = user.Id
+    pay_out.CreditedUserId = user.Id
+    pay_out.DebitedFunds = Money()
+    pay_out.DebitedFunds.Currency = 'EUR'
+    pay_out.DebitedFunds.Amount = 10
+    pay_out.Fees = Money()
+    pay_out.Fees.Currency = 'EUR'
+    pay_out.Fees.Amount = 5
+
+    pay_out.DebitedWalletId = wallet.Id
+    pay_out.MeanOfPaymentDetails = payOutPaymentDetailsBankWire()
+    pay_out.MeanOfPaymentDetails.BankAccountId = account.Id
+
+    saved_pay_out = api.payOuts.Create(pay_out)
+
+V3
 
 .. code-block:: python
 
@@ -423,6 +778,19 @@ required steps.
 
 1. Create a Document
 
+V2
+
+.. code-block:: python
+
+    kyc_document = kyc_document()
+    kyc_document.Tag = 'test tag 1'
+    kyc_document.Type = KycDocumentType.IDENTITY_PROOF
+    kyc_document.UserId = user.Id
+
+    saved_kyc_document = api.users.CreateUserKycDocument(kycDocument, user.Id)
+
+V3
+
 .. code-block:: python
 
     document = Document(type='IDENTITY_PROOF', user=legal_user)
@@ -441,17 +809,35 @@ required steps.
 Once you have done with these steps, you will be able to get a list of all
 the uploaded documents for this particular user
 
+V2
+
+.. code-block:: python
+
+    documents = api.users.GetKycDocuments(user.Id)
+
+V3
+
 .. code-block:: python
 
     documents = legal_user.documents.all()
 
 To get the list of all the uploaded documents for all users:
 
+V2
+
+.. code-block:: python
+
+    documents = api.kycdocuments.GetAll()
+
+V3
+
 .. code-block:: python
 
     documents = Document.all()
 
 To get the list of KYC documents pages
+
+V3 only
 
 .. code-block:: python
 
@@ -464,11 +850,30 @@ Get details about client.
 
 1.Get Client:
 
+V2
+
+.. code-block:: python
+
+    client = api.clients.Get()
+
+V3
+
 .. code-block:: python
 
     client = Client.get()
 
 2.Update Client:
+
+V2
+
+.. code-block:: python
+
+    client.PrimaryButtonColour = str("#%06x" % random.randint(0, 0xFFFFFF))
+    client.PrimaryThemeColour = str("#%06x" % random.randint(0, 0xFFFFFF))
+
+    updated_client = api.clients.Update(client)
+
+V3
 
 .. code-block:: python
 
@@ -481,6 +886,17 @@ Dispute
 
 1. View disputes
 
+V2
+
+.. code-block:: python
+
+    #view a dispute
+    dispute = api.disputes.Get(dispute.Id)
+    #view all disputes
+    disputes = api.disputes.GetAll()
+
+V3
+
 .. code-block:: python
 
     #view a dispute
@@ -490,6 +906,14 @@ Dispute
 
 2. Get disputes transactions
 
+V2
+
+.. code-block:: python
+
+    transactions = api.disputes.GetTransactions(dispute.Id)
+
+V3
+
 .. code-block:: python
 
     #dispute status must be 'NOT_CONTESTABLE'
@@ -497,12 +921,16 @@ Dispute
 
 3. Get wallet disputes
 
+V3 only
+
 .. code-block:: python
 
     #connection flow : dispute->initial_transaction->credited_wallet
     wallet.disputes.all()
 
 4. Get user disputes
+
+V3 only
 
 .. code-block:: python
 
@@ -513,6 +941,19 @@ Dispute
     In order to contest a dispute, its status must be 'PENDING_CLIENT_ACTION' or 'REOPENED_PENDING_CLIENT_ACTION'
     and its type must be either 'CONTESTABLE' or 'RETRIEVAL'
 
+V2
+
+.. code-block:: python
+
+    contested_funds = Money()
+    contested_funds.amount = 100
+    contested_funds.currency = 'EUR'
+
+    result = api.disputes.ContestDispute(contested_funds, dispute.Id)
+
+
+V3
+
 .. code-block:: python
 
     if dispute.status == 'REOPENED_PENDING_CLIENT_ACTION':
@@ -521,6 +962,15 @@ Dispute
     result = dispute.contest(money)
 
 6. Update a disputes tag
+
+V2
+
+.. code-block:: python
+
+    new_tag = 'New tag ' + str(int(time.time()))
+    result = api.disputes.UpdateTag(new_tag, dispute.Id)
+
+V3
 
 .. code-block:: python
 
@@ -531,11 +981,27 @@ Dispute
 7. Close a dispute
     In order to close a dispute, its status must be 'PENDING_CLIENT_ACTION' or 'REOPENED_PENDING_CLIENT_ACTION'
 
+V2
+
+.. code-block:: python
+
+    result = api.disputes.CloseDispute(dispute.Id)
+
+V3
+
 .. code-block:: python
 
     result = dispute.close()
 
 8. Get repudiation
+
+V2
+
+.. code-block:: python
+
+    repudiation = api.disputes.GetRepudiation(repudiation.id)
+
+V3
 
 .. code-block:: python
 
@@ -543,6 +1009,26 @@ Dispute
     repudiation = dispute.transactions.all()
 
 9. Create Settlement Transfer
+
+V2
+
+.. code-block:: python
+
+    debited_funds = Money()
+    fees = Money()
+    debited_funds.Currency = 'EUR'
+    debited_funds.Amount = 1
+    fees.Currency = 'EUR'
+    fees.Amount = 0
+
+    transfer = Transfer()
+    transfer.AuthorId = repudiation.AuthorId
+    transfer.DebitedFunds = debited_funds
+    transfer.Fees = fees
+
+    result = api.disputes.CreateSettlementTransfer(transfer, repudiation.Id)
+
+V3
 
 .. code-block:: python
 
@@ -564,12 +1050,22 @@ Dispute
 
 10. Resubmit dispute:
 
+V2
+
+.. code-block:: python
+
+    result = api.disputes.ResubmitDispute(dispute.Id)
+
+V3
+
 .. code-block:: python
 
     #dispute type must be 'REOPENED_PENDING_CLIENT_ACTION'
     result = dispute.resubmit()
 
 11. To get the list of Dispute documents pages
+
+V3 only
 
 .. code-block:: python
 
