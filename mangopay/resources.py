@@ -4,7 +4,7 @@ from mangopay.signals import pre_save, post_save
 from mangopay.utils import Money, DeclaredUbo
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
-
+from .compat import python_2_unicode_compatible
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
@@ -12,8 +12,6 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
-
-from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -38,6 +36,7 @@ class Client(BaseApiModel):
     platform_categorization = PlatformCategorizationField(api_name='PlatformCategorization')
     platform_url = CharField(api_name='PlatformURL')
     headquarters_address = AddressField(api_name='HeadquartersAddress')
+    headquarters_phone_number = CharField(api_name='HeadquartersPhoneNumber')
     tax_number = CharField(api_name='TaxNumber')
 
     class Meta:
