@@ -38,13 +38,13 @@ class TokenTestLive(BaseTestLive):
 
     def test_IsolateTokensBetweenEnvironments(self):
         handler = APIRequest(client_id='sdk-unit-tests',
-                             passphrase='cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju',
+                             apikey='cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju',
                              api_sandbox_url='https://api.sandbox.mangopay.com/v2.01/',
                              storage_strategy=StaticStorageStrategy())
         token1 = handler.auth_manager.get_token()
 
         handler = APIRequest(client_id='sdk_example',
-                             passphrase='Vfp9eMKSzGkxivCwt15wE082pTTKsx90vBenc9hjLsf5K46ciF',
+                             apikey='Vfp9eMKSzGkxivCwt15wE082pTTKsx90vBenc9hjLsf5K46ciF',
                              api_sandbox_url='https://api.sandbox.mangopay.com/v2.01/',
                              storage_strategy=StaticStorageStrategy())
         token2 = handler.auth_manager.get_token()
@@ -52,7 +52,7 @@ class TokenTestLive(BaseTestLive):
         self.assertNotEqual(token1, token2)
 
         handler = APIRequest(client_id='sdk-unit-tests',
-                             passphrase='cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju',
+                             apikey='cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju',
                              api_sandbox_url='https://api.sandbox.mangopay.com/v2.01/',
                              storage_strategy=StaticStorageStrategy())
 

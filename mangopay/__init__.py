@@ -1,5 +1,5 @@
 client_id = None
-passphrase = None
+apikey = None
 api_url = 'https://api.mangopay.com/v2.01/'
 api_sandbox_url = 'https://api.sandbox.mangopay.com/v2.01/'
 temp_dir = None

@@ -10,7 +10,7 @@ instanciate a new handler which is a connection authentication.
 To create a new handler, you have to provide several parameters:
 
 * **MANGOPAY_CLIENT_ID** - The client identifier used by `mangopay <http://www.mangopay.com/>`_ to identify you
-* **MANGOPAY_PASSPHRASE** - Your password
+* **MANGOPAY_APIKEY** - Your password
 
 API host
 --------
@@ -39,7 +39,7 @@ V3
     import mangopay
 
     mangopay.client_id='my client id'
-    mangopay.passphrase='my password'
+    mangopay.apikey='my password'
 
     from mangopay.api import APIRequest
 
