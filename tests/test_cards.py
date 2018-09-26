@@ -265,15 +265,15 @@ class CardsLiveTest(BaseTestLive):
     def test_getCardPreAuthorizations(self):
         card = BaseTestLive.get_johns_card()
 
-        get_preauthorizations = card.get_pre_authorizations()
+        preauthorizations_page = card.get_pre_authorizations()
 
-        self.assertIsNotNone(get_preauthorizations)
-        self.assertIsInstance(get_preauthorizations, list)
+        self.assertIsNotNone(preauthorizations_page.data)
+        self.assertIsInstance(preauthorizations_page.data, list)
 
     def test_getCardTransactions(self):
         card = BaseTestLive.get_johns_card()
 
-        get_transactions = card.get_transactions()
+        transactions_page = card.get_transactions()
 
-        self.assertIsNotNone(get_transactions)
-        self.assertIsInstance(get_transactions, list)
+        self.assertIsNotNone(transactions_page.data)
+        self.assertIsInstance(transactions_page.data, list)

@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
+import responses
+
 from tests import settings
 from .resources import ClientWallet
 from .test_base import BaseTest, BaseTestLive
-
-import responses
 
 
 class ClientWalletsTest(BaseTest):
 
     @responses.activate
     def test_client_wallet(self):
-
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/clients/wallets',
                 'body': [
                     {
                         "Balance": {
@@ -54,7 +53,7 @@ class ClientWalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets/FEES/EUR/',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/clients/wallets/FEES/EUR/',
                 'body':
                     {
                         "Balance": {
@@ -71,7 +70,7 @@ class ClientWalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets/CREDIT',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/clients/wallets/CREDIT',
                 'body': [
                     {
                         "Balance": {
@@ -100,7 +99,7 @@ class ClientWalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/clients/wallets/FEES',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/clients/wallets/FEES',
                 'body': [
                     {
                         "Balance": {
@@ -131,19 +130,20 @@ class ClientWalletsTest(BaseTest):
         self.assertEqual(wallet, found_wallet)
         self.assertEqual(wallet.funds_type, found_wallet.funds_type)
 
-        all_wallets = ClientWallet.all()
+        wallets_page = ClientWallet.all()
+        all_wallets = wallets_page.data
 
-        fees_wallets = ClientWallet.all_by_funds_type('FEES')
+        fees_wallets_page = ClientWallet.all_by_funds_type('FEES')
 
-        default_wallets = ClientWallet.all_by_funds_type('DEFAULT')
+        default_wallets_page = ClientWallet.all_by_funds_type('DEFAULT')
 
-        credit_wallets = ClientWallet.all_by_funds_type('CREDIT')
+        credit_wallets_page = ClientWallet.all_by_funds_type('CREDIT')
 
-        self.assertEqual(all_wallets[:1], fees_wallets)
+        self.assertEqual(all_wallets[:1], fees_wallets_page.data)
 
-        self.assertEqual(all_wallets[1:], credit_wallets)
+        self.assertEqual(all_wallets[1:], credit_wallets_page.data)
 
-        self.assertEqual(default_wallets, all_wallets)
+        self.assertEqual(default_wallets_page.data, all_wallets)
 
 
 class ClientWalletsLiveTest(BaseTestLive):

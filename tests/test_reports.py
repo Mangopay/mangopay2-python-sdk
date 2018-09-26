@@ -41,16 +41,21 @@ class ReportsTestLive(BaseTestLive):
         time.sleep(3)
         report = BaseTestLive.get_johns_report(recreate=True)
 
-        result = Report.all(page=1, per_page=1, sort='CreationDate:DESC')
+        page = Report.all(page=1, per_page=1, sort='CreationDate:DESC')
+        result = page.data
 
         self.assertIsNotNone(result[0])
         self.assertEqual(report.id, result[0].id)
 
-        result = Report.all(AfterDate=result[0].creation_date, BeforeDate=int(time.time()-2000), sort='CreationDate:DESC')
+        page = Report.all(AfterDate=result[0].creation_date, BeforeDate=int(time.time() - 2000),
+                          sort='CreationDate:DESC')
+        result = page.data
 
         self.assertIsNotNone(result)
         self.assertTrue(len(result) == 0)
 
-        result = Report.all(AfterDate=int(time.time() - 315569260), BeforeDate=int(time.time()), sort='CreationDate:DESC')
+        page = Report.all(AfterDate=int(time.time() - 315569260), BeforeDate=int(time.time()),
+                          sort='CreationDate:DESC')
+        result = page.data
 
         self.assertTrue(result)
