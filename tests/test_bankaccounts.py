@@ -482,3 +482,19 @@ class BankAccountTestLive(BaseTestLive):
         self.assertIsNotNone(result)
         self.assertEqual(account.id, result.id)
         self.assertFalse(result.active)
+
+    def test_BankAccount_getTransactions(self):
+        account = BaseTestLive.get_johns_account()
+
+        get_transactions = account.get_transactions()
+
+        self.assertIsNotNone(get_transactions)
+        self.assertIsInstance(get_transactions, list)
+
+    def test_GetBankAccount(self):
+        account = BaseTestLive.get_johns_account()
+
+        get_account = BaseTestLive.get_john().bankaccounts.get(account.id)
+
+        self.assertIsNotNone(get_account)
+        self.assertEqual(account.id, get_account.id)

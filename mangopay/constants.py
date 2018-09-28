@@ -261,3 +261,11 @@ NATURAL_USER_CAPACITY_CHOICES = Choices(
     ("NORMAL", "normal", "Normal"),
     ("DECLARATIVE", "declarative", "Declarative")
 )
+
+AVS_RESULT_CHOICES = Choices(
+    ("FULL_MATCH", "full_match", "Full Match"),
+    ("ADDRESS_MATCH_ONLY", "address_match_only", "Address Match Only"),
+    ("POSTAL_CODE_MATCH_ONLY", "postal_code_match_only", "Postal Code Match Only"),
+    ("NO_MATCH", "no_match", "No Match"),
+    ("NO_CHECK", "no_check", "No Check")
+)

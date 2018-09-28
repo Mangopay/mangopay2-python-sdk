@@ -223,6 +223,31 @@ class Money(object):
 
 
 @add_camelcase_aliases
+class PlatformCategorization(object):
+    def __init__(self, business_type=None, sector=None):
+        self.business_type = business_type
+        self.sector = sector
+
+    def __str__(self):
+        return 'PlatformCategorization: %s %s' % (self.business_type, self.sector)
+      
+@add_camelcase_aliases
+class Billing(object):
+    def __init__(self, address=None):
+        self.address = address
+
+    def __str__(self):
+        return 'Billing: %s' % self.address
+
+@add_camelcase_aliases
+class SecurityInfo(object):
+    def __init__(self, avs_result=None):
+        self.avs_result = avs_result
+
+    def __str__(self):
+        return 'AVS Result: %s' % self.avs_result
+
+@add_camelcase_aliases
 class DebitedBankAccount(object):
     def __init__(self, owner_name=None):
         self.owner_name = owner_name
@@ -264,6 +289,16 @@ class Address(object):
                     (self.country == other.country))
             return stat
         return False
+
+    def to_api_json(self):
+        return {
+            "AddressLine1": self.address_line_1,
+            "AddressLine2": self.address_line_2,
+            "PostalCode": self.postal_code,
+            "City": self.city,
+            "Region": self.region,
+            "Country": self.country,
+        }
 
 
 @add_camelcase_aliases

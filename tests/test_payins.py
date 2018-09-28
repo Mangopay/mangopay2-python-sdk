@@ -7,7 +7,7 @@ from .resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
                         CardWebPayIn, DirectDebitWebPayIn)
 from .test_base import BaseTest, BaseTestLive
 
-from mangopay.utils import (Money, ShippingAddress)
+from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo)
 
 from datetime import date
 
@@ -560,3 +560,43 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual('PAYIN', result['type'])
         self.assertIsNotNone(result['mandate_id'])
         self.assertEqual(mandate.id, result['mandate_id'])
+
+    def test_PayIns_CardDirect_CreateWithAvs(self):
+        user = BaseTestLive.get_john(True)
+        debited_wallet = BaseTestLive.get_johns_wallet(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+        card = BaseTestLive.get_johns_card(True)
+
+        pay_in = DirectPayIn()
+        pay_in.author = user
+        pay_in.debited_wallet = debited_wallet
+        pay_in.credited_wallet = credited_wallet
+        pay_in.card = card
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = "EUR"
+        pay_in.secure_mode_return_url = "http://www.example.com/"
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        pay_in.billing = Billing(address=address)
+
+        result = pay_in.save()
+
+        self.assertIsNotNone(result)
+        security_info = result['security_info']
+        self.assertIsNotNone(security_info)
+        self.assertIsInstance(security_info, SecurityInfo)
+        self.assertEqual(security_info.avs_result, "FULL_MATCH")

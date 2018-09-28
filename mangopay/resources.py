@@ -11,7 +11,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField)
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
 
 from .compat import python_2_unicode_compatible
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
@@ -35,7 +35,7 @@ class Client(BaseApiModel):
     fraud_emails = ListField(api_name='FraudEmails')
     billing_emails = ListField(api_name='BillingEmails')
     platform_description = ListField(api_name='PlatformDescription')
-    platform_type = CharField(api_name='PlatformType', choices=constants.PLATFORM_TYPE)
+    platform_categorization = PlatformCategorizationField(api_name='PlatformCategorization')
     platform_url = CharField(api_name='PlatformURL')
     headquarters_address = AddressField(api_name='HeadquartersAddress')
     tax_number = CharField(api_name='TaxNumber')
@@ -87,6 +87,9 @@ class User(BaseModel):
     email = EmailField(api_name='Email', required=True)
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
 
+    def fixed_kwargs(self):
+        return {"user_id": self.id}
+
     class Meta:
         verbose_name = 'user'
         verbose_name_plural = 'users'
@@ -108,6 +111,12 @@ class User(BaseModel):
 
     def get_emoney(self):
         return self.emoney.get('', **{'user_id': self.get_pk()})
+
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'USER_GET_PREAUTHORIZATIONS'
+        return select.all(*args, **kwargs)
 
     def __str__(self):
         return '%s' % self.email
@@ -164,6 +173,7 @@ class LegalUser(User):
     statute = CharField(api_name='Statute')
     proof_of_registration = CharField(api_name='ProofOfRegistration')
     shareholder_declaration = CharField(api_name='ShareholderDeclaration')
+    company_number = CharField(api_name='CompanyNumber')
 
     class Meta:
         verbose_name = 'user'
@@ -194,7 +204,7 @@ class Wallet(BaseModel):
     description = CharField(api_name='Description', required=True)
     currency = CharField(api_name='Currency', required=True)
     balance = MoneyField(api_name='Balance')
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'wallet'
@@ -237,14 +247,20 @@ class Transfer(BaseModel):
     fees = MoneyField(api_name='Fees', required=True)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     credited_funds = MoneyField(api_name='CreditedFunds')
     status = CharField(api_name='Status',
                        choices=constants.STATUS_CHOICES,
                        default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'TRANSFER_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'transfer'
@@ -257,7 +273,7 @@ class Transfer(BaseModel):
 
 @python_2_unicode_compatible
 class Card(BaseModel):
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     expiration_date = CharField(api_name='ExpirationDate')
     alias = CharField(api_name='Alias')
     card_provider = CharField(api_name='CardProvider')
@@ -280,6 +296,18 @@ class Card(BaseModel):
         kwargs['fingerprint'] = fingerprint
         select = SelectQuery(cls, *args, **kwargs)
         select.identifier = 'CARDS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
+
+    def get_pre_authorizations(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(PreAuthorization, *args, **kwargs)
+        select.identifier = 'CARD_PRE_AUTHORIZATIONS'
+        return select.all(*args, **kwargs)
+
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
     class Meta:
@@ -306,7 +334,7 @@ class CardRegistration(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     status = CharField(api_name='Status', choices=constants.CARD_STATUS_CHOICES, default=None)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'cardregistration'
@@ -336,6 +364,12 @@ class Mandate(BaseModel):
     mandate_type = CharField(api_name='MandateType', choiced=constants.MANDATE_TYPE_CHOICES, default=None)
 
     creation_date = DateTimeField(api_name='CreationDate')
+
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'MANDATE_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'mandate'
@@ -372,11 +406,17 @@ class PayIn(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, args, kwargs)
+        select.identifier = 'PAYIN_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'payin'
@@ -410,10 +450,12 @@ class DirectPayIn(PayIn):
     secure_mode = CharField(api_name='SecureMode',
                             choices=constants.SECURE_MODE_CHOICES,
                             default=constants.SECURE_MODE_CHOICES.default)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
 
     class Meta:
         verbose_name = 'payin'
@@ -568,8 +610,10 @@ class PreAuthorization(BaseModel):
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
-    expiration_date = DateField(api_name='ExpirationDate')
+    expiration_date = DateTimeField(api_name='ExpirationDate')
     payin = ForeignKeyField(PayIn, api_name='PayinId')
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
 
     class Meta:
         verbose_name = 'preauthorization'
@@ -577,7 +621,9 @@ class PreAuthorization(BaseModel):
         url = {
             InsertQuery.identifier: '/preauthorizations/card/direct',
             UpdateQuery.identifier: '/preauthorizations',
-            SelectQuery.identifier: '/preauthorizations'
+            SelectQuery.identifier: '/preauthorizations',
+            'USER_GET_PREAUTHORIZATIONS': '/users/%(id)s/preauthorizations',
+            'CARD_PRE_AUTHORIZATIONS': '/cards/%(id)s/preauthorizations'
         }
 
 
@@ -608,7 +654,7 @@ class BankAccount(BaseModel):
     user = ForeignKeyField(User, api_name='UserId', related_name='bankaccounts')
     owner_name = CharField(api_name='OwnerName', required=True)
     owner_address = AddressField(api_name='OwnerAddress', required=True)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     type = CharField(api_name='Type', choices=constants.BANK_ACCOUNT_TYPE_CHOICES, default=None, required=True)
     iban = CharField(api_name='IBAN')
     bic = CharField(api_name='BIC')
@@ -624,6 +670,12 @@ class BankAccount(BaseModel):
     country = CharField(api_name='Country')
     bic = CharField(api_name='BIC')
     active = BooleanField(api_name='Active', default=True)
+
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'BANK_ACCOUNT_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'bankaccount'
@@ -659,13 +711,19 @@ class BankWirePayOut(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
     bank_wire_ref = CharField(api_name='BankWireRef')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'PAYOUT_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'payout'
@@ -688,7 +746,7 @@ class Refund(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
@@ -701,7 +759,15 @@ class Refund(BaseModel):
     class Meta:
         verbose_name = 'refund'
         verbose_name_plural = 'refunds'
-        url = '/refunds'
+        url = {
+            SelectQuery.identifier: '/refunds',
+            InsertQuery.identifier: '/refunds',
+            UpdateQuery.identifier: '/refunds',
+            'REPUDIATION_GET_REFUNDS': '/repudiations/%(id)s/refunds',
+            'TRANSFER_GET_REFUNDS': '/transfers/%(id)s/refunds',
+            'PAYOUT_GET_REFUNDS': '/payouts/%(id)s/refunds',
+            'PAYIN_GET_REFUNDS': '/payins/%(id)s/refunds'
+        }
 
 
 @python_2_unicode_compatible
@@ -791,17 +857,25 @@ class Transaction(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
     wallet = ForeignKeyField(Wallet, related_name='transactions')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'transaction'
         verbose_name_plural = 'transactions'
-        url = '/users/%(user_id)s/transactions'
+        url = {
+            SelectQuery.identifier: '/users/%(user_id)s/transactions',
+            InsertQuery.identifier: '/users/%(user_id)s/transactions',
+            UpdateQuery.identifier: '/users/%(user_id)s/transactions',
+            'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions',
+            'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
+            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions'
+        }
 
     def __str__(self):
         return 'Transaction n.%s' % self.id
@@ -1057,11 +1131,17 @@ class Repudiation(BaseModel):
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
 
     creation_date = DateTimeField(api_name='CreationDate')
+
+    def get_refunds(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Refund, *args, **kwargs)
+        select.identifier = 'REPUDIATION_GET_REFUNDS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'repudiation'
@@ -1252,7 +1332,7 @@ class BankingAliasIBAN(BankingAlias):
 
 
 class UboDeclaration(BaseModel):
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     user_id = CharField(api_name='UserId')
     status = CharField(api_name='Status', choices=constants.UBO_DECLARATION_STATUS_CHOICES, default=None)
     refused_reason_types = ListField(api_name='RefusedReasonTypes')

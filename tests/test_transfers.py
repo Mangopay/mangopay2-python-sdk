@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
 from .resources import Transfer, Wallet, DirectPayIn
-from .test_base import BaseTest
+from .test_base import BaseTest, BaseTestLive
 
 from mangopay.utils import Money
 
@@ -86,7 +86,7 @@ class TransfersTest(BaseTest):
                 'body': {
                     "Id": "1169434",
                     "Tag": "custom tag",
-                    "CreationDate": "2015-05-15",
+                    "CreationDate": 1431648000,
                     "AuthorId": "1167495",
                     "CreditedUserId": "1167502",
                     "DebitedFunds": {
@@ -201,3 +201,13 @@ class TransfersTest(BaseTest):
         self.assertIsInstance(retrieved_transfer, Transfer)
 
         self.assertEqual(getattr(retrieved_transfer, 'id'), transfer.get_pk())
+
+
+class Transfers(BaseTestLive):
+    def test_Transfer_GetRefunds(self):
+        transfer = BaseTestLive.get_johns_transfer()
+
+        get_refunds = transfer.get_refunds()
+
+        self.assertIsNotNone(get_refunds)
+        self.assertIsInstance(get_refunds, list)

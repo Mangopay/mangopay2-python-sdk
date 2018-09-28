@@ -586,7 +586,7 @@ class UsersTest(BaseTest):
                 'body': {
                     "Id": "1169434",
                     "Tag": "DefaultTag",
-                    "CreationDate": "2015-05-15",
+                    "CreationDate": 1431648000,
                     "AuthorId": "1167495",
                     "CreditedUserId": "1167502",
                     "DebitedFunds": {
@@ -619,7 +619,7 @@ class UsersTest(BaseTest):
                     {
                         "Id": "1174837",
                         "Tag": "my transfer",
-                        "CreationDate": "2015-05-15",
+                        "CreationDate": 1431648000,
                         "AuthorId": "1167495",
                         "CreditedUserId": "1167502",
                         "DebitedFunds": {
@@ -776,3 +776,31 @@ class UserTestLive(BaseTestLive):
         documents = user.documents.all()
 
         self.assertTrue(documents)
+
+
+class PayOutsTestLive(BaseTestLive):
+
+    def test_PayOut_GetRefunds(self):
+        payout = BaseTestLive.get_johns_payout()
+
+        refunds = payout.get_refunds()
+
+        self.assertIsNotNone(refunds)
+        self.assertIsInstance(refunds, list)
+
+class PayInsTestLive(BaseTestLive):
+    def test_PayIn_GetRefunds(self):
+        payin = BaseTestLive.get_johns_payin()
+
+        get_refunds = payin.get_refunds()
+
+        self.assertIsNotNone(get_refunds)
+        self.assertIsInstance(get_refunds, list)
+
+    def test_User_GetPreAuthorizationss(self):
+        user = BaseTestLive.get_john()
+
+        get_preauthorizations = user.get_pre_authorizations()
+
+        self.assertIsNotNone(get_preauthorizations)
+        self.assertIsInstance(get_preauthorizations, list)

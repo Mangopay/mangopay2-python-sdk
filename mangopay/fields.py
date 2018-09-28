@@ -1,11 +1,11 @@
+import datetime
 import json
 import re
 import time
-import datetime
 import six
-
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo \
-
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
+    Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo, \
+PlatformCategorization, Billing, SecurityInfo
 import sys
 
 
@@ -206,6 +206,61 @@ class MoneyField(Field):
 
         return value
 
+
+class PlatformCategorizationField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PlatformCategorization(business_type=value['BusinessType'], sector=value['Sector'])
+          
+        return value
+           
+    def api_value(self, value):
+        value = super(PlatformCategorizationField, self).api_value(value)
+
+        if isinstance(value, PlatformCategorization):
+            value = {
+                'BusinessType': value.business_type,
+                'Sector': value.sector
+            }
+
+        return value  
+              
+              
+class BillingField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return Billing(address=value['Address'])
+        return value  
+
+    def api_value(self, value):
+        value = super(BillingField, self).api_value(value)
+
+        if isinstance(value, Billing):
+            value = {
+                'Address': value.address
+            }
+
+        return value
+
+
+class SecurityInfoField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return SecurityInfo(avs_result=value['AVSResult'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(SecurityInfoField, self).api_value(value)
+
+        if isinstance(value, SecurityInfo):
+            value = {
+                'AVSResult': value.avs_result
+            }
+
+        return value
+
+
 class DebitedBankAccountField(Field):
     def python_value(self, value):
         if value is not None:
@@ -222,6 +277,7 @@ class DebitedBankAccountField(Field):
             }
 
         return value
+
 
 class ReportTransactionsFiltersField(Field):
     def python_value(self, value):
@@ -509,15 +565,18 @@ class ReverseForeignRelatedObject(object):
         self.related_model = related_model
 
     def __get__(self, instance, instance_type=None):
-        return RelatedManager(instance, self.related_model)
+        fixed_kwargs = instance.fixed_kwargs()
+        return RelatedManager(instance, self.related_model, fixed_kwargs)
 
 
 class RelatedManager(object):
-    def __init__(self, instance, related_model):
+    def __init__(self, instance, related_model, fixed_kwargs=None):
         self.instance = instance
         self.related_model = related_model
+        self.fixed_kwargs = fixed_kwargs
 
     def get(self, pk, **kwargs):
+        kwargs.update(self.fixed_kwargs)
         return self.instance.get(pk, self.instance.handler, self.related_model, **kwargs)
 
     def all(self, **kwargs):
