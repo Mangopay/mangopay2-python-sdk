@@ -100,7 +100,7 @@ class AuthorizationTokenManager(object):
 
     def get_evn_key(self):
         return hashlib.md5((self._handler.client_id + self._handler.api_url +
-                            self._handler.passphrase).encode('utf-8')).hexdigest()
+                            self._handler.apikey).encode('utf-8')).hexdigest()
 
 
 class ApiAuthorization(object):
@@ -116,13 +116,13 @@ class ApiAuthorization(object):
         return result
 
     def basic_token(self):
-        if self._handler.client_id is None or self._handler.passphrase is None:
+        if self._handler.client_id is None or self._handler.apikey is None:
             raise AuthenticationError(
                 'Authentication failed. (Please set your Mangopay API username '
                 'and password using "mangopay.client_id = CLIENT_ID" '
-                'and "mangopay.passphrase = PASSPHRASE").')
+                'and "mangopay.apikey = APIKEY").')
 
-        credentials = '%s:%s' % (self._handler.client_id, self._handler.passphrase)
+        credentials = '%s:%s' % (self._handler.client_id, self._handler.apikey)
         credentials = base64.b64encode(credentials.encode('ascii'))
 
         if six.PY3:

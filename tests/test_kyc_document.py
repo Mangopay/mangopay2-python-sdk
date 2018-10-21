@@ -16,7 +16,7 @@ class KYCDocumentTestLive(BaseTestLive):
         result2 = Document.all(page=1, per_page=2, Sort='CreationDate:DESC')
 
         self.assertTrue(result2)
-        self.assertFalse(result[0].id == result2[0].id)
+        self.assertFalse(result.data[0].id == result2.data[0].id)
 
     def test_GetKycDocument(self):
         johns_document = BaseTestLive.get_johns_kyc_document()

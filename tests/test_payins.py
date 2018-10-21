@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
+import time
 import unittest
+from datetime import date
+
+import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate
+from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo)
 from tests import settings
 from .resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
                         CardWebPayIn, DirectDebitWebPayIn)
 from .test_base import BaseTest, BaseTestLive
-
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo)
-
-from datetime import date
-
-import responses
-import time
 
 
 class PayInsTest(BaseTest):
@@ -291,7 +289,7 @@ class PayInsTest(BaseTest):
                 "PaymentType": "PAYPAL",
                 "ExecutionType": "DIRECT",
                 "ReturnURL": "http://www.ulule.com/?transactionId=1169430",
-                "RedirectURL" :"https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-68L249465R9617720",
+                "RedirectURL": "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-68L249465R9617720",
                 "ShippingAddress": {
                     "RecipientName": "Unittests User",
                     "Address": {
@@ -329,7 +327,8 @@ class PayInsTest(BaseTest):
         self.assertEqual(paypal_payin.type, 'PAYIN')
         self.assertEqual(paypal_payin.payment_type, 'PAYPAL')
         self.assertIsNotNone(paypal_payin.get_pk())
-        self.assertTrue(paypal_payin.redirect_url.startswith('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token'))
+        self.assertTrue(paypal_payin.redirect_url.startswith(
+            'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token'))
 
         self.assertTrue(paypal_payin.return_url.startswith('http://www.ulule.com/?transactionId='))
         paypal_payin_params.pop('return_url')
@@ -516,6 +515,16 @@ class PayInsTest(BaseTest):
         self.assertEqual(payin.credited_wallet.id, payin.CreditedWalletId)
         payin.Tag = 'x'
         self.assertIs(payin.Tag, payin.tag)
+
+    def test_get_paypal_with_account_email(self):
+        payin_id = "54088959"
+        paypal_buyer_email = "paypal-buyer-user@mangopay.com"
+        payin = PayPalPayIn.get(payin_id)
+
+        self.assertIsNotNone(payin, "PayPal pay in is null")
+        self.assertEqual(payin.payment_type, "PAYPAL")
+        self.assertEqual(payin_id, payin.id)
+        self.assertEqual(paypal_buyer_email, payin.buyer_account_email)
 
 
 class PayInsTestLive(BaseTestLive):

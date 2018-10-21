@@ -207,7 +207,7 @@ class Transfers(BaseTestLive):
     def test_Transfer_GetRefunds(self):
         transfer = BaseTestLive.get_johns_transfer()
 
-        get_refunds = transfer.get_refunds()
+        refunds_page = transfer.get_refunds()
 
-        self.assertIsNotNone(get_refunds)
-        self.assertIsInstance(get_refunds, list)
+        self.assertIsNotNone(refunds_page.data)
+        self.assertIsInstance(refunds_page.data, list)

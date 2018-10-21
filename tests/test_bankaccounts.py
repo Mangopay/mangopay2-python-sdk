@@ -486,10 +486,10 @@ class BankAccountTestLive(BaseTestLive):
     def test_BankAccount_getTransactions(self):
         account = BaseTestLive.get_johns_account()
 
-        get_transactions = account.get_transactions()
+        transactions_page = account.get_transactions()
 
-        self.assertIsNotNone(get_transactions)
-        self.assertIsInstance(get_transactions, list)
+        self.assertIsNotNone(transactions_page.data)
+        self.assertIsInstance(transactions_page.data, list)
 
     def test_GetBankAccount(self):
         account = BaseTestLive.get_johns_account()
