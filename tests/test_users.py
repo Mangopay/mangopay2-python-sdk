@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 
+import re
+
+import requests
+import responses
+
+from mangopay.resources import (User, NaturalUser, Wallet,
+                                LegalUser, Transfer, Transaction, UboDeclaration)
+from mangopay.utils import Money, Address, DeclaredUbo
 from tests import settings
 from tests.mocks import get_fixture
 from tests.mocks import today, today_timestamp
-from mangopay.resources import (User, NaturalUser, Wallet,
-                                LegalUser, Transfer, Transaction, UboDeclaration)
 from tests.test_base import BaseTest, BaseTestLive
-
-from mangopay.utils import Money, Address, DeclaredUbo
-
-import responses
-import requests
-import time
-import re
 
 requests_session = requests.Session()
 
@@ -363,7 +361,7 @@ class UsersTest(BaseTest):
         })
 
         users = User.all()
-        self.assertIsInstance(users, list)
+        self.assertIsInstance(users.data, list)
 
         self.assertIsInstance(users[0], NaturalUser)
         self.assertEqual(users[0].email, 'victor@hugo.com')
@@ -377,32 +375,32 @@ class UsersTest(BaseTest):
         self.mock_user_list_page1()
         self.mock_user_list_2_per_page()
 
-        users = User.all()
-        self.assertEqual(len(users), 10)
-        for user in users:
+        users_page = User.all()
+        self.assertEqual(len(users_page), 10)
+        for user in users_page:
             if isinstance(user, NaturalUser):
                 self.assertIsNotNone(user.first_name)
             else:
                 self.assertIsInstance(user, LegalUser)
                 self.assertIsNotNone(user.name)
 
-        users = User.all(page=1, per_page=2)
-        self.assertEqual(len(users), 2)
+        users_page = User.all(page=1, per_page=2)
+        self.assertEqual(len(users_page), 2)
 
-        first_instance = users[0]
+        first_instance = users_page.data[0]
 
-        users = User.all(page=2, per_page=3)
-        self.assertEqual(len(users), 3)
-        self.assertFalse(first_instance in users)
+        users_page = User.all(page=2, per_page=3)
+        self.assertEqual(len(users_page), 3)
+        self.assertFalse(first_instance in users_page)
 
         # with self.assertRaises(APIError):
-        #     users = User.all(random_key=1, another_random_key=2)
+        #     users_page = User.all(random_key=1, another_random_key=2)
 
-        users = User.all(page=1)
-        self.assertEqual(len(users), 10)
+        users_page = User.all(page=1)
+        self.assertEqual(len(users_page), 10)
 
-        users = User.all(per_page=2)
-        self.assertEqual(len(users), 2)
+        users_page = User.all(per_page=2)
+        self.assertEqual(len(users_page), 2)
 
     @responses.activate
     def test_retrieve_specific_natural_user(self):
@@ -785,22 +783,23 @@ class PayOutsTestLive(BaseTestLive):
 
         refunds = payout.get_refunds()
 
-        self.assertIsNotNone(refunds)
-        self.assertIsInstance(refunds, list)
+        self.assertIsNotNone(refunds.data)
+        self.assertIsInstance(refunds.data, list)
+
 
 class PayInsTestLive(BaseTestLive):
     def test_PayIn_GetRefunds(self):
         payin = BaseTestLive.get_johns_payin()
 
-        get_refunds = payin.get_refunds()
+        refunds_page = payin.get_refunds()
 
-        self.assertIsNotNone(get_refunds)
-        self.assertIsInstance(get_refunds, list)
+        self.assertIsNotNone(refunds_page.data)
+        self.assertIsInstance(refunds_page.data, list)
 
     def test_User_GetPreAuthorizationss(self):
         user = BaseTestLive.get_john()
 
-        get_preauthorizations = user.get_pre_authorizations()
+        get_preauthorizations_page = user.get_pre_authorizations()
 
-        self.assertIsNotNone(get_preauthorizations)
-        self.assertIsInstance(get_preauthorizations, list)
+        self.assertIsNotNone(get_preauthorizations_page.data)
+        self.assertIsInstance(get_preauthorizations_page.data, list)
