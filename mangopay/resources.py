@@ -36,6 +36,7 @@ class Client(BaseApiModel):
     platform_categorization = PlatformCategorizationField(api_name='PlatformCategorization')
     platform_url = CharField(api_name='PlatformURL')
     headquarters_address = AddressField(api_name='HeadquartersAddress')
+    headquarters_phone_number = CharField(api_name='HeadquartersPhoneNumber')
     tax_number = CharField(api_name='TaxNumber')
 
     class Meta:

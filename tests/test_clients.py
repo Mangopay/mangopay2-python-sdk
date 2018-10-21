@@ -15,15 +15,18 @@ class ClientsTestLive(BaseTestLive):
         self.assertEqual('sdk-unit-tests', client.client_id)
 
     def test_ClientUpdate(self):
+        phone_number = str(random.randint(1, 99999999))
         client = Client.get()
         client.primary_button_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
         client.primary_theme_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
-
+        client.headquarters_phone_number = phone_number
         new_client = client.update()
 
         self.assertIsNotNone(new_client)
         self.assertEqual(client.primary_button_colour, new_client['primary_button_colour'])
         self.assertEqual(client.primary_theme_colour, new_client['primary_theme_colour'])
+        self.assertEqual(client.headquarters_phone_number, phone_number, "Headquarter's phone number was not updated "
+                                                                         "correctly")
 
     def test_LogoUpload(self):
         file_path = os.path.join(os.path.dirname(__file__), 'resources', 'TestKycPageFile.png')
@@ -34,4 +37,3 @@ class ClientsTestLive(BaseTestLive):
         client_logo = ClientLogo()
         client_logo.file = encoded_file
         client_logo.upload()
-
