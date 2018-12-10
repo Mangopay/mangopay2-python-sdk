@@ -78,6 +78,7 @@ class PayInsTest(BaseTest):
                     "CardId": "6784287",
                     "SecureModeReturnURL": None,
                     "SecureModeRedirectURL": None,
+                    "Culture": "FR",
                     "SecureModeNeeded": False
                 },
                 'status': 200
@@ -134,7 +135,8 @@ class PayInsTest(BaseTest):
             "credited_wallet": self.legal_user_wallet,
             "card": self.card,
             "secure_mode": "DEFAULT",
-            "secure_mode_return_url": "http://www.ulule.com/"
+            "secure_mode_return_url": "http://www.ulule.com/",
+            "culture": "FR",
         }
         direct_payin = DirectPayIn(**direct_payin_params)
 
@@ -165,6 +167,7 @@ class PayInsTest(BaseTest):
         self.assertIsInstance(payin, PayIn)
 
         self.assertEqual(getattr(payin, 'id'), direct_payin.get_pk())
+        self.assertEqual(getattr(payin, 'culture'), direct_payin.culture)
 
         legal_user_wallet = Wallet.get(self.legal_user_wallet.get_pk())
         self.assertEqual(legal_user_wallet.balance.amount, 9900)
