@@ -230,7 +230,7 @@ class PlatformCategorization(object):
 
     def __str__(self):
         return 'PlatformCategorization: %s %s' % (self.business_type, self.sector)
-      
+
 @add_camelcase_aliases
 class Billing(object):
     def __init__(self, address=None):
@@ -297,6 +297,29 @@ class Address(object):
             "PostalCode": self.postal_code,
             "City": self.city,
             "Region": self.region,
+            "Country": self.country,
+        }
+
+
+@add_camelcase_aliases
+class Birthplace(object):
+    def __init__(self, city=None, country=None):
+        self.city = city
+        self.country = country
+
+    def __str__(self):
+        return 'Birthplace: %s, %s' % (self.city, self.country)
+
+    def __eq__(self, other):
+        if isinstance(other, Birthplace):
+            stat = ((self.city == other.city) and
+                    (self.country == other.country))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "City": self.city,
             "Country": self.country,
         }
 
@@ -392,28 +415,6 @@ class Reason(object):
         if isinstance(other, Reason):
             return ((self.type == other.type) and
                     (self.message == other.message))
-        return False
-
-
-@add_camelcase_aliases
-class DeclaredUbo(object):
-    def __init__(self, user_id=None, status=None, refused_reason_type=None, refused_reason_message=None):
-        self.user_id = user_id
-        self.status = status
-        self.refused_reason_type = refused_reason_type
-        self.refused_reason_message = refused_reason_message
-
-    def __str__(self):
-        return 'Declared UBO ID: %s Status: %s' +\
-               ('' if self.refused_reason_type is None else ' Refused Because: %s (%s)')\
-                % self.user_id, self.status, self.refused_reason_message, self.refused_reason_type
-
-    def __eq__(self, other):
-        if isinstance(other, DeclaredUbo):
-            return ((self.user_id == other.user_id) and
-                    (self.status == other.status) and
-                    (self.refused_reason_type == other.refused_reason_type) and
-                    (self.refused_reason_message == other.refused_reason_message))
         return False
 
 

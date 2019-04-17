@@ -1,7 +1,7 @@
 import six
 
 from mangopay.signals import pre_save, post_save
-from mangopay.utils import Money, DeclaredUbo
+from mangopay.utils import Money
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
 from .compat import python_2_unicode_compatible
@@ -11,7 +11,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
+                     BirthplaceField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -1333,73 +1334,33 @@ class BankingAliasIBAN(BankingAlias):
 
 class UboDeclaration(BaseModel):
     creation_date = DateField(api_name='CreationDate')
-    user_id = CharField(api_name='UserId')
     status = CharField(api_name='Status', choices=constants.UBO_DECLARATION_STATUS_CHOICES, default=None)
     refused_reason_types = ListField(api_name='RefusedReasonTypes')
     refused_reason_message = CharField(api_name='RefusedReasonMessage')
-    declared_ubos = ListField(api_name='DeclaredUBOs')
+    user = ForeignKeyField(User)
 
     class Meta:
-        verbose_name = 'ubodeclaration'
-        verbose_name_plural = 'ubodeclarations'
-        url = {
-            InsertQuery.identifier: '/users/legal/%(user_id)s/ubodeclarations',
-            UpdateQuery.identifier: '/ubodeclarations'
-        }
+        verbose_name = 'KYC/ubodeclaration'
+        verbose_name_plural = 'KYC/ubodeclarations'
+        url = '/users/%(user_id)s/KYC/ubodeclarations'
 
-    def save(self, handler=None, cls=None, idempotency_key=None):
-        self._handler = handler or self.handler
 
-        field_dict = dict(self._data)
-        field_dict.update(self.get_field_dict())
-        field_dict.pop(self._meta.pk_name)
 
-        all_fields = self._meta.fields
+@python_2_unicode_compatible
+class Ubo(BaseModel):
+    creation_date = DateField(api_name='CreationDate')
+    first_name = CharField(api_name='FirstName', required=True)
+    last_name = CharField(api_name='LastName', required=True)
+    address = AddressField(api_name='Address', required=True)
+    birthday = DateField(api_name='Birthday', required=True)
+    nationality = CharField(api_name='Nationality', required=True)
+    birthplace = BirthplaceField(api_name='Birthplace', required=True)
+    is_active = BooleanField(api_name='IsActive', default=True)
+    ubo_declaration = ForeignKeyField(UboDeclaration)
+    user = ForeignKeyField(UboDeclaration)
 
-        if cls is None:
-            cls = self.__class__
+    class Meta:
+        verbose_name = 'ubo'
+        verbose_name_plural = 'ubos'
+        url = '/users/%(user_id)s/KYC/ubodeclarations/%(ubo_declaration_id)s/ubos'
 
-        created = False
-
-        pre_save.send(cls, instance=self)
-
-        if self.get_pk():
-            declared_ubo_ids = []
-            for ubo in field_dict['declared_ubos']:
-                declared_ubo_ids.append(ubo.user_id)
-            field_dict['declared_ubos'] = declared_ubo_ids
-            update = self.update(
-                self.get_pk(),
-                **field_dict
-            )
-            result = update.execute(handler)
-        else:
-            for k, v in all_fields.items():
-                if v.required is True and field_dict[v.name] is None:
-                    raise ValueError('Missing mandatory field: ' + v.name)
-
-            insert = self.insert(idempotency_key=idempotency_key, **field_dict)
-            result = insert.execute(handler)
-
-            created = True
-
-        post_save.send(cls, instance=self, created=created)
-
-        for key, value in result.items():
-            setattr(self, key, value)
-
-        declared_ubo_objects = []
-        for ubo in result['declared_ubos']:
-            ubo_object = DeclaredUbo()
-            ubo_object.user_id = ubo['UserId']
-            ubo_object.status = ubo['Status']
-            if (hasattr(ubo, 'RefusedReasonType')):
-                ubo_object.refused_reason_type = ubo['RefusedReasonType']
-            if (hasattr(ubo, 'RefusedReasonMessage')):
-                ubo_object.refused_reason_message = ubo['RefusedReasonMessage']
-            declared_ubo_objects.append(ubo_object)
-
-        setattr(self, 'declared_ubos', declared_ubo_objects)
-        result['declared_ubos'] = declared_ubo_objects
-
-        return result

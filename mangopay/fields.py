@@ -4,8 +4,8 @@ import re
 import time
 import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
-    Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo, \
-PlatformCategorization, Billing, SecurityInfo
+    Reason, ReportTransactionsFilters, ReportWalletsFilters, \
+    PlatformCategorization, Billing, SecurityInfo, Birthplace
 import sys
 
 
@@ -211,9 +211,9 @@ class PlatformCategorizationField(Field):
     def python_value(self, value):
         if value is not None:
             return PlatformCategorization(business_type=value['BusinessType'], sector=value['Sector'])
-          
+
         return value
-           
+
     def api_value(self, value):
         value = super(PlatformCategorizationField, self).api_value(value)
 
@@ -223,14 +223,14 @@ class PlatformCategorizationField(Field):
                 'Sector': value.sector
             }
 
-        return value  
-              
-              
+        return value
+
+
 class BillingField(Field):
     def python_value(self, value):
         if value is not None:
             return Billing(address=value['Address'])
-        return value  
+        return value
 
     def api_value(self, value):
         value = super(BillingField, self).api_value(value)
@@ -451,6 +451,29 @@ class AddressField(Field):
         value = super(AddressField, self).api_value(value)
 
         if isinstance(value, Address):
+            value = {
+                'AddressLine1': value.address_line_1,
+                'AddressLine2': value.address_line_2,
+                'City': value.city,
+                'Region': value.region,
+                'PostalCode': value.postal_code,
+                'Country': value.country
+            }
+
+        return value
+
+
+class BirthplaceField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return Birthplace(city=value['City'], country=value['Country'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(BirthplaceField, self).api_value(value)
+
+        if isinstance(value, Birthplace):
             value = {
                 'AddressLine1': value.address_line_1,
                 'AddressLine2': value.address_line_2,
