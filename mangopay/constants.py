@@ -1,6 +1,5 @@
 from .utils import Choices
 
-
 USER_TYPE_CHOICES = Choices(
     ('NATURAL', 'natural', 'Natural user'),
     ('LEGAL', 'legal', 'Legal user')
@@ -237,13 +236,14 @@ UBO_DECLARATION_STATUS_CHOICES = Choices(
     ("CREATED", "created", "Created"),
     ("VALIDATION_ASKED", "validation_asked", "Validation Asked"),
     ("VALIDATED", "validated", "Validated"),
-    ("REFUSED", "refused", "Refused")
+    ("REFUSED", "refused", "Refused"),
+    ("INCOMPLETE", "incomplete", "Incomplete")
 )
 
 UBO_DECLARATION_REFUSED_REASON_CHOICES = Choices(
     ("MISSING_UBO", "missing_ubo", "Missing UBO"),
-    ("INVALID_DECLARED_UBO", "invalid_declared_ubo", "Invalid Declared UBO"),
-    ("INVALID_UBO_DETAILS", "invalid_ubo_details", "Invalid UBO Details")
+    ("DECLARATION_DO_NOT_MATCH_UBO_INFORMATION", "declaration_do_not_match_ubo_information", "Declaration Do Not "
+                                                                                             "Match UBO Information")
 )
 
 DECLARED_UBO_STATUS_CHOICES = Choices(

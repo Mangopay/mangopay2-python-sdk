@@ -48,7 +48,10 @@ class SelectQuery(BaseQuery):
         handler = handler or self.handler
 
         meta_url = self.parse_url(model._meta.url, kwargs)
-        url = '%s/%s' % (meta_url, reference)
+        if reference != "":
+            url = '%s/%s' % (meta_url, reference)
+        else:
+            url = '%s' % meta_url
 
         result, data = handler.request(self.method, url)
 
