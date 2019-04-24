@@ -36,11 +36,7 @@ class UbosTests(BaseTest):
         self.mock_get_ubo_declaration()
 
         ubo_declaration, user = self.legal_user_ubo_declaration
-        params = {
-            "user_id": user.id
-        }
-
-        fetched_declaration = UboDeclaration.get(ubo_declaration.get_pk(), **params)
+        fetched_declaration = UboDeclaration.get(ubo_declaration.get_pk(), **{"user_id": user.get_pk()})
         self.assertIsNotNone(fetched_declaration)
         self.assertEquals(ubo_declaration.id, fetched_declaration.id)
 
@@ -95,7 +91,7 @@ class UbosTests(BaseTest):
         }
         to_be_updated = Ubo.create(**params)
 
-        to_be_update_params = {
+        params_to_be_updated = {
             "user_id": user.get_pk(),
             "ubo_declaration_id": ubo_declaration.get_pk(),
             "first_name": "UpdatedFirstName",
@@ -105,10 +101,10 @@ class UbosTests(BaseTest):
             "nationality": "GB",
             "birthplace": Birthplace(country='GB')
         }
-        ubo = to_be_updated.update(to_be_updated.get_pk(), **to_be_update_params).execute()
+        updated_ubo = to_be_updated.update(to_be_updated.get_pk(), **params_to_be_updated).execute()
 
-        self.assertEquals(ubo['first_name'], "UpdatedFirstName")
-        self.assertEquals(ubo['nationality'], "GB")
+        self.assertEquals(updated_ubo['first_name'], "UpdatedFirstName")
+        self.assertEquals(updated_ubo['nationality'], "GB")
 
     @responses.activate
     def test_get_ubo(self):

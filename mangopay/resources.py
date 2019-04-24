@@ -1344,9 +1344,10 @@ class UboDeclaration(BaseModel):
     class Meta:
         verbose_name = 'ubodeclaration'
         verbose_name_plural = 'ubodeclarations'
+
+        # For Update as well as Select, 'ubo_declaration_id' is provided by the 'reference' param of the update method
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations',
-            # ubo_declaration_id will be set on "reference"
             UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations',
             SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations'
         }
@@ -1373,9 +1374,10 @@ class Ubo(BaseModel):
     class Meta:
         verbose_name = 'ubo'
         verbose_name_plural = 'ubos'
+
+        # For Update, 'ubo_id' is provided by the 'reference' param of the update method
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
-            # ubo_id will be set on "reference"
             UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
             SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/%(ubo_id)s'
         }
