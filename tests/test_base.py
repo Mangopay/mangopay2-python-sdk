@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-import requests
-
+import time
+import unittest
 from datetime import date
+
+import requests
+import responses
 from exam.decorators import fixture
 
 from mangopay import APIRequest
-from mangopay.utils import Address, ReportTransactionsFilters
+from mangopay import get_default_handler
+from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
+from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo
+from mangopay.utils import Address, ReportTransactionsFilters, Birthplace
 from . import settings
 from .mocks import RegisteredMocks
 from .resources import (NaturalUser, LegalUser, Wallet,
                         CardRegistration, Card, BankWirePayOut, CardWebPayIn, Transfer, Money)
-
-import responses
-import time
-import unittest
-
-from mangopay import get_default_handler
-from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
-from mangopay.resources import BankAccount, Document, ReportTransactions
 
 _activate = responses.activate
 
@@ -190,6 +188,56 @@ class BaseTest(RegisteredMocks):
 
         return card
 
+    @fixture
+    def legal_user_ubo_declaration(self):
+        self.mock_declarative_user()
+        self.mock_ubo_declaration()
+
+        params = {
+            "first_name": "Victor",
+            "last_name": "Hugo",
+            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR'),
+            "birthday": 1231432,
+            "nationality": "FR",
+            "country_of_residence": "FR",
+            "occupation": "Writer",
+            "income_range": 6,
+            "proof_of_identity": None,
+            "proof_of_address": None,
+            "person_type": "NATURAL",
+            "email": "victor@hugo.com",
+            "tag": "custom tag",
+            "capacity": "DECLARATIVE"
+        }
+        user = NaturalUser(**params)
+        user.save()
+
+        params = {
+            "user": user,
+            "creation_date": 1554803756
+        }
+
+        ubo_declaration = UboDeclaration(**params)
+        ubo_declaration.save()
+        return ubo_declaration, user
+
+    @fixture
+    def ubo_declaration_ubo(self):
+        params = {
+            "first_name": "Victor",
+            "last_name": "Hugo",
+            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR'),
+            "birthday": 1231432,
+            "nationality": "FR",
+            "birthplace": Birthplace(city='Paris', country='FR')
+        }
+        ubo = Ubo(**params)
+        return ubo
+
 
 class BaseTestLive(unittest.TestCase):
     _john = None
@@ -308,7 +356,7 @@ class BaseTestLive(unittest.TestCase):
             payout.payment_type = 'BANK_WIRE'
             BaseTestLive._johns_payout = BankWirePayOut(**payout.save())
         return BaseTestLive._johns_payout
-    
+
     @staticmethod
     def get_johns_payin(recreate=False):
         if BaseTestLive._johns_payin is None or recreate:
