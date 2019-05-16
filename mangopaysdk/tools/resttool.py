@@ -87,7 +87,9 @@ class BaseRestTool(object):
         """Prepare and send the request"""
         prepared_request = request.prepare()
         session = requests.Session()
-        response = session.send(prepared_request, verify=self._sslVerification)
+        # response = session.send(prepared_request, verify=self._sslVerification)
+        response = session.send(prepared_request, verify=False)
+
         return response
 
     def _runRequest(self, urlMethod, pagination, additionalUrlParams):
