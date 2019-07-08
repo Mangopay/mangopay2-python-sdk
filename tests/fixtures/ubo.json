@@ -1,0 +1,19 @@
+{
+  "Id": "1232432",
+  "FirstName": "Victor",
+  "LastName": "Hugo",
+  "Address": {
+    "AddressLine1": "AddressLine1",
+    "AddressLine2": "AddressLine2",
+    "City": "City",
+    "Region": "Region",
+    "PostalCode": "11222",
+    "Country": "FR"
+  },
+  "Birthday": 1231432,
+  "Nationality": "FR",
+  "Birthplace": {
+    "City": "Paris",
+    "Country": "FR"
+  }
+}

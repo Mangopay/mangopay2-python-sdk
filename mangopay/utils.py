@@ -1,18 +1,19 @@
 # see: http://hustoknow.blogspot.com/2011/01/m2crypto-and-facebook-python-sdk.html
 from __future__ import unicode_literals
 
-from calendar import timegm
 import copy
 import datetime
 import decimal
 import inspect
+import sys
+from calendar import timegm
+from functools import wraps
+
 import pytz
 import six
-import sys
 
-from functools import wraps
-from .exceptions import CurrencyMismatch
 from .compat import python_2_unicode_compatible
+from .exceptions import CurrencyMismatch
 
 if six.PY3:
     from urllib import request
@@ -396,25 +397,26 @@ class Reason(object):
 
 
 @add_camelcase_aliases
-class DeclaredUbo(object):
-    def __init__(self, user_id=None, status=None, refused_reason_type=None, refused_reason_message=None):
-        self.user_id = user_id
-        self.status = status
-        self.refused_reason_type = refused_reason_type
-        self.refused_reason_message = refused_reason_message
+class Birthplace(object):
+    def __init__(self, city=None, country=None):
+        self.city = city
+        self.country = country
 
     def __str__(self):
-        return 'Declared UBO ID: %s Status: %s' +\
-               ('' if self.refused_reason_type is None else ' Refused Because: %s (%s)')\
-                % self.user_id, self.status, self.refused_reason_message, self.refused_reason_type
+        return 'Birthplace: %s, %s' % (self.city, self.country)
 
     def __eq__(self, other):
-        if isinstance(other, DeclaredUbo):
-            return ((self.user_id == other.user_id) and
-                    (self.status == other.status) and
-                    (self.refused_reason_type == other.refused_reason_type) and
-                    (self.refused_reason_message == other.refused_reason_message))
+        if isinstance(other, Birthplace):
+            stat = ((self.city == other.city) and
+                    (self.country == other.country))
+            return stat
         return False
+
+    def to_api_json(self):
+        return {
+            "City": self.city,
+            "Country": self.country,
+        }
 
 
 # This code belongs to https://github.com/carljm/django-model-utils
