@@ -10,8 +10,9 @@ sudo: required
 dist: xenial
 deploy:
   provider: pypi
-  user: $USER
-  password: $PASS
+  user: mangopay
+  password:
+     secure: "X1fRaFg+BH6DzYuR59Nsl3A3xhO2UzpVPxRqi31UJG/Y5SIuArBDhacXms6kMHh4IcBC5gDHUIsngU+nTXasO7icYHfSCxUqcx7B1n4GteUD9Sr922dLU+5lgTzzIg8kh0rzHDqFBX33RV3xzHUCuAW+KKRl4LrLWWA4SlluVhI="
   on:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
