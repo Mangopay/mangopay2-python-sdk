@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import Transfer, Transaction
-from .test_base import BaseTest
+from tests.resources import Transfer, Transaction
+from tests.test_base import BaseTest
 
 from mangopay.utils import Money
 

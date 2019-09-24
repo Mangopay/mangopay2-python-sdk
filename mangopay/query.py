@@ -111,11 +111,12 @@ class InsertQuery(BaseQuery):
 
     def parse_insert(self):
         pairs = {}
-        for k, v in six.iteritems(self.insert_query):
-            field = self.model._meta.get_field_by_name(k)
+        if hasattr(self.model, "_meta"):
+            for k, v in six.iteritems(self.insert_query):
+                field = self.model._meta.get_field_by_name(k)
 
-            if field.required or v is not None:
-                pairs[field.api_name] = field.api_value(v)
+                if field.required or v is not None:
+                    pairs[field.api_name] = field.api_value(v)
 
         return pairs
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
-from .test_base import BaseTest, BaseTestLive
+from tests.resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
+from tests.test_base import BaseTest, BaseTestLive
 
 try:
     import urllib.parse as urlrequest

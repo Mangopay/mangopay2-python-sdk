@@ -2,8 +2,8 @@
 import responses
 
 from tests import settings
-from .resources import ClientWallet
-from .test_base import BaseTest, BaseTestLive
+from tests.resources import ClientWallet
+from tests.test_base import BaseTest, BaseTestLive
 
 
 class ClientWalletsTest(BaseTest):

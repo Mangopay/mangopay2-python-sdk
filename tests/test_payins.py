@@ -8,9 +8,9 @@ import responses
 from mangopay.resources import DirectDebitDirectPayIn, Mandate
 from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo)
 from tests import settings
-from .resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
+from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
                         CardWebPayIn, DirectDebitWebPayIn)
-from .test_base import BaseTest, BaseTestLive
+from tests.test_base import BaseTest, BaseTestLive
 
 
 class PayInsTest(BaseTest):
