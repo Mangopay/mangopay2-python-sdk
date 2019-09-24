@@ -1,4 +1,9 @@
 ## [Unreleased]
+- ApplePay Payin functions will be available very soon. More info about activation to come in the following weeks...
+
+## [3.7.1] - 2019-09-24
+### Fixed
+- Fix issue on `UBODeclaration` creation
 
 ## [3.7.0] - 2019-07-09
 ### Added
