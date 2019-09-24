@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import (Transfer, TransferRefund,
-                        PayInRefund, DirectPayIn, Refund,
-                        Wallet)
-from .test_base import BaseTest
+from tests.resources import (Transfer, TransferRefund,
+                             PayInRefund, DirectPayIn, Refund,
+                             Wallet)
+from tests.test_base import BaseTest
 
 from mangopay.utils import Money
 
@@ -19,7 +19,7 @@ class RefundsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -49,7 +49,7 @@ class RefundsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/card/direct',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -109,7 +109,7 @@ class RefundsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/transfers',
                 'body': {
                     "Id": "1169434",
                     "Tag": "DefaultTag",
@@ -169,7 +169,7 @@ class RefundsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/refunds/123456708',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/refunds/123456708',
                 'body': {
                     "Id": "123456708",
                     "Tag": None,
@@ -207,7 +207,7 @@ class RefundsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers/1169434/refunds',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/transfers/1169434/refunds',
                 'body': {
                     "Id": "123456708",
                     "Tag": None,
@@ -284,7 +284,7 @@ class RefundsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1167495',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1167495',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Hugo",
@@ -314,7 +314,7 @@ class RefundsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/card/direct',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/card/direct',
                 'body': {
                     "Id": "6784288",
                     "Tag": None,
@@ -364,7 +364,7 @@ class RefundsTest(BaseTest):
 
         self.register_mock({
             'method': responses.POST,
-            'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/payins/6784288/refunds',
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/6784288/refunds',
             'body': {
                 "Id": "1632606",
                 "Tag": None,

@@ -1,6 +1,6 @@
 from tests import settings
-from .resources import Document, Page, DisputeDocument, DocumentConsult, Dispute
-from .test_base import BaseTest
+from tests.resources import Document, Page, DisputeDocument, DocumentConsult, Dispute
+from tests.test_base import BaseTest
 import responses
 import base64
 import sys

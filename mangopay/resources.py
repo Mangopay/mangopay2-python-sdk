@@ -1352,6 +1352,10 @@ class UboDeclaration(BaseModel):
             SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations'
         }
 
+    def create(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        return insert.execute()
+
     def get_read_only_properties(self):
         read_only = ["ProcessedDate", "Reason", "Message"]
         return read_only
