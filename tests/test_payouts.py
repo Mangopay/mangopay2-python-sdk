@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import BankAccount, BankWirePayOut
-from .test_base import BaseTest
+from tests.resources import BankAccount, BankWirePayOut
+from tests.test_base import BaseTest
 
 from mangopay.utils import Money, Address
 

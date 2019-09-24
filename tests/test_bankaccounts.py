@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from mangopay.utils import Address
 from tests import settings
-from .resources import BankAccount
-from .test_base import BaseTest, BaseTestLive
+from tests.resources import BankAccount
+from tests.test_base import BaseTest, BaseTestLive
 
 from datetime import date
 

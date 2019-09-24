@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import EMoney
-from .test_base import BaseTest
+from tests.test_base import BaseTest
 
 import responses
 
