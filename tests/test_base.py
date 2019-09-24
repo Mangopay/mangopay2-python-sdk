@@ -48,7 +48,7 @@ class BaseTest(RegisteredMocks):
             "proof_of_address": None,
             "person_type": "NATURAL",
             "email": "victor@hugo.com",
-            "tag": "custom tag",
+            "tag": "Python SDK Unit Test",
         }
         natural_user = NaturalUser(**natural_user_params)
         natural_user.save()
@@ -75,7 +75,7 @@ class BaseTest(RegisteredMocks):
             "statute": None,
             "person_type": "LEGAL",
             "email": "info@mangopay.com",
-            "tag": "custom tag",
+            "tag": "Python SDK Unit Test",
             # "creation_date": datetime.now()
         }
         legal_user = LegalUser(**legal_user_params)
@@ -125,7 +125,7 @@ class BaseTest(RegisteredMocks):
         response = requests.post(card_registration.card_registration_url, data={
             'cardNumber': '4970100000000154',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         })
@@ -151,7 +151,7 @@ class BaseTest(RegisteredMocks):
         response = requests.post(card_registration.card_registration_url, data={
             'cardNumber': '4970101122334422',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         })
@@ -177,7 +177,7 @@ class BaseTest(RegisteredMocks):
         response = requests.post(card_registration.card_registration_url, data={
             'cardNumber': '4970101122334406',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         })
@@ -209,7 +209,7 @@ class BaseTest(RegisteredMocks):
             "proof_of_address": None,
             "person_type": "NATURAL",
             "email": "victor@hugo.com",
-            "tag": "custom tag",
+            "tag": "Python SDK Unit Test",
             "capacity": "DECLARATIVE"
         }
         user = NaturalUser(**params)
@@ -264,7 +264,7 @@ class BaseTestLive(unittest.TestCase):
     def get_user_legal(recreate=False):
         if BaseTestLive._user_legal is None or recreate:
             legal = LegalUser()
-            legal.name = 'MartixSampleOrg_NodejsSDK'
+            legal.name = 'MatrixSampleOrg_PythonSDK'
             legal.email = 'mail@test.com'
             legal.legal_person_type = "BUSINESS"
             legal.legal_representative_first_name = "Mango"
@@ -278,7 +278,7 @@ class BaseTestLive(unittest.TestCase):
             legal.legal_representative_nationality = 'FR'
             legal.legal_representative_country_of_residence = 'FR'
             legal.company_number = 123456789
-            legal.tag = 'custom tag'
+            legal.tag = 'Python SDK Unit Test'
             BaseTestLive._user_legal = LegalUser(**legal.save())
         return BaseTestLive._user_legal
 
