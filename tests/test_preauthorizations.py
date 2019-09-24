@@ -671,4 +671,4 @@ class PreAuthorizationsTestLive(BaseTestLive):
         self.assertIsNotNone(saved_pre_authorization)
         security_info = saved_pre_authorization['security_info']
         self.assertIsInstance(security_info, SecurityInfo)
-        self.assertEqual(security_info.avs_result, "ADDRESS_MATCH_ONLY")
+        self.assertEqual(security_info.avs_result, "NO_CHECK")

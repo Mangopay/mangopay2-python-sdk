@@ -608,4 +608,4 @@ class PayInsTestLive(BaseTestLive):
         security_info = result['security_info']
         self.assertIsNotNone(security_info)
         self.assertIsInstance(security_info, SecurityInfo)
-        self.assertEqual(security_info.avs_result, "FULL_MATCH")
+        self.assertEqual(security_info.avs_result, "NO_CHECK")

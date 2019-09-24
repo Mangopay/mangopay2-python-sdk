@@ -6,26 +6,28 @@ from tests.test_base import BaseTestLive
 
 class UbosTests(BaseTestLive):
     def test_create_ubo_declaration(self):
-        created_ubo = self.get_ubo_declaration()
+        self.get_user_legal(True)
+        created_ubo = self.get_ubo_declaration(True)
         self.assertIsNotNone(created_ubo)
 
     def test_list_ubo_declarations(self):
-        legal_user = self.get_user_legal()
+        legal_user = self.get_user_legal(True)
+        self.get_ubo_declaration(True)
         declarations = UboDeclaration.all(**{"user_id": legal_user.id})
         self.assertIsNotNone(declarations)
         self.assertEqual(1, len(declarations))
         self.assertEqual(self.get_ubo_declaration().id, declarations[0].id)
 
     def test_get_ubo_declaration(self):
-        legal_user = self.get_user_legal()
+        legal_user = self.get_user_legal(True)
+        self.get_ubo_declaration(True)
         fetched_declaration = UboDeclaration.get(self.get_ubo_declaration().get_pk(),
                                                  **{"user_id": legal_user.get_pk()})
         self.assertIsNotNone(fetched_declaration)
         self.assertEqual(self.get_ubo_declaration().id, fetched_declaration.id)
 
     def test_create_ubo(self):
-        new_ubo = self.get_ubo()
-
+        new_ubo = self.get_ubo(True)
         self.assertIsNotNone(new_ubo)
         self.assertIsNotNone(new_ubo.id)
         self.assertEqual('Victor', new_ubo.first_name)
@@ -35,9 +37,9 @@ class UbosTests(BaseTestLive):
         self.assertEqual(Birthplace(city='Paris', country='FR'), new_ubo.birthplace)
 
     def test_update_ubo(self):
+        to_be_updated = self.get_ubo(True)
         user = self.get_user_legal()
         ubo_declaration = self.get_ubo_declaration()
-        to_be_updated = self.get_ubo()
         address = to_be_updated.address
         address.address_line_1 = 'UpdatedLine1'
         birthplace = to_be_updated.birthplace
@@ -58,7 +60,7 @@ class UbosTests(BaseTestLive):
         self.assertEqual(updated_ubo['nationality'], "GB")
 
     def test_get_ubo(self):
-        existing_ubo = self.get_ubo()
+        existing_ubo = self.get_ubo(True)
         user = self.get_user_legal()
         ubo_declaration = self.get_ubo_declaration()
         params = {
@@ -77,8 +79,9 @@ class UbosTests(BaseTestLive):
         self.assertEquals(existing_ubo.birthplace, fetched_ubo.birthplace)
 
     def test_submit_for_validation(self):
-        ubo_declaration = self.get_ubo_declaration()
+        self.get_ubo(True)
         user = self.get_user_legal()
+        ubo_declaration = self.get_ubo_declaration()
         params = {
             'user_id': user.id,
             'status': constants.UBO_DECLARATION_STATUS_CHOICES.validation_asked

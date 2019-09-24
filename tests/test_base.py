@@ -299,8 +299,8 @@ class BaseTestLive(unittest.TestCase):
                               city='City', region='Region',
                               postal_code='11222', country='FR')
             params = {
-                "user": BaseTestLive.get_user_legal(),
-                "ubo_declaration": BaseTestLive.get_ubo_declaration(),
+                "user": BaseTestLive.get_user_legal(True),
+                "ubo_declaration": BaseTestLive.get_ubo_declaration(True),
                 "first_name": "Victor",
                 "last_name": "Hugo",
                 "address": address,
