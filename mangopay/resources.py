@@ -109,8 +109,16 @@ class User(BaseModel):
 
         return cls
 
-    def get_emoney(self):
-        return self.emoney.get('', **{'user_id': self.get_pk()})
+    def get_emoney(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(EMoney, *args, **kwargs)
+        if kwargs.__contains__('month') and kwargs.__contains__('year'):
+            select.identifier = 'FOR_MONTH'
+        elif kwargs.__contains__('year'):
+            select.identifier = 'FOR_YEAR'
+        else:
+            select.identifier = 'ALL'
+        return select.all(*args, **kwargs)
 
     def get_pre_authorizations(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -192,7 +200,11 @@ class EMoney(BaseModel):
 
     class Meta:
         verbose_name = 'emoney'
-        url = '/users/%(user_id)s/emoney'
+        url = {
+            'ALL': '/users/%(user_id)s/emoney',
+            'FOR_YEAR': '/users/%(user_id)s/emoney/%(year)s',
+            'FOR_MONTH': '/users/%(user_id)s/emoney/%(year)s/%(month)s'
+        }
 
     def __str__(self):
         return 'EMoney for user %s' % self.user_id
