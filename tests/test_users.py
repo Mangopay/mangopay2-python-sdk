@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 
-from tests import settings
-from tests.mocks import get_fixture
-from tests.mocks import today, today_timestamp
-from mangopay.resources import (User, NaturalUser, Wallet,
-                                LegalUser, Transfer, Transaction, UboDeclaration)
-from tests.test_base import BaseTest, BaseTestLive
-
-from mangopay.utils import Money, Address, DeclaredUbo
-
-import responses
-import requests
-import time
 import re
+
+import requests
+import responses
+
+from mangopay.resources import (User, NaturalUser, Wallet,
+                                LegalUser, Transfer, Transaction)
+from mangopay.utils import Money, Address
+from tests import settings
+from tests.mocks import today, today_timestamp
+from tests.test_base import BaseTest, BaseTestLive
 
 requests_session = requests.Session()
 
@@ -363,7 +360,7 @@ class UsersTest(BaseTest):
         })
 
         users = User.all()
-        self.assertIsInstance(users, list)
+        self.assertIsInstance(users.data, list)
 
         self.assertIsInstance(users[0], NaturalUser)
         self.assertEqual(users[0].email, 'victor@hugo.com')
@@ -377,32 +374,32 @@ class UsersTest(BaseTest):
         self.mock_user_list_page1()
         self.mock_user_list_2_per_page()
 
-        users = User.all()
-        self.assertEqual(len(users), 10)
-        for user in users:
+        users_page = User.all()
+        self.assertEqual(len(users_page), 10)
+        for user in users_page:
             if isinstance(user, NaturalUser):
                 self.assertIsNotNone(user.first_name)
             else:
                 self.assertIsInstance(user, LegalUser)
                 self.assertIsNotNone(user.name)
 
-        users = User.all(page=1, per_page=2)
-        self.assertEqual(len(users), 2)
+        users_page = User.all(page=1, per_page=2)
+        self.assertEqual(len(users_page), 2)
 
-        first_instance = users[0]
+        first_instance = users_page.data[0]
 
-        users = User.all(page=2, per_page=3)
-        self.assertEqual(len(users), 3)
-        self.assertFalse(first_instance in users)
+        users_page = User.all(page=2, per_page=3)
+        self.assertEqual(len(users_page), 3)
+        self.assertFalse(first_instance in users_page)
 
         # with self.assertRaises(APIError):
-        #     users = User.all(random_key=1, another_random_key=2)
+        #     users_page = User.all(random_key=1, another_random_key=2)
 
-        users = User.all(page=1)
-        self.assertEqual(len(users), 10)
+        users_page = User.all(page=1)
+        self.assertEqual(len(users_page), 10)
 
-        users = User.all(per_page=2)
-        self.assertEqual(len(users), 2)
+        users_page = User.all(per_page=2)
+        self.assertEqual(len(users_page), 2)
 
     @responses.activate
     def test_retrieve_specific_natural_user(self):
@@ -676,97 +673,6 @@ class UsersTest(BaseTest):
         self.assertEqual(len(transactions), 1)
         self.assertEqual(transactions[0].type, 'TRANSFER')
 
-    @responses.activate
-    def test_create_ubo_declaration(self):
-        self.mock_legal_user()
-        self.mock_declarative_user()
-        self.mock_ubo_declaration()
-
-        params = {
-            "first_name": "Victor",
-            "last_name": "Hugo",
-            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                               city='City', region='Region',
-                               postal_code='11222', country='FR'),
-            "birthday": today,
-            "nationality": "FR",
-            "country_of_residence": "FR",
-            "occupation": "Writer",
-            "income_range": 6,
-            "proof_of_identity": None,
-            "proof_of_address": None,
-            "person_type": "NATURAL",
-            "email": "victor@hugo.com",
-            "tag": "custom tag",
-            "capacity": "DECLARATIVE"
-        }
-        user = NaturalUser(**params)
-        user.save()
-
-        params = {
-            "user_id": "1169420",
-            "declared_ubos": ["11694190"]
-        }
-        ubo_declaration = UboDeclaration(**params)
-        ubo_declaration.save()
-
-        self.assertTrue(isinstance(ubo_declaration, UboDeclaration))
-        self.assertTrue(ubo_declaration.id == "1169420")
-        self.assertTrue(len(ubo_declaration.declared_ubos) == 1)
-        ubo = ubo_declaration.declared_ubos[0]
-        self.assertTrue(isinstance(ubo, DeclaredUbo))
-        self.assertTrue(ubo.user_id == '11694190')
-        self.assertTrue(ubo.status == 'CREATED')
-
-    @responses.activate
-    def test_update_ubo_declaration(self):
-        self.mock_legal_user()
-        self.mock_declarative_user()
-        self.mock_ubo_declaration()
-
-        params = {
-            "first_name": "Victor",
-            "last_name": "Hugo",
-            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                               city='City', region='Region',
-                               postal_code='11222', country='FR'),
-            "birthday": today,
-            "nationality": "FR",
-            "country_of_residence": "FR",
-            "occupation": "Writer",
-            "income_range": 6,
-            "proof_of_identity": None,
-            "proof_of_address": None,
-            "person_type": "NATURAL",
-            "email": "victor@hugo.com",
-            "tag": "custom tag",
-            "capacity": "DECLARATIVE"
-        }
-        user = NaturalUser(**params)
-        user.save()
-
-        params = {
-            "user_id": "1169420",
-            "declared_ubos": ["11694190"]
-        }
-        ubo_declaration = UboDeclaration(**params)
-        ubo_declaration.save()
-
-        updated_value = 'Updated Tag'
-
-        self.register_mock({
-            "method": responses.PUT,
-            "url": settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/ubodeclarations/1169420',
-            "body": get_fixture('ubo_declaration') % ('"' + updated_value + '"'),
-            "status": 200
-        })
-
-        ubo_declaration.tag = updated_value
-        ubo_declaration.save()
-
-        self.assertTrue(ubo_declaration.id == "1169420")
-        self.assertTrue(ubo_declaration.tag == updated_value)
-
 
 class UserTestLive(BaseTestLive):
     def test_Users_GetKycDocuments(self):
@@ -785,22 +691,23 @@ class PayOutsTestLive(BaseTestLive):
 
         refunds = payout.get_refunds()
 
-        self.assertIsNotNone(refunds)
-        self.assertIsInstance(refunds, list)
+        self.assertIsNotNone(refunds.data)
+        self.assertIsInstance(refunds.data, list)
+
 
 class PayInsTestLive(BaseTestLive):
     def test_PayIn_GetRefunds(self):
         payin = BaseTestLive.get_johns_payin()
 
-        get_refunds = payin.get_refunds()
+        refunds_page = payin.get_refunds()
 
-        self.assertIsNotNone(get_refunds)
-        self.assertIsInstance(get_refunds, list)
+        self.assertIsNotNone(refunds_page.data)
+        self.assertIsInstance(refunds_page.data, list)
 
     def test_User_GetPreAuthorizationss(self):
         user = BaseTestLive.get_john()
 
-        get_preauthorizations = user.get_pre_authorizations()
+        get_preauthorizations_page = user.get_pre_authorizations()
 
-        self.assertIsNotNone(get_preauthorizations)
-        self.assertIsInstance(get_preauthorizations, list)
+        self.assertIsNotNone(get_preauthorizations_page.data)
+        self.assertIsInstance(get_preauthorizations_page.data, list)

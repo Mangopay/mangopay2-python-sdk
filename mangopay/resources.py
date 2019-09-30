@@ -1,19 +1,18 @@
 import six
 
 from mangopay.signals import pre_save, post_save
-from mangopay.utils import Money, DeclaredUbo
+from mangopay.utils import Money, Address, Birthplace
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
-
+from .compat import python_2_unicode_compatible
 from .fields import (PrimaryKeyField, EmailField, CharField,
                      BooleanField, DateTimeField, DateField,
                      ManyToManyField, ForeignKeyField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
-
-from .compat import python_2_unicode_compatible
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
+                     BirthplaceField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -38,6 +37,7 @@ class Client(BaseApiModel):
     platform_categorization = PlatformCategorizationField(api_name='PlatformCategorization')
     platform_url = CharField(api_name='PlatformURL')
     headquarters_address = AddressField(api_name='HeadquartersAddress')
+    headquarters_phone_number = CharField(api_name='HeadquartersPhoneNumber')
     tax_number = CharField(api_name='TaxNumber')
 
     class Meta:
@@ -520,6 +520,7 @@ class PayPalPayIn(PayIn):
     redirect_url = CharField(api_name='RedirectURL', required=False)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     shipping_address = ShippingAddressField(api_name='ShippingAddress')
+    buyer_account_email = CharField(api_name="PaypalBuyerAccountEmail", required=False)
 
     class Meta:
         verbose_name = 'payin'
@@ -1333,73 +1334,55 @@ class BankingAliasIBAN(BankingAlias):
 
 class UboDeclaration(BaseModel):
     creation_date = DateTimeField(api_name='CreationDate')
-    user_id = CharField(api_name='UserId')
+    processed_date = DateTimeField(api_name='ProcessedDate')
+    reason = CharField(api_name='Reason')
+    message = CharField(api_name='Message')
     status = CharField(api_name='Status', choices=constants.UBO_DECLARATION_STATUS_CHOICES, default=None)
-    refused_reason_types = ListField(api_name='RefusedReasonTypes')
-    refused_reason_message = CharField(api_name='RefusedReasonMessage')
-    declared_ubos = ListField(api_name='DeclaredUBOs')
+    ubos = ListField(api_name='Ubos')
+    user = ForeignKeyField(User)
 
     class Meta:
         verbose_name = 'ubodeclaration'
         verbose_name_plural = 'ubodeclarations'
+
+        # For Update as well as Select, 'ubo_declaration_id' is provided by the 'reference' param of the update method
         url = {
-            InsertQuery.identifier: '/users/legal/%(user_id)s/ubodeclarations',
-            UpdateQuery.identifier: '/ubodeclarations'
+            InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations',
+            UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations',
+            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations'
         }
 
-    def save(self, handler=None, cls=None, idempotency_key=None):
-        self._handler = handler or self.handler
+    def get_read_only_properties(self):
+        read_only = ["ProcessedDate", "Reason", "Message"]
+        return read_only
 
-        field_dict = dict(self._data)
-        field_dict.update(self.get_field_dict())
-        field_dict.pop(self._meta.pk_name)
+    def get_sub_objects(self, sub_objects=None):
+        sub_objects['Ubos'] = Ubo
+        return sub_objects
 
-        all_fields = self._meta.fields
 
-        if cls is None:
-            cls = self.__class__
+class Ubo(BaseModel):
+    first_name = CharField(api_name='FirstName', required=True)
+    last_name = CharField(api_name='LastName', required=True)
+    address = AddressField(api_name='Address', required=True)
+    nationality = CharField(api_name='Nationality', required=True)
+    birthday = IntegerField(api_name='Birthday', required=True)
+    birthplace = BirthplaceField(api_name='Birthplace', required=True)
+    user = ForeignKeyField(User)
+    ubo_declaration = ForeignKeyField(UboDeclaration)
 
-        created = False
+    class Meta:
+        verbose_name = 'ubo'
+        verbose_name_plural = 'ubos'
 
-        pre_save.send(cls, instance=self)
+        # For Update, 'ubo_id' is provided by the 'reference' param of the update method
+        url = {
+            InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
+            UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
+            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/%(ubo_id)s'
+        }
 
-        if self.get_pk():
-            declared_ubo_ids = []
-            for ubo in field_dict['declared_ubos']:
-                declared_ubo_ids.append(ubo.user_id)
-            field_dict['declared_ubos'] = declared_ubo_ids
-            update = self.update(
-                self.get_pk(),
-                **field_dict
-            )
-            result = update.execute(handler)
-        else:
-            for k, v in all_fields.items():
-                if v.required is True and field_dict[v.name] is None:
-                    raise ValueError('Missing mandatory field: ' + v.name)
-
-            insert = self.insert(idempotency_key=idempotency_key, **field_dict)
-            result = insert.execute(handler)
-
-            created = True
-
-        post_save.send(cls, instance=self, created=created)
-
-        for key, value in result.items():
-            setattr(self, key, value)
-
-        declared_ubo_objects = []
-        for ubo in result['declared_ubos']:
-            ubo_object = DeclaredUbo()
-            ubo_object.user_id = ubo['UserId']
-            ubo_object.status = ubo['Status']
-            if (hasattr(ubo, 'RefusedReasonType')):
-                ubo_object.refused_reason_type = ubo['RefusedReasonType']
-            if (hasattr(ubo, 'RefusedReasonMessage')):
-                ubo_object.refused_reason_message = ubo['RefusedReasonMessage']
-            declared_ubo_objects.append(ubo_object)
-
-        setattr(self, 'declared_ubos', declared_ubo_objects)
-        result['declared_ubos'] = declared_ubo_objects
-
-        return result
+    def get_sub_objects(self, sub_objects=None):
+        sub_objects['Address'] = Address
+        sub_objects['Birthplace'] = Birthplace
+        return sub_objects

@@ -197,11 +197,11 @@ class NotificationsTest(BaseTest):
         notification = Notification(**params)
         notification.save()
 
-        notifications = Notification.all()
+        notifications_page = Notification.all()
 
-        self.assertIsInstance(notifications, list)
+        self.assertIsInstance(notifications_page.data, list)
 
-        for notification in notifications:
+        for notification in notifications_page:
             self.assertIsInstance(notification, Notification)
 
     @responses.activate
@@ -247,11 +247,11 @@ class NotificationsTest(BaseTest):
         notification = Notification(**params)
         notification.save()
 
-        events = Event.all()
+        events_page = Event.all()
 
-        self.assertIsInstance(events, list)
+        self.assertIsInstance(events_page.data, list)
 
-        for event in events:
+        for event in events_page:
             self.assertIsInstance(event, Event)
 
     @responses.activate
