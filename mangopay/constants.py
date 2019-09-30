@@ -172,6 +172,7 @@ REFUSED_REASON_TYPE_CHOICES = Choices(
     ('SPECIFIC_CASE', 'specific_case', 'Specific Case'),
     ('DOCUMENT_FALSIFIED', 'document_falsified', 'Document Falsified'),
     ('UNDERAGE_PERSON', 'underage_person', 'Underage Person'),
+    ('COUNTERFEIT_PRODUCT', 'counterfeit_product', 'Counterfeit Product'),
     ('OTHER', 'other', 'Other')
 )
 
