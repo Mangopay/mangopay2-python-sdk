@@ -76,7 +76,8 @@ class MandatesTestLive(BaseTestLive):
         mandate.culture = 'EN'
         mandate_created = Mandate(**mandate.save())
 
-        mandates = BaseTestLive.get_johns_account().get_mandates()
+        mandates_page = BaseTestLive.get_johns_account().get_mandates()
+        mandates = mandates_page.data
 
         self.assertTrue(mandates)
         self.assertIsNotNone(mandates[0])
@@ -90,7 +91,7 @@ class MandatesTestLive(BaseTestLive):
         mandate.culture = 'FR'
         mandate = Mandate(**mandate.save())
 
-        get_transactions = mandate.get_transactions()
+        transactions_page = mandate.get_transactions()
 
-        self.assertIsNotNone(get_transactions)
-        self.assertIsInstance(get_transactions, list)
+        self.assertIsNotNone(transactions_page.data)
+        self.assertIsInstance(transactions_page.data, list)

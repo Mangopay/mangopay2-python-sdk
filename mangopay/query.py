@@ -1,6 +1,7 @@
-from . import get_default_handler
-
 import six
+
+from mangopay.page import Page
+from . import get_default_handler
 
 
 class BaseQuery(object):
@@ -47,7 +48,10 @@ class SelectQuery(BaseQuery):
         handler = handler or self.handler
 
         meta_url = self.parse_url(model._meta.url, kwargs)
-        url = '%s/%s' % (meta_url, reference)
+        if reference != "":
+            url = '%s/%s' % (meta_url, reference)
+        else:
+            url = '%s' % meta_url
 
         result, data = handler.request(self.method, url)
 
@@ -90,7 +94,11 @@ class SelectQuery(BaseQuery):
             model_klass = cast(entry)
             results.append(model_klass(handler=handler, **dict(self.parse_result(entry, model_klass))))
 
-        return results
+        total_pages = result.headers.get('x-number-of-pages')
+        total_items = result.headers.get('x-number-of-items')
+        params.update({'total_items': total_items, 'total_pages': total_pages})
+        page = Page(results, **params)
+        return page
 
 
 class InsertQuery(BaseQuery):

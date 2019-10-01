@@ -1,12 +1,14 @@
 import datetime
 import json
 import re
-import time
-import six
-from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
-    Reason, ReportTransactionsFilters, ReportWalletsFilters, DeclaredUbo, \
-PlatformCategorization, Billing, SecurityInfo
 import sys
+import time
+
+import six
+
+from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
+    Reason, ReportTransactionsFilters, ReportWalletsFilters, \
+    PlatformCategorization, Billing, SecurityInfo, Birthplace
 
 
 class FieldDescriptor(object):
@@ -632,3 +634,22 @@ class ManyToManyRelatedObject(object):
 
     def __set__(self, instance, objs):
         setattr(instance, self.field_name, [obj.get_pk() for obj in objs])
+
+
+class BirthplaceField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return Birthplace(city=value['City'], country=value['Country'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(BirthplaceField, self).api_value(value)
+
+        if isinstance(value, Birthplace):
+            value = {
+                'City': value.city,
+                'Country': value.country,
+            }
+
+        return value
