@@ -224,7 +224,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("CARD", "card", "Card"),
     ("DIRECT_DEBIT", "direct_debit", "Direct Debit"),
     ("PREAUTHORIZED", "preauthorized", "Preauthorized"),
-    ("BANK_WIRE", "bank_wire", "Bank Wire")
+    ("BANK_WIRE", "bank_wire", "Bank Wire"),
+    ("APPLEPAY", "applepay", "Applepay")
 )
 
 CARD_STATUS_CHOICES = Choices(

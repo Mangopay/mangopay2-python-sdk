@@ -231,7 +231,8 @@ class PlatformCategorization(object):
 
     def __str__(self):
         return 'PlatformCategorization: %s %s' % (self.business_type, self.sector)
-      
+
+
 @add_camelcase_aliases
 class Billing(object):
     def __init__(self, address=None):
@@ -240,6 +241,7 @@ class Billing(object):
     def __str__(self):
         return 'Billing: %s' % self.address
 
+
 @add_camelcase_aliases
 class SecurityInfo(object):
     def __init__(self, avs_result=None):
@@ -247,6 +249,7 @@ class SecurityInfo(object):
 
     def __str__(self):
         return 'AVS Result: %s' % self.avs_result
+
 
 @add_camelcase_aliases
 class DebitedBankAccount(object):
@@ -314,6 +317,19 @@ class ShippingAddress(object):
     def __eq__(self, other):
         if isinstance(other, ShippingAddress):
             return self.recipient_name == other.recipient_name and self.address == other.address
+        return False
+
+
+@add_camelcase_aliases
+class ApplepayPaymentData(object):
+    def __init__(self, transaction_id=None, network=None, token_data=None):
+        self.transaction_id = transaction_id
+        self.network = network
+        self.token_data = token_data
+
+    def __eq__(self, other):
+        if isinstance(other, ApplepayPaymentData):
+            return self.transaction_id == other.transaction_id and self.network == other.network and self.token_data == other.token_data
         return False
 
 

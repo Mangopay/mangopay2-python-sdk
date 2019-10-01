@@ -12,7 +12,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField)
+                     BirthplaceField, ApplepayPaymentDataField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -447,6 +447,7 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
+            ("APPLEPAY", "DIRECT"): ApplepayPayIn
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -540,6 +541,22 @@ class PayPalPayIn(PayIn):
         url = {
             InsertQuery.identifier: '/payins/paypal/web',
             SelectQuery.identifier: '/payins'
+        }
+
+
+class ApplepayPayIn(PayIn):
+    tag = CharField(api_name='Applepay PayIn')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    payment_data = ApplepayPaymentDataField(api_name='PaymentData', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'applepay_payin'
+        verbose_name_plural = 'applepay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/applepay/direct'
         }
 
 
