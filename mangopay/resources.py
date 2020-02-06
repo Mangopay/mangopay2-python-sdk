@@ -1399,7 +1399,7 @@ class Ubo(BaseModel):
     last_name = CharField(api_name='LastName', required=True)
     address = AddressField(api_name='Address', required=True)
     nationality = CharField(api_name='Nationality', required=True)
-    birthday = IntegerField(api_name='Birthday', required=True)
+    birthday = DateField(api_name='Birthday', required=True)
     birthplace = BirthplaceField(api_name='Birthplace', required=True)
     user = ForeignKeyField(User)
     ubo_declaration = ForeignKeyField(UboDeclaration)

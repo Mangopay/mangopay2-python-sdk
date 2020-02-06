@@ -304,7 +304,7 @@ class BaseTestLive(unittest.TestCase):
                 "first_name": "Victor",
                 "last_name": "Hugo",
                 "address": address,
-                "birthday": 1231432,
+                "birthday": date(1970, 1, 15),
                 "nationality": "FR",
                 "birthplace": Birthplace(city='Paris', country='FR')
             }
