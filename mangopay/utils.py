@@ -334,6 +334,19 @@ class ApplepayPaymentData(object):
 
 
 @add_camelcase_aliases
+class GooglepayPaymentData(object):
+    def __init__(self, transaction_id=None, network=None, token_data=None):
+        self.transaction_id = transaction_id
+        self.network = network
+        self.token_data = token_data
+
+    def __eq__(self, other):
+        if isinstance(other, GooglepayPaymentData):
+            return self.transaction_id == other.transaction_id and self.network == other.network and self.token_data == other.token_data
+        return False
+
+
+@add_camelcase_aliases
 class ReportTransactionsFilters(object):
     def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
                  min_debited_funds_amount=None, min_debited_funds_currency=None, max_debited_funds_amount=None,

@@ -8,7 +8,7 @@ import six
 
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
-    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData
+    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData
 
 
 class FieldDescriptor(object):
@@ -652,6 +652,22 @@ class ApplepayPaymentDataField(Field):
                 'Network': value.network,
                 'TokenData': value.token_data
             }
+        return value
+
+
+class GooglepayPaymentDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return GooglepayPaymentData(transaction_id=value['TransactionId'], network=value['Network'],
+                                        token_data=value['TokenData'])
+        return value
+
+    def api_value(self, value):
+        value = {
+            'TransactionId': value.transaction_id,
+            'Network': value.network,
+            'TokenData': value.token_data
+        }
         return value
 
 

@@ -226,6 +226,7 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("PREAUTHORIZED", "preauthorized", "Preauthorized"),
     ("BANK_WIRE", "bank_wire", "Bank Wire"),
     ("APPLEPAY", "applepay", "Applepay")
+    ("GOOGLEPAY", "googlepay", "Googlepay")
 )
 
 CARD_STATUS_CHOICES = Choices(
