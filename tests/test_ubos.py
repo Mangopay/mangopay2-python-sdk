@@ -2,6 +2,7 @@ from mangopay import constants
 from mangopay.resources import UboDeclaration, Ubo
 from mangopay.utils import Birthplace
 from tests.test_base import BaseTestLive
+from datetime import date
 
 
 class UbosTests(BaseTestLive):
@@ -33,7 +34,7 @@ class UbosTests(BaseTestLive):
         self.assertEqual('Victor', new_ubo.first_name)
         self.assertEqual('Hugo', new_ubo.last_name)
         self.assertEqual('FR', new_ubo.nationality)
-        self.assertEqual(1231432, new_ubo.birthday)
+        self.assertEqual(date(1970, 1, 15), new_ubo.birthday)
         self.assertEqual(Birthplace(city='Paris', country='FR'), new_ubo.birthplace)
 
     def test_update_ubo(self):
