@@ -1332,6 +1332,8 @@ class BankingAlias(BaseModel):
         if 'Type' in result:
             if result['Type'] == 'IBAN':
                 return BankingAliasIBAN
+            elif result['Type'] == 'OTHER':
+                return BankingAliasOther
             else:
                 return BankingAlias
 
@@ -1356,6 +1358,22 @@ class BankingAliasIBAN(BankingAlias):
         verbose_name_plural = 'bankingaliases'
         url = {
             InsertQuery.identifier: '/wallets/%(wallet_id)s/bankingaliases/iban',
+            SelectQuery.identifier: '/bankingaliases/%(id)s',
+            UpdateQuery.identifier: '/bankingaliases/%(id)s'
+        }
+
+
+class BankingAliasOther(BankingAlias):
+    type = CharField(api_name='Type', default='OTHER', required='True')
+    account_number = CharField(api_name='AccountNumber')
+    bic = CharField(api_name='BIC')
+    country = CharField(api_name='Country', required=True)
+
+    class Meta:
+        verbose_name = 'bankingalias'
+        verbose_name_plural = 'bankingaliases'
+        url = {
+            InsertQuery.identifier: '/wallets/%(wallet_id)s/bankingaliases/accountNumber',
             SelectQuery.identifier: '/bankingaliases/%(id)s',
             UpdateQuery.identifier: '/bankingaliases/%(id)s'
         }
