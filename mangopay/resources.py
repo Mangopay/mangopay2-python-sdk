@@ -1,7 +1,7 @@
 import six
 
 from mangopay.signals import pre_save, post_save
-from mangopay.utils import Money, DeclaredUbo
+from mangopay.utils import Money, Address, Birthplace
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
 from .compat import python_2_unicode_compatible
@@ -11,7 +11,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      MoneyField, IntegerField, DisputeReasonField, RelatedManager, DictField, AddressField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
-                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField)
+                     ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
+                     BirthplaceField, ApplepayPaymentDataField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -108,8 +109,16 @@ class User(BaseModel):
 
         return cls
 
-    def get_emoney(self):
-        return self.emoney.get('', **{'user_id': self.get_pk()})
+    def get_emoney(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(EMoney, *args, **kwargs)
+        if kwargs.__contains__('month') and kwargs.__contains__('year'):
+            select.identifier = 'FOR_MONTH'
+        elif kwargs.__contains__('year'):
+            select.identifier = 'FOR_YEAR'
+        else:
+            select.identifier = 'ALL'
+        return select.all(*args, **kwargs)
 
     def get_pre_authorizations(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -191,7 +200,11 @@ class EMoney(BaseModel):
 
     class Meta:
         verbose_name = 'emoney'
-        url = '/users/%(user_id)s/emoney'
+        url = {
+            'ALL': '/users/%(user_id)s/emoney',
+            'FOR_YEAR': '/users/%(user_id)s/emoney/%(year)s',
+            'FOR_MONTH': '/users/%(user_id)s/emoney/%(year)s/%(month)s'
+        }
 
     def __str__(self):
         return 'EMoney for user %s' % self.user_id
@@ -434,6 +447,7 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
+            ("APPLEPAY", "DIRECT"): ApplepayPayIn
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -531,6 +545,22 @@ class PayPalPayIn(PayIn):
         }
 
 
+class ApplepayPayIn(PayIn):
+    tag = CharField(api_name='Applepay PayIn')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    payment_data = ApplepayPaymentDataField(api_name='PaymentData', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'applepay_payin'
+        verbose_name_plural = 'applepay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/applepay/direct'
+        }
+
+
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -613,7 +643,7 @@ class PreAuthorization(BaseModel):
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
     expiration_date = DateField(api_name='ExpirationDate')
-    payin = ForeignKeyField(PayIn, api_name='PayinId')
+    payin = ForeignKeyField(PayIn, api_name='PayInId')
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
 
@@ -1335,74 +1365,60 @@ class BankingAliasIBAN(BankingAlias):
 
 
 class UboDeclaration(BaseModel):
-    creation_date = DateField(api_name='CreationDate')
-    user_id = CharField(api_name='UserId')
+    creation_date = IntegerField(api_name='CreationDate')
+    processed_date = IntegerField(api_name='ProcessedDate')
+    reason = CharField(api_name='Reason')
+    message = CharField(api_name='Message')
     status = CharField(api_name='Status', choices=constants.UBO_DECLARATION_STATUS_CHOICES, default=None)
-    refused_reason_types = ListField(api_name='RefusedReasonTypes')
-    refused_reason_message = CharField(api_name='RefusedReasonMessage')
-    declared_ubos = ListField(api_name='DeclaredUBOs')
+    ubos = ListField(api_name='Ubos')
+    user = ForeignKeyField(User)
 
     class Meta:
         verbose_name = 'ubodeclaration'
         verbose_name_plural = 'ubodeclarations'
+
+        # For Update as well as Select, 'ubo_declaration_id' is provided by the 'reference' param of the update method
         url = {
-            InsertQuery.identifier: '/users/legal/%(user_id)s/ubodeclarations',
-            UpdateQuery.identifier: '/ubodeclarations'
+            InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations',
+            UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations',
+            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations'
         }
 
-    def save(self, handler=None, cls=None, idempotency_key=None):
-        self._handler = handler or self.handler
+    def create(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        return insert.execute()
 
-        field_dict = dict(self._data)
-        field_dict.update(self.get_field_dict())
-        field_dict.pop(self._meta.pk_name)
+    def get_read_only_properties(self):
+        read_only = ["ProcessedDate", "Reason", "Message"]
+        return read_only
 
-        all_fields = self._meta.fields
+    def get_sub_objects(self, sub_objects=None):
+        sub_objects['Ubos'] = Ubo
+        return sub_objects
 
-        if cls is None:
-            cls = self.__class__
 
-        created = False
+class Ubo(BaseModel):
+    first_name = CharField(api_name='FirstName', required=True)
+    last_name = CharField(api_name='LastName', required=True)
+    address = AddressField(api_name='Address', required=True)
+    nationality = CharField(api_name='Nationality', required=True)
+    birthday = DateField(api_name='Birthday', required=True)
+    birthplace = BirthplaceField(api_name='Birthplace', required=True)
+    user = ForeignKeyField(User)
+    ubo_declaration = ForeignKeyField(UboDeclaration)
 
-        pre_save.send(cls, instance=self)
+    class Meta:
+        verbose_name = 'ubo'
+        verbose_name_plural = 'ubos'
 
-        if self.get_pk():
-            declared_ubo_ids = []
-            for ubo in field_dict['declared_ubos']:
-                declared_ubo_ids.append(ubo.user_id)
-            field_dict['declared_ubos'] = declared_ubo_ids
-            update = self.update(
-                self.get_pk(),
-                **field_dict
-            )
-            result = update.execute(handler)
-        else:
-            for k, v in all_fields.items():
-                if v.required is True and field_dict[v.name] is None:
-                    raise ValueError('Missing mandatory field: ' + v.name)
+        # For Update, 'ubo_id' is provided by the 'reference' param of the update method
+        url = {
+            InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
+            UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
+            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/%(ubo_id)s'
+        }
 
-            insert = self.insert(idempotency_key=idempotency_key, **field_dict)
-            result = insert.execute(handler)
-
-            created = True
-
-        post_save.send(cls, instance=self, created=created)
-
-        for key, value in result.items():
-            setattr(self, key, value)
-
-        declared_ubo_objects = []
-        for ubo in result['declared_ubos']:
-            ubo_object = DeclaredUbo()
-            ubo_object.user_id = ubo['UserId']
-            ubo_object.status = ubo['Status']
-            if (hasattr(ubo, 'RefusedReasonType')):
-                ubo_object.refused_reason_type = ubo['RefusedReasonType']
-            if (hasattr(ubo, 'RefusedReasonMessage')):
-                ubo_object.refused_reason_message = ubo['RefusedReasonMessage']
-            declared_ubo_objects.append(ubo_object)
-
-        setattr(self, 'declared_ubos', declared_ubo_objects)
-        result['declared_ubos'] = declared_ubo_objects
-
-        return result
+    def get_sub_objects(self, sub_objects=None):
+        sub_objects['Address'] = Address
+        sub_objects['Birthplace'] = Birthplace
+        return sub_objects

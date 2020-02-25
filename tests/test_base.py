@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-import requests
-
+import time
+import unittest
 from datetime import date
+
+import requests
+import responses
 from exam.decorators import fixture
 
 from mangopay import APIRequest
-from mangopay.utils import Address, ReportTransactionsFilters
-from . import settings
-from .mocks import RegisteredMocks
-from .resources import (NaturalUser, LegalUser, Wallet,
-                        CardRegistration, Card, BankWirePayOut, CardWebPayIn, Transfer, Money)
-
-import responses
-import time
-import unittest
-
 from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
-from mangopay.resources import BankAccount, Document, ReportTransactions
+from mangopay.constants import LEGAL_USER_TYPE_CHOICES
+from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo
+from mangopay.utils import Address, ReportTransactionsFilters, Birthplace
+from tests import settings
+from tests.mocks import RegisteredMocks
+from tests.resources import (NaturalUser, LegalUser, Wallet,
+                             CardRegistration, Card, BankWirePayOut, CardWebPayIn, Transfer, Money)
 
 _activate = responses.activate
 
@@ -49,7 +48,7 @@ class BaseTest(RegisteredMocks):
             "proof_of_address": None,
             "person_type": "NATURAL",
             "email": "victor@hugo.com",
-            "tag": "custom tag",
+            "tag": "Python SDK Unit Test",
         }
         natural_user = NaturalUser(**natural_user_params)
         natural_user.save()
@@ -76,7 +75,7 @@ class BaseTest(RegisteredMocks):
             "statute": None,
             "person_type": "LEGAL",
             "email": "info@mangopay.com",
-            "tag": "custom tag",
+            "tag": "Python SDK Unit Test",
             # "creation_date": datetime.now()
         }
         legal_user = LegalUser(**legal_user_params)
@@ -126,7 +125,7 @@ class BaseTest(RegisteredMocks):
         response = requests.post(card_registration.card_registration_url, data={
             'cardNumber': '4970100000000154',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         })
@@ -152,7 +151,7 @@ class BaseTest(RegisteredMocks):
         response = requests.post(card_registration.card_registration_url, data={
             'cardNumber': '4970101122334422',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         })
@@ -178,7 +177,7 @@ class BaseTest(RegisteredMocks):
         response = requests.post(card_registration.card_registration_url, data={
             'cardNumber': '4970101122334406',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         })
@@ -189,6 +188,56 @@ class BaseTest(RegisteredMocks):
         card = Card.get(card_registration.card.get_pk())
 
         return card
+
+    @fixture
+    def legal_user_ubo_declaration(self):
+        self.mock_declarative_user()
+        self.mock_ubo_declaration()
+
+        params = {
+            "first_name": "Victor",
+            "last_name": "Hugo",
+            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR'),
+            "birthday": 1231432,
+            "nationality": "FR",
+            "country_of_residence": "FR",
+            "occupation": "Writer",
+            "income_range": 6,
+            "proof_of_identity": None,
+            "proof_of_address": None,
+            "person_type": "NATURAL",
+            "email": "victor@hugo.com",
+            "tag": "Python SDK Unit Test",
+            "capacity": "DECLARATIVE"
+        }
+        user = NaturalUser(**params)
+        user.save()
+
+        params = {
+            "user": user,
+            "creation_date": 1554803756
+        }
+
+        ubo_declaration = UboDeclaration(**params)
+        ubo_declaration.save()
+        return ubo_declaration, user
+
+    @fixture
+    def ubo_declaration_ubo(self):
+        params = {
+            "first_name": "Victor",
+            "last_name": "Hugo",
+            "address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR'),
+            "birthday": 1231432,
+            "nationality": "FR",
+            "birthplace": Birthplace(city='Paris', country='FR')
+        }
+        ubo = Ubo(**params)
+        return ubo
 
 
 class BaseTestLive(unittest.TestCase):
@@ -203,8 +252,64 @@ class BaseTestLive(unittest.TestCase):
     _johns_payin = None
     _johns_card = None
 
+    _user_legal = None
+    _ubo_declaration = None
+    _ubo = None
+
     def setUp(self):
         BaseTestLive.get_john()
+        BaseTestLive.get_user_legal()
+
+    @staticmethod
+    def get_user_legal(recreate=False):
+        if BaseTestLive._user_legal is None or recreate:
+            legal = LegalUser()
+            legal.name = 'MatrixSampleOrg_PythonSDK'
+            legal.email = 'mail@test.com'
+            legal.legal_person_type = "BUSINESS"
+            legal.legal_representative_first_name = "Mango"
+            legal.legal_representative_last_name = 'Pay'
+            legal.legal_representative_email = 'mango@mangopay.com'
+            legal.person_type = 'LEGAL'
+            legal.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                                 city='City', region='Region',
+                                                 postal_code='11222', country='FR')
+            legal.legal_representative_birthday = 1300186358
+            legal.legal_representative_nationality = 'FR'
+            legal.legal_representative_country_of_residence = 'FR'
+            legal.company_number = 123456789
+            legal.tag = 'Python SDK Unit Test'
+            BaseTestLive._user_legal = LegalUser(**legal.save())
+        return BaseTestLive._user_legal
+
+    @staticmethod
+    def get_ubo_declaration(recreate=False):
+        if BaseTestLive._ubo_declaration is None or recreate:
+            legal_user = BaseTestLive.get_user_legal()
+            params = {
+                "user_id": legal_user.id
+            }
+            BaseTestLive._ubo_declaration = UboDeclaration(**UboDeclaration().create(**params))
+        return BaseTestLive._ubo_declaration
+
+    @staticmethod
+    def get_ubo(recreate=False):
+        if BaseTestLive._ubo is None or recreate:
+            address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                              city='City', region='Region',
+                              postal_code='11222', country='FR')
+            params = {
+                "user": BaseTestLive.get_user_legal(True),
+                "ubo_declaration": BaseTestLive.get_ubo_declaration(True),
+                "first_name": "Victor",
+                "last_name": "Hugo",
+                "address": address,
+                "birthday": date(1970, 1, 15),
+                "nationality": "FR",
+                "birthplace": Birthplace(city='Paris', country='FR')
+            }
+            BaseTestLive._ubo = Ubo.create(**params)
+        return BaseTestLive._ubo
 
     @staticmethod
     def get_johns_report(recreate=False):
@@ -308,7 +413,7 @@ class BaseTestLive(unittest.TestCase):
             payout.payment_type = 'BANK_WIRE'
             BaseTestLive._johns_payout = BankWirePayOut(**payout.save())
         return BaseTestLive._johns_payout
-    
+
     @staticmethod
     def get_johns_payin(recreate=False):
         if BaseTestLive._johns_payin is None or recreate:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import NaturalUser, Wallet, Transfer
-from .test_base import BaseTest
+from tests.resources import NaturalUser, Wallet, Transfer
+from tests.test_base import BaseTest
 
 from datetime import date
 

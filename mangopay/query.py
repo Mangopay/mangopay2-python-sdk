@@ -48,7 +48,10 @@ class SelectQuery(BaseQuery):
         handler = handler or self.handler
 
         meta_url = self.parse_url(model._meta.url, kwargs)
-        url = '%s/%s' % (meta_url, reference)
+        if reference != "":
+            url = '%s/%s' % (meta_url, reference)
+        else:
+            url = '%s' % meta_url
 
         result, data = handler.request(self.method, url)
 
@@ -86,7 +89,8 @@ class SelectQuery(BaseQuery):
 
         results = []
         cast = getattr(self.model, 'cast', lambda result: self.model)
-
+        if type(data) is not list:
+            data = [data]
         for entry in data:
             model_klass = cast(entry)
             results.append(model_klass(handler=handler, **dict(self.parse_result(entry, model_klass))))
@@ -108,11 +112,12 @@ class InsertQuery(BaseQuery):
 
     def parse_insert(self):
         pairs = {}
-        for k, v in six.iteritems(self.insert_query):
-            field = self.model._meta.get_field_by_name(k)
+        if hasattr(self.model, "_meta"):
+            for k, v in six.iteritems(self.insert_query):
+                field = self.model._meta.get_field_by_name(k)
 
-            if field.required or v is not None:
-                pairs[field.api_name] = field.api_value(v)
+                if field.required or v is not None:
+                    pairs[field.api_name] = field.api_value(v)
 
         return pairs
 

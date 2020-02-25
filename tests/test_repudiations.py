@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mangopay.resources import Repudiation
-from .test_base import BaseTestLive
+from tests.test_base import BaseTestLive
 
 
 class RepudiationsTestLive(BaseTestLive):

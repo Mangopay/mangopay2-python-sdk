@@ -1,6 +1,5 @@
 from .utils import Choices
 
-
 USER_TYPE_CHOICES = Choices(
     ('NATURAL', 'natural', 'Natural user'),
     ('LEGAL', 'legal', 'Legal user')
@@ -173,6 +172,7 @@ REFUSED_REASON_TYPE_CHOICES = Choices(
     ('SPECIFIC_CASE', 'specific_case', 'Specific Case'),
     ('DOCUMENT_FALSIFIED', 'document_falsified', 'Document Falsified'),
     ('UNDERAGE_PERSON', 'underage_person', 'Underage Person'),
+    ('COUNTERFEIT_PRODUCT', 'counterfeit_product', 'Counterfeit Product'),
     ('OTHER', 'other', 'Other')
 )
 
@@ -224,7 +224,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("CARD", "card", "Card"),
     ("DIRECT_DEBIT", "direct_debit", "Direct Debit"),
     ("PREAUTHORIZED", "preauthorized", "Preauthorized"),
-    ("BANK_WIRE", "bank_wire", "Bank Wire")
+    ("BANK_WIRE", "bank_wire", "Bank Wire"),
+    ("APPLEPAY", "applepay", "Applepay")
 )
 
 CARD_STATUS_CHOICES = Choices(
@@ -237,13 +238,14 @@ UBO_DECLARATION_STATUS_CHOICES = Choices(
     ("CREATED", "created", "Created"),
     ("VALIDATION_ASKED", "validation_asked", "Validation Asked"),
     ("VALIDATED", "validated", "Validated"),
-    ("REFUSED", "refused", "Refused")
+    ("REFUSED", "refused", "Refused"),
+    ("INCOMPLETE", "incomplete", "Incomplete")
 )
 
 UBO_DECLARATION_REFUSED_REASON_CHOICES = Choices(
     ("MISSING_UBO", "missing_ubo", "Missing UBO"),
-    ("INVALID_DECLARED_UBO", "invalid_declared_ubo", "Invalid Declared UBO"),
-    ("INVALID_UBO_DETAILS", "invalid_ubo_details", "Invalid UBO Details")
+    ("DECLARATION_DO_NOT_MATCH_UBO_INFORMATION", "declaration_do_not_match_ubo_information", "Declaration Do Not "
+                                                                                             "Match UBO Information")
 )
 
 DECLARED_UBO_STATUS_CHOICES = Choices(

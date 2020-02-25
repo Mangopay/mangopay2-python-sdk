@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
-from .test_base import BaseTest, BaseTestLive
+from tests.resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
+from tests.test_base import BaseTest, BaseTestLive
 
 try:
     import urllib.parse as urlrequest
@@ -642,7 +642,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         registration_data_response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
             'cardNumber': '4970100000000154',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0320',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }))
@@ -671,4 +671,4 @@ class PreAuthorizationsTestLive(BaseTestLive):
         self.assertIsNotNone(saved_pre_authorization)
         security_info = saved_pre_authorization['security_info']
         self.assertIsInstance(security_info, SecurityInfo)
-        self.assertEqual(security_info.avs_result, "ADDRESS_MATCH_ONLY")
+        self.assertEqual(security_info.avs_result, "NO_CHECK")

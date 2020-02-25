@@ -1,18 +1,19 @@
 # see: http://hustoknow.blogspot.com/2011/01/m2crypto-and-facebook-python-sdk.html
 from __future__ import unicode_literals
 
-from calendar import timegm
 import copy
 import datetime
 import decimal
 import inspect
+import sys
+from calendar import timegm
+from functools import wraps
+
 import pytz
 import six
-import sys
 
-from functools import wraps
-from .exceptions import CurrencyMismatch
 from .compat import python_2_unicode_compatible
+from .exceptions import CurrencyMismatch
 
 if six.PY3:
     from urllib import request
@@ -230,7 +231,8 @@ class PlatformCategorization(object):
 
     def __str__(self):
         return 'PlatformCategorization: %s %s' % (self.business_type, self.sector)
-      
+
+
 @add_camelcase_aliases
 class Billing(object):
     def __init__(self, address=None):
@@ -239,6 +241,7 @@ class Billing(object):
     def __str__(self):
         return 'Billing: %s' % self.address
 
+
 @add_camelcase_aliases
 class SecurityInfo(object):
     def __init__(self, avs_result=None):
@@ -246,6 +249,7 @@ class SecurityInfo(object):
 
     def __str__(self):
         return 'AVS Result: %s' % self.avs_result
+
 
 @add_camelcase_aliases
 class DebitedBankAccount(object):
@@ -313,6 +317,19 @@ class ShippingAddress(object):
     def __eq__(self, other):
         if isinstance(other, ShippingAddress):
             return self.recipient_name == other.recipient_name and self.address == other.address
+        return False
+
+
+@add_camelcase_aliases
+class ApplepayPaymentData(object):
+    def __init__(self, transaction_id=None, network=None, token_data=None):
+        self.transaction_id = transaction_id
+        self.network = network
+        self.token_data = token_data
+
+    def __eq__(self, other):
+        if isinstance(other, ApplepayPaymentData):
+            return self.transaction_id == other.transaction_id and self.network == other.network and self.token_data == other.token_data
         return False
 
 
@@ -396,25 +413,26 @@ class Reason(object):
 
 
 @add_camelcase_aliases
-class DeclaredUbo(object):
-    def __init__(self, user_id=None, status=None, refused_reason_type=None, refused_reason_message=None):
-        self.user_id = user_id
-        self.status = status
-        self.refused_reason_type = refused_reason_type
-        self.refused_reason_message = refused_reason_message
+class Birthplace(object):
+    def __init__(self, city=None, country=None):
+        self.city = city
+        self.country = country
 
     def __str__(self):
-        return 'Declared UBO ID: %s Status: %s' +\
-               ('' if self.refused_reason_type is None else ' Refused Because: %s (%s)')\
-                % self.user_id, self.status, self.refused_reason_message, self.refused_reason_type
+        return 'Birthplace: %s, %s' % (self.city, self.country)
 
     def __eq__(self, other):
-        if isinstance(other, DeclaredUbo):
-            return ((self.user_id == other.user_id) and
-                    (self.status == other.status) and
-                    (self.refused_reason_type == other.refused_reason_type) and
-                    (self.refused_reason_message == other.refused_reason_message))
+        if isinstance(other, Birthplace):
+            stat = ((self.city == other.city) and
+                    (self.country == other.country))
+            return stat
         return False
+
+    def to_api_json(self):
+        return {
+            "City": self.city,
+            "Country": self.country,
+        }
 
 
 # This code belongs to https://github.com/carljm/django-model-utils

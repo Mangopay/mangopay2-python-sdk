@@ -15,7 +15,7 @@ class ClientsTestLive(BaseTestLive):
         self.assertEqual('sdk-unit-tests', client.client_id)
 
     def test_ClientUpdate(self):
-        phone_number = str(random.randint(1, 99999999))
+        phone_number = str('+33123456789')
         client = Client.get()
         client.primary_button_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
         client.primary_theme_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
