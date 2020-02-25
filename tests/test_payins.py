@@ -643,6 +643,7 @@ class PayInsTestLive(BaseTestLive):
         result = pay_in.save()
         self.assertIsNotNone(result)
 
+    @unittest.skip
     def test_GooglePay_payIn(self):
         user = self.get_john(True)
         debited_wallet = self.get_johns_wallet()
@@ -666,9 +667,10 @@ class PayInsTestLive(BaseTestLive):
         pay_in.debited_funds.amount = 199
         pay_in.debited_funds.currency = "EUR"
         payment_data = GooglepayPaymentData()
+        # can't be tested
         payment_data.transaction_id = "placeholder"
         payment_data.network = 'VISA'
-        payment_data.token_data = "{\"version\"}"
+        payment_data.token_data = "placeholder"
         pay_in.payment_data = payment_data
         pay_in.statement_descriptor = 'Python'
         pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.googlepay

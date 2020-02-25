@@ -225,7 +225,7 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("DIRECT_DEBIT", "direct_debit", "Direct Debit"),
     ("PREAUTHORIZED", "preauthorized", "Preauthorized"),
     ("BANK_WIRE", "bank_wire", "Bank Wire"),
-    ("APPLEPAY", "applepay", "Applepay")
+    ("APPLEPAY", "applepay", "Applepay"),
     ("GOOGLEPAY", "googlepay", "Googlepay")
 )
 
