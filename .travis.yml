@@ -10,15 +10,12 @@ sudo: required
 dist: precise
 deploy:
   provider: pypi
-  user: $USER
-  password: $PASS
+  user: "__token__"
+  password:
+    secure: "MIGJAoGBALeFvpaS4szqW9jo3uH3kaS2YJZSyghvokomKuiPIBr8mnO6BNm6C5sJ\nDKX7ihhJdKUA/MpEFCiObj5ZPiXcV7gHlyVN2FCP5ucFLHtasa3j6nCH5lvdLxAw\nAbPKq8PPCq8rurmFWBLuuCWXR0VW2OG1+Oo4b9U1d5ywST7hpvOrAgMBAAE="
   on:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
     branch: release
     tags: false
     condition: $TRAVIS_PYTHON_VERSION = "3.4"
-env:
-  global:
-  - secure: "XJ8JnWU4iprVkIYb+3KcUWe2VLQjI275chcnWUB6ZCJlE64OGWbvqtzbn67ARICqTqK8julSCO//wOcqHeOXNcTqZ4yHzxGBQXIHBlEXWp6xVTdnD8zl+F/S5g05GcNNAdJyfxW83z3Eha7QUTHbmYfLw/Ev9u85+5My00zZz0U="
-  - secure: "N04bNRIgSTEvLP1QFKK4LPuS99l95UbdAt7yL1C0o/ijayRNPVnchyvJjYeqmG3HhlYpBFuS416DuIsftR/rMn/Lozz6aQ6WqdPB/hqnz+0wiETf8WPuh+iqAeCNGL4kiHTv8xZaAvH4Gkqn2SEIKgCbGFzEQekG1JF54giZSdM="
