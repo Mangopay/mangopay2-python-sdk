@@ -8,7 +8,6 @@ import unittest
 
 class ReportsTestLive(BaseTestLive):
 
-    @unittest.skip("reason for skipping")
     def test_ReportCreate(self):
         report = ReportTransactions()
         report.report_type = 'transactions'
@@ -17,7 +16,6 @@ class ReportsTestLive(BaseTestLive):
         self.assertIsNotNone(result)
         self.assertTrue(result['id'])
 
-    @unittest.skip("reason for skipping")
     def test_ReportFilteredCreate(self):
         report = ReportTransactions()
         report.report_type = 'transactions'
@@ -34,14 +32,12 @@ class ReportsTestLive(BaseTestLive):
         self.assertEqual(report.filters.author_id, result['filters'].author_id)
         self.assertEqual(report.filters.wallet_id, result['filters'].wallet_id)
 
-    @unittest.skip("reason for skipping")
     def test_ReportGet(self):
         report = BaseTestLive.get_johns_report()
         result = Report.get(report.id)
 
         self.assertEqual(report.id, result.id)
 
-    @unittest.skip("reason for skipping")
     def test_Reports_All(self):
         time.sleep(3)
         report = BaseTestLive.get_johns_report(recreate=True)
