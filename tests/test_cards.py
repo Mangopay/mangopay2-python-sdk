@@ -69,7 +69,7 @@ class CardsTest(BaseTest):
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
             'cardNumber': '4970100000000154',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }))
