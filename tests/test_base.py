@@ -306,7 +306,8 @@ class BaseTestLive(unittest.TestCase):
                 "address": address,
                 "birthday": date(1970, 1, 15),
                 "nationality": "FR",
-                "birthplace": Birthplace(city='Paris', country='FR')
+                "birthplace": Birthplace(city='Paris', country='FR'),
+                "isActive": True
             }
             BaseTestLive._ubo = Ubo.create(**params)
         return BaseTestLive._ubo

@@ -1403,6 +1403,7 @@ class Ubo(BaseModel):
     birthplace = BirthplaceField(api_name='Birthplace', required=True)
     user = ForeignKeyField(User)
     ubo_declaration = ForeignKeyField(UboDeclaration)
+    isActive = BooleanField(api_name='IsActive')
 
     class Meta:
         verbose_name = 'ubo'
