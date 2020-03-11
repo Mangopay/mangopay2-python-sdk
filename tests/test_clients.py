@@ -2,7 +2,7 @@ import base64
 import os
 import random
 
-from mangopay.resources import Client, ClientLogo
+from mangopay.resources import Client, ClientLogo, Address
 from tests.test_base import BaseTestLive
 
 
@@ -20,6 +20,8 @@ class ClientsTestLive(BaseTestLive):
         client.primary_button_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
         client.primary_theme_colour = str("#%06x" % random.randint(0, 0xFFFFFF))
         client.headquarters_phone_number = phone_number
+        client.tech_emails = ['test@test.com']
+        client.headquarters_address = Address('AddressLine1','AddressLine2','city','region','123456','FR')
         new_client = client.update()
 
         self.assertIsNotNone(new_client)

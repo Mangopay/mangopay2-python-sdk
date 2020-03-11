@@ -5,8 +5,9 @@ from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, DebitedBankAccount)
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn
+from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
+
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
                              CardWebPayIn, DirectDebitWebPayIn, constants)
@@ -744,6 +745,41 @@ class PayInsTestLive(BaseTestLive):
         pay_in.payment_data = payment_data
         pay_in.statement_descriptor = 'Python'
         pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.applepay
+        pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
+        result = pay_in.save()
+        self.assertIsNotNone(result)
+
+    @unittest.skip
+    def test_GooglePay_payIn(self):
+        user = self.get_john(True)
+        debited_wallet = self.get_johns_wallet()
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+        card = BaseTestLive.get_johns_card(True)
+
+        pay_in = GooglepayPayIn()
+        pay_in.author = user
+        pay_in.credited_user = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 1
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 199
+        pay_in.debited_funds.currency = "EUR"
+        payment_data = GooglepayPaymentData()
+        # can't be tested
+        payment_data.transaction_id = "placeholder"
+        payment_data.network = 'VISA'
+        payment_data.token_data = "placeholder"
+        pay_in.payment_data = payment_data
+        pay_in.statement_descriptor = 'Python'
+        pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.googlepay
         pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
         result = pay_in.save()
         self.assertIsNotNone(result)

@@ -12,7 +12,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField, ApplepayPaymentDataField)
+                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -447,7 +447,8 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
-            ("APPLEPAY", "DIRECT"): ApplepayPayIn
+            ("APPLEPAY", "DIRECT"): ApplepayPayIn,
+            ("GOOGLEPAY", "DIRECT"): GooglepayPayIn
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -557,6 +558,22 @@ class ApplepayPayIn(PayIn):
         verbose_name_plural = 'applepay_payins'
         url = {
             InsertQuery.identifier: '/payins/applepay/direct'
+        }
+
+
+class GooglepayPayIn(PayIn):
+    tag = CharField(api_name='Googlepay PayIn')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    payment_type = GooglepayPaymentDataField(api_name='PaymentData', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'googlepay_payin'
+        verbose_name_plural = 'googlepay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
 
