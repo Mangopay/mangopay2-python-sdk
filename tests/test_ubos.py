@@ -53,12 +53,14 @@ class UbosTests(BaseTestLive):
             "address": address,
             "birthday": 25755342,
             "nationality": "GB",
-            "birthplace": birthplace
+            "birthplace": birthplace,
+            "isActive": True
         }
         updated_ubo = to_be_updated.update(to_be_updated.get_pk(), **params_to_be_updated).execute()
 
         self.assertEqual(updated_ubo['first_name'], "UpdatedFirstName")
         self.assertEqual(updated_ubo['nationality'], "GB")
+        self.assertEqual(updated_ubo["isActive"], True)
 
     def test_get_ubo(self):
         existing_ubo = self.get_ubo(True)

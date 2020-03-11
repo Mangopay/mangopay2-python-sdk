@@ -126,10 +126,8 @@ class PayOutsTest(BaseTest):
             self.assertEqual(getattr(bank_wire_payout, key), value)
 
         self.assertIsNotNone(bank_wire_payout.get_pk())
-
         # test_retrieve_payouts
         retrieved_payout = BankWirePayOut.get(bank_wire_payout.get_pk())
-
         self.assertIsNotNone(retrieved_payout.get_pk())
         self.assertIsInstance(retrieved_payout, BankWirePayOut)
 
