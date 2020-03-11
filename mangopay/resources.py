@@ -12,7 +12,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField, ApplepayPaymentDataField)
+                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -447,7 +447,8 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
-            ("APPLEPAY", "DIRECT"): ApplepayPayIn
+            ("APPLEPAY", "DIRECT"): ApplepayPayIn,
+            ("GOOGLEPAY", "DIRECT"): GooglepayPayIn
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -558,6 +559,22 @@ class ApplepayPayIn(PayIn):
         verbose_name_plural = 'applepay_payins'
         url = {
             InsertQuery.identifier: '/payins/applepay/direct'
+        }
+
+
+class GooglepayPayIn(PayIn):
+    tag = CharField(api_name='Googlepay PayIn')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    payment_type = GooglepayPaymentDataField(api_name='PaymentData', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'googlepay_payin'
+        verbose_name_plural = 'googlepay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
 
@@ -1335,6 +1352,8 @@ class BankingAlias(BaseModel):
         if 'Type' in result:
             if result['Type'] == 'IBAN':
                 return BankingAliasIBAN
+            elif result['Type'] == 'OTHER':
+                return BankingAliasOther
             else:
                 return BankingAlias
 
@@ -1359,6 +1378,22 @@ class BankingAliasIBAN(BankingAlias):
         verbose_name_plural = 'bankingaliases'
         url = {
             InsertQuery.identifier: '/wallets/%(wallet_id)s/bankingaliases/iban',
+            SelectQuery.identifier: '/bankingaliases/%(id)s',
+            UpdateQuery.identifier: '/bankingaliases/%(id)s'
+        }
+
+
+class BankingAliasOther(BankingAlias):
+    type = CharField(api_name='Type', default='OTHER', required='True')
+    account_number = CharField(api_name='AccountNumber')
+    bic = CharField(api_name='BIC')
+    country = CharField(api_name='Country', required=True)
+
+    class Meta:
+        verbose_name = 'bankingalias'
+        verbose_name_plural = 'bankingaliases'
+        url = {
+            InsertQuery.identifier: '/wallets/%(wallet_id)s/bankingaliases/accountNumber',
             SelectQuery.identifier: '/bankingaliases/%(id)s',
             UpdateQuery.identifier: '/bankingaliases/%(id)s'
         }
@@ -1406,6 +1441,7 @@ class Ubo(BaseModel):
     birthplace = BirthplaceField(api_name='Birthplace', required=True)
     user = ForeignKeyField(User)
     ubo_declaration = ForeignKeyField(UboDeclaration)
+    isActive = BooleanField(api_name='IsActive')
 
     class Meta:
         verbose_name = 'ubo'
@@ -1415,7 +1451,7 @@ class Ubo(BaseModel):
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
             UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
-            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/%(ubo_id)s'
+            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/'
         }
 
     def get_sub_objects(self, sub_objects=None):

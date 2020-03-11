@@ -2,7 +2,7 @@ import base64
 import os
 import random
 
-from mangopay.resources import Client, ClientLogo
+from mangopay.resources import Client, ClientLogo, Address
 from tests.test_base import BaseTestLive
 
 

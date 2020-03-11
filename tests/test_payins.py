@@ -5,10 +5,11 @@ from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData)
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn
+from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
+
 from tests import settings
-from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
+from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
                              CardWebPayIn, DirectDebitWebPayIn, constants)
 from tests.test_base import BaseTest, BaseTestLive
 
@@ -252,6 +253,111 @@ class PayInsTest(BaseTest):
             self.assertEqual(getattr(bank_wire_payin, key), value)
 
         self.assertIsNotNone(bank_wire_payin.get_pk())
+
+    @responses.activate
+    def test_get_bank_wire_external_instructions_iban(self):
+        debited_bank_account_params = {
+                    "owner_name": None,
+                    "account_number": None,
+                    "iban": "1234567",
+                    "bic": None,
+                    "type": "IBAN",
+                    "country": None
+                }
+        debited_bank_account = DebitedBankAccount(**debited_bank_account_params)
+        self.register_mock({
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/74980101',
+            'body': {
+                "CreditedUserId": "3171114",
+                "AuthorId": "3171114",
+                "CreditedWalletId": "3171115",
+                "DebitedBankAccount": debited_bank_account_params,
+                "BankingAliasId": "3174533",
+                "Type": "PAYIN",
+                "Status": "SUCCEEDED",
+                "ResultCode": "000000",
+                "ResultMessage": "Success",
+                "Nature": "REGULAR",
+                "CreationDate": 1499440747,
+                "ExecutionDate": 1499440749,
+                "WireReference": "feadza",
+                "PaymentType": "BANK_WIRE",
+                "ExecutionType": "EXTERNAL_INSTRUCTION",
+                "DebitedWalletId": None,
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 0
+                },
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "Id": "3174534",
+                "Tag": None
+            },
+            'status': 200
+        })
+
+        self.assertIsNone(debited_bank_account.account_number)
+        self.assertIsNotNone(debited_bank_account.iban)
+        self.assertIs(debited_bank_account.type, "IBAN")
+
+    @responses.activate
+    def test_get_bank_wire_external_instructions_account_number(self):
+        debited_bank_account_params = {
+            "owner_name": None,
+            "account_number": "1234567",
+            "iban": None,
+            "bic": None,
+            "type": "OTHER"
+        }
+        debited_bank_account = DebitedBankAccount(**debited_bank_account_params)
+        self.register_mock({
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/74980101',
+            'body': {
+                "CreditedUserId": "3171114",
+                "AuthorId": "3171114",
+                "CreditedWalletId": "3171115",
+                "DebitedBankAccount": debited_bank_account_params,
+                "BankingAliasId": "3174533",
+                "Type": "PAYIN",
+                "Status": "SUCCEEDED",
+                "ResultCode": "000000",
+                "ResultMessage": "Success",
+                "Nature": "REGULAR",
+                "CreationDate": 1499440747,
+                "ExecutionDate": 1499440749,
+                "WireReference": "feadza",
+                "PaymentType": "BANK_WIRE",
+                "ExecutionType": "EXTERNAL_INSTRUCTION",
+                "DebitedWalletId": None,
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 0
+                },
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "Id": "3174534",
+                "Tag": None
+            },
+            'status': 200
+        })
+
+        self.assertIsNone(debited_bank_account.iban)
+        self.assertIsNotNone(debited_bank_account.account_number)
+        self.assertIs(debited_bank_account.type, "OTHER")
 
     @responses.activate
     def test_create_paypal_payin(self):
@@ -642,6 +748,41 @@ class PayInsTestLive(BaseTestLive):
         pay_in.payment_data = payment_data
         pay_in.statement_descriptor = 'Python'
         pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.applepay
+        pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
+        result = pay_in.save()
+        self.assertIsNotNone(result)
+
+    @unittest.skip
+    def test_GooglePay_payIn(self):
+        user = self.get_john(True)
+        debited_wallet = self.get_johns_wallet()
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+        card = BaseTestLive.get_johns_card(True)
+
+        pay_in = GooglepayPayIn()
+        pay_in.author = user
+        pay_in.credited_user = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 1
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 199
+        pay_in.debited_funds.currency = "EUR"
+        payment_data = GooglepayPaymentData()
+        # can't be tested
+        payment_data.transaction_id = "placeholder"
+        payment_data.network = 'VISA'
+        payment_data.token_data = "placeholder"
+        pay_in.payment_data = payment_data
+        pay_in.statement_descriptor = 'Python'
+        pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.googlepay
         pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
         result = pay_in.save()
         self.assertIsNotNone(result)
