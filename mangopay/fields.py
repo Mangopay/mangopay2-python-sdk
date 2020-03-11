@@ -266,7 +266,9 @@ class SecurityInfoField(Field):
 class DebitedBankAccountField(Field):
     def python_value(self, value):
         if value is not None:
-            return DebitedBankAccount(owner_name=value['OwnerName'])
+            return DebitedBankAccount(owner_name=value['OwnerName'], account_number=value['AccountNumber'],
+                                      iban=value['IBAN'], bic=value['BIC'], type=value['Type'],
+                                      country=value['Country'])
 
         return value
 
@@ -275,7 +277,12 @@ class DebitedBankAccountField(Field):
 
         if isinstance(value, DebitedBankAccount):
             value = {
-                'OwnerName': value.owner_name
+                'OwnerName': value.owner_name,
+                'AccountNumber': value.account_number,
+                'IBAN': value.iban,
+                'BIC': value.bic,
+                'Type': value.type,
+                'Country': value.country
             }
 
         return value

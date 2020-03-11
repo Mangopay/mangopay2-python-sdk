@@ -117,7 +117,12 @@ EVENT_TYPE_CHOICES = Choices(
     ('PAYOUT_REFUND_FAILED', 'payout_refund_failed', 'Payout refund failed'),
     ('TRANSFER_REFUND_CREATED', 'transfer_refund_created', 'Transfer refund created'),
     ('TRANSFER_REFUND_SUCCEEDED', 'transfer_refund_succeeded', 'Transfer refund succeeded'),
-    ('TRANSFER_REFUND_FAILED', 'transfer_refund_failed', 'Transfer refund failed')
+    ('TRANSFER_REFUND_FAILED', 'transfer_refund_failed', 'Transfer refund failed'),
+    ('MANDATE_CREATED', 'mandate_created', 'Mandate created'),
+    ('MANDATE_FAILED', 'mandate_failed', 'Mandate failed'),
+    ('MANDATE_ACTIVATED', 'mandate_activated', 'Mandate activated'),
+    ('MANDATE_SUBMITTED', 'mandate_submitted', 'Mandate submitted'),
+    ('MANDATE_EXPIRED', 'mandate_expired', 'Mandate expired')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
@@ -180,7 +185,8 @@ MANDATE_STATUS_CHOICES = Choices(
     ('CREATED', 'created', 'Created'),
     ('SUBMITTED', 'submitted', 'Submitted'),
     ('ACTIVE', 'active', 'Active'),
-    ('FAILED', 'failed', 'Failed')
+    ('FAILED', 'failed', 'Failed'),
+    ('EXPIRED', 'expired', 'Expired')
 )
 
 MANDATE_TYPE_CHOICES = Choices(
