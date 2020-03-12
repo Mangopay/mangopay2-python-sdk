@@ -470,6 +470,7 @@ class DirectPayIn(PayIn):
     fees = MoneyField(api_name='Fees', required=True)
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
+    culture = CharField(api_name='Culture')
 
     class Meta:
         verbose_name = 'payin'
@@ -631,6 +632,7 @@ class DirectDebitDirectPayIn(PayIn):
     fees = MoneyField(api_name='Fees', required=True)
     statement_descriptor = CharField(api_name='StatementDescriptor')
     charge_date = CharField(api_name='ChargeDate')
+    culture = CharField(api_name='Culture')
 
     class Meta:
         verbose_name = 'direct_debit_direct_payin'
@@ -686,6 +688,7 @@ class PreAuthorizedPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    culture = CharField(api_name='Culture')
 
     class Meta:
         verbose_name = 'preauthorized_payin'
