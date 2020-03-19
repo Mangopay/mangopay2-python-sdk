@@ -15,5 +15,6 @@
   "Birthplace": {
     "City": "Paris",
     "Country": "GB"
-  }
+  },
+  "IsActive": true
 }

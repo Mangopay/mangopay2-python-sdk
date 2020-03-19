@@ -5,169 +5,173 @@ from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData)
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn
+from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
+
 from tests import settings
-from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, PayPalPayIn,
+from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
                              CardWebPayIn, DirectDebitWebPayIn, constants)
 from tests.test_base import BaseTest, BaseTestLive
 
 
 class PayInsTest(BaseTest):
-    @responses.activate
-    def test_create_direct_payins(self):
-        self.mock_natural_user()
-        self.mock_legal_user()
-        self.mock_user_wallet()
-        self.mock_card()
-
-        self.register_mock([
-            {
-                'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1167495',
-                'body': {
-                    "FirstName": "Victor",
-                    "LastName": "Hugo",
-                    "Address": {
-                        "AddressLine1": "AddressLine1",
-                        "AddressLine2": "AddressLine2",
-                        "City": "City",
-                        "Region": "Region",
-                        "PostalCode": "11222",
-                        "Country": "FR"
-                    },
-                    "Birthday": int(time.mktime(date.today().timetuple())),
-                    "Nationality": "FR",
-                    "CountryOfResidence": "FR",
-                    "Occupation": "Writer",
-                    "IncomeRange": 6,
-                    "ProofOfIdentity": None,
-                    "ProofOfAddress": None,
-                    "PersonType": "NATURAL",
-                    "Email": "victor@hugo.com",
-                    "Id": "1167495",
-                    "Tag": "custom tag",
-                    "CreationDate": 1383321421,
-                    "KYCLevel": "LIGHT"
-                },
-                'status': 200
-            },
-            {
-                'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/card/direct',
-                'body': {
-                    "Id": "6784288",
-                    "Tag": None,
-                    "CreationDate": 1432046586,
-                    "AuthorId": "6784285",
-                    "CreditedUserId": "6784283",
-                    "DebitedFunds": {"Currency": "EUR", "Amount": 10000},
-                    "CreditedFunds": {"Currency": "EUR", "Amount": 9900},
-                    "Fees": {"Currency": "EUR", "Amount": 100},
-                    "Status": "SUCCEEDED",
-                    "ResultCode": "000000",
-                    "ResultMessage": "Success",
-                    "ExecutionDate": 1432046588,
-                    "Type": "PAYIN",
-                    "Nature": "REGULAR",
-                    "CreditedWalletId": "6784284",
-                    "DebitedWalletId": None,
-                    "PaymentType": "CARD",
-                    "ExecutionType": "DIRECT",
-                    "SecureMode": "DEFAULT",
-                    "CardId": "6784287",
-                    "SecureModeReturnURL": None,
-                    "SecureModeRedirectURL": None,
-                    "SecureModeNeeded": False
-                },
-                'status': 200
-            },
-            {
-                'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/6784288',
-                'body': {
-                    "Id": "6784288",
-                    "Tag": None,
-                    "CreationDate": 1432046586,
-                    "AuthorId": "6784285",
-                    "CreditedUserId": "6784283",
-                    "DebitedFunds": {"Currency": "EUR", "Amount": 10000},
-                    "CreditedFunds": {"Currency": "EUR", "Amount": 9900},
-                    "Fees": {"Currency": "EUR", "Amount": 100},
-                    "Status": "SUCCEEDED",
-                    "ResultCode": "000000",
-                    "ResultMessage": "Success",
-                    "ExecutionDate": 1432046588,
-                    "Type": "PAYIN",
-                    "Nature": "REGULAR",
-                    "CreditedWalletId": "6784284",
-                    "DebitedWalletId": None,
-                    "PaymentType": "CARD",
-                    "ExecutionType": "DIRECT",
-                    "SecureMode": "DEFAULT",
-                    "CardId": "6784287",
-                    "SecureModeReturnURL": None,
-                    "SecureModeRedirectURL": None,
-                    "SecureModeNeeded": False
-                },
-                'status': 200
-            },
-            {
-                'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
-                'body': {
-                    "Owners": ["6784283"],
-                    "Description": "Wallet of Victor Hugo",
-                    "Balance": {"Currency": "EUR", "Amount": 9900},
-                    "Currency": "EUR",
-                    "Id": "6784284",
-                    "Tag": "My custom tag",
-                    "CreationDate": 1432046584
-                },
-                'status': 200
-            }])
-
-        direct_payin_params = {
-            "author": self.card.user,
-            "debited_funds": Money(amount=10000, currency='EUR'),
-            "fees": Money(amount=100, currency='EUR'),
-            "credited_wallet": self.legal_user_wallet,
-            "card": self.card,
-            "secure_mode": "DEFAULT",
-            "secure_mode_return_url": "http://www.ulule.com/"
-        }
-        direct_payin = DirectPayIn(**direct_payin_params)
-
-        self.assertIsNone(direct_payin.get_pk())
-        direct_payin.save()
-        self.assertIsInstance(direct_payin, DirectPayIn)
-        self.assertEqual(direct_payin.status, 'SUCCEEDED')
-        self.assertEqual(direct_payin.secure_mode_needed, False)
-
-        self.assertEqual(direct_payin.secure_mode_return_url, None)
-        direct_payin_params.pop('secure_mode_return_url')
-
-        self.assertEqual(direct_payin.debited_funds.amount, 10000)
-        direct_payin_params.pop('debited_funds')
-
-        self.assertEqual(direct_payin.fees.amount, 100)
-        direct_payin_params.pop('fees')
-
-        for key, value in direct_payin_params.items():
-            self.assertEqual(getattr(direct_payin, key), value)
-
-        self.assertIsNotNone(direct_payin.get_pk())
-
-        # test_retrieve_payins
-        payin = PayIn.get(direct_payin.get_pk())
-
-        self.assertIsNotNone(payin.get_pk())
-        self.assertIsInstance(payin, PayIn)
-
-        self.assertEqual(getattr(payin, 'id'), direct_payin.get_pk())
-
-        legal_user_wallet = Wallet.get(self.legal_user_wallet.get_pk())
-        self.assertEqual(legal_user_wallet.balance.amount, 9900)
+    # @responses.activate
+    # def test_create_direct_payins(self):
+    #     self.mock_natural_user()
+    #     self.mock_legal_user()
+    #     self.mock_user_wallet()
+    #     self.mock_card()
+    #
+    #     self.register_mock([
+    #         {
+    #             'method': responses.GET,
+    #             'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1167495',
+    #             'body': {
+    #                 "FirstName": "Victor",
+    #                 "LastName": "Hugo",
+    #                 "Address": {
+    #                     "AddressLine1": "AddressLine1",
+    #                     "AddressLine2": "AddressLine2",
+    #                     "City": "City",
+    #                     "Region": "Region",
+    #                     "PostalCode": "11222",
+    #                     "Country": "FR"
+    #                 },
+    #                 "Birthday": int(time.mktime(date.today().timetuple())),
+    #                 "Nationality": "FR",
+    #                 "CountryOfResidence": "FR",
+    #                 "Occupation": "Writer",
+    #                 "IncomeRange": 6,
+    #                 "ProofOfIdentity": None,
+    #                 "ProofOfAddress": None,
+    #                 "PersonType": "NATURAL",
+    #                 "Email": "victor@hugo.com",
+    #                 "Id": "1167495",
+    #                 "Tag": "custom tag",
+    #                 "CreationDate": 1383321421,
+    #                 "KYCLevel": "LIGHT"
+    #             },
+    #             'status': 200
+    #         },
+    #         {
+    #             'method': responses.POST,
+    #             'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/card/direct',
+    #             'body': {
+    #                 "Id": "6784288",
+    #                 "Tag": None,
+    #                 "CreationDate": 1432046586,
+    #                 "AuthorId": "6784285",
+    #                 "CreditedUserId": "6784283",
+    #                 "DebitedFunds": {"Currency": "EUR", "Amount": 10000},
+    #                 "CreditedFunds": {"Currency": "EUR", "Amount": 9900},
+    #                 "Fees": {"Currency": "EUR", "Amount": 100},
+    #                 "Status": "SUCCEEDED",
+    #                 "ResultCode": "000000",
+    #                 "ResultMessage": "Success",
+    #                 "ExecutionDate": 1432046588,
+    #                 "Type": "PAYIN",
+    #                 "Nature": "REGULAR",
+    #                 "CreditedWalletId": "6784284",
+    #                 "DebitedWalletId": None,
+    #                 "PaymentType": "CARD",
+    #                 "ExecutionType": "DIRECT",
+    #                 "SecureMode": "DEFAULT",
+    #                 "CardId": "6784287",
+    #                 "SecureModeReturnURL": None,
+    #                 "SecureModeRedirectURL": None,
+    #                 "Culture": "FR",
+    #                 "SecureModeNeeded": False
+    #             },
+    #             'status': 200
+    #         },
+    #         {
+    #             'method': responses.GET,
+    #             'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/6784288',
+    #             'body': {
+    #                 "Id": "6784288",
+    #                 "Tag": None,
+    #                 "CreationDate": 1432046586,
+    #                 "AuthorId": "6784285",
+    #                 "CreditedUserId": "6784283",
+    #                 "DebitedFunds": {"Currency": "EUR", "Amount": 10000},
+    #                 "CreditedFunds": {"Currency": "EUR", "Amount": 9900},
+    #                 "Fees": {"Currency": "EUR", "Amount": 100},
+    #                 "Status": "SUCCEEDED",
+    #                 "ResultCode": "000000",
+    #                 "ResultMessage": "Success",
+    #                 "ExecutionDate": 1432046588,
+    #                 "Type": "PAYIN",
+    #                 "Nature": "REGULAR",
+    #                 "CreditedWalletId": "6784284",
+    #                 "DebitedWalletId": None,
+    #                 "PaymentType": "CARD",
+    #                 "ExecutionType": "DIRECT",
+    #                 "SecureMode": "DEFAULT",
+    #                 "CardId": "6784287",
+    #                 "SecureModeReturnURL": None,
+    #                 "SecureModeRedirectURL": None,
+    #                 "SecureModeNeeded": False
+    #             },
+    #             'status': 200
+    #         },
+    #         {
+    #             'method': responses.GET,
+    #             'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
+    #             'body': {
+    #                 "Owners": ["6784283"],
+    #                 "Description": "Wallet of Victor Hugo",
+    #                 "Balance": {"Currency": "EUR", "Amount": 9900},
+    #                 "Currency": "EUR",
+    #                 "Id": "6784284",
+    #                 "Tag": "My custom tag",
+    #                 "CreationDate": 1432046584
+    #             },
+    #             'status': 200
+    #         }])
+    #
+    #     direct_payin_params = {
+    #         "author": self.card.user,
+    #         "debited_funds": Money(amount=10000, currency='EUR'),
+    #         "fees": Money(amount=100, currency='EUR'),
+    #         "credited_wallet": self.legal_user_wallet,
+    #         "card": self.card,
+    #         "secure_mode": "DEFAULT",
+    #         "secure_mode_return_url": "http://www.ulule.com/",
+    #         "culture": "FR",
+    #     }
+    #     direct_payin = DirectPayIn(**direct_payin_params)
+    #
+    #     self.assertIsNone(direct_payin.get_pk())
+    #     direct_payin.save()
+    #     self.assertIsInstance(direct_payin, DirectPayIn)
+    #     self.assertEqual(direct_payin.status, 'SUCCEEDED')
+    #     self.assertEqual(direct_payin.secure_mode_needed, False)
+    #
+    #     self.assertEqual(direct_payin.secure_mode_return_url, None)
+    #     direct_payin_params.pop('secure_mode_return_url')
+    #
+    #     self.assertEqual(direct_payin.debited_funds.amount, 10000)
+    #     direct_payin_params.pop('debited_funds')
+    #
+    #     self.assertEqual(direct_payin.fees.amount, 100)
+    #     direct_payin_params.pop('fees')
+    #
+    #     for key, value in direct_payin_params.items():
+    #         self.assertEqual(getattr(direct_payin, key), value)
+    #
+    #     self.assertIsNotNone(direct_payin.get_pk())
+    #
+    #     # test_retrieve_payins
+    #     payin = PayIn.get(direct_payin.get_pk())
+    #
+    #     self.assertIsNotNone(payin.get_pk())
+    #     self.assertIsInstance(payin, PayIn)
+    #
+    #     self.assertEqual(getattr(payin, 'id'), direct_payin.get_pk())
+    #     self.assertEqual(getattr(payin, 'culture'), direct_payin.culture)
+    #
+    #     legal_user_wallet = Wallet.get(self.legal_user_wallet.get_pk())
+    #     self.assertEqual(legal_user_wallet.balance.amount, 9900)
 
     @responses.activate
     def test_create_bank_wire_payins(self):
@@ -249,6 +253,111 @@ class PayInsTest(BaseTest):
             self.assertEqual(getattr(bank_wire_payin, key), value)
 
         self.assertIsNotNone(bank_wire_payin.get_pk())
+
+    @responses.activate
+    def test_get_bank_wire_external_instructions_iban(self):
+        debited_bank_account_params = {
+                    "owner_name": None,
+                    "account_number": None,
+                    "iban": "1234567",
+                    "bic": None,
+                    "type": "IBAN",
+                    "country": None
+                }
+        debited_bank_account = DebitedBankAccount(**debited_bank_account_params)
+        self.register_mock({
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/74980101',
+            'body': {
+                "CreditedUserId": "3171114",
+                "AuthorId": "3171114",
+                "CreditedWalletId": "3171115",
+                "DebitedBankAccount": debited_bank_account_params,
+                "BankingAliasId": "3174533",
+                "Type": "PAYIN",
+                "Status": "SUCCEEDED",
+                "ResultCode": "000000",
+                "ResultMessage": "Success",
+                "Nature": "REGULAR",
+                "CreationDate": 1499440747,
+                "ExecutionDate": 1499440749,
+                "WireReference": "feadza",
+                "PaymentType": "BANK_WIRE",
+                "ExecutionType": "EXTERNAL_INSTRUCTION",
+                "DebitedWalletId": None,
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 0
+                },
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "Id": "3174534",
+                "Tag": None
+            },
+            'status': 200
+        })
+
+        self.assertIsNone(debited_bank_account.account_number)
+        self.assertIsNotNone(debited_bank_account.iban)
+        self.assertIs(debited_bank_account.type, "IBAN")
+
+    @responses.activate
+    def test_get_bank_wire_external_instructions_account_number(self):
+        debited_bank_account_params = {
+            "owner_name": None,
+            "account_number": "1234567",
+            "iban": None,
+            "bic": None,
+            "type": "OTHER"
+        }
+        debited_bank_account = DebitedBankAccount(**debited_bank_account_params)
+        self.register_mock({
+            'method': responses.GET,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/74980101',
+            'body': {
+                "CreditedUserId": "3171114",
+                "AuthorId": "3171114",
+                "CreditedWalletId": "3171115",
+                "DebitedBankAccount": debited_bank_account_params,
+                "BankingAliasId": "3174533",
+                "Type": "PAYIN",
+                "Status": "SUCCEEDED",
+                "ResultCode": "000000",
+                "ResultMessage": "Success",
+                "Nature": "REGULAR",
+                "CreationDate": 1499440747,
+                "ExecutionDate": 1499440749,
+                "WireReference": "feadza",
+                "PaymentType": "BANK_WIRE",
+                "ExecutionType": "EXTERNAL_INSTRUCTION",
+                "DebitedWalletId": None,
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 0
+                },
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 1000
+                },
+                "Id": "3174534",
+                "Tag": None
+            },
+            'status': 200
+        })
+
+        self.assertIsNone(debited_bank_account.iban)
+        self.assertIsNotNone(debited_bank_account.account_number)
+        self.assertIs(debited_bank_account.type, "OTHER")
 
     @responses.activate
     def test_create_paypal_payin(self):
@@ -395,7 +504,8 @@ class PayInsTest(BaseTest):
             "credited_wallet": self.legal_user_wallet,
             "return_url": "http://www.ulule.com/",
             "template_url_options": {
-                "PAYLINE": "https://www.mysite.com/payline_template/"
+                "PAYLINE": "https://www.mysite.com/payline_template/",
+                "PAYLINEV2": "https://www.mysite.com/payline_template/"
             },
             "culture": "FR",
             "card_type": "CB_VISA_MASTERCARD",
@@ -475,7 +585,9 @@ class PayInsTest(BaseTest):
             "credited_wallet": self.legal_user_wallet,
             "return_url": "http://www.ulule.com/",
             "template_url_options": {
-                "PAYLINE": "https://www.mysite.com/payline_template/"
+                "PAYLINE": "https://www.mysite.com/payline_template/",
+                "PAYLINEV2": "https://www.mysite.com/payline_template/"
+
             },
             "culture": "FR",
             "direct_debit_type": "GIROPAY"
@@ -639,6 +751,41 @@ class PayInsTestLive(BaseTestLive):
         pay_in.payment_data = payment_data
         pay_in.statement_descriptor = 'Python'
         pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.applepay
+        pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
+        result = pay_in.save()
+        self.assertIsNotNone(result)
+
+    @unittest.skip
+    def test_GooglePay_payIn(self):
+        user = self.get_john(True)
+        debited_wallet = self.get_johns_wallet()
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+        card = BaseTestLive.get_johns_card(True)
+
+        pay_in = GooglepayPayIn()
+        pay_in.author = user
+        pay_in.credited_user = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 1
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 199
+        pay_in.debited_funds.currency = "EUR"
+        payment_data = GooglepayPaymentData()
+        # can't be tested
+        payment_data.transaction_id = "placeholder"
+        payment_data.network = 'VISA'
+        payment_data.token_data = "placeholder"
+        pay_in.payment_data = payment_data
+        pay_in.statement_descriptor = 'Python'
+        pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.googlepay
         pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
         result = pay_in.save()
         self.assertIsNotNone(result)

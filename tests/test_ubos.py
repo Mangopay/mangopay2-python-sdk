@@ -53,24 +53,21 @@ class UbosTests(BaseTestLive):
             "address": address,
             "birthday": 25755342,
             "nationality": "GB",
-            "birthplace": birthplace
+            "birthplace": birthplace,
+            "isActive": True
         }
         updated_ubo = to_be_updated.update(to_be_updated.get_pk(), **params_to_be_updated).execute()
 
         self.assertEqual(updated_ubo['first_name'], "UpdatedFirstName")
         self.assertEqual(updated_ubo['nationality'], "GB")
+        self.assertEqual(updated_ubo["isActive"], True)
 
     def test_get_ubo(self):
         existing_ubo = self.get_ubo(True)
         user = self.get_user_legal()
         ubo_declaration = self.get_ubo_declaration()
-        params = {
-            "user_id": user.id,
-            "ubo_declaration_id": ubo_declaration.id,
-            "ubo_id": existing_ubo.get_pk()
-        }
 
-        fetched_ubo = Ubo.get("", **params)
+        fetched_ubo = Ubo.get(existing_ubo.get_pk(), **{'user_id' : user.id, 'ubo_declaration_id': ubo_declaration.id })
         self.assertIsNotNone(fetched_ubo)
         self.assertEquals(existing_ubo.first_name, fetched_ubo.first_name)
         self.assertEquals(existing_ubo.last_name, fetched_ubo.last_name)
