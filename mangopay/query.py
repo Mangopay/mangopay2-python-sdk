@@ -89,7 +89,8 @@ class SelectQuery(BaseQuery):
 
         results = []
         cast = getattr(self.model, 'cast', lambda result: self.model)
-
+        if type(data) is not list:
+            data = [data]
         for entry in data:
             model_klass = cast(entry)
             results.append(model_klass(handler=handler, **dict(self.parse_result(entry, model_klass))))

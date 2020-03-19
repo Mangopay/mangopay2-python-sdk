@@ -231,7 +231,8 @@ class PlatformCategorization(object):
 
     def __str__(self):
         return 'PlatformCategorization: %s %s' % (self.business_type, self.sector)
-      
+
+
 @add_camelcase_aliases
 class Billing(object):
     def __init__(self, address=None):
@@ -239,6 +240,7 @@ class Billing(object):
 
     def __str__(self):
         return 'Billing: %s' % self.address
+
 
 @add_camelcase_aliases
 class SecurityInfo(object):
@@ -248,18 +250,30 @@ class SecurityInfo(object):
     def __str__(self):
         return 'AVS Result: %s' % self.avs_result
 
+
 @add_camelcase_aliases
 class DebitedBankAccount(object):
-    def __init__(self, owner_name=None):
+    def __init__(self, owner_name=None, account_number=None, iban=None,
+                 bic=None, type=None, country=None):
         self.owner_name = owner_name
+        self.account_number = account_number
+        self.iban = iban
+        self.bic = bic
+        self.type = type
+        self.country = country
 
     def __str__(self):
         return 'DebitedBankAccount: %s' % \
-               (self.owner_name)
+               (self.owner_name, self.account_number, self.iban, self.bic, self.type, self.country)
 
     def __eq__(self, other):
         if isinstance(other, DebitedBankAccount):
-            stat = (self.owner_name == other.owner_name)
+            stat = (self.owner_name == other.owner_name and
+                    self.account_number == other.account_number and
+                    self.iban == other.iban and
+                    self.bic == other.bic and
+                    self.type == other.type and
+                    self.country == other.country)
 
             return stat
         return False
@@ -314,6 +328,32 @@ class ShippingAddress(object):
     def __eq__(self, other):
         if isinstance(other, ShippingAddress):
             return self.recipient_name == other.recipient_name and self.address == other.address
+        return False
+
+
+@add_camelcase_aliases
+class ApplepayPaymentData(object):
+    def __init__(self, transaction_id=None, network=None, token_data=None):
+        self.transaction_id = transaction_id
+        self.network = network
+        self.token_data = token_data
+
+    def __eq__(self, other):
+        if isinstance(other, ApplepayPaymentData):
+            return self.transaction_id == other.transaction_id and self.network == other.network and self.token_data == other.token_data
+        return False
+
+
+@add_camelcase_aliases
+class GooglepayPaymentData(object):
+    def __init__(self, transaction_id=None, network=None, token_data=None):
+        self.transaction_id = transaction_id
+        self.network = network
+        self.token_data = token_data
+
+    def __eq__(self, other):
+        if isinstance(other, GooglepayPaymentData):
+            return self.transaction_id == other.transaction_id and self.network == other.network and self.token_data == other.token_data
         return False
 
 

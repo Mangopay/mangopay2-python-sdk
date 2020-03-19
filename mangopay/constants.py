@@ -117,7 +117,12 @@ EVENT_TYPE_CHOICES = Choices(
     ('PAYOUT_REFUND_FAILED', 'payout_refund_failed', 'Payout refund failed'),
     ('TRANSFER_REFUND_CREATED', 'transfer_refund_created', 'Transfer refund created'),
     ('TRANSFER_REFUND_SUCCEEDED', 'transfer_refund_succeeded', 'Transfer refund succeeded'),
-    ('TRANSFER_REFUND_FAILED', 'transfer_refund_failed', 'Transfer refund failed')
+    ('TRANSFER_REFUND_FAILED', 'transfer_refund_failed', 'Transfer refund failed'),
+    ('MANDATE_CREATED', 'mandate_created', 'Mandate created'),
+    ('MANDATE_FAILED', 'mandate_failed', 'Mandate failed'),
+    ('MANDATE_ACTIVATED', 'mandate_activated', 'Mandate activated'),
+    ('MANDATE_SUBMITTED', 'mandate_submitted', 'Mandate submitted'),
+    ('MANDATE_EXPIRED', 'mandate_expired', 'Mandate expired')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
@@ -172,6 +177,7 @@ REFUSED_REASON_TYPE_CHOICES = Choices(
     ('SPECIFIC_CASE', 'specific_case', 'Specific Case'),
     ('DOCUMENT_FALSIFIED', 'document_falsified', 'Document Falsified'),
     ('UNDERAGE_PERSON', 'underage_person', 'Underage Person'),
+    ('COUNTERFEIT_PRODUCT', 'counterfeit_product', 'Counterfeit Product'),
     ('OTHER', 'other', 'Other')
 )
 
@@ -179,7 +185,8 @@ MANDATE_STATUS_CHOICES = Choices(
     ('CREATED', 'created', 'Created'),
     ('SUBMITTED', 'submitted', 'Submitted'),
     ('ACTIVE', 'active', 'Active'),
-    ('FAILED', 'failed', 'Failed')
+    ('FAILED', 'failed', 'Failed'),
+    ('EXPIRED', 'expired', 'Expired')
 )
 
 MANDATE_TYPE_CHOICES = Choices(
@@ -223,7 +230,9 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("CARD", "card", "Card"),
     ("DIRECT_DEBIT", "direct_debit", "Direct Debit"),
     ("PREAUTHORIZED", "preauthorized", "Preauthorized"),
-    ("BANK_WIRE", "bank_wire", "Bank Wire")
+    ("BANK_WIRE", "bank_wire", "Bank Wire"),
+    ("APPLEPAY", "applepay", "Applepay"),
+    ("GOOGLEPAY", "googlepay", "Googlepay")
 )
 
 CARD_STATUS_CHOICES = Choices(
