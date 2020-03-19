@@ -20,3 +20,6 @@ deploy:
     tags: false
     python: 3.5
     condition: $TRAVIS_PYTHON_VERSION = "3.5"
+env:
+  global:
+    secure: RhjsC2mVfzyZUzWD8xIQHId1ONHh63BkpbDNr6f2PzHUH9qr/DJemW+du+bNOaUk+ifWBuUqoOvQxIOucTnT/u3M1M1X6XA56bF2cGxTc4JAovYh2z+ZS3qTF1zFLftUxTuit3oA7tpabXyPXfYHlRkwCwbinyIx78zT5OXivGM=
