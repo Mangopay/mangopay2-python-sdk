@@ -504,7 +504,8 @@ class PayInsTest(BaseTest):
             "credited_wallet": self.legal_user_wallet,
             "return_url": "http://www.ulule.com/",
             "template_url_options": {
-                "PAYLINE": "https://www.mysite.com/payline_template/"
+                "PAYLINE": "https://www.mysite.com/payline_template/",
+                "PAYLINEV2": "https://www.mysite.com/payline_template/"
             },
             "culture": "FR",
             "card_type": "CB_VISA_MASTERCARD",
@@ -584,7 +585,9 @@ class PayInsTest(BaseTest):
             "credited_wallet": self.legal_user_wallet,
             "return_url": "http://www.ulule.com/",
             "template_url_options": {
-                "PAYLINE": "https://www.mysite.com/payline_template/"
+                "PAYLINE": "https://www.mysite.com/payline_template/",
+                "PAYLINEV2": "https://www.mysite.com/payline_template/"
+
             },
             "culture": "FR",
             "direct_debit_type": "GIROPAY"
