@@ -698,7 +698,6 @@ class PayOutsTestLive(BaseTestLive):
 class PayInsTestLive(BaseTestLive):
     def test_PayIn_GetRefunds(self):
         payin = BaseTestLive.get_johns_payin()
-
         refunds_page = payin.get_refunds()
 
         self.assertIsNotNone(refunds_page.data)
