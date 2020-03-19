@@ -12,7 +12,7 @@ deploy:
   provider: pypi
   user: __token__
   password:
-    secure: SvJl5/5vWaiyrP1gGRTZFnMBvRhzGZunhvgY0eTKakC7fY1mgkD93qfeMt/Uzfb2KBOGvvbYqLqN4Pyx/KYfeHBQ5AOtNVFPYyQwL3JrruLZI+V71yExntcWOgvwUW6VWoRP+OvPZBs+5eP5r211G4K1LLR/2J6/WsWYZZ46pSk=
+    secure: iock6SDyVCusWm/L5fVUg5qaibGCfhO+lEzc/6iALI/0ZlmfElWF9ijC6h2kkylnbLjm0+x0AelqTEV0YhrkmPuroGH6t/WOcinOHKpxVoy2695/JA3U2F6RrbcDeb55srxZrTRvGHdxASQm4i4A2Ty6zjci0ekU1i11mvBtoO4=
   on:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
