@@ -8,13 +8,10 @@ install:
 script: nosetests
 sudo: required
 dist: precise
-env:
-  - secure: "LTo02Sdtij0dqU+P5ScqxVOxtxPwKpFvVRV+hYkGhrpbZtfH36WNx1ziuCD/8udkxaXdypsXeLV++lk/M2fVYXqTYWOHOJzqowrjpw693cxvW3TqY8XC1N4sJ64083r0FdrEaUhQhVyyEGJeHMuSCLzzggLhYLGq4KGBytEjBiQ="
-  - secure: "WGiPG3MkFDXCQ+K7ES+P5hNn1tSP934s9ZLxsQFWb1qNoGe7rAtue558t8cUB0YFMBwz/c2najyB1RzcfFU60yHM/OHLIOim5AHGWeSWRVnAw8oD5Syd4bQKSaIDoIzEjhJ0zH4gewvbi3h7odYfYvINa2UfNWcxvhYQfK4aNDA="
 deploy:
   provider: pypi
   user: __token__
-  password: $DPASS1$DPASS2
+  password: $PASSONE$PASSTWO
   on:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
@@ -22,3 +19,7 @@ deploy:
     tags: false
     python: 3.5
     condition: $TRAVIS_PYTHON_VERSION = "3.5"
+env:
+  global:
+  - secure: eDsZz0hrnLpBmkFvHMeczHHjytOMJpOZMc21nVR/vRLnjZ7eLmXaklvdy3AQ5SJz+l1neVVihHNX6MyBJ0s63UKatLP7catl++yyqPj5/0C7C0a07ZvJHhUzqnEdYLNOMauy7p5rPMldLOiT1dgQlL1f1FG31BHJ5UkAnrhwvdU=
+  - secure: sZ91Uh/9t4oQn34SUnkEE7opYHy1loe/q8YRG/zHDvY1Qwbzvu+lubKMQwtiHNuY7qJAxBdW5uf8+Poaj742tTTkhiM4Rfqh2FDgWz0DkzIJ7w6u72VGcvIGdaipZtddo70XU5noA4Hw24qmdIx4zbnpw1WsNc4PD6CB5b2rSBA=
