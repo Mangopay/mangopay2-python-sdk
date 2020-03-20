@@ -11,8 +11,7 @@ dist: precise
 deploy:
   provider: pypi
   user: __token__
-  password:
-    secure: iock6SDyVCusWm/L5fVUg5qaibGCfhO+lEzc/6iALI/0ZlmfElWF9ijC6h2kkylnbLjm0+x0AelqTEV0YhrkmPuroGH6t/WOcinOHKpxVoy2695/JA3U2F6RrbcDeb55srxZrTRvGHdxASQm4i4A2Ty6zjci0ekU1i11mvBtoO4=
+  password: $DPASS1$DPASS2
   on:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
@@ -22,4 +21,5 @@ deploy:
     condition: $TRAVIS_PYTHON_VERSION = "3.5"
 env:
   global:
-    secure: RhjsC2mVfzyZUzWD8xIQHId1ONHh63BkpbDNr6f2PzHUH9qr/DJemW+du+bNOaUk+ifWBuUqoOvQxIOucTnT/u3M1M1X6XA56bF2cGxTc4JAovYh2z+ZS3qTF1zFLftUxTuit3oA7tpabXyPXfYHlRkwCwbinyIx78zT5OXivGM=
+  - secure: LTo02Sdtij0dqU+P5ScqxVOxtxPwKpFvVRV+hYkGhrpbZtfH36WNx1ziuCD/8udkxaXdypsXeLV++lk/M2fVYXqTYWOHOJzqowrjpw693cxvW3TqY8XC1N4sJ64083r0FdrEaUhQhVyyEGJeHMuSCLzzggLhYLGq4KGBytEjBiQ=
+  - secure: WGiPG3MkFDXCQ+K7ES+P5hNn1tSP934s9ZLxsQFWb1qNoGe7rAtue558t8cUB0YFMBwz/c2najyB1RzcfFU60yHM/OHLIOim5AHGWeSWRVnAw8oD5Syd4bQKSaIDoIzEjhJ0zH4gewvbi3h7odYfYvINa2UfNWcxvhYQfK4aNDA=
