@@ -8,6 +8,9 @@ install:
 script: nosetests
 sudo: required
 dist: precise
+env:
+  - secure: "LTo02Sdtij0dqU+P5ScqxVOxtxPwKpFvVRV+hYkGhrpbZtfH36WNx1ziuCD/8udkxaXdypsXeLV++lk/M2fVYXqTYWOHOJzqowrjpw693cxvW3TqY8XC1N4sJ64083r0FdrEaUhQhVyyEGJeHMuSCLzzggLhYLGq4KGBytEjBiQ="
+  - secure: "WGiPG3MkFDXCQ+K7ES+P5hNn1tSP934s9ZLxsQFWb1qNoGe7rAtue558t8cUB0YFMBwz/c2najyB1RzcfFU60yHM/OHLIOim5AHGWeSWRVnAw8oD5Syd4bQKSaIDoIzEjhJ0zH4gewvbi3h7odYfYvINa2UfNWcxvhYQfK4aNDA="
 deploy:
   provider: pypi
   user: __token__
@@ -19,7 +22,3 @@ deploy:
     tags: false
     python: 3.5
     condition: $TRAVIS_PYTHON_VERSION = "3.5"
-env:
-  global:
-  - secure: LTo02Sdtij0dqU+P5ScqxVOxtxPwKpFvVRV+hYkGhrpbZtfH36WNx1ziuCD/8udkxaXdypsXeLV++lk/M2fVYXqTYWOHOJzqowrjpw693cxvW3TqY8XC1N4sJ64083r0FdrEaUhQhVyyEGJeHMuSCLzzggLhYLGq4KGBytEjBiQ=
-  - secure: WGiPG3MkFDXCQ+K7ES+P5hNn1tSP934s9ZLxsQFWb1qNoGe7rAtue558t8cUB0YFMBwz/c2najyB1RzcfFU60yHM/OHLIOim5AHGWeSWRVnAw8oD5Syd4bQKSaIDoIzEjhJ0zH4gewvbi3h7odYfYvINa2UfNWcxvhYQfK4aNDA=
