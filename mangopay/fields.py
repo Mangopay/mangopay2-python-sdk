@@ -8,7 +8,7 @@ import six
 
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
-    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData
+    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData
 
 
 class FieldDescriptor(object):
@@ -266,7 +266,9 @@ class SecurityInfoField(Field):
 class DebitedBankAccountField(Field):
     def python_value(self, value):
         if value is not None:
-            return DebitedBankAccount(owner_name=value['OwnerName'])
+            return DebitedBankAccount(owner_name=value['OwnerName'], account_number=value['AccountNumber'],
+                                      iban=value['IBAN'], bic=value['BIC'], type=value['Type'],
+                                      country=value['Country'])
 
         return value
 
@@ -275,7 +277,12 @@ class DebitedBankAccountField(Field):
 
         if isinstance(value, DebitedBankAccount):
             value = {
-                'OwnerName': value.owner_name
+                'OwnerName': value.owner_name,
+                'AccountNumber': value.account_number,
+                'IBAN': value.iban,
+                'BIC': value.bic,
+                'Type': value.type,
+                'Country': value.country
             }
 
         return value
@@ -652,6 +659,22 @@ class ApplepayPaymentDataField(Field):
                 'Network': value.network,
                 'TokenData': value.token_data
             }
+        return value
+
+
+class GooglepayPaymentDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return GooglepayPaymentData(transaction_id=value['TransactionId'], network=value['Network'],
+                                        token_data=value['TokenData'])
+        return value
+
+    def api_value(self, value):
+        value = {
+            'TransactionId': value.transaction_id,
+            'Network': value.network,
+            'TokenData': value.token_data
+        }
         return value
 
 
