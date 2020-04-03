@@ -115,7 +115,7 @@ class PayOutsTest(BaseTest):
         self.assertIsNone(bank_wire_payout.get_pk())
         bank_wire_payout.save()
         self.assertIsInstance(bank_wire_payout, BankWirePayOut)
-
+        self.assertEqual(bankaccount, bank_wire_payout.bank_account)
         self.assertEqual(bank_wire_payout.debited_funds.amount, 1000)
         bank_wire_payout_params.pop('debited_funds')
 
