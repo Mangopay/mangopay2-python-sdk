@@ -122,7 +122,8 @@ EVENT_TYPE_CHOICES = Choices(
     ('MANDATE_FAILED', 'mandate_failed', 'Mandate failed'),
     ('MANDATE_ACTIVATED', 'mandate_activated', 'Mandate activated'),
     ('MANDATE_SUBMITTED', 'mandate_submitted', 'Mandate submitted'),
-    ('MANDATE_EXPIRED', 'mandate_expired', 'Mandate expired')
+    ('MANDATE_EXPIRED', 'mandate_expired', 'Mandate expired'),
+    ('USER_KYC_REGULAR', 'user_kyc_regular', 'User kyc regular')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
