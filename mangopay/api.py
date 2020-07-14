@@ -71,6 +71,7 @@ class APIRequest(object):
             if "data_XXX" in params:
                 params[str("data")] = params[str("data_XXX")]
                 params.__delitem__(str("data_XXX"))
+                headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
         truncated_data = None
 
