@@ -649,7 +649,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         saved_registration['registration_data'] = registration_data_response.text
         updated_registration = CardRegistration(**saved_registration).save()
 
-        card = Card.get(updated_registration['card_id'])
+        card = Card.get(updated_registration['id'])
         pre_authorization = PreAuthorization()
         pre_authorization.card = card
         pre_authorization.author = user
