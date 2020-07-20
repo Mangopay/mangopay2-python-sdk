@@ -1459,6 +1459,7 @@ class Ubo(BaseModel):
         sub_objects['Birthplace'] = Birthplace
         return sub_objects
 
+
 class RateLimit:
     interval_minutes = CharField(api_name='IntervalMinutes', required=True)
     calls_made = CharField(api_name='CallsMade')
@@ -1468,3 +1469,7 @@ class RateLimit:
     class Meta:
         verbose_name = 'rate_limit'
         verbose_name_plural = 'rate_limits'
+
+    def __init__(self, *args):
+        super(RateLimit, self).__init__(*args)
+        self.interval_minutes = args

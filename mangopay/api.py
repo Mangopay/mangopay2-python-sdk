@@ -8,7 +8,8 @@ import logging
 import six
 import copy
 import mangopay
-
+from mangopay.resources import RateLimit
+import sys
 
 from mangopay.auth import AuthorizationTokenManager
 from .exceptions import APIError, DecodeError
@@ -138,7 +139,7 @@ class APIRequest(object):
             result.headers,
             result.text if hasattr(result, 'text') else result.content)
         )
-
+        self.read_response_header(result.headers)
         if result.status_code not in (requests.codes.ok, requests.codes.not_found,
                                       requests.codes.created, requests.codes.accepted,
                                       requests.codes.no_content):
@@ -160,6 +161,53 @@ class APIRequest(object):
                     self._create_decodeerror(result, url=url)
             else:
                 self._create_decodeerror(result, url=url)
+
+    def read_response_header(self, headers):
+        updatedRateLimits = []
+
+        for header in headers:
+            lowercaseHeader = header.lower()
+            if lowercaseHeader.find('X-RateLimit-Remaining') != -1:
+                if updatedRateLimits is not None:
+                    updatedRateLimits = self.init_rate_limits()
+
+                calls_remaining = headers
+                updatedRateLimits[0].calls_remaining = calls_remaining[3]
+                updatedRateLimits[1].calls_remaining = calls_remaining[2]
+                updatedRateLimits[2].calls_remaining = calls_remaining[1]
+                updatedRateLimits[3].calls_remaining = calls_remaining[0]
+
+            if lowercaseHeader.find('X-RateLimit') != -1:
+                if updatedRateLimits is not None:
+                    updatedRateLimits = self.init_rate_limits()
+                calls_made = headers
+                updatedRateLimits[0].calls_made = calls_made[3]
+                updatedRateLimits[1].calls_made = calls_made[2]
+                updatedRateLimits[2].calls_made = calls_made[1]
+                updatedRateLimits[3].calls_made = calls_made[0]
+
+            if lowercaseHeader.find('X-RateLimit-Reset') != -1:
+                if updatedRateLimits is not None:
+                    updatedRateLimits = self.init_rate_limits()
+                reset_times = headers
+                updatedRateLimits[0].reset_time_millis = reset_times[3]
+                updatedRateLimits[1].reset_time_millis = reset_times[2]
+                updatedRateLimits[2].reset_time_millis = reset_times[1]
+                updatedRateLimits[3].reset_time_millis = reset_times[0]
+
+    def init_rate_limits(self):
+        return [
+             RateLimit(15),
+             RateLimit(30),
+             RateLimit(60),
+             RateLimit(24*60)
+        ]
+
+    def find_first_rate_limit_matching_predicate(self, update_rate_limits, predicate):
+        for i in range(0, sys.getsizeof(update_rate_limits)):
+            if predicate(update_rate_limits[i]):
+                return update_rate_limits[i]
+        return RateLimit()
 
     def _absolute_url(self, url, encoded_params):
         pattern = '%s%s%s'
