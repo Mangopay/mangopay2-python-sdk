@@ -139,7 +139,7 @@ class APIRequest(object):
             result.headers,
             result.text if hasattr(result, 'text') else result.content)
         )
-        self.read_response_header(result.headers)
+        # self.read_response_header(result.headers)
         if result.status_code not in (requests.codes.ok, requests.codes.not_found,
                                       requests.codes.created, requests.codes.accepted,
                                       requests.codes.no_content):

@@ -1460,16 +1460,16 @@ class Ubo(BaseModel):
         return sub_objects
 
 
-class RateLimit:
-    interval_minutes = CharField(api_name='IntervalMinutes', required=True)
-    calls_made = CharField(api_name='CallsMade')
-    calls_remaining = CharField(api_name='CallsRemaining')
-    reset_time_millis = CharField(api_name='ResetTimeMillis')
-
-    class Meta:
-        verbose_name = 'rate_limit'
-        verbose_name_plural = 'rate_limits'
-
-    def __init__(self, *args):
-        super(RateLimit, self).__init__(*args)
-        self.interval_minutes = args
+# class RateLimit:
+#     interval_minutes = CharField(api_name='IntervalMinutes', required=True)
+#     calls_made = CharField(api_name='CallsMade')
+#     calls_remaining = CharField(api_name='CallsRemaining')
+#     reset_time_millis = CharField(api_name='ResetTimeMillis')
+#
+#     class Meta:
+#         verbose_name = 'rate_limit'
+#         verbose_name_plural = 'rate_limits'
+#
+#     def __init__(self, *args):
+#         super(RateLimit, self).__init__(*args)
+#         self.interval_minutes = args
