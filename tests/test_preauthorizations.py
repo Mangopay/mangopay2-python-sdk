@@ -640,7 +640,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         registration_data_response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4972485830400049',
             'cardCvx': '123',
             'cardExpirationDate': '0320',
             'accessKeyRef': card_registration.access_key,
@@ -649,7 +649,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         saved_registration['registration_data'] = registration_data_response.text
         updated_registration = CardRegistration(**saved_registration).save()
 
-        card = Card.get(updated_registration['card_id'])
+        card = Card.get(updated_registration['id'])
         pre_authorization = PreAuthorization()
         pre_authorization.card = card
         pre_authorization.author = user
