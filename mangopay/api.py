@@ -32,14 +32,15 @@ except ImportError:
 logger = logging.getLogger('mangopay')
 
 requests_session = requests.Session()
-
+rate_limits = None
 
 class APIRequest(object):
 
 
     def __init__(self, client_id=None, apikey=None, api_url=None, api_sandbox_url=None, sandbox=None,
                  timeout=30.0, storage_strategy=None, proxies=None):
-        self.rate_limits = None
+        global rate_limits
+        rate_limits = None
         if sandbox or mangopay.sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
@@ -51,14 +52,13 @@ class APIRequest(object):
         self.timeout = timeout
         self.proxies = proxies
 
-    def set_rate_limit(self, rate_limits):
-        print("set rate-limits : %s", rate_limits)
-        self.rate_limits = rate_limits
-        print("setted rate-limits : %s", self.rate_limits)
+    def set_rate_limit(self, rate_limit):
+        global rate_limits
+        rate_limits = rate_limit
+
 
     def get_rate_limits(self):
-        print("get rate-limits : %s", self.rate_limits)
-        return self.rate_limits
+        return rate_limits
 
     def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
         return self.custom_request(method, url, data, idempotency_key, oauth_request, True, **params)
