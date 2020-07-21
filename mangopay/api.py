@@ -36,10 +36,10 @@ requests_session = requests.Session()
 
 class APIRequest(object):
 
-    rate_limits = None
 
     def __init__(self, client_id=None, apikey=None, api_url=None, api_sandbox_url=None, sandbox=None,
                  timeout=30.0, storage_strategy=None, proxies=None):
+        self.rate_limits = None
         if sandbox or mangopay.sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
@@ -51,11 +51,14 @@ class APIRequest(object):
         self.timeout = timeout
         self.proxies = proxies
 
-        def set_rate_limit(rate_limits):
-            self.rate_limits = rate_limits
+    def set_rate_limit(self, rate_limits):
+        print("set rate-limits : %s", rate_limits)
+        self.rate_limits = rate_limits
+        print("setted rate-limits : %s", self.rate_limits)
 
-        def get_rate_limits():
-            return self.rate_limits
+    def get_rate_limits(self):
+        print("get rate-limits : %s", self.rate_limits)
+        return self.rate_limits
 
     def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
         return self.custom_request(method, url, data, idempotency_key, oauth_request, True, **params)
@@ -81,6 +84,7 @@ class APIRequest(object):
             if "data_XXX" in params:
                 params[str("data")] = params[str("data_XXX")]
                 params.__delitem__(str("data_XXX"))
+                headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
         truncated_data = None
 
@@ -177,12 +181,6 @@ class APIRequest(object):
         rate_limits = [RateLimit(15), RateLimit(30), RateLimit(60), RateLimit(24 * 60)]
         return rate_limits
 
-    def find_first_rate_limit_matching_predicate(self, update_rate_limits, predicate):
-        for i in range(0,len(update_rate_limits)):
-            if predicate(update_rate_limits[i]):
-                return update_rate_limits[i]
-        return RateLimit(0)
-
     def read_response_headers(self, headers):
         update_rate_limits = None
 
@@ -216,7 +214,7 @@ class APIRequest(object):
                 update_rate_limits[3].reset_time_millis = int(reset_times[0])
 
         if update_rate_limits is not None:
-            APIRequest.rate_limits = update_rate_limits
+            self.set_rate_limit(update_rate_limits)
 
     def _absolute_url(self, url, encoded_params):
         pattern = '%s%s%s'
