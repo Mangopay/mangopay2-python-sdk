@@ -7,7 +7,7 @@ install:
 - pip install -r requirements/development.txt
 script: nosetests
 sudo: required
-dist: xenial
+dist: bionic
 deploy:
   provider: pypi
   user: $USER
