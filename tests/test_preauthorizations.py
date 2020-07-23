@@ -639,13 +639,17 @@ class PreAuthorizationsTestLive(BaseTestLive):
         card_registration.currency = "EUR"
 
         saved_registration = card_registration.save()
-        registration_data_response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+        data = {
+            'cardNumber': '4972485830400049',
             'cardCvx': '123',
-            'cardExpirationDate': '0320',
+            'cardExpirationDate': '0820',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
-        }))
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
         saved_registration['registration_data'] = registration_data_response.text
         updated_registration = CardRegistration(**saved_registration).save()
 
