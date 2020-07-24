@@ -70,7 +70,7 @@ class APIRequest(object):
         headers = {}
 
         if is_mangopay_request:
-            headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
+            headers['User-Agent'] = 'MangoPay V2 SDK Python ' + str(mangopay.package_version)
             if oauth_request:
                 headers['Authorization'] = self.auth_manager.basic_token()
                 headers['Content-Type'] = 'application/x-www-form-urlencoded'
