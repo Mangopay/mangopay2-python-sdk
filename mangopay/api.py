@@ -8,6 +8,7 @@ import logging
 import six
 import copy
 import mangopay
+from mangopay.ratelimit import RateLimit
 
 
 from mangopay.auth import AuthorizationTokenManager
@@ -31,11 +32,15 @@ except ImportError:
 logger = logging.getLogger('mangopay')
 
 requests_session = requests.Session()
-
+rate_limits = None
 
 class APIRequest(object):
+
+
     def __init__(self, client_id=None, apikey=None, api_url=None, api_sandbox_url=None, sandbox=None,
                  timeout=30.0, storage_strategy=None, proxies=None):
+        global rate_limits
+        rate_limits = None
         if sandbox or mangopay.sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
@@ -47,6 +52,14 @@ class APIRequest(object):
         self.timeout = timeout
         self.proxies = proxies
 
+    def set_rate_limit(self, rate_limit):
+        global rate_limits
+        rate_limits = rate_limit
+
+
+    def get_rate_limits(self):
+        return rate_limits
+
     def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
         return self.custom_request(method, url, data, idempotency_key, oauth_request, True, **params)
 
@@ -57,7 +70,7 @@ class APIRequest(object):
         headers = {}
 
         if is_mangopay_request:
-            headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
+            headers['User-Agent'] = 'MangoPay V2 SDK Python ' + str(mangopay.package_version)
             if oauth_request:
                 headers['Authorization'] = self.auth_manager.basic_token()
                 headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -71,6 +84,7 @@ class APIRequest(object):
             if "data_XXX" in params:
                 params[str("data")] = params[str("data_XXX")]
                 params.__delitem__(str("data_XXX"))
+                headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
         truncated_data = None
 
@@ -139,6 +153,8 @@ class APIRequest(object):
             result.text if hasattr(result, 'text') else result.content)
         )
 
+        self.read_response_headers(result.headers)
+
         if result.status_code not in (requests.codes.ok, requests.codes.not_found,
                                       requests.codes.created, requests.codes.accepted,
                                       requests.codes.no_content):
@@ -160,6 +176,45 @@ class APIRequest(object):
                     self._create_decodeerror(result, url=url)
             else:
                 self._create_decodeerror(result, url=url)
+
+    def init_rate_limits(self):
+        rate_limits = [RateLimit(15), RateLimit(30), RateLimit(60), RateLimit(24 * 60)]
+        return rate_limits
+
+    def read_response_headers(self, headers):
+        update_rate_limits = None
+
+        for k, v in headers.items():
+            lower_case_header = k.lower()
+            if lower_case_header == "x-ratelimit-remaining":
+                if update_rate_limits is None:
+                    update_rate_limits = self.init_rate_limits()
+                calls_remaining = list(eval(v))
+                update_rate_limits[0].calls_remaining = int(calls_remaining[3])
+                update_rate_limits[1].calls_remaining = int(calls_remaining[2])
+                update_rate_limits[2].calls_remaining = int(calls_remaining[1])
+                update_rate_limits[3].calls_remaining = int(calls_remaining[0])
+
+            if lower_case_header == "x-ratelimit":
+                if update_rate_limits is None:
+                    update_rate_limits = self.init_rate_limits()
+                calls_made = list(eval(v))
+                update_rate_limits[0].calls_made = int(calls_made[3])
+                update_rate_limits[1].calls_made = int(calls_made[2])
+                update_rate_limits[2].calls_made = int(calls_made[1])
+                update_rate_limits[3].calls_made = int(calls_made[0])
+
+            if lower_case_header == "x-ratelimit-reset":
+                if update_rate_limits is None:
+                    update_rate_limits = self.init_rate_limits()
+                reset_times = list(eval(v))
+                update_rate_limits[0].reset_time_millis = int(reset_times[3])
+                update_rate_limits[1].reset_time_millis = int(reset_times[2])
+                update_rate_limits[2].reset_time_millis = int(reset_times[1])
+                update_rate_limits[3].reset_time_millis = int(reset_times[0])
+
+        if update_rate_limits is not None:
+            self.set_rate_limit(update_rate_limits)
 
     def _absolute_url(self, url, encoded_params):
         pattern = '%s%s%s'

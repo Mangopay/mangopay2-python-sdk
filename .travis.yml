@@ -7,7 +7,7 @@ install:
 - pip install -r requirements/development.txt
 script: nosetests
 sudo: required
-dist: precise
+dist: xenial
 deploy:
   provider: pypi
   user: __token__
