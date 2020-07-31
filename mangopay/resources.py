@@ -663,6 +663,7 @@ class PreAuthorization(BaseModel):
     payin = ForeignKeyField(PayIn, api_name='PayInId')
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
+    multi_capture = BooleanField(api_name='MultiCapture')
 
     class Meta:
         verbose_name = 'preauthorization'
