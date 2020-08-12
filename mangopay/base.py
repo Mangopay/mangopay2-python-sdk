@@ -207,14 +207,14 @@ class BaseApiModel(BaseApiModelMethods):
                 self.get_pk(),
                 **field_dict
             )
-            result = update.execute(handler)
+            result = update.execute(self._handler)
         else:
             for k, v in all_fields.items():
                 if v.required is True and field_dict[v.name] is None:
                     raise ValueError('Missing mandatory field: ' + v.name)
 
             insert = self.insert(idempotency_key=idempotency_key, **field_dict)
-            result = insert.execute(handler)
+            result = insert.execute(self._handler)
 
             created = True
 
