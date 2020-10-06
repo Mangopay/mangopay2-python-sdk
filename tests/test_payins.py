@@ -755,7 +755,7 @@ class PayInsTestLive(BaseTestLive):
         result = pay_in.save()
         self.assertIsNotNone(result)
 
-    @unittest.skip
+    @unittest.skip("can't be tested yet")
     def test_GooglePay_payIn(self):
         user = self.get_john(True)
         debited_wallet = self.get_johns_wallet()
