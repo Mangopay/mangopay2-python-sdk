@@ -769,6 +769,7 @@ class BankWirePayOut(BaseModel):
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
     bank_wire_ref = CharField(api_name='BankWireRef')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
+    creation_date = DateField(api_name='CreationDate')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
