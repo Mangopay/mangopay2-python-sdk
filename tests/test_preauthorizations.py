@@ -66,6 +66,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 10000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "WAITING",
@@ -95,6 +99,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 1000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -123,6 +131,10 @@ class PreAuthorizationsTest(BaseTest):
                     "DebitedFunds": {
                         "Currency": "EUR",
                         "Amount": 1000
+                    },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
                     },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
@@ -153,6 +165,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 1000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -182,6 +198,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 1000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -201,6 +221,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "http://www.ulule.com/"
         }
@@ -223,6 +244,7 @@ class PreAuthorizationsTest(BaseTest):
             self.assertEqual(getattr(preauthorization, key), value)
 
         self.assertIsNotNone(preauthorization.get_pk())
+        self.assertIsNotNone(preauthorization.remaining_funds)
 
         # Test update
         previous_pk = preauthorization.get_pk()
@@ -282,6 +304,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 10000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "WAITING",
@@ -310,6 +336,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 10000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -335,6 +365,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "https://www.mysite.com/secure?preAuthorizationId=1209003"
         }
@@ -348,6 +379,7 @@ class PreAuthorizationsTest(BaseTest):
         preauthorization = PreAuthorization.get(preauthorization.get_pk())
 
         self.assertIsNotNone(preauthorization.get_pk())
+        self.assertIsNotNone(preauthorization.remaining_funds)
 
         self.assertEqual(preauthorization.secure_mode_return_url, None)
         params.pop('secure_mode_return_url')
@@ -464,6 +496,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "https://www.mysite.com/secure?preAuthorizationId=1209003"
         }
@@ -606,6 +639,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "http://www.ulule.com/"
         }
@@ -642,7 +676,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         data = {
             'cardNumber': '4972485830400049',
             'cardCvx': '123',
-            'cardExpirationDate': '0820',
+            'cardExpirationDate': '0821',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
@@ -660,6 +694,9 @@ class PreAuthorizationsTestLive(BaseTestLive):
         pre_authorization.debited_funds = Money()
         pre_authorization.debited_funds.currency = "EUR"
         pre_authorization.debited_funds.amount = 500
+        pre_authorization.remaining_funds = Money()
+        pre_authorization.remaining_funds.currency = "EUR"
+        pre_authorization.remaining_funds.amount = 500
         pre_authorization.secure_mode_return_url = "http://www.example.com/"
         billing = Billing()
         billing.address = Address()
