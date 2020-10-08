@@ -1,4 +1,12 @@
-## [Unreleased]
+## 3.8.2
+- Added missing 'creation_date' field to BankWirePayOut
+- Handler has been modified in save function
+- New RemainingFunds Parameters (Complete feature not fully activated, please listen for product announcements)
+- Added CardValidation endpoint  (Complete feature not fully activated, please listen for product announcements)
+- New MultiCapture Parameter in Preauthorization object (Complete feature not fully activated, please listen for product announcements)
+- Added OUT_OF_DATE status for KYC docs
+- Library upgrade httplib2
+- "User-agent" format in the headers changed, aligned to other assets 
 
 ## [3.8.0]
 ### Added
