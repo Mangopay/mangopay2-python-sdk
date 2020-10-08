@@ -92,7 +92,8 @@ DOCUMENTS_STATUS_CHOICES = Choices(
     ('CREATED', 'created', 'Created'),
     ('VALIDATION_ASKED', 'validation_asked', 'Validation asked'),
     ('VALIDATED', 'validated', 'Validated'),
-    ('REFUSED', 'refused', 'Refused')
+    ('REFUSED', 'refused', 'Refused'),
+    ('OUT_OF_DATE', 'out_of_date', 'Out of Date')
 )
 
 EVENT_TYPE_CHOICES = Choices(
