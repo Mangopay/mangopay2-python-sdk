@@ -277,3 +277,9 @@ class CardsLiveTest(BaseTestLive):
 
         self.assertIsNotNone(transactions_page.data)
         self.assertIsInstance(transactions_page.data, list)
+
+    def test_cardValidation(self):
+        card = BaseTestLive.get_johns_card()
+        validatedCard = card.validate()
+
+        self.assertIsNotNone(validatedCard)

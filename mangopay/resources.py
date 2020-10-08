@@ -322,13 +322,20 @@ class Card(BaseModel):
         select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
+    def validate(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'CARD_VALIDATE'
+        return insert.execute()
+
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
         url = {
             SelectQuery.identifier: '/cards',
             UpdateQuery.identifier: '/cards',
-            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s'}
+            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s',
+            'CARD_VALIDATE': '/cards/%(id)s/validate'}
 
     def __str__(self):
         return '%s of user %s' % (self.card_type, self.user_id)
