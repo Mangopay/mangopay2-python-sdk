@@ -1,7 +1,7 @@
 language: python
 python:
 - '2.7'
-- '3.4'
+- '3.5'
 install:
 - pip install -r requirements/base.txt
 - pip install -r requirements/development.txt
@@ -10,15 +10,16 @@ sudo: required
 dist: xenial
 deploy:
   provider: pypi
-  user: $USER
-  password: $PASS
+  user: __token__
+  password: $PASSONE$PASSTWO
   on:
     distributions: sdist bdist_wheel
     repo: Mangopay/mangopay2-python-sdk
     branch: release
     tags: false
-    condition: $TRAVIS_PYTHON_VERSION = "3.4"
+    python: 3.5
+    condition: $TRAVIS_PYTHON_VERSION = "3.5"
 env:
   global:
-  - secure: "XJ8JnWU4iprVkIYb+3KcUWe2VLQjI275chcnWUB6ZCJlE64OGWbvqtzbn67ARICqTqK8julSCO//wOcqHeOXNcTqZ4yHzxGBQXIHBlEXWp6xVTdnD8zl+F/S5g05GcNNAdJyfxW83z3Eha7QUTHbmYfLw/Ev9u85+5My00zZz0U="
-  - secure: "N04bNRIgSTEvLP1QFKK4LPuS99l95UbdAt7yL1C0o/ijayRNPVnchyvJjYeqmG3HhlYpBFuS416DuIsftR/rMn/Lozz6aQ6WqdPB/hqnz+0wiETf8WPuh+iqAeCNGL4kiHTv8xZaAvH4Gkqn2SEIKgCbGFzEQekG1JF54giZSdM="
+  - secure: eDsZz0hrnLpBmkFvHMeczHHjytOMJpOZMc21nVR/vRLnjZ7eLmXaklvdy3AQ5SJz+l1neVVihHNX6MyBJ0s63UKatLP7catl++yyqPj5/0C7C0a07ZvJHhUzqnEdYLNOMauy7p5rPMldLOiT1dgQlL1f1FG31BHJ5UkAnrhwvdU=
+  - secure: sZ91Uh/9t4oQn34SUnkEE7opYHy1loe/q8YRG/zHDvY1Qwbzvu+lubKMQwtiHNuY7qJAxBdW5uf8+Poaj742tTTkhiM4Rfqh2FDgWz0DkzIJ7w6u72VGcvIGdaipZtddo70XU5noA4Hw24qmdIx4zbnpw1WsNc4PD6CB5b2rSBA=
