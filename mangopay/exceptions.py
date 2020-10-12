@@ -3,6 +3,7 @@ class APIError(Exception):
         self.code = kwargs.pop('code', None)
         self.url = kwargs.pop('url', None)
         self.content = kwargs.pop('content', None)
+        self.headers = kwargs.pop('headers', None)
 
         super(APIError, self).__init__(*args, **kwargs)
 
