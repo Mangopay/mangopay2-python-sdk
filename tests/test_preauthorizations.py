@@ -713,3 +713,68 @@ class PreAuthorizationsTestLive(BaseTestLive):
         security_info = saved_pre_authorization['security_info']
         self.assertIsInstance(security_info, SecurityInfo)
         self.assertEqual(security_info.avs_result, "NO_CHECK")
+
+    def test_PreAuthorizations_CreateDirect(self):
+        user = BaseTestLive.get_john()
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = "EUR"
+
+        saved_registration = card_registration.save()
+        data = {
+            'cardNumber': '4972485830400049',
+            'cardCvx': '123',
+            'cardExpirationDate': '0821',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+
+        card = Card.get(updated_registration['card_id'])
+        pre_authorization = PreAuthorization()
+        pre_authorization.card = card
+        pre_authorization.author = user
+        pre_authorization.debited_funds = Money()
+        pre_authorization.debited_funds.currency = "EUR"
+        pre_authorization.debited_funds.amount = 500
+        pre_authorization.remaining_funds = Money()
+        pre_authorization.remaining_funds.currency = "EUR"
+        pre_authorization.remaining_funds.amount = 500
+        pre_authorization.secure_mode_return_url = "http://www.example.com/"
+        billing = Billing()
+        billing.address = Address()
+        billing.address.address_line_1 = "Main Street"
+        billing.address.address_line_2 = "no. 5 ap. 6"
+        billing.address.country = "FR"
+        billing.address.city = "Lyon"
+        billing.address.postal_code = "65400"
+        pre_authorization.billing = billing
+
+        saved_pre_authorization = pre_authorization.save()
+
+        wallet = BaseTestLive.get_johns_wallet()
+
+        payin = PreAuthorizedPayIn()
+        payin.author = BaseTestLive.get_john()
+        payin.debited_funds = Money(amount=500, currency='EUR')
+        payin.credited_wallet = wallet
+        payin.secure_mode_return_url = "http://test.com"
+        payin.secure_mode = 'DEFAULT'
+        payin.preauthorization = pre_authorization
+        payin.fees = Money(amount=0, currency='EUR')
+        payin.culture = 'fr'
+        BaseTestLive._johns_payin = PreAuthorizedPayIn(**payin.save())
+
+        transactions = pre_authorization.get_transactions()
+
+        self.assertIsNotNone(saved_pre_authorization)
+        security_info = saved_pre_authorization['security_info']
+        self.assertIsInstance(security_info, SecurityInfo)
+        self.assertEqual(security_info.avs_result, "NO_CHECK")
+        self.assertEqual(payin.status, "SUCCEEDED")
+        self.assertEqual(transactions[0].status, "SUCCEEDED")
