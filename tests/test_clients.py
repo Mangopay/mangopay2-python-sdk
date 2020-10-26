@@ -2,7 +2,8 @@ import base64
 import os
 import random
 
-from mangopay.resources import Client, ClientLogo, Address
+from mangopay.resources import Client, ClientLogo, Address, BankWirePayOut, ClientWallet
+from mangopay.utils import Money
 from tests.test_base import BaseTestLive
 
 
@@ -37,3 +38,26 @@ class ClientsTestLive(BaseTestLive):
         client_logo = ClientLogo()
         client_logo.file = encoded_file
         client_logo.upload()
+
+    def test_create_bank_account(self):
+        account = BaseTestLive.get_client_bank_account()
+        self.assertIsNotNone(account)
+        self.assertIsNotNone(account.id)
+
+    def test_create_payout(self):
+        account = BaseTestLive.get_client_bank_account()
+        payout = BankWirePayOut()
+        wallets = ClientWallet.all()
+
+        payout.debited_funds = Money()
+        payout.debited_funds.currency = 'EUR'
+        payout.debited_funds.amount = 12
+
+        payout.bank_account = account
+        payout.debited_wallet = wallets[0]
+        payout.bank_wire_ref = 'invoice 7282'
+
+        created_payout = BankWirePayOut(**payout.create_client_payout())
+
+        self.assertIsNotNone(created_payout)
+        self.assertIsNotNone(created_payout.id)
