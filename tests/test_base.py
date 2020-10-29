@@ -485,3 +485,20 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_oauth_manager():
         return BaseTestLive._oauth_manager
+
+    def test_handler(self):
+        api_url = "test_api_url"
+        sandbox_url = "test_sandbox_url"
+
+        sandbox_handler = APIRequest(
+            api_sandbox_url=sandbox_url,
+            api_url=api_url,
+            sandbox=True)
+
+        non_sandbox_handler = APIRequest(
+            api_sandbox_url=sandbox_url,
+            api_url=api_url,
+            sandbox=False)
+
+        self.assertEqual(api_url, non_sandbox_handler.api_url)
+        self.assertEqual(sandbox_url, sandbox_handler.api_url)

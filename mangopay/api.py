@@ -41,7 +41,7 @@ class APIRequest(object):
                  timeout=30.0, storage_strategy=None, proxies=None):
         global rate_limits
         rate_limits = None
-        if sandbox or mangopay.sandbox:
+        if (sandbox is None and mangopay.sandbox) or sandbox:
             self.api_url = api_sandbox_url or mangopay.api_sandbox_url
         else:
             self.api_url = api_url or mangopay.api_url
