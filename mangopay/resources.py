@@ -673,6 +673,12 @@ class PreAuthorization(BaseModel):
     security_info = SecurityInfoField(api_name='SecurityInfo')
     multi_capture = BooleanField(api_name='MultiCapture')
 
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'PRE_AUTHORIZATION_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'preauthorization'
         verbose_name_plural = 'preauthorizations'
@@ -948,7 +954,8 @@ class Transaction(BaseModel):
             UpdateQuery.identifier: '/users/%(user_id)s/transactions',
             'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions',
             'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
-            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions'
+            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
+            'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions'
         }
 
     def __str__(self):
