@@ -736,13 +736,20 @@ class BankAccount(BaseModel):
         select.identifier = 'BANK_ACCOUNT_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
+    def create_client_bank_account(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'CLIENT_CREATE_BANK_ACCOUNT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
     class Meta:
         verbose_name = 'bankaccount'
         verbose_name_plural = 'bankaccounts'
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/bankaccounts/%(type)s',
             SelectQuery.identifier: '/users/%(user_id)s/bankaccounts',
-            UpdateQuery.identifier: '/users/%(user_id)s/bankaccounts'
+            UpdateQuery.identifier: '/users/%(user_id)s/bankaccounts',
+            'CLIENT_CREATE_BANK_ACCOUNT': '/clients/bankaccounts/iban'
         }
 
     def __str__(self):
@@ -785,12 +792,19 @@ class BankWirePayOut(BaseModel):
         select.identifier = 'PAYOUT_GET_REFUNDS'
         return select.all(*args, **kwargs)
 
+    def create_client_payout(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'CLIENT_CREATE_PAYOUT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
     class Meta:
         verbose_name = 'payout'
         verbose_name_plural = 'payouts'
         url = {
             InsertQuery.identifier: '/payouts/bankwire',
-            SelectQuery.identifier: '/payouts'
+            SelectQuery.identifier: '/payouts',
+            'CLIENT_CREATE_PAYOUT': '/clients/payouts'
         }
 
     def __str__(self):

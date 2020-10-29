@@ -256,6 +256,8 @@ class BaseTestLive(unittest.TestCase):
     _ubo_declaration = None
     _ubo = None
 
+    _client_account = None
+
     def setUp(self):
         BaseTestLive.get_john()
         BaseTestLive.get_user_legal()
@@ -334,6 +336,30 @@ class BaseTestLive(unittest.TestCase):
             account.bic = 'CMBRFR2BCME'
             BaseTestLive._johns_account = BankAccount(**account.save())
         return BaseTestLive._johns_account
+
+    @staticmethod
+    def get_client_bank_account(recreate=False):
+        if BaseTestLive._client_account is None or recreate:
+            account = BankAccount()
+            account.owner_name = 'Joe Blogs'
+            account.type = 'IBAN'
+
+            account.owner_address = Address()
+            account.owner_address.address_line_1 = "Main Street"
+            account.owner_address.address_line_2 = "no. 5 ap. 6"
+            account.owner_address.country = "FR"
+            account.owner_address.city = "Lyon"
+            account.owner_address.postal_code = "65400"
+
+            account.iban = 'FR7630004000031234567890143'
+            account.bic = 'CRLYFRPP'
+            account.tag = 'custom meta'
+
+            account.create_client_bank_account()
+
+            BaseTestLive._client_account = BankAccount(**account.create_client_bank_account())
+
+        return BaseTestLive._client_account
 
     @staticmethod
     def get_john(recreate=False):
