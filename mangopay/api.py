@@ -250,7 +250,7 @@ class APIRequest(object):
         except ValueError:
             content = None
 
-        raise APIError(text, code=status_code, content=content)
+        raise APIError(text, code=status_code, content=content, headers=headers)
 
     def _create_decodeerror(self, result, url=None):
 
