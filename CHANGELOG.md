@@ -1,3 +1,10 @@
+## 3.8.3
+- added new methods for client fees wallet bank accounts and payouts
+- added new method for PreAuthorization transactions
+- fixed handler sandbox false condition
+- added headers to APIError
+- Improve logging calls. 
+
 ## 3.8.2
 - Added missing 'creation_date' field to BankWirePayOut
 - Handler has been modified in save function
