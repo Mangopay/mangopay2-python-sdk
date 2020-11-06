@@ -459,6 +459,29 @@ class Birthplace(object):
         }
 
 
+@add_camelcase_aliases
+class ScopeBlocked(object):
+    def __init__(self, inflows=None, outflows=None):
+        self.inflows = inflows
+        self.outflows = outflows
+
+    def __str__(self):
+        return 'ScopeBlocked: %s, %s' % (self.inflows, self.outflows)
+
+    def __eq__(self, other):
+        if isinstance(other, ScopeBlocked):
+            stat = ((self.inflows == other.inflows) and
+                    (self.outflows == other.outflows))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "Inflows": self.inflows,
+            "Outflows": self.outflows,
+        }
+
+
 # This code belongs to https://github.com/carljm/django-model-utils
 class Choices(object):
     """
