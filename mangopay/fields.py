@@ -8,7 +8,7 @@ import six
 
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
-    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData
+    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, ScopeBlocked
 
 
 class FieldDescriptor(object):
@@ -692,6 +692,25 @@ class BirthplaceField(Field):
             value = {
                 'City': value.city,
                 'Country': value.country,
+            }
+
+        return value
+
+
+class ScopeBlockedField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return ScopeBlocked(inflows=value['Inflows'], outflows=value['Outflows'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(ScopeBlockedField, self).api_value(value)
+
+        if isinstance(value, ScopeBlocked):
+            value = {
+                'Inflows': value.inflows,
+                'Outflows': value.outflows,
             }
 
         return value

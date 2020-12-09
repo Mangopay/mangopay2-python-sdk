@@ -12,7 +12,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField)
+                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -125,6 +125,12 @@ class User(BaseModel):
         select = SelectQuery(PreAuthorization, *args, **kwargs)
         select.identifier = 'USER_GET_PREAUTHORIZATIONS'
         return select.all(*args, **kwargs)
+
+    def get_block_status(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(UserBlockStatus, *args, **kwargs)
+        select.identifier = 'USERS_BLOCK_STATUS'
+        return select.get("", *args, **kwargs)
 
     def __str__(self):
         return '%s' % self.email
@@ -1489,3 +1495,16 @@ class Ubo(BaseModel):
         sub_objects['Address'] = Address
         sub_objects['Birthplace'] = Birthplace
         return sub_objects
+
+
+class UserBlockStatus(BaseModel):
+    scope_blocked = ScopeBlockedField(api_name='ScopeBlocked', required=True)
+    action_code = CharField(api_name='ActionCode', required=True)
+
+    class Meta:
+        verbose_name = 'userblockstatus'
+        verbose_name_plural = 'userblockstatuses'
+
+        url = {
+            'USERS_BLOCK_STATUS': '/users/%(user_id)s/blockStatus'
+        }

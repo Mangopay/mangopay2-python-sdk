@@ -710,3 +710,9 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertIsNotNone(get_preauthorizations_page.data)
         self.assertIsInstance(get_preauthorizations_page.data, list)
+
+    def test_User_get_block_status(self):
+        user = BaseTestLive.get_john()
+        block_status = user.get_block_status()
+
+        self.assertIsNotNone(block_status)
