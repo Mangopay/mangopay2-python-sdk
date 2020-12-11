@@ -1,3 +1,6 @@
+## 3.8.4
+- Added 'Regulatory' endpoint to allow checks of User Block Status
+- Added support for Regulatory -> Blocked Status Hooks
 ## 3.8.3
 - added new methods for client fees wallet bank accounts and payouts
 - added new method for PreAuthorization transactions
