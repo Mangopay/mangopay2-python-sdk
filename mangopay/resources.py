@@ -132,6 +132,12 @@ class User(BaseModel):
         select.identifier = 'USERS_BLOCK_STATUS'
         return select.get("", *args, **kwargs)
 
+    def get_regulatory(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(UserBlockStatus, *args, **kwargs)
+        select.identifier = 'USERS_REGULATORY'
+        return select.get("", *args, **kwargs)
+
     def __str__(self):
         return '%s' % self.email
 
@@ -1506,5 +1512,6 @@ class UserBlockStatus(BaseModel):
         verbose_name_plural = 'userblockstatuses'
 
         url = {
-            'USERS_BLOCK_STATUS': '/users/%(user_id)s/blockStatus'
+            'USERS_BLOCK_STATUS': '/users/%(user_id)s/blockStatus',
+            'USERS_REGULATORY': '/users/%(user_id)s/Regulatory'
         }
