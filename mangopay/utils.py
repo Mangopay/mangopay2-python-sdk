@@ -458,6 +458,7 @@ class Birthplace(object):
             "Country": self.country,
         }
 
+
 @add_camelcase_aliases
 class BrowserInfo(object):
     def __init__(self, accept_header=None, java_enabled=None, javascript_enabled=None,
@@ -475,8 +476,9 @@ class BrowserInfo(object):
 
     def __str__(self):
         return 'BrowserInfo: %s %s %s %s %s %s %s %s %s' % (self.java_enabled, self.accept_header, self.language,
-                                                         self.color_depth, self.screen_height, self.screen_width,
-                                                         self.timezone_offset, self.user_agent, self.javascript_enabled)
+                                                            self.color_depth, self.screen_height, self.screen_width,
+                                                            self.timezone_offset, self.user_agent,
+                                                            self.javascript_enabled)
 
     def __eq__(self, other):
         if isinstance(other, BrowserInfo):
@@ -504,6 +506,16 @@ class BrowserInfo(object):
             "TimeZoneOffset": self.timezone_offset,
             "UserAgent": self.user_agent
         }
+
+
+@add_camelcase_aliases
+class Shipping(object):
+    def __init__(self, address=None):
+        self.address = address
+
+    def __str__(self):
+        return 'Shipping: %s' % self.address
+
 
 @add_camelcase_aliases
 class ScopeBlocked(object):
