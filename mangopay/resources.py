@@ -12,7 +12,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField)
+                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
+                     BrowserInfoField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -485,6 +486,7 @@ class DirectPayIn(PayIn):
     security_info = SecurityInfoField(api_name='SecurityInfo')
     culture = CharField(api_name='Culture')
     ip_address = CharField(api_name='IpAdress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
 
     class Meta:
         verbose_name = 'payin'
@@ -680,6 +682,7 @@ class PreAuthorization(BaseModel):
     security_info = SecurityInfoField(api_name='SecurityInfo')
     multi_capture = BooleanField(api_name='MultiCapture')
     ip_address = CharField(api_name='IpAdress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
 
     def get_transactions(self, *args, **kwargs):
         kwargs['id'] = self.id

@@ -8,7 +8,8 @@ import six
 
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
-    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, ScopeBlocked
+    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
+    ScopeBlocked, BrowserInfo
 
 
 class FieldDescriptor(object):
@@ -696,6 +697,34 @@ class BirthplaceField(Field):
 
         return value
 
+class BrowserInfoField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return BrowserInfo(accept_header=value['AcceptHeader'], java_enabled=value['JavaEnabled'],
+                               javascript_enabled=value['JavascriptEnabled'], language=value['Language'],
+                               color_depth=value['ColorDepth'], screen_width=value['ScreenWidth'],
+                               screen_height=value['ScreenHeight'], timezone_offset=value['TimeZoneOffset'],
+                               user_agent=value['UserAgent'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(BrowserInfoField, self).api_value(value)
+
+        if isinstance(value, BrowserInfo):
+            value = {
+                "AcceptHeader": value.accept_header,
+                "JavaEnabled": value.java_enabled,
+                "JavascriptEnabled": value.javascript_enabled,
+                "Language": value.language,
+                "ColorDepth": value.color_depth,
+                "ScreenHeight": value.screen_height,
+                "ScreenWidth": value.screen_width,
+                "TimeZoneOffset": value.timezone_offset,
+                "UserAgent": value.user_agent
+            }
+
+            return value
 
 class ScopeBlockedField(Field):
     def python_value(self, value):
