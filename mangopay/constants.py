@@ -64,7 +64,8 @@ EXECUTION_TYPE_CHOICES = Choices(
 
 SECURE_MODE_CHOICES = Choices(
     ('DEFAULT', 'default', 'Default'),
-    ('FORCE', 'force', 'Force')
+    ('FORCE', 'force', 'Force'),
+    ('NO_CHOICE', 'no_choice', 'No_Choice')
 )
 
 BANK_ACCOUNT_TYPE_CHOICES = Choices(
