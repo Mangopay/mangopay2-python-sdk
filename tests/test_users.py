@@ -716,3 +716,9 @@ class PayInsTestLive(BaseTestLive):
         block_status = user.get_block_status()
 
         self.assertIsNotNone(block_status)
+
+    def test_User_get_regulatory(self):
+        user = BaseTestLive.get_john()
+        regulatory = user.get_regulatory()
+
+        self.assertIsNotNone(regulatory)
