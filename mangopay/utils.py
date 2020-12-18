@@ -460,6 +460,64 @@ class Birthplace(object):
 
 
 @add_camelcase_aliases
+class BrowserInfo(object):
+    def __init__(self, accept_header=None, java_enabled=None, javascript_enabled=None,
+                 language=None, color_depth=None, screen_height=None, screen_width=None,
+                 timezone_offset=None, user_agent=None):
+        self.user_agent = user_agent
+        self.timezone_offset = timezone_offset
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.color_depth = color_depth
+        self.language = language
+        self.accept_header = accept_header
+        self.java_enabled = java_enabled
+        self.javascript_enabled = javascript_enabled
+
+    def __str__(self):
+        return 'BrowserInfo: %s %s %s %s %s %s %s %s %s' % (self.java_enabled, self.accept_header, self.language,
+                                                            self.color_depth, self.screen_height, self.screen_width,
+                                                            self.timezone_offset, self.user_agent,
+                                                            self.javascript_enabled)
+
+    def __eq__(self, other):
+        if isinstance(other, BrowserInfo):
+            stat = ((self.user_agent == other.user_agent) and
+                    (self.timezone_offset == other.timezone_offset) and
+                    (self.screen_width == other.screen_width) and
+                    (self.screen_height == other.screen_height) and
+                    (self.color_depth == other.color_depth) and
+                    (self.language == other.language) and
+                    (self.accept_header == other.accept_header) and
+                    (self.java_enabled == other.java_enabled) and
+                    (self.javascript_enabled == other.javascript_enabled))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "AcceptHeader": self.accept_header,
+            "JavaEnabled": self.java_enabled,
+            "JavascriptEnabled": self.javascript_enabled,
+            "Language": self.language,
+            "ColorDepth": self.color_depth,
+            "ScreenHeight": self.screen_height,
+            "ScreenWidth": self.screen_width,
+            "TimeZoneOffset": self.timezone_offset,
+            "UserAgent": self.user_agent
+        }
+
+
+@add_camelcase_aliases
+class Shipping(object):
+    def __init__(self, address=None):
+        self.address = address
+
+    def __str__(self):
+        return 'Shipping: %s' % self.address
+
+
+@add_camelcase_aliases
 class ScopeBlocked(object):
     def __init__(self, inflows=None, outflows=None):
         self.inflows = inflows

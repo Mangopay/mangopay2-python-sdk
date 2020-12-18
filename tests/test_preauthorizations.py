@@ -288,7 +288,8 @@ class PreAuthorizationsTest(BaseTest):
                     "Id": "1167495",
                     "Tag": "custom tag",
                     "CreationDate": 1383321421,
-                    "KYCLevel": "LIGHT"
+                    "KYCLevel": "LIGHT",
+                    "IpAdress": "2001:0620:0000:0000:0211:24FF:FE80:C12C"
                 },
                 'status': 200
             },

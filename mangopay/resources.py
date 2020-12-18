@@ -12,7 +12,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField)
+                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
+                     BrowserInfoField, ShippingField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -490,6 +491,9 @@ class DirectPayIn(PayIn):
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     culture = CharField(api_name='Culture')
+    ip_address = CharField(api_name='IpAdress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    shipping = ShippingField(api_name='Shipping')
 
     class Meta:
         verbose_name = 'payin'
@@ -611,6 +615,7 @@ class CardWebPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    shipping = ShippingField(api_name='Shipping')
 
     class Meta:
         verbose_name = 'card_payin'
@@ -684,6 +689,9 @@ class PreAuthorization(BaseModel):
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     multi_capture = BooleanField(api_name='MultiCapture')
+    ip_address = CharField(api_name='IpAdress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    shipping = ShippingField(api_name='Shipping')
 
     def get_transactions(self, *args, **kwargs):
         kwargs['id'] = self.id
