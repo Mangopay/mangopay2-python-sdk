@@ -620,9 +620,8 @@ V2
     account.OwnerAddress = user.Address
     account.UserId = user.Id
     account.Type = 'IBAN'
-    account.Details = BankAccountDetailsIBAN()
-    account.Details.IBAN = 'FR7618829754160173622224154'
-    account.Details.BIC = 'CMBRFR2BCME'
+    account.IBAN = 'FR7618829754160173622224154'
+    account.BIC = 'CMBRFR2BCME'
 
     saved_account = api.users.CreateBankAccount(user.Id, account)
 
@@ -630,8 +629,8 @@ V3
 
 .. code-block:: python
 
-    bankaccount = BankAccountIBAN(owner_name="Victor Hugo",
-                                  user=natural_user,
+    bankaccount_iban = BankAccount(owner_name="Victor Hugo",
+                                  user_id="8494514",
                                   type="IBAN",
                                   owner_address=Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
                                   postal_code='11222', country='FR'),

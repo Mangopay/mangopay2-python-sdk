@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import BankingAliasIBAN, BankingAlias
-from .test_base import BaseTest, BaseTestLive
+from tests.resources import BankingAliasIBAN, BankingAlias
+from tests.test_base import BaseTest, BaseTestLive
 
 import responses
 

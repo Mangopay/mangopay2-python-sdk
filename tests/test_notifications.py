@@ -5,8 +5,8 @@ import json
 import pytz
 
 from tests import settings
-from .resources import Notification, Event
-from .test_base import BaseTest
+from tests.resources import Notification, Event
+from tests.test_base import BaseTest
 
 import responses
 

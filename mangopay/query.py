@@ -89,7 +89,8 @@ class SelectQuery(BaseQuery):
 
         results = []
         cast = getattr(self.model, 'cast', lambda result: self.model)
-
+        if type(data) is not list:
+            data = [data]
         for entry in data:
             model_klass = cast(entry)
             results.append(model_klass(handler=handler, **dict(self.parse_result(entry, model_klass))))
@@ -111,11 +112,12 @@ class InsertQuery(BaseQuery):
 
     def parse_insert(self):
         pairs = {}
-        for k, v in six.iteritems(self.insert_query):
-            field = self.model._meta.get_field_by_name(k)
+        if hasattr(self.model, "_meta"):
+            for k, v in six.iteritems(self.insert_query):
+                field = self.model._meta.get_field_by_name(k)
 
-            if field.required or v is not None:
-                pairs[field.api_name] = field.api_value(v)
+                if field.required or v is not None:
+                    pairs[field.api_name] = field.api_value(v)
 
         return pairs
 

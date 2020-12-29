@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
-from .test_base import BaseTest, BaseTestLive
+from tests.resources import (PreAuthorization, PreAuthorizedPayIn, CardRegistration, Card)
+from tests.test_base import BaseTest, BaseTestLive
 
 try:
     import urllib.parse as urlrequest
@@ -66,6 +66,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 10000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "WAITING",
@@ -95,6 +99,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 1000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -123,6 +131,10 @@ class PreAuthorizationsTest(BaseTest):
                     "DebitedFunds": {
                         "Currency": "EUR",
                         "Amount": 1000
+                    },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
                     },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
@@ -153,6 +165,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 1000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -182,6 +198,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 1000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -201,6 +221,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "http://www.ulule.com/"
         }
@@ -223,6 +244,7 @@ class PreAuthorizationsTest(BaseTest):
             self.assertEqual(getattr(preauthorization, key), value)
 
         self.assertIsNotNone(preauthorization.get_pk())
+        self.assertIsNotNone(preauthorization.remaining_funds)
 
         # Test update
         previous_pk = preauthorization.get_pk()
@@ -266,7 +288,8 @@ class PreAuthorizationsTest(BaseTest):
                     "Id": "1167495",
                     "Tag": "custom tag",
                     "CreationDate": 1383321421,
-                    "KYCLevel": "LIGHT"
+                    "KYCLevel": "LIGHT",
+                    "IpAdress": "2001:0620:0000:0000:0211:24FF:FE80:C12C"
                 },
                 'status': 200
             },
@@ -281,6 +304,10 @@ class PreAuthorizationsTest(BaseTest):
                     "DebitedFunds": {
                         "Currency": "EUR",
                         "Amount": 10000
+                    },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
                     },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
@@ -310,6 +337,10 @@ class PreAuthorizationsTest(BaseTest):
                         "Currency": "EUR",
                         "Amount": 10000
                     },
+                    "RemainingFunds": {
+                        "Currency": "EUR",
+                        "Amount": 500
+                    },
                     "AuthorizationDate": 1388653377,
                     "Status": "SUCCEEDED",
                     "PaymentStatus": "CREATED",
@@ -335,6 +366,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "https://www.mysite.com/secure?preAuthorizationId=1209003"
         }
@@ -348,6 +380,7 @@ class PreAuthorizationsTest(BaseTest):
         preauthorization = PreAuthorization.get(preauthorization.get_pk())
 
         self.assertIsNotNone(preauthorization.get_pk())
+        self.assertIsNotNone(preauthorization.remaining_funds)
 
         self.assertEqual(preauthorization.secure_mode_return_url, None)
         params.pop('secure_mode_return_url')
@@ -464,6 +497,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "https://www.mysite.com/secure?preAuthorizationId=1209003"
         }
@@ -606,6 +640,7 @@ class PreAuthorizationsTest(BaseTest):
             "author": self.card.user,
             "card": self.card,
             "debited_funds": Money(amount=10000, currency='EUR'),
+            "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
             "secure_mode_return_url": "http://www.ulule.com/"
         }
@@ -639,13 +674,17 @@ class PreAuthorizationsTestLive(BaseTestLive):
         card_registration.currency = "EUR"
 
         saved_registration = card_registration.save()
-        registration_data_response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+        data = {
+            'cardNumber': '4972485830400049',
             'cardCvx': '123',
-            'cardExpirationDate': '0120',
+            'cardExpirationDate': '0821',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
-        }))
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
         saved_registration['registration_data'] = registration_data_response.text
         updated_registration = CardRegistration(**saved_registration).save()
 
@@ -656,6 +695,9 @@ class PreAuthorizationsTestLive(BaseTestLive):
         pre_authorization.debited_funds = Money()
         pre_authorization.debited_funds.currency = "EUR"
         pre_authorization.debited_funds.amount = 500
+        pre_authorization.remaining_funds = Money()
+        pre_authorization.remaining_funds.currency = "EUR"
+        pre_authorization.remaining_funds.amount = 500
         pre_authorization.secure_mode_return_url = "http://www.example.com/"
         billing = Billing()
         billing.address = Address()
@@ -671,4 +713,69 @@ class PreAuthorizationsTestLive(BaseTestLive):
         self.assertIsNotNone(saved_pre_authorization)
         security_info = saved_pre_authorization['security_info']
         self.assertIsInstance(security_info, SecurityInfo)
-        self.assertEqual(security_info.avs_result, "ADDRESS_MATCH_ONLY")
+        self.assertEqual(security_info.avs_result, "NO_CHECK")
+
+    def test_PreAuthorizations_CreateDirect(self):
+        user = BaseTestLive.get_john()
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = "EUR"
+
+        saved_registration = card_registration.save()
+        data = {
+            'cardNumber': '4972485830400049',
+            'cardCvx': '123',
+            'cardExpirationDate': '0821',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+
+        card = Card.get(updated_registration['card_id'])
+        pre_authorization = PreAuthorization()
+        pre_authorization.card = card
+        pre_authorization.author = user
+        pre_authorization.debited_funds = Money()
+        pre_authorization.debited_funds.currency = "EUR"
+        pre_authorization.debited_funds.amount = 500
+        pre_authorization.remaining_funds = Money()
+        pre_authorization.remaining_funds.currency = "EUR"
+        pre_authorization.remaining_funds.amount = 500
+        pre_authorization.secure_mode_return_url = "http://www.example.com/"
+        billing = Billing()
+        billing.address = Address()
+        billing.address.address_line_1 = "Main Street"
+        billing.address.address_line_2 = "no. 5 ap. 6"
+        billing.address.country = "FR"
+        billing.address.city = "Lyon"
+        billing.address.postal_code = "65400"
+        pre_authorization.billing = billing
+
+        saved_pre_authorization = pre_authorization.save()
+
+        wallet = BaseTestLive.get_johns_wallet()
+
+        payin = PreAuthorizedPayIn()
+        payin.author = BaseTestLive.get_john()
+        payin.debited_funds = Money(amount=500, currency='EUR')
+        payin.credited_wallet = wallet
+        payin.secure_mode_return_url = "http://test.com"
+        payin.secure_mode = 'DEFAULT'
+        payin.preauthorization = pre_authorization
+        payin.fees = Money(amount=0, currency='EUR')
+        payin.culture = 'fr'
+        BaseTestLive._johns_payin = PreAuthorizedPayIn(**payin.save())
+
+        transactions = pre_authorization.get_transactions()
+
+        self.assertIsNotNone(saved_pre_authorization)
+        security_info = saved_pre_authorization['security_info']
+        self.assertIsInstance(security_info, SecurityInfo)
+        self.assertEqual(security_info.avs_result, "NO_CHECK")
+        self.assertEqual(payin.status, "SUCCEEDED")
+        self.assertEqual(transactions[0].status, "SUCCEEDED")

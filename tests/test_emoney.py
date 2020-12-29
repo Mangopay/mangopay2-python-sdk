@@ -1,35 +1,21 @@
 # -*- coding: utf-8 -*-
-from tests import settings
-from .resources import EMoney
-from .test_base import BaseTest
+from mangopay.resources import EMoney
+from tests.test_base import BaseTestLive
 
-import responses
 
-class EMoneyTest(BaseTest):
-    @responses.activate
+class EMoneyTest(BaseTestLive):
+
     def test_retrieve_emoney(self):
-        self.mock_legal_user()
+        john = self.get_john()
+        emoney = john.get_emoney()
+        self.assertIsNotNone(emoney)
 
-        self.register_mock([
-            {
-                'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169420/emoney/',
-                'body': {
-                    "UserId": 1169420,
-                    "CreditedEMoney": {
-                        "Currency": "EUR",
-                        "Amount": 500
-                    },
-                    "DebitedEMoney": {
-                        "Currency": "EUR",
-                        "Amount": 500
-                    }
-                },
-                'status': 200,
-                'match_querystring': True
-            }])
+    def test_retrieve_emoney_for_year(self):
+        john = self.get_john()
+        emoney = john.get_emoney(**{'year': 2019})
+        self.assertIsNotNone(emoney)
 
-        #user_emoney = self.legal_user.get_emoney()
-        #self.assertIsNotNone(user_emoney.credited_emoney)
-        #self.assertIsNotNone(user_emoney.debited_emoney)
-        #self.assertIsInstance(user_emoney, EMoney)
+    def test_retrieve_emoney_for_month(self):
+        john = self.get_john()
+        emoney = john.get_emoney(**{'year': 2019, 'month': 4})
+        self.assertIsNotNone(emoney)
