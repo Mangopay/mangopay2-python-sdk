@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import BankAccount, BankWirePayOut
-from .test_base import BaseTest
+from tests.resources import BankAccount, BankWirePayOut
+from tests.test_base import BaseTest
 
 from mangopay.utils import Money, Address
 
@@ -115,7 +115,7 @@ class PayOutsTest(BaseTest):
         self.assertIsNone(bank_wire_payout.get_pk())
         bank_wire_payout.save()
         self.assertIsInstance(bank_wire_payout, BankWirePayOut)
-
+        self.assertEqual(bankaccount, bank_wire_payout.bank_account)
         self.assertEqual(bank_wire_payout.debited_funds.amount, 1000)
         bank_wire_payout_params.pop('debited_funds')
 
@@ -126,10 +126,8 @@ class PayOutsTest(BaseTest):
             self.assertEqual(getattr(bank_wire_payout, key), value)
 
         self.assertIsNotNone(bank_wire_payout.get_pk())
-
         # test_retrieve_payouts
         retrieved_payout = BankWirePayOut.get(bank_wire_payout.get_pk())
-
         self.assertIsNotNone(retrieved_payout.get_pk())
         self.assertIsInstance(retrieved_payout, BankWirePayOut)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from .resources import Document, Page, KYC
-from .test_base import BaseTest
+from tests.resources import Document, Page, KYC
+from tests.test_base import BaseTest
 
 import responses
 import base64

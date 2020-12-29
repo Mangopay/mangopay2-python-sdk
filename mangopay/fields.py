@@ -8,7 +8,8 @@ import six
 
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
-    PlatformCategorization, Billing, SecurityInfo, Birthplace
+    PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
+    ScopeBlocked, BrowserInfo, Shipping
 
 
 class FieldDescriptor(object):
@@ -213,9 +214,9 @@ class PlatformCategorizationField(Field):
     def python_value(self, value):
         if value is not None:
             return PlatformCategorization(business_type=value['BusinessType'], sector=value['Sector'])
-          
+
         return value
-           
+
     def api_value(self, value):
         value = super(PlatformCategorizationField, self).api_value(value)
 
@@ -225,14 +226,14 @@ class PlatformCategorizationField(Field):
                 'Sector': value.sector
             }
 
-        return value  
-              
-              
+        return value
+
+
 class BillingField(Field):
     def python_value(self, value):
         if value is not None:
             return Billing(address=value['Address'])
-        return value  
+        return value
 
     def api_value(self, value):
         value = super(BillingField, self).api_value(value)
@@ -266,7 +267,9 @@ class SecurityInfoField(Field):
 class DebitedBankAccountField(Field):
     def python_value(self, value):
         if value is not None:
-            return DebitedBankAccount(owner_name=value['OwnerName'])
+            return DebitedBankAccount(owner_name=value['OwnerName'], account_number=value['AccountNumber'],
+                                      iban=value['IBAN'], bic=value['BIC'], type=value['Type'],
+                                      country=value['Country'])
 
         return value
 
@@ -275,7 +278,12 @@ class DebitedBankAccountField(Field):
 
         if isinstance(value, DebitedBankAccount):
             value = {
-                'OwnerName': value.owner_name
+                'OwnerName': value.owner_name,
+                'AccountNumber': value.account_number,
+                'IBAN': value.iban,
+                'BIC': value.bic,
+                'Type': value.type,
+                'Country': value.country
             }
 
         return value
@@ -636,6 +644,41 @@ class ManyToManyRelatedObject(object):
         setattr(instance, self.field_name, [obj.get_pk() for obj in objs])
 
 
+class ApplepayPaymentDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return ApplepayPaymentData(transaction_id=value['TransactionId'], network=value['Network'],
+                                       token_data=value['TokenData'])
+        return value
+
+    def api_value(self, value):
+        value = super(ApplepayPaymentDataField, self).api_value(value)
+
+        if isinstance(value, ApplepayPaymentData):
+            value = {
+                'TransactionId': value.transaction_id,
+                'Network': value.network,
+                'TokenData': value.token_data
+            }
+        return value
+
+
+class GooglepayPaymentDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return GooglepayPaymentData(transaction_id=value['TransactionId'], network=value['Network'],
+                                        token_data=value['TokenData'])
+        return value
+
+    def api_value(self, value):
+        value = {
+            'TransactionId': value.transaction_id,
+            'Network': value.network,
+            'TokenData': value.token_data
+        }
+        return value
+
+
 class BirthplaceField(Field):
     def python_value(self, value):
         if value is not None:
@@ -650,6 +693,72 @@ class BirthplaceField(Field):
             value = {
                 'City': value.city,
                 'Country': value.country,
+            }
+
+        return value
+
+
+class BrowserInfoField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return BrowserInfo(accept_header=value['AcceptHeader'], java_enabled=value['JavaEnabled'],
+                               javascript_enabled=value['JavascriptEnabled'], language=value['Language'],
+                               color_depth=value['ColorDepth'], screen_width=value['ScreenWidth'],
+                               screen_height=value['ScreenHeight'], timezone_offset=value['TimeZoneOffset'],
+                               user_agent=value['UserAgent'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(BrowserInfoField, self).api_value(value)
+
+        if isinstance(value, BrowserInfo):
+            value = {
+                "AcceptHeader": value.accept_header,
+                "JavaEnabled": value.java_enabled,
+                "JavascriptEnabled": value.javascript_enabled,
+                "Language": value.language,
+                "ColorDepth": value.color_depth,
+                "ScreenHeight": value.screen_height,
+                "ScreenWidth": value.screen_width,
+                "TimeZoneOffset": value.timezone_offset,
+                "UserAgent": value.user_agent
+            }
+
+            return value
+
+
+class ScopeBlockedField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return ScopeBlocked(inflows=value['Inflows'], outflows=value['Outflows'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(ScopeBlockedField, self).api_value(value)
+
+        if isinstance(value, ScopeBlocked):
+            value = {
+                'Inflows': value.inflows,
+                'Outflows': value.outflows,
+            }
+
+        return value
+
+
+class ShippingField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return Shipping(address=value['Address'])
+        return value
+
+    def api_value(self, value):
+        value = super(ShippingField, self).api_value(value)
+
+        if isinstance(value, Billing):
+            value = {
+                'Address': value.address
             }
 
         return value

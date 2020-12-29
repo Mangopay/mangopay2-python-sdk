@@ -12,7 +12,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      DebitedBankAccountField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
-                     BirthplaceField)
+                     BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
+                     BrowserInfoField, ShippingField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -109,14 +110,34 @@ class User(BaseModel):
 
         return cls
 
-    def get_emoney(self):
-        return self.emoney.get('', **{'user_id': self.get_pk()})
+    def get_emoney(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(EMoney, *args, **kwargs)
+        if kwargs.__contains__('month') and kwargs.__contains__('year'):
+            select.identifier = 'FOR_MONTH'
+        elif kwargs.__contains__('year'):
+            select.identifier = 'FOR_YEAR'
+        else:
+            select.identifier = 'ALL'
+        return select.all(*args, **kwargs)
 
     def get_pre_authorizations(self, *args, **kwargs):
         kwargs['id'] = self.id
         select = SelectQuery(PreAuthorization, *args, **kwargs)
         select.identifier = 'USER_GET_PREAUTHORIZATIONS'
         return select.all(*args, **kwargs)
+
+    def get_block_status(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(UserBlockStatus, *args, **kwargs)
+        select.identifier = 'USERS_BLOCK_STATUS'
+        return select.get("", *args, **kwargs)
+
+    def get_regulatory(self, *args, **kwargs):
+        kwargs['user_id'] = self.id
+        select = SelectQuery(UserBlockStatus, *args, **kwargs)
+        select.identifier = 'USERS_REGULATORY'
+        return select.get("", *args, **kwargs)
 
     def __str__(self):
         return '%s' % self.email
@@ -192,7 +213,11 @@ class EMoney(BaseModel):
 
     class Meta:
         verbose_name = 'emoney'
-        url = '/users/%(user_id)s/emoney'
+        url = {
+            'ALL': '/users/%(user_id)s/emoney',
+            'FOR_YEAR': '/users/%(user_id)s/emoney/%(year)s',
+            'FOR_MONTH': '/users/%(user_id)s/emoney/%(year)s/%(month)s'
+        }
 
     def __str__(self):
         return 'EMoney for user %s' % self.user_id
@@ -310,13 +335,20 @@ class Card(BaseModel):
         select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
+    def validate(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'CARD_VALIDATE'
+        return insert.execute()
+
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
         url = {
             SelectQuery.identifier: '/cards',
             UpdateQuery.identifier: '/cards',
-            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s'}
+            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s',
+            'CARD_VALIDATE': '/cards/%(id)s/validate'}
 
     def __str__(self):
         return '%s of user %s' % (self.card_type, self.user_id)
@@ -435,6 +467,8 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
+            ("APPLEPAY", "DIRECT"): ApplepayPayIn,
+            ("GOOGLEPAY", "DIRECT"): GooglepayPayIn
         }
         return types.get((payment_type, execution_type), cls)
 
@@ -456,6 +490,10 @@ class DirectPayIn(PayIn):
     fees = MoneyField(api_name='Fees', required=True)
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
+    culture = CharField(api_name='Culture')
+    ip_address = CharField(api_name='IpAdress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    shipping = ShippingField(api_name='Shipping')
 
     class Meta:
         verbose_name = 'payin'
@@ -531,6 +569,38 @@ class PayPalPayIn(PayIn):
         }
 
 
+class ApplepayPayIn(PayIn):
+    tag = CharField(api_name='Applepay PayIn')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    payment_data = ApplepayPaymentDataField(api_name='PaymentData', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'applepay_payin'
+        verbose_name_plural = 'applepay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/applepay/direct'
+        }
+
+
+class GooglepayPayIn(PayIn):
+    tag = CharField(api_name='Googlepay PayIn')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    payment_type = GooglepayPaymentDataField(api_name='PaymentData', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'googlepay_payin'
+        verbose_name_plural = 'googlepay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/googlepay/direct'
+        }
+
+
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -545,6 +615,7 @@ class CardWebPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    shipping = ShippingField(api_name='Shipping')
 
     class Meta:
         verbose_name = 'card_payin'
@@ -585,6 +656,7 @@ class DirectDebitDirectPayIn(PayIn):
     fees = MoneyField(api_name='Fees', required=True)
     statement_descriptor = CharField(api_name='StatementDescriptor')
     charge_date = CharField(api_name='ChargeDate')
+    culture = CharField(api_name='Culture')
 
     class Meta:
         verbose_name = 'direct_debit_direct_payin'
@@ -598,6 +670,7 @@ class DirectDebitDirectPayIn(PayIn):
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    remaining_funds = MoneyField(api_name='RemainingFunds', required=True)
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     payment_status = CharField(api_name='PaymentStatus', choices=constants.PAYMENT_STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
@@ -612,9 +685,19 @@ class PreAuthorization(BaseModel):
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
     expiration_date = DateTimeField(api_name='ExpirationDate')
-    payin = ForeignKeyField(PayIn, api_name='PayinId')
+    payin = ForeignKeyField(PayIn, api_name='PayInId')
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
+    multi_capture = BooleanField(api_name='MultiCapture')
+    ip_address = CharField(api_name='IpAdress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    shipping = ShippingField(api_name='Shipping')
+
+    def get_transactions(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'PRE_AUTHORIZATION_TRANSACTIONS'
+        return select.all(*args, **kwargs)
 
     class Meta:
         verbose_name = 'preauthorization'
@@ -640,6 +723,7 @@ class PreAuthorizedPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
+    culture = CharField(api_name='Culture')
 
     class Meta:
         verbose_name = 'preauthorized_payin'
@@ -678,13 +762,20 @@ class BankAccount(BaseModel):
         select.identifier = 'BANK_ACCOUNT_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
+    def create_client_bank_account(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'CLIENT_CREATE_BANK_ACCOUNT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
     class Meta:
         verbose_name = 'bankaccount'
         verbose_name_plural = 'bankaccounts'
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/bankaccounts/%(type)s',
             SelectQuery.identifier: '/users/%(user_id)s/bankaccounts',
-            UpdateQuery.identifier: '/users/%(user_id)s/bankaccounts'
+            UpdateQuery.identifier: '/users/%(user_id)s/bankaccounts',
+            'CLIENT_CREATE_BANK_ACCOUNT': '/clients/bankaccounts/iban'
         }
 
     def __str__(self):
@@ -719,6 +810,7 @@ class BankWirePayOut(BaseModel):
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
     bank_wire_ref = CharField(api_name='BankWireRef')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
+    creation_date = DateField(api_name='CreationDate')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -726,12 +818,19 @@ class BankWirePayOut(BaseModel):
         select.identifier = 'PAYOUT_GET_REFUNDS'
         return select.all(*args, **kwargs)
 
+    def create_client_payout(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'CLIENT_CREATE_PAYOUT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
     class Meta:
         verbose_name = 'payout'
         verbose_name_plural = 'payouts'
         url = {
             InsertQuery.identifier: '/payouts/bankwire',
-            SelectQuery.identifier: '/payouts'
+            SelectQuery.identifier: '/payouts',
+            'CLIENT_CREATE_PAYOUT': '/clients/payouts'
         }
 
     def __str__(self):
@@ -875,7 +974,8 @@ class Transaction(BaseModel):
             UpdateQuery.identifier: '/users/%(user_id)s/transactions',
             'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions',
             'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
-            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions'
+            'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
+            'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions'
         }
 
     def __str__(self):
@@ -1303,6 +1403,8 @@ class BankingAlias(BaseModel):
         if 'Type' in result:
             if result['Type'] == 'IBAN':
                 return BankingAliasIBAN
+            elif result['Type'] == 'OTHER':
+                return BankingAliasOther
             else:
                 return BankingAlias
 
@@ -1332,6 +1434,22 @@ class BankingAliasIBAN(BankingAlias):
         }
 
 
+class BankingAliasOther(BankingAlias):
+    type = CharField(api_name='Type', default='OTHER', required='True')
+    account_number = CharField(api_name='AccountNumber')
+    bic = CharField(api_name='BIC')
+    country = CharField(api_name='Country', required=True)
+
+    class Meta:
+        verbose_name = 'bankingalias'
+        verbose_name_plural = 'bankingaliases'
+        url = {
+            InsertQuery.identifier: '/wallets/%(wallet_id)s/bankingaliases/accountNumber',
+            SelectQuery.identifier: '/bankingaliases/%(id)s',
+            UpdateQuery.identifier: '/bankingaliases/%(id)s'
+        }
+
+
 class UboDeclaration(BaseModel):
     creation_date = DateTimeField(api_name='CreationDate')
     processed_date = DateTimeField(api_name='ProcessedDate')
@@ -1352,6 +1470,10 @@ class UboDeclaration(BaseModel):
             SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations'
         }
 
+    def create(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        return insert.execute()
+
     def get_read_only_properties(self):
         read_only = ["ProcessedDate", "Reason", "Message"]
         return read_only
@@ -1366,10 +1488,11 @@ class Ubo(BaseModel):
     last_name = CharField(api_name='LastName', required=True)
     address = AddressField(api_name='Address', required=True)
     nationality = CharField(api_name='Nationality', required=True)
-    birthday = IntegerField(api_name='Birthday', required=True)
+    birthday = DateField(api_name='Birthday', required=True)
     birthplace = BirthplaceField(api_name='Birthplace', required=True)
     user = ForeignKeyField(User)
     ubo_declaration = ForeignKeyField(UboDeclaration)
+    isActive = BooleanField(api_name='IsActive')
 
     class Meta:
         verbose_name = 'ubo'
@@ -1379,10 +1502,24 @@ class Ubo(BaseModel):
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
             UpdateQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos',
-            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/%(ubo_id)s'
+            SelectQuery.identifier: '/users/%(user_id)s/kyc/ubodeclarations/%(ubo_declaration_id)s/ubos/'
         }
 
     def get_sub_objects(self, sub_objects=None):
         sub_objects['Address'] = Address
         sub_objects['Birthplace'] = Birthplace
         return sub_objects
+
+
+class UserBlockStatus(BaseModel):
+    scope_blocked = ScopeBlockedField(api_name='ScopeBlocked', required=True)
+    action_code = CharField(api_name='ActionCode', required=True)
+
+    class Meta:
+        verbose_name = 'userblockstatus'
+        verbose_name_plural = 'userblockstatuses'
+
+        url = {
+            'USERS_BLOCK_STATUS': '/users/%(user_id)s/blockStatus',
+            'USERS_REGULATORY': '/users/%(user_id)s/Regulatory'
+        }
