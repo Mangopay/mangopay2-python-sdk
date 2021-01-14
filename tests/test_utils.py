@@ -15,7 +15,7 @@ class UtilsTest(BaseTest):
         The timestamp should be correctly calculated on a timezone unaware datetime.
         """
         unaware_datetime = datetime(2016, 1, 1, 10, 0, 0, 0)
-        self.assertEqual(timestamp_from_datetime(unaware_datetime), 1451642400)
+        self.assertEqual(timestamp_from_datetime(unaware_datetime), 1451635200)
 
     def test_timestamp_from_datetime_timezone_aware(self):
         """
