@@ -45,7 +45,6 @@ class PayOutsTest(BaseTest):
                     "Id": 30047,
                     "CreditedFunds": None,
                     "BankWireRef": "John Doe's trousers",
-                    "PayoutModeRequested": "INSTANT_PAYMENT",
                     "DebitedFunds": {"Currency": "EUR", "Amount": 1000},
                     "BankAccountId": 6784645,
                     "AuthorId": 6784642,
@@ -83,8 +82,7 @@ class PayOutsTest(BaseTest):
                     "Nature": "NORMAL",
                     "DebitedWalletId": "30025",
                     "BankAccountId": "30027",
-                    "BankWireRef": "John Doe's trousers",
-                    "PayoutModeRequested": "INSTANT_PAYMENT"
+                    "BankWireRef": "John Doe's trousers"
                 },
                 'status': 200
             }])
