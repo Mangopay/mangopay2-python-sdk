@@ -706,6 +706,8 @@ class PreAuthorizationsTestLive(BaseTestLive):
         billing.address.country = "FR"
         billing.address.city = "Lyon"
         billing.address.postal_code = "65400"
+        billing.last_name = "Doe"
+        billing.first_name = "John"
         pre_authorization.billing = billing
 
         saved_pre_authorization = pre_authorization.save()
@@ -754,6 +756,8 @@ class PreAuthorizationsTestLive(BaseTestLive):
         billing.address.country = "FR"
         billing.address.city = "Lyon"
         billing.address.postal_code = "65400"
+        billing.last_name = "Doe"
+        billing.first_name = "John"
         pre_authorization.billing = billing
 
         saved_pre_authorization = pre_authorization.save()
