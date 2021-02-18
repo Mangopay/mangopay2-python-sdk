@@ -212,7 +212,19 @@ class PreAuthorizationsTest(BaseTest):
                     "SecureMode": "FORCE",
                     "CardId": "1208983",
                     "PaymentType": "CARD",
-                    "ExecutionType": "DIRECT"
+                    "ExecutionType": "DIRECT",
+                    "Shipping": {
+                        "FirstName": "",
+                        "LastName": "",
+                        "Address": {
+                            "AddressLine1": "",
+                            "AddressLine2": "",
+                            "City": "",
+                            "Region": "",
+                            "PostalCode": "",
+                            "Country": ""
+                        }
+                    },
                 },
                 'status': 200
             }])
@@ -248,6 +260,8 @@ class PreAuthorizationsTest(BaseTest):
 
         # Test update
         previous_pk = preauthorization.get_pk()
+
+        preauthorization = PreAuthorization.get(previous_pk)
 
         preauthorization.payment_status = 'CANCELED'
         preauthorization.save()
