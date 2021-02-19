@@ -491,7 +491,7 @@ class DirectPayIn(PayIn):
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     culture = CharField(api_name='Culture')
-    ip_address = CharField(api_name='IpAdress')
+    ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
 
@@ -689,7 +689,7 @@ class PreAuthorization(BaseModel):
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     multi_capture = BooleanField(api_name='MultiCapture')
-    ip_address = CharField(api_name='IpAdress')
+    ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
 

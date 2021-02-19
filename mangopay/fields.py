@@ -232,7 +232,7 @@ class PlatformCategorizationField(Field):
 class BillingField(Field):
     def python_value(self, value):
         if value is not None:
-            return Billing(address=value['Address'])
+            return Billing(first_name=value['FirstName'], last_name=value['LastName'], address=value['Address'])
         return value
 
     def api_value(self, value):
@@ -240,6 +240,8 @@ class BillingField(Field):
 
         if isinstance(value, Billing):
             value = {
+                'FirstName': value.first_name,
+                'LastName': value.last_name,
                 'Address': value.address
             }
 
@@ -750,14 +752,16 @@ class ScopeBlockedField(Field):
 class ShippingField(Field):
     def python_value(self, value):
         if value is not None:
-            return Shipping(address=value['Address'])
+            return Shipping(first_name=value['FirstName'], last_name=value['LastName'], address=value['Address'])
         return value
 
     def api_value(self, value):
         value = super(ShippingField, self).api_value(value)
 
-        if isinstance(value, Billing):
+        if isinstance(value, Shipping):
             value = {
+                'FirstName': value.first_name,
+                'LastName': value.last_name,
                 'Address': value.address
             }
 
