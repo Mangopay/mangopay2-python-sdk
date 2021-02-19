@@ -10,6 +10,7 @@ The objects Billing and Shipping may be included on all calls to the following e
   - Instant Payment is in beta all over Europe - SEPA region
 - Changed date to dateTime and fixed tests
 - Changed User-Agent
+- Fixed typo on IpAddress, FirstName & LastName
 ## 3.8.4
 - Added 'Regulatory' endpoint to allow checks of User Block Status
 - Added support for Regulatory -> Blocked Status Hooks
