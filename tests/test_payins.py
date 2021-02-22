@@ -712,7 +712,7 @@ class PayInsTestLive(BaseTestLive):
         address.country = "FR"
         address.city = "Lyon"
         address.postal_code = "68400"
-        pay_in.billing = Billing(address=address)
+        pay_in.billing = Billing(first_name="John", last_name="Doe", address=address)
 
         result = pay_in.save()
 

@@ -229,7 +229,7 @@ class Wallet(BaseModel):
     description = CharField(api_name='Description', required=True)
     currency = CharField(api_name='Currency', required=True)
     balance = MoneyField(api_name='Balance')
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'wallet'
@@ -272,14 +272,14 @@ class Transfer(BaseModel):
     fees = MoneyField(api_name='Fees', required=True)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     credited_funds = MoneyField(api_name='CreditedFunds')
     status = CharField(api_name='Status',
                        choices=constants.STATUS_CHOICES,
                        default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -298,7 +298,7 @@ class Transfer(BaseModel):
 
 @python_2_unicode_compatible
 class Card(BaseModel):
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     expiration_date = CharField(api_name='ExpirationDate')
     alias = CharField(api_name='Alias')
     card_provider = CharField(api_name='CardProvider')
@@ -366,7 +366,7 @@ class CardRegistration(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     status = CharField(api_name='Status', choices=constants.CARD_STATUS_CHOICES, default=None)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     class Meta:
         verbose_name = 'cardregistration'
@@ -438,7 +438,7 @@ class PayIn(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
@@ -484,14 +484,14 @@ class DirectPayIn(PayIn):
     secure_mode = CharField(api_name='SecureMode',
                             choices=constants.SECURE_MODE_CHOICES,
                             default=constants.SECURE_MODE_CHOICES.default)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     statement_descriptor = CharField(api_name='StatementDescriptor')
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     culture = CharField(api_name='Culture')
-    ip_address = CharField(api_name='IpAdress')
+    ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
 
@@ -684,12 +684,12 @@ class PreAuthorization(BaseModel):
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
-    expiration_date = DateField(api_name='ExpirationDate')
+    expiration_date = DateTimeField(api_name='ExpirationDate')
     payin = ForeignKeyField(PayIn, api_name='PayInId')
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     multi_capture = BooleanField(api_name='MultiCapture')
-    ip_address = CharField(api_name='IpAdress')
+    ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
 
@@ -739,7 +739,7 @@ class BankAccount(BaseModel):
     user = ForeignKeyField(User, api_name='UserId', related_name='bankaccounts')
     owner_name = CharField(api_name='OwnerName', required=True)
     owner_address = AddressField(api_name='OwnerAddress', required=True)
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     type = CharField(api_name='Type', choices=constants.BANK_ACCOUNT_TYPE_CHOICES, default=None, required=True)
     iban = CharField(api_name='IBAN')
     bic = CharField(api_name='BIC')
@@ -803,14 +803,15 @@ class BankWirePayOut(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
     bank_wire_ref = CharField(api_name='BankWireRef')
+    payout_mode_requested = CharField(api_name='PayoutModeRequested')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -846,7 +847,7 @@ class Refund(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
@@ -957,7 +958,7 @@ class Transaction(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
@@ -1232,7 +1233,7 @@ class Repudiation(BaseModel):
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
-    execution_date = DateField(api_name='ExecutionDate')
+    execution_date = DateTimeField(api_name='ExecutionDate')
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
 
@@ -1451,7 +1452,7 @@ class BankingAliasOther(BankingAlias):
 
 
 class UboDeclaration(BaseModel):
-    creation_date = IntegerField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
     processed_date = IntegerField(api_name='ProcessedDate')
     reason = CharField(api_name='Reason')
     message = CharField(api_name='Message')
