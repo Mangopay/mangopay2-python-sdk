@@ -5,7 +5,7 @@ python:
 install:
 - pip install -r requirements/base.txt
 - pip install -r requirements/development.txt
-script: nosetests
+script: if [ $TRAVIS_BRANCH != "release" ]; then nosetests; fi
 sudo: required
 dist: xenial
 deploy:
