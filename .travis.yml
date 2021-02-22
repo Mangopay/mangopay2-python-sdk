@@ -1,11 +1,12 @@
 language: python
 python:
 #- '2.7'
-- '3.5'
+- '3.6'
 install:
 - pip install -r requirements/base.txt
 - pip install -r requirements/development.txt
-script: nosetests
+script:
+- if [ $TRAVIS_BRANCH != "release" ]; then nosetests; fi
 sudo: required
 dist: xenial
 deploy:
@@ -18,7 +19,7 @@ deploy:
     branch: release
     tags: false
     python: 3.5
-    condition: $TRAVIS_PYTHON_VERSION = "3.5"
+    condition: $TRAVIS_PYTHON_VERSION = "3.6"
 env:
   global:
   - secure: eDsZz0hrnLpBmkFvHMeczHHjytOMJpOZMc21nVR/vRLnjZ7eLmXaklvdy3AQ5SJz+l1neVVihHNX6MyBJ0s63UKatLP7catl++yyqPj5/0C7C0a07ZvJHhUzqnEdYLNOMauy7p5rPMldLOiT1dgQlL1f1FG31BHJ5UkAnrhwvdU=
