@@ -235,11 +235,14 @@ class PlatformCategorization(object):
 
 @add_camelcase_aliases
 class Billing(object):
-    def __init__(self, address=None):
+    def __init__(self, first_name=None, last_name=None, address=None):
+        self.first_name = first_name
+        self.last_name = last_name
         self.address = address
 
     def __str__(self):
-        return 'Billing: %s' % self.address
+        return 'Billing: %s' % \
+               (self.first_name, self.last_name, self.address)
 
 
 @add_camelcase_aliases
@@ -510,11 +513,14 @@ class BrowserInfo(object):
 
 @add_camelcase_aliases
 class Shipping(object):
-    def __init__(self, address=None):
+    def __init__(self, first_name=None, last_name=None, address=None):
+        self.first_name = first_name
+        self.last_name = last_name
         self.address = address
 
     def __str__(self):
-        return 'Shipping: %s' % self.address
+        return 'Shipping: %s' % \
+               (self.first_name, self.last_name, self.address)
 
 
 @add_camelcase_aliases

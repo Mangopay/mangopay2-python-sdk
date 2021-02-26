@@ -491,7 +491,7 @@ class DirectPayIn(PayIn):
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     culture = CharField(api_name='Culture')
-    ip_address = CharField(api_name='IpAdress')
+    ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
 
@@ -689,7 +689,7 @@ class PreAuthorization(BaseModel):
     billing = BillingField(api_name='Billing')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     multi_capture = BooleanField(api_name='MultiCapture')
-    ip_address = CharField(api_name='IpAdress')
+    ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
 
@@ -809,8 +809,9 @@ class BankWirePayOut(BaseModel):
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
     bank_wire_ref = CharField(api_name='BankWireRef')
+    payout_mode_requested = CharField(api_name='PayoutModeRequested')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
-    creation_date = DateField(api_name='CreationDate')
+    creation_date = DateTimeField(api_name='CreationDate')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id

@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+import time
+from datetime import date, datetime
+
+import responses
+
+from mangopay.utils import Money, timestamp_from_date
 from tests import settings
 from tests.resources import Transfer, Transaction
 from tests.test_base import BaseTest
 
-from mangopay.utils import Money
-
-from datetime import date
-
-import responses
-import time
-
+today = datetime.utcnow().date()
+today_timestamp = timestamp_from_date(today)
 
 class TransactionsTest(BaseTest):
     @responses.activate
@@ -43,7 +44,7 @@ class TransactionsTest(BaseTest):
                     "Status": "SUCCEEDED",
                     "ResultCode": "000000",
                     "ResultMessage": "Success",
-                    "ExecutionDate": int(time.mktime(date.today().timetuple())),
+                    "ExecutionDate": today_timestamp,
                     "Type": "TRANSFER",
                     "Nature": "REGULAR",
                     "DebitedWalletId": "1167496",
@@ -74,7 +75,7 @@ class TransactionsTest(BaseTest):
                         "Status": "CREATED",
                         "ResultCode": "000000",
                         "ResultMessage": "Success",
-                        "ExecutionDate": "2015-05-15",
+                        "ExecutionDate": today_timestamp,
                         "Type": "TRANSFER",
                         "Nature": "REFUND",
                         "DebitedWalletId": "1174774"
@@ -106,7 +107,7 @@ class TransactionsTest(BaseTest):
                         "Status": "CREATED",
                         "ResultCode": "000000",
                         "ResultMessage": "Success",
-                        "ExecutionDate": "2015-05-15",
+                        "ExecutionDate": today_timestamp,
                         "Type": "TRANSFER",
                         "Nature": "REFUND",
                         "DebitedWalletId": "1174774"
@@ -138,7 +139,7 @@ class TransactionsTest(BaseTest):
                         "Status": "FAILED",
                         "ResultCode": "000000",
                         "ResultMessage": "Success",
-                        "ExecutionDate": "2015-05-15",
+                        "ExecutionDate": today_timestamp,
                         "Type": "TRANSFER",
                         "Nature": "REFUND",
                         "DebitedWalletId": "1174774"
@@ -172,7 +173,7 @@ class TransactionsTest(BaseTest):
                         "Status": "CREATED",
                         "ResultCode": "000000",
                         "ResultMessage": "Success",
-                        "ExecutionDate": 1383156788,
+                        "ExecutionDate": today_timestamp,
                         "Type": "TRANSFER",
                         "Nature": "REGULAR",
                         "CreditedWalletId": "1167504",
