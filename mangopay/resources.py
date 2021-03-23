@@ -494,6 +494,8 @@ class DirectPayIn(PayIn):
     ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
+    requested_3ds_version = CharField(api_name='Requested3DSVersion')
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
 
     class Meta:
         verbose_name = 'payin'
@@ -616,6 +618,8 @@ class CardWebPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     shipping = ShippingField(api_name='Shipping')
+    requested_3ds_version = CharField(api_name='Requested3DSVersion')
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
 
     class Meta:
         verbose_name = 'card_payin'
@@ -692,6 +696,8 @@ class PreAuthorization(BaseModel):
     ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
     shipping = ShippingField(api_name='Shipping')
+    requested_3ds_version = CharField(api_name='Requested3DSVersion')
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
 
     def get_transactions(self, *args, **kwargs):
         kwargs['id'] = self.id
