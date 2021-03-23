@@ -223,8 +223,7 @@ class PreAuthorizationsTest(BaseTest):
             "debited_funds": Money(amount=10000, currency='EUR'),
             "remaining_funds": Money(amount=500, currency='EUR'),
             "secure_mode": "DEFAULT",
-            "secure_mode_return_url": "http://www.ulule.com/",
-            "requested_3ds_version": "V1"
+            "secure_mode_return_url": "http://www.ulule.com/"
         }
         preauthorization = PreAuthorization(**params)
 
