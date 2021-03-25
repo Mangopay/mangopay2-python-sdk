@@ -618,8 +618,6 @@ class CardWebPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     shipping = ShippingField(api_name='Shipping')
-    requested_3ds_version = CharField(api_name='Requested3DSVersion')
-    applied_3ds_version = CharField(api_name='Applied3DSVersion')
 
     class Meta:
         verbose_name = 'card_payin'
