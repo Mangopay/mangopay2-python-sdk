@@ -30,7 +30,7 @@ class PayOutsTest(BaseTest):
                         "PostalCode": "11222",
                         "Country": "FR"
                     },
-                    "IBAN": "FR3020041010124530725S03383",
+                    "IBAN": "FR7630004000031234567890143",
                     "BIC": "CRLYFRPP",
                     "Id": "1169675",
                     "Tag": "custom tag",
@@ -96,7 +96,7 @@ class PayOutsTest(BaseTest):
             "owner_address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
-            "iban": "FR3020041010124530725S03383",
+            "iban": "FR7630004000031234567890143",
             "bic": "CRLYFRPP",
             "tag": "custom tag"
         }
