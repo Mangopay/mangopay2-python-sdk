@@ -621,7 +621,7 @@ V2
     account.UserId = user.Id
     account.Type = 'IBAN'
     account.IBAN = 'FR7630004000031234567890143'
-    account.BIC = 'CRLYFRPP'
+    account.BIC = 'BNPAFRPP'
 
     saved_account = api.users.CreateBankAccount(user.Id, account)
 
@@ -635,7 +635,7 @@ V3
                                   owner_address=Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
                                   postal_code='11222', country='FR'),
                                   iban="FR7630004000031234567890143",
-                                  bic="CRLYFRPP")
+                                  bic="BNPAFRPP")
 
     bankaccount.save()
 

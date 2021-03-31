@@ -221,7 +221,7 @@ class PayInsTest(BaseTest):
                         "PostalCode": "11222",
                         "Country": "FR"
                     },
-                    "IBAN": "CRLYFRPP",
+                    "IBAN": "BNPAFRPP",
                     "BIC": "FR70 3000 2005 5000 0015 7845 Z02"
                 }
             },

@@ -30,7 +30,7 @@ class BankAccountsTest(BaseTest):
                     "Country": "FR"
                 },
                 "IBAN": "FR7630004000031234567890143",
-                "BIC": "CRLYFRPP",
+                "BIC": "BNPAFRPP",
                 "Id": "1169675",
                 "Tag": "custom tag",
                 "CreationDate": 1383561267
@@ -46,7 +46,7 @@ class BankAccountsTest(BaseTest):
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
             "iban": "FR7630004000031234567890143",
-            "bic": "CRLYFRPP",
+            "bic": "BNPAFRPP",
             "tag": "custom tag"
         }
         bankaccount = BankAccount(**params)
@@ -235,7 +235,7 @@ class BankAccountsTest(BaseTest):
                 "Tag": "custom tag",
                 "CreationDate": 1431964920,
                 "AccountNumber": "123",
-                "BIC": "CRLYFRPP",
+                "BIC": "BNPAFRPP",
                 "Country": "FR"
             },
             'status': 200
@@ -249,7 +249,7 @@ class BankAccountsTest(BaseTest):
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
             "country": "FR",
-            "bic": "CRLYFRPP",
+            "bic": "BNPAFRPP",
             "tag": "custom tag",
             "account_number": "123"
         }
@@ -284,7 +284,7 @@ class BankAccountsTest(BaseTest):
                         "Country": "FR"
                     },
                     "IBAN": "FR7630004000031234567890143",
-                    "BIC": "CRLYFRPP",
+                    "BIC": "BNPAFRPP",
                     "Id": "1169675",
                     "Tag": "custom tag",
                     "CreationDate": 1383561267
@@ -307,7 +307,7 @@ class BankAccountsTest(BaseTest):
                         "Country": "FR"
                     },
                     "IBAN": "FR7630004000031234567890143",
-                    "BIC": "CRLYFRPP",
+                    "BIC": "BNPAFRPP",
                     "Id": "1169675",
                     "Tag": "custom tag",
                     "CreationDate": 1383561267
@@ -331,7 +331,7 @@ class BankAccountsTest(BaseTest):
                             "Country": "FR"
                         },
                         "IBAN": "FR7630004000031234567890143",
-                        "BIC": "CRLYFRPP",
+                        "BIC": "BNPAFRPP",
                         "Id": "1169675",
                         "Tag": "custom tag",
                         "CreationDate": 1383561267
@@ -374,7 +374,7 @@ class BankAccountsTest(BaseTest):
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
             "iban": "FR7630004000031234567890143",
-            "bic": "CRLYFRPP",
+            "bic": "BNPAFRPP",
             "tag": "custom tag"
         }
         bankaccount = BankAccount(**params)
@@ -414,7 +414,7 @@ class BankAccountsTest(BaseTest):
                         "Country": "FR"
                     },
                     "IBAN": "FR7630004000031234567890143",
-                    "BIC": "CRLYFRPP",
+                    "BIC": "BNPAFRPP",
                     "Id": "1169675",
                     "Tag": "custom tag",
                     "CreationDate": 1383561267
@@ -438,7 +438,7 @@ class BankAccountsTest(BaseTest):
                             "Country": "FR"
                         },
                         "IBAN": "FR7630004000031234567890143",
-                        "BIC": "CRLYFRPP",
+                        "BIC": "BNPAFRPP",
                         "Id": "1169675",
                         "Tag": "custom tag",
                         "CreationDate": 1383561267
@@ -455,7 +455,7 @@ class BankAccountsTest(BaseTest):
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
             "iban": "FR7630004000031234567890143",
-            "bic": "CRLYFRPP",
+            "bic": "BNPAFRPP",
             "tag": "custom tag"
         }
         bankaccount = BankAccount(**params)

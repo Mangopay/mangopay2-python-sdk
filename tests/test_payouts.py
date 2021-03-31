@@ -31,7 +31,7 @@ class PayOutsTest(BaseTest):
                         "Country": "FR"
                     },
                     "IBAN": "FR7630004000031234567890143",
-                    "BIC": "CRLYFRPP",
+                    "BIC": "BNPAFRPP",
                     "Id": "1169675",
                     "Tag": "custom tag",
                     "CreationDate": 1383561267
@@ -97,7 +97,7 @@ class PayOutsTest(BaseTest):
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
             "iban": "FR7630004000031234567890143",
-            "bic": "CRLYFRPP",
+            "bic": "BNPAFRPP",
             "tag": "custom tag"
         }
         bankaccount = BankAccount(**params)
