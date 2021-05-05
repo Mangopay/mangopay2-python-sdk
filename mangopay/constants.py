@@ -129,7 +129,10 @@ EVENT_TYPE_CHOICES = Choices(
     ('USER_INFLOWS_BLOCKED', 'user_inflows_blocked', 'User inflows blocked'),
     ('USER_INFLOWS_UNBLOCKED', 'user_inflows_unblocked', 'User inflows unblocked'),
     ('USER_OUTFLOWS_BLOCKED', 'user_outflows_blocked', 'User outflows blocked'),
-    ('USER_OUTFLOWS_UNBLOCKED', 'user_outflows_unblocked', 'User outflows unblocked')
+    ('USER_OUTFLOWS_UNBLOCKED', 'user_outflows_unblocked', 'User outflows unblocked'),
+    ('PREAUTHORIZATION_CREATED', 'preauthorization_created', 'PreAuthorization created'),
+    ('PREAUTHORIZATION_SUCCEEDED', 'preauthorization_succeeded', 'PreAuthorization succeeded'),
+    ('PREAUTHORIZATION_FAILED', 'preauthorization_failed', 'PreAuthorization failed'),
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
