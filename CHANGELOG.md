@@ -1,3 +1,50 @@
+## 3.10.1
+## Fixed
+
+## Fixed 
+
+### IBAN for testing purposes
+
+⚠️ **IBAN provided for testing purpose should never be used outside of a testing environement!**
+
+- Fix `BankAccount` IBAN reference for tests
+
+More information about how to test payments, click [here](https://docs.mangopay.com/guide/testing-payments).
+
+### Others
+
+- httplib2 has been updated to the last version
+- RemainingFunds was flag wrongly as mandatory for PreAuthorization. It has been fixed.
+- ProcessedDate had the type IntegerField instead of DateTimeField. It has been fixed.
+
+## Added 
+
+### New events for PreAuthorization
+
+Some of you use a lot the [PreAuthorization](https://docs.mangopay.com/endpoints/v2.01/preauthorizations#e183_the-preauthorization-object) feature of our API. To make your life easier, we have added three new events :
+
+- PREAUTHORIZATION_CREATED
+- PREAUTHORIZATION_SUCCEEDED
+- PREAUTHORIZATION_FAILED
+
+The goal is to help you monitor a PreAuthorization with a [webhook](https://docs.mangopay.com/endpoints/v2.01/hooks#e246_the-hook-object).
+
+*Example: If a PreAuthorization is desynchronized, when the status is updated, you will be able to know it.*
+
+### Logging
+
+We have merged @rbarrois pull request. The logging module expects user to provide the string as a first argument, and all interpolation parameters in separate positional or keyword arguments: `logger.debug("trying x=%s", x)`.
+
+This brings two benefits:
+
+- The interpolation is only performed if the logging message is actually
+used (debug messages won't even be interpolated if logging is set to
+WARNING)
+
+- Monitoring libraries like Sentry can group messages based on their
+non-interpolated message, which helps detecting similar issues.
+
+
 ## 3.10.0
 ## Added
 
