@@ -672,7 +672,7 @@ class DirectDebitDirectPayIn(PayIn):
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
-    remaining_funds = MoneyField(api_name='RemainingFunds', required=True)
+    remaining_funds = MoneyField(api_name='RemainingFunds')
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     payment_status = CharField(api_name='PaymentStatus', choices=constants.PAYMENT_STATUS_CHOICES, default=None)
     result_code = CharField(api_name='ResultCode')
