@@ -332,8 +332,8 @@ class BaseTestLive(unittest.TestCase):
             account.user = BaseTestLive._john
             account.type = 'IBAN'
             account.owner_address = BaseTestLive._john.address
-            account.iban = 'FR7618829754160173622224154'
-            account.bic = 'CMBRFR2BCME'
+            account.iban = 'FR7630004000031234567890143'
+            account.bic = 'BNPAFRPP'
             BaseTestLive._johns_account = BankAccount(**account.save())
         return BaseTestLive._johns_account
 
@@ -352,7 +352,7 @@ class BaseTestLive(unittest.TestCase):
             account.owner_address.postal_code = "65400"
 
             account.iban = 'FR7630004000031234567890143'
-            account.bic = 'CRLYFRPP'
+            account.bic = 'BNPAFRPP'
             account.tag = 'custom meta'
 
             account.create_client_bank_account()
