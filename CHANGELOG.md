@@ -1,3 +1,23 @@
+## 3.11.0 - 2021.05.27
+## Added 
+
+Mangopay introduces the instant payment mode. It allows payouts (transfer from wallet to user bank account) to be processed within 25 seconds, rather than the 48 hours for a standard payout.
+
+You can now use this new type of payout with the Python SDK.
+
+Example :
+
+```python
+get_bank_wire = BankWirePayOut.get_bankwire(payout_id)
+# where payout_id is the id of an existing payout
+```
+
+Please note that this feature must be authorized and activated by MANGOPAY. More information [here](https://docs.mangopay.com/guide/instant-payment-payout).
+
+## Fixed
+
+Duplicate BIC in resources 
+
 ## 3.10.1
 ## Fixed
 
