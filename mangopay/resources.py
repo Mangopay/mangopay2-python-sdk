@@ -757,7 +757,6 @@ class BankAccount(BaseModel):
     institution_number = CharField(api_name='InstitutionNumber')
     branch_code = CharField(api_name='BranchCode')
     country = CharField(api_name='Country')
-    bic = CharField(api_name='BIC')
     active = BooleanField(api_name='Active', default=True)
 
     def get_transactions(self, *args, **kwargs):
