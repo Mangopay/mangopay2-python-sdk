@@ -757,7 +757,6 @@ class BankAccount(BaseModel):
     institution_number = CharField(api_name='InstitutionNumber')
     branch_code = CharField(api_name='BranchCode')
     country = CharField(api_name='Country')
-    bic = CharField(api_name='BIC')
     active = BooleanField(api_name='Active', default=True)
 
     def get_transactions(self, *args, **kwargs):
@@ -816,6 +815,9 @@ class BankWirePayOut(BaseModel):
     payout_mode_requested = CharField(api_name='PayoutModeRequested')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
     creation_date = DateTimeField(api_name='CreationDate')
+    mode_requested = CharField(api_name='ModeRequested')
+    mode_applied = CharField(api_name='ModeApplied')
+    fallback_reason = CharField(api_name='FallbackReason')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -829,12 +831,21 @@ class BankWirePayOut(BaseModel):
         insert.insert_query = self.get_field_dict()
         return insert.execute()
 
+    @classmethod
+    def get_bankwire(cls, payout_id, **kwargs):
+        kwargs['id'] = payout_id
+        args = '',
+        select = SelectQuery(cls, *args, **kwargs)
+        select.identifier = 'PAYOUT_BANKWIRE_GET'
+        return select.get(*args, **kwargs)
+
     class Meta:
         verbose_name = 'payout'
         verbose_name_plural = 'payouts'
         url = {
             InsertQuery.identifier: '/payouts/bankwire',
             SelectQuery.identifier: '/payouts',
+            'PAYOUT_BANKWIRE_GET': '/payouts/bankwire/%(id)s',
             'CLIENT_CREATE_PAYOUT': '/clients/payouts'
         }
 

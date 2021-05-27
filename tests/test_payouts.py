@@ -45,7 +45,7 @@ class PayOutsTest(BaseTest):
                     "Id": 30047,
                     "CreditedFunds": None,
                     "BankWireRef": "John Doe's trousers",
-                    "PayoutModeRequested": "INSTANT_PAYMENT",
+                    "PayoutModeRequested": "STANDARD",
                     "DebitedFunds": {"Currency": "EUR", "Amount": 1000},
                     "BankAccountId": 6784645,
                     "AuthorId": 6784642,
@@ -84,7 +84,7 @@ class PayOutsTest(BaseTest):
                     "DebitedWalletId": "30025",
                     "BankAccountId": "30027",
                     "BankWireRef": "John Doe's trousers",
-                    "PayoutModeRequested": "INSTANT_PAYMENT"
+                    "PayoutModeRequested": "STANDARD"
                 },
                 'status': 200
             }])
@@ -110,7 +110,8 @@ class PayOutsTest(BaseTest):
             "fees": Money(amount=100, currency='EUR'),
             "debited_wallet": self.legal_user_wallet,
             "bank_account": bankaccount,
-            "bank_wire_ref": "John Doe's trousers"
+            "bank_wire_ref": "John Doe's trousers",
+            "payout_mode_requested": "STANDARD"
         }
         bank_wire_payout = BankWirePayOut(**bank_wire_payout_params)
 
@@ -134,3 +135,5 @@ class PayOutsTest(BaseTest):
         self.assertIsInstance(retrieved_payout, BankWirePayOut)
 
         self.assertEqual(getattr(retrieved_payout, 'id'), bank_wire_payout.get_pk())
+
+        # get_bank_wire = BankWirePayOut.get_bankwire(109791242)
