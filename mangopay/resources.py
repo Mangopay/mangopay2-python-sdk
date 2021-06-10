@@ -472,6 +472,79 @@ class PayIn(BaseModel):
         }
         return types.get((payment_type, execution_type), cls)
 
+@python_2_unicode_compatible
+class RecurringPayIn(BaseModel):
+    recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+    author = ForeignKeyField(User, api_name='AuthorId')
+    creation_date = DateTimeField(api_name='CreationDate')
+    credited_user = ForeignKeyField(User, api_name='CreditedUserId')
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
+    debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId')
+    card = ForeignKeyField(Card, api_name='CardId')
+    credited_funds = MoneyField(api_name='CreditedFunds')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+    status = CharField(api_name='Status')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    execution_date = DateTimeField(api_name='ExecutionDate')
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
+    nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    secure_mode = CharField(api_name='SecureMode',
+                            choices=constants.SECURE_MODE_CHOICES,
+                            default=constants.SECURE_MODE_CHOICES.default)
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
+    secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
+    secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
+    billing = BillingField(api_name='Billing')
+    security_info = SecurityInfoField(api_name='SecurityInfo')
+    culture = CharField(api_name='Culture')
+    ip_address = CharField(api_name='IpAddress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    shipping = ShippingField(api_name='Shipping')
+    requested_3ds_version = CharField(api_name='Requested3DSVersion')
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    def get_read_only_properties(self):
+        read_only = ["Id", "CreditedUserId", "CreditedFunds", "CreditedWalletId", "DebitedWalletId", "Status",
+                     "ResultCode", "ResultMessage", "ExecutionDate", "Type", "Nature", "PaymentType", "ExecutionType"]
+        return read_only
+
+    class Meta:
+        verbose_name = 'base_recurring_payin'
+        verbose_name_plural = 'base_recurring_payins'
+
+@python_2_unicode_compatible
+class RecurringPayInCIT(RecurringPayIn):
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    ip_address = CharField(api_name='IpAddress')
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    tag = CharField(api_name='Tag')
+
+    class Meta:
+        verbose_name = 'recurring_payin'
+        verbose_name_plural = 'recurring_payins'
+        url = {
+            InsertQuery.identifier: '/payins/recurring/card/direct'
+        }
+
+@python_2_unicode_compatible
+class RecurringPayInMIT(RecurringPayIn):
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    tag = CharField(api_name='Tag')
+
+    class Meta:
+        verbose_name = 'recurring_payin'
+        verbose_name_plural = 'recurring_payins'
+        url = {
+            InsertQuery.identifier: '/payins/recurring/card/direct'
+        }
 
 @python_2_unicode_compatible
 class DirectPayIn(PayIn):
@@ -602,7 +675,8 @@ class GooglepayPayIn(PayIn):
             InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
-class RecurringPayIn(BaseApiModel):
+
+class RecurringPayInRegistration(BaseApiModel):
     id = PrimaryKeyField(api_name='Id')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -630,8 +704,8 @@ class RecurringPayIn(BaseApiModel):
         return read_only
 
     class Meta:
-        verbose_name = 'recurring_payin'
-        verbose_name_plural = 'recurring_payins'
+        verbose_name = 'recurring_registration_payin'
+        verbose_name_plural = 'recurring_registration_payins'
         url = {
             InsertQuery.identifier: '/recurringpayinregistrations'
         }
