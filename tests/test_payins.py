@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 import time
 import unittest
+from cmath import rect
 from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
+    RecurringPayInRegistration, RecurringPayInCIT, RecurringPayIn
+from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
+                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
 
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
@@ -721,6 +724,55 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(security_info)
         self.assertIsInstance(security_info, SecurityInfo)
         self.assertEqual(security_info.avs_result, "NO_CHECK")
+
+    def test_RecurringPayment_Create(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayInRegistration()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money()
+        recurring.first_transaction_fees.amount = 1
+        recurring.first_transaction_fees.currency = "EUR"
+        recurring.first_transaction_debited_funds = Money()
+        recurring.first_transaction_debited_funds.amount = 10
+        recurring.first_transaction_debited_funds.currency = "EUR"
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        result = recurring.save()
+        self.assertIsNotNone(result)
+
+        cit = RecurringPayInCIT()
+        cit.recurring_payin_registration_id = result.get('id')
+        cit.tag = "custom meta"
+        cit.statement_descriptor = "lorem"
+        cit.secure_mode_return_url = "http://www.my-site.com/returnurl"
+        cit.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        browser = BrowserInfo()
+        browser.accept_header = "text/html, application/xhtml+xml, application/xml;q=0.9, /;q=0.8"
+        browser.java_enabled = True
+        browser.language = "FR-FR"
+        browser.color_depth = 4
+        browser.screen_width = 400
+        browser.screen_height = 1800
+        browser.javascript_enabled = True
+        browser.timezone_offset = "+60"
+        browser.user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+        cit.browser_info = browser
+
+        createdCit = cit.save()
+        self.assertIsNotNone(createdCit)
+
 
     def test_ApplePay_Payin(self):
         user = self.get_john(True)
