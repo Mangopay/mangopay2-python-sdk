@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import time
 import unittest
+from cmath import rect
 from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, RecurringPayIn
+from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
 
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
@@ -721,6 +722,33 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(security_info)
         self.assertIsInstance(security_info, SecurityInfo)
         self.assertEqual(security_info.avs_result, "NO_CHECK")
+
+    def test_RecurringPayment_Create(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayIn()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money()
+        recurring.first_transaction_fees.amount = 1
+        recurring.first_transaction_fees.currency = "EUR"
+        recurring.first_transaction_debited_funds = Money()
+        recurring.first_transaction_debited_funds.amount = 10
+        recurring.first_transaction_debited_funds.currency = "EUR"
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        result = recurring.save()
+        self.assertIsNotNone(result)
 
     def test_ApplePay_Payin(self):
         user = self.get_john(True)

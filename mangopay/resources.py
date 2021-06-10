@@ -602,6 +602,39 @@ class GooglepayPayIn(PayIn):
             InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
+class RecurringPayIn(BaseApiModel):
+    id = PrimaryKeyField(api_name='Id')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    card = ForeignKeyField(Card, api_name='CardId', required=True)
+    user = ForeignKeyField(User, api_name='CreditedUserId')
+    first_transaction_debited_funds = MoneyField(api_name='FirstTransactionDebitedFunds', required=True)
+    first_transaction_fees = MoneyField(api_name='FirstTransactionFees', required=True)
+    billing = BillingField(api_name='Billing', required=True)
+    shipping = ShippingField(api_name='Shipping', required=True)
+    end_date = DateField(api_name='EndDate')
+    frequency = CharField(api_name='Frequency')
+    fixed_next_amount = BooleanField(api_name='FixedNextAmount')
+    fractioned_payment = BooleanField(api_name='FractionedPayment')
+    migration = BooleanField(api_name='Migration')
+    next_transaction_debited_funds = MoneyField(api_name='FirstTransactionDebitedFunds')
+    next_transaction_fees = MoneyField(api_name='FirstTransactionFees')
+    free_cycles = IntegerField(api_name='FreeCycles')
+    cycle_number = IntegerField(api_name='CycleNumber')
+    total_amount = IntegerField(api_name='TotalAmount')
+    recurring_type = CharField(api_name='RecurringType')
+    status = CharField(api_name='Status')
+
+    def get_read_only_properties(self):
+        read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status"]
+        return read_only
+
+    class Meta:
+        verbose_name = 'recurring_payin'
+        verbose_name_plural = 'recurring_payins'
+        url = {
+            InsertQuery.identifier: '/recurringpayinregistrations'
+        }
 
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
