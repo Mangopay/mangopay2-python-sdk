@@ -13,7 +13,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
-                     BrowserInfoField, ShippingField)
+                     BrowserInfoField, ShippingField, CurrentStateField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -700,6 +700,7 @@ class RecurringPayInRegistration(BaseApiModel):
     total_amount = IntegerField(api_name='TotalAmount')
     recurring_type = CharField(api_name='RecurringType')
     status = CharField(api_name='Status')
+    current_state = CurrentStateField(api_name='CurrentState')
 
     def get_read_only_properties(self):
         read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status"]
@@ -709,7 +710,8 @@ class RecurringPayInRegistration(BaseApiModel):
         verbose_name = 'recurring_registration_payin'
         verbose_name_plural = 'recurring_registration_payins'
         url = {
-            InsertQuery.identifier: '/recurringpayinregistrations'
+            InsertQuery.identifier: '/recurringpayinregistrations',
+            SelectQuery.identifier: '/recurringpayinregistrations'
         }
 
 class CardWebPayIn(PayIn):
