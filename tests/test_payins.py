@@ -758,6 +758,8 @@ class PayInsTestLive(BaseTestLive):
         cit.statement_descriptor = "lorem"
         cit.secure_mode_return_url = "http://www.my-site.com/returnurl"
         cit.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        cit.debited_funds = Money(amount=10, currency="EUR")
+        cit.fees = Money(amount=1, currency="EUR")
         browser = BrowserInfo()
         browser.accept_header = "text/html, application/xhtml+xml, application/xml;q=0.9, /;q=0.8"
         browser.java_enabled = True

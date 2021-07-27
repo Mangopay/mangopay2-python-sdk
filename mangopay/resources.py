@@ -524,6 +524,8 @@ class RecurringPayInCIT(RecurringPayIn):
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
     statement_descriptor = CharField(api_name='StatementDescriptor')
     tag = CharField(api_name='Tag')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
 
     class Meta:
         verbose_name = 'recurring_payin'
