@@ -703,7 +703,7 @@ class RecurringPayInRegistration(BaseApiModel):
     current_state = CurrentStateField(api_name='CurrentState')
 
     def get_read_only_properties(self):
-        read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status"]
+        read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status", "CurrentState"]
         return read_only
 
     class Meta:
@@ -711,7 +711,8 @@ class RecurringPayInRegistration(BaseApiModel):
         verbose_name_plural = 'recurring_registration_payins'
         url = {
             InsertQuery.identifier: '/recurringpayinregistrations',
-            SelectQuery.identifier: '/recurringpayinregistrations'
+            SelectQuery.identifier: '/recurringpayinregistrations',
+            UpdateQuery.identifier: '/recurringpayinregistrations'
         }
 
 class CardWebPayIn(PayIn):
