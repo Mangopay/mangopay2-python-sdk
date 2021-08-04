@@ -9,7 +9,7 @@ import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
-    ScopeBlocked, BrowserInfo, Shipping
+    ScopeBlocked, BrowserInfo, Shipping, CurrentState
 
 
 class FieldDescriptor(object):
@@ -763,6 +763,29 @@ class ShippingField(Field):
                 'FirstName': value.first_name,
                 'LastName': value.last_name,
                 'Address': value.address
+            }
+
+        return value
+
+
+class CurrentStateField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return CurrentState(payins_linked=value['PayinsLinked'],
+                                cumulated_debited_amount=value['CumulatedDebitedAmount'],
+                                cumulated_debited_fees=value['CumulatedFeesAmount'],
+                                last_payin_id=value['LastPayinId'])
+        return value
+
+    def api_value(self, value):
+        value = super(CurrentStateField, self).api_value(value)
+
+        if isinstance(value, CurrentState):
+            value = {
+                'PayinsLinked ': value.payins_linked,
+                'CumulatedDebitedAmount ': value.cumulated_debited_amount,
+                'CumulatedFeesAmount  ': value.cumulated_debited_fees,
+                'LastPayinId ': value.last_payin_id
             }
 
         return value

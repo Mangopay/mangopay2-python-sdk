@@ -524,6 +524,20 @@ class Shipping(object):
 
 
 @add_camelcase_aliases
+class CurrentState(object):
+    def __init__(self, payins_linked=None, cumulated_debited_amount=None, cumulated_debited_fees=None,
+                 last_payin_id=None):
+        self.payins_linked = payins_linked
+        self.cumulated_debited_amount = cumulated_debited_amount
+        self.cumulated_debited_fees = cumulated_debited_fees
+        self.last_payin_id = last_payin_id
+
+    def __str__(self):
+        return 'CurrentState: %s' % \
+               (self.cumulated_debited_amount, self.cumulated_debited_fees, self.last_payin_id, self.payins_linked)
+
+
+@add_camelcase_aliases
 class ScopeBlocked(object):
     def __init__(self, inflows=None, outflows=None):
         self.inflows = inflows

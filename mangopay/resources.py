@@ -13,7 +13,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
-                     BrowserInfoField, ShippingField)
+                     BrowserInfoField, ShippingField, CurrentStateField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -524,6 +524,8 @@ class RecurringPayInCIT(RecurringPayIn):
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
     statement_descriptor = CharField(api_name='StatementDescriptor')
     tag = CharField(api_name='Tag')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
 
     class Meta:
         verbose_name = 'recurring_payin'
@@ -698,16 +700,19 @@ class RecurringPayInRegistration(BaseApiModel):
     total_amount = IntegerField(api_name='TotalAmount')
     recurring_type = CharField(api_name='RecurringType')
     status = CharField(api_name='Status')
+    current_state = CurrentStateField(api_name='CurrentState')
 
     def get_read_only_properties(self):
-        read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status"]
+        read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status", "CurrentState"]
         return read_only
 
     class Meta:
         verbose_name = 'recurring_registration_payin'
         verbose_name_plural = 'recurring_registration_payins'
         url = {
-            InsertQuery.identifier: '/recurringpayinregistrations'
+            InsertQuery.identifier: '/recurringpayinregistrations',
+            SelectQuery.identifier: '/recurringpayinregistrations',
+            UpdateQuery.identifier: '/recurringpayinregistrations'
         }
 
 class CardWebPayIn(PayIn):
