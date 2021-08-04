@@ -1,4 +1,4 @@
-name: mangopay2-python-sdk-ci
+name: mangopay2-python-sdk-cd
 
 on:
   push:
