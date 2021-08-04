@@ -2,9 +2,7 @@ name: mangopay2-python-sdk-cd
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
-      # It pushes any tags that contain a v. ex: 1.16.1
       - '*'
 
 jobs:
