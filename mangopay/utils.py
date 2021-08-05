@@ -246,6 +246,17 @@ class Billing(object):
 
 
 @add_camelcase_aliases
+class FallbackReason(object):
+    def __init__(self, code=None, message=None):
+        self.code = code
+        self.message = message
+
+    def __str__(self):
+        return 'FallbackReason: %s' % \
+            (self.code, self.last_name, self.message)
+
+
+@add_camelcase_aliases
 class SecurityInfo(object):
     def __init__(self, avs_result=None):
         self.avs_result = avs_result

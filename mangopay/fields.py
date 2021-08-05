@@ -9,7 +9,7 @@ import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
-    ScopeBlocked, BrowserInfo, Shipping, CurrentState
+    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason
 
 
 class FieldDescriptor(object):
@@ -205,6 +205,25 @@ class MoneyField(Field):
             value = {
                 'Currency': value.currency,
                 'Amount': int(value.amount)
+            }
+
+        return value
+
+
+class FallbackReasonField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return FallbackReason(code=value['Code'], message=value['Message'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(FallbackReasonField, self).api_value(value)
+
+        if isinstance(value, FallbackReason):
+            value = {
+                'Code': value.code,
+                'Message': value.message
             }
 
         return value
