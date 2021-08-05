@@ -13,7 +13,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
-                     BrowserInfoField, ShippingField, CurrentStateField)
+                     BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -929,7 +929,7 @@ class BankWirePayOut(BaseModel):
     creation_date = DateTimeField(api_name='CreationDate')
     mode_requested = CharField(api_name='ModeRequested')
     mode_applied = CharField(api_name='ModeApplied')
-    fallback_reason = CharField(api_name='FallbackReason')
+    fallback_reason = FallbackReasonField(api_name='FallbackReason')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
