@@ -676,9 +676,9 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4972485830400049',
+            'cardNumber': '4972485830400056',
             'cardCvx': '123',
-            'cardExpirationDate': '0821',
+            'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
@@ -695,10 +695,10 @@ class PreAuthorizationsTestLive(BaseTestLive):
         pre_authorization.author = user
         pre_authorization.debited_funds = Money()
         pre_authorization.debited_funds.currency = "EUR"
-        pre_authorization.debited_funds.amount = 500
+        pre_authorization.debited_funds.amount = 100
         pre_authorization.remaining_funds = Money()
         pre_authorization.remaining_funds.currency = "EUR"
-        pre_authorization.remaining_funds.amount = 500
+        pre_authorization.remaining_funds.amount = 100
         pre_authorization.secure_mode_return_url = "http://www.example.com/"
         billing = Billing()
         billing.address = Address()
@@ -726,9 +726,9 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4972485830400049',
+            'cardNumber': '4972485830400056',
             'cardCvx': '123',
-            'cardExpirationDate': '0821',
+            'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
