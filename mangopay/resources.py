@@ -645,6 +645,24 @@ class PayPalPayIn(PayIn):
             SelectQuery.identifier: '/payins'
         }
 
+@python_2_unicode_compatible
+class PayconiqPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=False)
+    redirect_url = CharField(api_name='RedirectURL', required=False)
+    creation_date = DateField(api_name='CreationDate', required=False)
+    expiration_date = CharField(api_name='ExpirationDate', required=False)
+    deep_link_url = CharField(api_name='DeepLinkURL', required=False)
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/payins/payconiq/web',
+            SelectQuery.identifier: '/payins'
+        }
 
 class ApplepayPayIn(PayIn):
     tag = CharField(api_name='Applepay PayIn')

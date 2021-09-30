@@ -13,7 +13,7 @@ from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, 
 
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
-                             CardWebPayIn, DirectDebitWebPayIn, constants)
+                             PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants)
 from tests.test_base import BaseTest, BaseTestLive
 
 
@@ -453,6 +453,82 @@ class PayInsTest(BaseTest):
 
         for key, value in paypal_payin_params.items():
             self.assertEqual(getattr(paypal_payin, key), value)
+
+    @responses.activate
+    def test_create_payoniq_payin(self):
+
+        self.mock_natural_user()
+        self.mock_legal_user()
+        self.mock_user_wallet()
+
+        self.register_mock({
+            'method': responses.POST,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/payconiq/web',
+            'body': {
+               "Id": "119683174",
+               "Tag": "custom meta",
+               "CreationDate" :1632985748,
+               "ExpirationDate" :1632986949,
+               "AuthorId": "119683166",
+               "CreditedUserId": "119683166",
+               "DebitedFunds": {
+                  "Currency": "EUR",
+                  "Amount": 22
+               },
+               "CreditedFunds": {
+                  "Currency": "EUR",
+                  "Amount": 12
+               },
+               "Fees": {
+                  "Currency": "EUR",
+                  "Amount": 10
+               },
+               "Status": "CREATED",
+               "ResultCode": None,
+               "ResultMessage": None,
+               "ExecutionDate": None,
+               "Type": "PAYIN",
+               "Nature": "REGULAR",
+               "CreditedWalletId": "119683167",
+               "DebitedWalletId": None,
+               "PaymentType": "PAYCONIQ",
+               "ExecutionType": "WEB",
+               "RedirectURL": "https://portal.payconiq.com/qrcode?c=https%3A%2F%2Fpayconiq.com%2Fpay%2F2%2F52e501a43d878e8846470b8f",
+               "ReturnURL": "http://www.my-site.com/returnURL",
+               "DeepLinkURL": "HTTPS://PAYCONIQ.COM/PAY/2/52E501A43D878E8846470B8F"
+            },
+            'status': 200
+        })
+
+        payconiq_payin_params = {
+            "tag": "custom meta",
+            "author": self.natural_user,
+            "debited_funds": Money(amount=22, currency='EUR'),
+            "fees": Money(amount=10, currency="EUR"),
+            "return_url": "http://www.my-site.com/returnURL",
+            "credited_wallet": self.legal_user_wallet,
+            "country": "BE"
+        }
+
+        payconiq_payin = PayconiqPayIn(**payconiq_payin_params)
+
+        self.assertIsNone(payconiq_payin.get_pk())
+        payconiq_payin.save()
+        self.assertIsInstance(payconiq_payin, PayconiqPayIn)
+        self.assertEqual(payconiq_payin.status, 'CREATED')
+        self.assertEqual(payconiq_payin.type, 'PAYIN')
+        self.assertEqual(payconiq_payin.payment_type, 'PAYCONIQ')
+        self.assertIsNotNone(payconiq_payin.get_pk())
+        self.assertTrue(payconiq_payin.redirect_url.startswith(
+            'https://portal.payconiq.com/qrcode'))
+
+        self.assertTrue(payconiq_payin.return_url.startswith('http://www.my-site.com'))
+
+        self.assertTrue(payconiq_payin.deep_link_url.startswith('HTTPS://PAYCONIQ.COM/PAY'))
+
+        self.assertEqual(payconiq_payin.debited_funds.amount, 22)
+
+        self.assertEqual(payconiq_payin.fees.amount, 10)
 
     @responses.activate
     def test_create_card_via_web_interface_payin(self):
