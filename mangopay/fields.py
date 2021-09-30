@@ -99,7 +99,7 @@ class DateTimeField(Field):
 
         if isinstance(value, six.string_types):
             value = value.rsplit('.', 1)[0]
-            value = datetime(*time.strptime(value, '%Y-%m-%d %H:%M:%S')[:6])
+            value = datetime.datetime(*time.strptime(value, '%Y-%m-%d %H:%M:%S')[:6])
 
         if isinstance(value, six.integer_types):
             value = datetime.datetime.utcfromtimestamp(value)
