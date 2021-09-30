@@ -1,3 +1,13 @@
+## 3.15.0 - 2021.09.30
+## Added
+
+As requested by numerous clients, we are now providing [Payconiq](https://www.payconiq.be/fr) as a new mean-of-payment. To request access, please contact MANGOPAY.
+
+## Fixed 
+
++ BillingField & ShippingField are now optionals for RecurringPayIn
++ We have fixed DateTimeField (previously was generating an error due to format) 
+
 ## 3.14.1 - 2021.08.05
 ## Fixed 
 
