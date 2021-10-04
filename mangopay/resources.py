@@ -1064,6 +1064,7 @@ class Document(KYC):
     refused_reason_type = CharField(api_name='RefusedReasonType')
     refused_reason_message = CharField(api_name='RefusedReasonMessage')
     processedDate = DateTimeField(api_name='ProcessedDate')
+    flags = ListField(api_name='Flags')
 
     class Meta:
         verbose_name = 'KYC/document'
