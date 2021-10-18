@@ -881,6 +881,45 @@ class PayInsTestLive(BaseTestLive):
         get = RecurringPayInRegistration.get(rec_id)
         self.assertIsNotNone(get)
 
+    def test_RecurringPayment_Update(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayInRegistration()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money()
+        recurring.first_transaction_fees.amount = 1
+        recurring.first_transaction_fees.currency = "EUR"
+        recurring.first_transaction_debited_funds = Money()
+        recurring.first_transaction_debited_funds.amount = 10
+        recurring.first_transaction_debited_funds.currency = "EUR"
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        result = recurring.save()
+        self.assertIsNotNone(result)
+
+        rec_id = result.get("id")
+
+        get = RecurringPayInRegistration.get(rec_id)
+        self.assertIsNotNone(get)
+
+        params_to_be_updated = {
+            "status": "ENDED"
+        }
+
+        updated = get.update(get.get_pk(), **params_to_be_updated).execute()
+        self.assertIsNotNone(updated)
+
     def test_ApplePay_Payin(self):
         user = self.get_john(True)
         debited_wallet = self.get_johns_wallet()
