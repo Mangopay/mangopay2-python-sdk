@@ -133,6 +133,8 @@ EVENT_TYPE_CHOICES = Choices(
     ('PREAUTHORIZATION_CREATED', 'preauthorization_created', 'PreAuthorization created'),
     ('PREAUTHORIZATION_SUCCEEDED', 'preauthorization_succeeded', 'PreAuthorization succeeded'),
     ('PREAUTHORIZATION_FAILED', 'preauthorization_failed', 'PreAuthorization failed'),
+    ('INSTANT_PAYOUT_SUCCEEDED', 'instant_payout_succeeded', 'Instant Payout Succeeded'),
+    ('INSTANT_PAYOUT_FALLBACKED', 'instant_payout_fallbacked', 'Instant Payout Fallbacked')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
