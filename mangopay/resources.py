@@ -531,7 +531,8 @@ class RecurringPayInCIT(RecurringPayIn):
         verbose_name = 'recurring_payin'
         verbose_name_plural = 'recurring_payins'
         url = {
-            InsertQuery.identifier: '/payins/recurring/card/direct'
+            InsertQuery.identifier: '/payins/recurring/card/direct',
+            SelectQuery.identifier: '/payins'
         }
 
 @python_2_unicode_compatible
@@ -545,7 +546,8 @@ class RecurringPayInMIT(RecurringPayIn):
         verbose_name = 'recurring_payin'
         verbose_name_plural = 'recurring_payins'
         url = {
-            InsertQuery.identifier: '/payins/recurring/card/direct'
+            InsertQuery.identifier: '/payins/recurring/card/direct',
+            SelectQuery.identifier: '/payins'
         }
 
 @python_2_unicode_compatible
