@@ -7,7 +7,7 @@ from datetime import date
 import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
-    RecurringPayInRegistration, RecurringPayInCIT, RecurringPayIn
+    RecurringPayInRegistration, RecurringPayInCIT, RecurringPayIn, PayInRefund, RecurringPayInRefund
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
 
@@ -811,12 +811,8 @@ class PayInsTestLive(BaseTestLive):
         recurring.card = card
         recurring.user = user
         recurring.credited_wallet = wallet
-        recurring.first_transaction_fees = Money()
-        recurring.first_transaction_fees.amount = 1
-        recurring.first_transaction_fees.currency = "EUR"
-        recurring.first_transaction_debited_funds = Money()
-        recurring.first_transaction_debited_funds.amount = 10
-        recurring.first_transaction_debited_funds.currency = "EUR"
+        recurring.first_transaction_fees = Money(1, "EUR")
+        recurring.first_transaction_debited_funds = Money(12, "EUR")
         address = Address()
         address.address_line_1 = "Big Street"
         address.address_line_2 = "no 2 ap 6"
@@ -825,11 +821,17 @@ class PayInsTestLive(BaseTestLive):
         address.postal_code = "68400"
         recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
         recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        recurring.end_date = 1768656033
+        recurring.migration = True
+        recurring.next_transaction_fees = Money(1, "EUR")
+        recurring.next_transaction_debited_funds = Money(12, "EUR")
         result = recurring.save()
         self.assertIsNotNone(result)
 
+        createdRecurringPayInRegistration = RecurringPayInRegistration.get(result.get('id'))
+
         cit = RecurringPayInCIT()
-        cit.recurring_payin_registration_id = result.get('id')
+        cit.recurring_payin_registration_id = createdRecurringPayInRegistration.id
         cit.tag = "custom meta"
         cit.statement_descriptor = "lorem"
         cit.secure_mode_return_url = "http://www.my-site.com/returnurl"
@@ -845,9 +847,26 @@ class PayInsTestLive(BaseTestLive):
         browser.timezone_offset = "+60"
         browser.user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
         cit.browser_info = browser
+        cit.debited_funds = Money(12, "EUR")
+        cit.fees = Money(1, "EUR")
 
         createdCit = cit.save()
         self.assertIsNotNone(createdCit)
+
+        gotCit = RecurringPayInCIT.get(createdCit.get('id'))
+
+        params = {
+            "author": user,
+            "payin": gotCit
+        }
+
+        payin_refund = RecurringPayInRefund(**params)
+
+        self.assertIsNotNone(payin_refund)
+        self.assertIsNone(payin_refund.get_pk())
+        payin_refund.save()
+        self.assertIsInstance(payin_refund, RecurringPayInRefund)
+        self.assertEqual(payin_refund.status, 'SUCCEEDED')
 
     def test_RecurringPayment_Get(self):
         user = self.get_john(True)

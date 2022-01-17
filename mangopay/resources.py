@@ -492,9 +492,6 @@ class RecurringPayIn(BaseModel):
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
-    secure_mode = CharField(api_name='SecureMode',
-                            choices=constants.SECURE_MODE_CHOICES,
-                            default=constants.SECURE_MODE_CHOICES.default)
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
@@ -1038,6 +1035,24 @@ class PayInRefund(Refund):
     debited_funds = MoneyField(api_name='DebitedFunds')
     fees = MoneyField(api_name='Fees')
     payin = ForeignKeyField(PayIn)
+
+    class Meta:
+        verbose_name = 'refund'
+        verbose_name_plural = 'refunds'
+        url = {
+            InsertQuery.identifier: '/payins/%(payin_id)s/refunds',
+            SelectQuery.identifier: '/refunds'
+        }
+
+    def __str__(self):
+        return 'PayInRefund request from user %s' % self.author_id
+
+@python_2_unicode_compatible
+class RecurringPayInRefund(Refund):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+    payin = ForeignKeyField(RecurringPayIn)
 
     class Meta:
         verbose_name = 'refund'
