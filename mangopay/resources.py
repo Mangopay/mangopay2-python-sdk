@@ -474,10 +474,11 @@ class PayIn(BaseModel):
 
 
 @python_2_unicode_compatible
-class RecurringPayIn(PayIn):
+class RecurringPayIn(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     card = ForeignKeyField(Card, api_name='CardId', required=True)
     user = ForeignKeyField(User, api_name='CreditedUserId')
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     first_transaction_debited_funds = MoneyField(api_name='FirstTransactionDebitedFunds', required=True)
     first_transaction_fees = MoneyField(api_name='FirstTransactionFees', required=True)
     billing = BillingField(api_name='Billing', required=False)
@@ -494,6 +495,7 @@ class RecurringPayIn(PayIn):
     total_amount = IntegerField(api_name='TotalAmount')
     recurring_type = CharField(api_name='RecurringType')
     current_state = CurrentStateField(api_name='CurrentState')
+    status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
 
     def get_read_only_properties(self):
         read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status", "CurrentState"]
@@ -533,8 +535,8 @@ class RecurringPayInCIT(PayIn):
     shipping = ShippingField(api_name='Shipping')
 
     def get_read_only_properties(self):
-        read_only = ["AuthorId", "Applied3DSVersion", "Billing", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
-                     , "SecureMode", "SecureModeRedirectURL", "SecurityInfo", "Shipping"]
+        read_only = ["AuthorId", "Applied3DSVersion", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
+                     , "SecureMode", "SecureModeRedirectURL", "SecurityInfo"]
         return read_only
 
     class Meta:
@@ -570,8 +572,8 @@ class RecurringPayInMIT(PayIn):
     shipping = ShippingField(api_name='Shipping')
 
     def get_read_only_properties(self):
-        read_only = ["AuthorId", "Applied3DSVersion", "Billing", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
-                     , "SecureMode", "SecureModeRedirectURL", "SecurityInfo", "Shipping", "DebitedFunds", "Fees",
+        read_only = ["AuthorId", "Applied3DSVersion", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
+                     , "SecureMode", "SecureModeRedirectURL", "SecurityInfo", "DebitedFunds", "Fees",
                      "StatementDescriptor", "BrowserInfo", "IpAddress", "SecureModeReturnURL"]
         return read_only
 
