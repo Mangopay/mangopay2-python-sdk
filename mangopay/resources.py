@@ -474,7 +474,7 @@ class PayIn(BaseModel):
 
 
 @python_2_unicode_compatible
-class RecurringPayIn(BaseModel):
+class RecurringPayInRegistration(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     card = ForeignKeyField(Card, api_name='CardId', required=True)
     user = ForeignKeyField(User, api_name='CreditedUserId')

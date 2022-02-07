@@ -7,7 +7,7 @@ from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, RecurringPayIn, \
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
@@ -807,7 +807,7 @@ class PayInsTestLive(BaseTestLive):
         wallet = self.get_johns_wallet(True)
         card = BaseTestLive.get_johns_card_3dsecure(True)
 
-        recurring = RecurringPayIn()
+        recurring = RecurringPayInRegistration()
         recurring.author = user
         recurring.card = card
         recurring.user = user
@@ -829,7 +829,7 @@ class PayInsTestLive(BaseTestLive):
         result = recurring.save()
         self.assertIsNotNone(result)
 
-        created_recurring = RecurringPayIn.get(result.get('id'))
+        created_recurring = RecurringPayInRegistration.get(result.get('id'))
         self.assertIsNotNone(created_recurring)
         print(created_recurring.id)
         cit = RecurringPayInCIT()
@@ -906,7 +906,7 @@ class PayInsTestLive(BaseTestLive):
         wallet = self.get_johns_wallet(True)
         card = BaseTestLive.get_johns_card_3dsecure(True)
 
-        recurring = RecurringPayIn()
+        recurring = RecurringPayInRegistration()
         recurring.author = user
         recurring.card = card
         recurring.user = user
@@ -930,7 +930,7 @@ class PayInsTestLive(BaseTestLive):
 
         rec_id = result.get("id")
 
-        get = RecurringPayIn.get(rec_id)
+        get = RecurringPayInRegistration.get(rec_id)
         self.assertIsNotNone(get)
 
     def test_RecurringPayment_Update(self):
@@ -938,7 +938,7 @@ class PayInsTestLive(BaseTestLive):
         wallet = self.get_johns_wallet(True)
         card = BaseTestLive.get_johns_card_3dsecure(True)
 
-        recurring = RecurringPayIn()
+        recurring = RecurringPayInRegistration()
         recurring.author = user
         recurring.card = card
         recurring.user = user
@@ -962,7 +962,7 @@ class PayInsTestLive(BaseTestLive):
 
         rec_id = result.get("id")
 
-        get = RecurringPayIn.get(rec_id)
+        get = RecurringPayInRegistration.get(rec_id)
         self.assertIsNotNone(get)
 
         params_to_be_updated = {
