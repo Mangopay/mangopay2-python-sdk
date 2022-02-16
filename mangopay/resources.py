@@ -457,8 +457,15 @@ class PayIn(BaseModel):
 
     @classmethod
     def cast(cls, result):
+        if cls.__name__ == "RecurringPayInCIT":
+            return RecurringPayInCIT
+
+        if cls.__name__ == "RecurringPayInMIT":
+            return RecurringPayInMIT
+
         payment_type = result.get('PaymentType')
         execution_type = result.get('ExecutionType')
+
         types = {
             ("CARD", "DIRECT"): DirectPayIn,
             ("CARD", "WEB"): CardWebPayIn,
@@ -470,6 +477,7 @@ class PayIn(BaseModel):
             ("APPLEPAY", "DIRECT"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn
         }
+
         return types.get((payment_type, execution_type), cls)
 
 

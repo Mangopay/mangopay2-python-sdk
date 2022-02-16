@@ -858,6 +858,7 @@ class PayInsTestLive(BaseTestLive):
 
         got_cit = RecurringPayInCIT.get(cit_id)
         self.assertIsNotNone(got_cit)
+        self.assertIsInstance(got_cit, RecurringPayInCIT)
 
         mit = RecurringPayInMIT()
         mit.recurring_payin_registration_id = created_recurring.id
@@ -870,6 +871,7 @@ class PayInsTestLive(BaseTestLive):
 
         got_cit = RecurringPayInCIT.get(cit_id)
         self.assertIsNotNone(got_cit)
+        #self.assertIsInstance(got_cit, RecurringPayInCIT)
 
         params = {
             "author": user,
@@ -887,6 +889,7 @@ class PayInsTestLive(BaseTestLive):
         mit_id = created_mit.get('id')
         got_mit = RecurringPayInMIT.get(mit_id)
         self.assertIsNotNone(got_mit)
+        self.assertIsInstance(got_mit, RecurringPayInMIT)
 
         params = {
             "author": user,
