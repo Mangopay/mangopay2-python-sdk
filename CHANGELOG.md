@@ -1,3 +1,10 @@
+## 3.18.1 - 2022.02.18
+### Fixed
+
+- Refund for MIT/CIT has been fixed
+- secure_mode parameter is not set anymore for CIT 
+
+
 ## 3.18.0 - 2021.11.19
 ## Added
 
