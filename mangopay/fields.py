@@ -9,7 +9,7 @@ import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
-    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason
+    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout
 
 
 class FieldDescriptor(object):
@@ -224,6 +224,25 @@ class FallbackReasonField(Field):
             value = {
                 'Code': value.code,
                 'Message': value.message
+            }
+
+        return value
+
+
+class InstantPayoutField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return InstantPayout(is_reachable=value['IsReachable'], unreachable_reason=value['UnreachableReason'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(InstantPayoutField, self).api_value(value)
+
+        if isinstance(value, InstantPayoutField):
+            value = {
+                'IsReachable': value.is_reachable,
+                'UnreachableReason': value.unreachable_reason
             }
 
         return value

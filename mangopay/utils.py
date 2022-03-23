@@ -253,7 +253,18 @@ class FallbackReason(object):
 
     def __str__(self):
         return 'FallbackReason: %s' % \
-            (self.code, self.last_name, self.message)
+            (self.code, self.message)
+
+
+@add_camelcase_aliases
+class InstantPayout(object):
+    def __init__(self, is_reachable=None, unreachable_reason=None):
+        self.is_reachable = is_reachable
+        self.unreachable_reason = unreachable_reason
+
+    def __str__(self):
+        return 'InstantPayout: %s' % \
+            (self.code, self.message)
 
 
 @add_camelcase_aliases

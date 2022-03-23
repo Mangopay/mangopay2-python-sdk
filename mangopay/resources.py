@@ -1,7 +1,7 @@
 import six
 
 from mangopay.signals import pre_save, post_save
-from mangopay.utils import Money, Address, Birthplace
+from mangopay.utils import Money, Address, Birthplace, InstantPayout
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
 from .compat import python_2_unicode_compatible
@@ -13,7 +13,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
-                     BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField)
+                     BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -990,6 +990,34 @@ class BankWirePayOut(BaseModel):
 
     def __str__(self):
         return 'PayOut request from user %s' % self.author_id
+
+@python_2_unicode_compatible
+class PayOutEligibilityResult(BaseModel):
+    instant_payout = InstantPayoutField(api_name='InstantPayout')
+
+
+@python_2_unicode_compatible
+class PayOutEligibility(BaseModel):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    bank_account = ForeignKeyField(BankAccount, api_name='BankAccountId', required=True)
+    debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId', required=True)
+    fees = MoneyField(api_name='Fees')
+    payout_mode_requested = CharField(api_name='PayoutModeRequested')
+    bank_wire_ref = CharField(api_name='BankWireRef')
+
+    def check_eligibility(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.identifier = 'PAYOUT_CHECK_ELIGIBILITY'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute(model_klass=PayOutEligibilityResult)
+
+    class Meta:
+        verbose_name = 'payout_eligibility'
+        verbose_name_plural = 'payouts_eligibility'
+        url = {
+            'PAYOUT_CHECK_ELIGIBILITY': '/payouts/reachability'
+        }
 
 
 class Refund(BaseModel):
