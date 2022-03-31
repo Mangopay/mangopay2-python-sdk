@@ -121,7 +121,7 @@ class InsertQuery(BaseQuery):
 
         return pairs
 
-    def execute(self, handler=None):
+    def execute(self, handler=None, model_klass=None):
         handler = handler or self.handler
 
         data = self.parse_insert()
@@ -133,7 +133,7 @@ class InsertQuery(BaseQuery):
                                        data=data,
                                        idempotency_key=self.idempotency_key)
 
-        return dict(self.parse_result(data))
+        return dict(self.parse_result(data, model_klass))
 
 
 class UpdateQuery(BaseQuery):
