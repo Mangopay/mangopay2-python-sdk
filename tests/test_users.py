@@ -722,3 +722,39 @@ class PayInsTestLive(BaseTestLive):
         regulatory = user.get_regulatory()
 
         self.assertIsNotNone(regulatory)
+
+    def test_User_natural_terms_and_conditions(self):
+        user = BaseTestLive.get_john()
+        self.assertFalse(user.terms_and_conditions_accepted)
+
+        user.terms_and_conditions_accepted = True
+        user.save()
+
+        self.assertTrue(user.terms_and_conditions_accepted)
+        self.assertIsNotNone(user.terms_and_conditions_accepted_date)
+
+        user = BaseTestLive.get_john(recreate=True, terms=True)
+        self.assertTrue(user.terms_and_conditions_accepted)
+        self.assertIsNotNone(user.terms_and_conditions_accepted_date)
+
+    def test_User_legal_terms_and_conditions(self):
+        user = BaseTestLive.get_user_legal()
+        self.assertFalse(user.terms_and_conditions_accepted)
+
+        user.legal_representative_address = {
+                        "AddressLine1": "AddressLine1",
+                        "AddressLine2": "AddressLine2",
+                        "City": "City",
+                        "Region": "Region",
+                        "PostalCode": "11222",
+                        "Country": "FR"
+                    }
+        user.terms_and_conditions_accepted = True
+        user.save()
+
+        self.assertTrue(user.terms_and_conditions_accepted)
+        self.assertIsNotNone(user.terms_and_conditions_accepted_date)
+
+        user = BaseTestLive.get_user_legal(recreate=True, terms=True)
+        self.assertTrue(user.terms_and_conditions_accepted)
+        self.assertIsNotNone(user.terms_and_conditions_accepted_date)
