@@ -264,7 +264,7 @@ class BaseTestLive(unittest.TestCase):
         BaseTestLive.get_user_legal()
 
     @staticmethod
-    def get_user_legal(recreate=False):
+    def get_user_legal(recreate=False, terms=False):
         if BaseTestLive._user_legal is None or recreate:
             legal = LegalUser()
             legal.name = 'MatrixSampleOrg_PythonSDK'
@@ -282,6 +282,7 @@ class BaseTestLive(unittest.TestCase):
             legal.legal_representative_country_of_residence = 'FR'
             legal.company_number = 123456789
             legal.tag = 'Python SDK Unit Test'
+            legal.terms_and_conditions_accepted = terms
             BaseTestLive._user_legal = LegalUser(**legal.save())
         return BaseTestLive._user_legal
 
@@ -363,7 +364,7 @@ class BaseTestLive(unittest.TestCase):
         return BaseTestLive._client_account
 
     @staticmethod
-    def get_john(recreate=False):
+    def get_john(recreate=False, terms=False):
         if BaseTestLive._john is None or recreate:
             user = NaturalUser()
             user.first_name = 'John'
@@ -378,6 +379,7 @@ class BaseTestLive(unittest.TestCase):
             user.occupation = 'programmer'
             user.income_range = '1'
             user.person_type = 'NATURAL'
+            user.terms_and_conditions_accepted = terms
             BaseTestLive._john = NaturalUser(**user.save())
         return BaseTestLive._john
 

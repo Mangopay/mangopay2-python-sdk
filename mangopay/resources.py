@@ -87,6 +87,8 @@ class ClientLogo(BaseModel):
 class User(BaseModel):
     email = EmailField(api_name='Email', required=True)
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
+    terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted')
+    terms_and_conditions_accepted_date = DateTimeField(api_name='TermsAndConditionsAcceptedDate')
 
     def fixed_kwargs(self):
         return {"user_id": self.id}
