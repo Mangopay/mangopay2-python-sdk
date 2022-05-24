@@ -283,6 +283,7 @@ class BaseTestLive(unittest.TestCase):
             legal.company_number = 123456789
             legal.tag = 'Python SDK Unit Test'
             legal.terms_and_conditions_accepted = terms
+            legal.user_category = 'OWNER'
             BaseTestLive._user_legal = LegalUser(**legal.save())
         return BaseTestLive._user_legal
 
@@ -380,6 +381,7 @@ class BaseTestLive(unittest.TestCase):
             user.income_range = '1'
             user.person_type = 'NATURAL'
             user.terms_and_conditions_accepted = terms
+            user.user_category = 'OWNER'
             BaseTestLive._john = NaturalUser(**user.save())
         return BaseTestLive._john
 
