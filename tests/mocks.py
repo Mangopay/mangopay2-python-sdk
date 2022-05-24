@@ -11,6 +11,8 @@ import responses
 from mangopay.utils import timestamp_from_date
 from tests import settings
 
+re._pattern_type = re.Pattern
+
 today = datetime.utcnow().date()
 today_timestamp = timestamp_from_date(today)
 

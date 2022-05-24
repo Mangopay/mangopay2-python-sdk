@@ -89,6 +89,7 @@ class User(BaseModel):
     kyc_level = CharField(api_name='KYCLevel', choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light)
     terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted')
     terms_and_conditions_accepted_date = DateTimeField(api_name='TermsAndConditionsAcceptedDate')
+    user_category = CharField(api_name='UserCategory')
 
     def fixed_kwargs(self):
         return {"user_id": self.id}

@@ -45,7 +45,8 @@ class UsersTest(BaseTest):
                 "Id": "1169419",
                 "Tag": "custom tag",
                 "CreationDate": 1383321421,
-                "KYCLevel": "LIGHT"
+                "KYCLevel": "LIGHT",
+                "UserCategory": "OWNER"
             },
             "status": 200
         })
@@ -66,6 +67,7 @@ class UsersTest(BaseTest):
             "person_type": "NATURAL",
             "email": "victor@hugo.com",
             "tag": "custom tag",
+            "user_category": "OWNER"
         }
         user = NaturalUser(**params)
 
@@ -117,7 +119,8 @@ class UsersTest(BaseTest):
                 "Id": "1169420",
                 "Tag": "custom tag",
                 "CreationDate": 1383322502,
-                "KYCLevel": "LIGHT"
+                "KYCLevel": "LIGHT",
+                "UserCategory": "PAYER"
             },
             'status': 200
         })
@@ -141,6 +144,7 @@ class UsersTest(BaseTest):
             "person_type": "LEGAL",
             "email": "info@mangopay.com",
             "tag": "custom tag",
+            "user_category": "PAYER"
             # "creation_date": datetime.now()
         }
         user = LegalUser(**params)
@@ -194,7 +198,8 @@ class UsersTest(BaseTest):
                     "Id": "1169419",
                     "Tag": "custom tag",
                     "CreationDate": 1383321421,
-                    "KYCLevel": "LIGHT"
+                    "KYCLevel": "LIGHT",
+                    "UserCategory": "OWNER"
                 },
                 'status': 200
             },
@@ -221,6 +226,7 @@ class UsersTest(BaseTest):
             "person_type": "NATURAL",
             "email": "victor@hugo.com",
             "tag": "custom tag",
+            "user_category": "OWNER"
         }
         user = NaturalUser(**params)
         user.save()
@@ -429,7 +435,8 @@ class UsersTest(BaseTest):
                 "Id": "1167495",
                 "CreationDate": 1382605938,
                 "KYCLevel": "LIGHT",
-                "Tag": "custom tag"
+                "Tag": "custom tag",
+                "UserCategory": "OWNER"
             },
             'status': 200
         })
@@ -450,6 +457,7 @@ class UsersTest(BaseTest):
             "person_type": "NATURAL",
             "email": "victor@hugo.com",
             "tag": "custom tag",
+            "user_category": "OWNER"
         }
         user = NaturalUser(**params)
         user.save()
@@ -497,7 +505,8 @@ class UsersTest(BaseTest):
                 "Id": "1169420",
                 "Tag": "custom tag",
                 "CreationDate": 1383322502,
-                "KYCLevel": "LIGHT"
+                "KYCLevel": "LIGHT",
+                "UserCategory": "OWNER"
             },
             'status': 200
         })
@@ -521,6 +530,7 @@ class UsersTest(BaseTest):
             "person_type": "LEGAL",
             "email": "info@mangopay.com",
             "tag": "custom tag",
+            "user_category": "OWNER"
             # "creation_date": datetime.now()
         }
         user = LegalUser(**params)
@@ -573,7 +583,8 @@ class UsersTest(BaseTest):
                     "Id": "1169419",
                     "Tag": "custom tag",
                     "CreationDate": 1383321421,
-                    "KYCLevel": "LIGHT"
+                    "KYCLevel": "LIGHT",
+                    "UserCategory": "OWNER"
                 },
                 'status': 200
             },
