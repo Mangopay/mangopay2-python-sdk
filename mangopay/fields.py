@@ -123,7 +123,10 @@ class DateField(Field):
             value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
 
         if isinstance(value, six.integer_types):
-            value = datetime.datetime.utcfromtimestamp(value).date()
+            if value < 0:
+                value = (datetime.datetime.utcfromtimestamp(0) + datetime.timedelta(seconds=value)).date()
+            else:
+                value = datetime.datetime.utcfromtimestamp(value).date()
 
         return value
 
