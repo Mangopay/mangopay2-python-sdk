@@ -814,6 +814,7 @@ class PayInsTestLive(BaseTestLive):
         recurring.credited_wallet = wallet
         recurring.first_transaction_fees = Money(1, "EUR")
         recurring.first_transaction_debited_funds = Money(12, "EUR")
+        recurring.free_cycles = 0
         address = Address()
         address.address_line_1 = "Big Street"
         address.address_line_2 = "no 2 ap 6"
@@ -828,6 +829,7 @@ class PayInsTestLive(BaseTestLive):
         recurring.next_transaction_debited_funds = Money(12, "EUR")
         result = recurring.save()
         self.assertIsNotNone(result)
+        self.assertIsNotNone(result.get('free_cycles'))
 
         created_recurring = RecurringPayInRegistration.get(result.get('id'))
         self.assertIsNotNone(created_recurring)
