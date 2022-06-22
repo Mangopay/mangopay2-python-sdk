@@ -66,7 +66,7 @@ class BaseTest(RegisteredMocks):
             "legal_representative_first_name": "Mango",
             "legal_representative_last_name": "Pay",
             "legal_representative_email": "mango@mangopay.com",
-            "legal_representative_birthday": time.mktime(date.today().timetuple()),
+            "legal_representative_birthday": 188301600,
             "legal_representative_nationality": "FR",
             "legal_representative_country_of_residence": "FR",
             "proof_of_registration": None,
