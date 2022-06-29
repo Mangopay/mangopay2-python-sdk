@@ -501,7 +501,7 @@ class RecurringPayInRegistration(BaseModel):
     migration = BooleanField(api_name='Migration')
     next_transaction_debited_funds = MoneyField(api_name='NextTransactionDebitedFunds')
     next_transaction_fees = MoneyField(api_name='NextTransactionFees')
-    free_cycles = IntegerField(api_name='FreeCycles')
+    free_cycles = IntegerField(api_name='FreeCycles', required=False)
     cycle_number = IntegerField(api_name='CycleNumber')
     total_amount = IntegerField(api_name='TotalAmount')
     recurring_type = CharField(api_name='RecurringType')
