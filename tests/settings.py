@@ -1,5 +1,7 @@
 import sys
 
+from mangopay import api_sandbox_url, api_url
+
 try:
     from .credentials import *  # noqa
 except ImportError:
@@ -7,8 +9,8 @@ except ImportError:
 
     MANGOPAY_CLIENT_ID = 'sdk-unit-tests'
     MANGOPAY_APIKEY = 'cqFfFrWfCcb7UadHNxx2C9Lo6Djw8ZduLi7J9USTmu8bhxxpju'
-    MANGOPAY_API_URL = 'https://api.mangopay.com/v2.01/'
-    MANGOPAY_API_SANDBOX_URL = 'https://api.sandbox.mangopay.com/v2.01/'
+    MANGOPAY_API_URL = api_url
+    MANGOPAY_API_SANDBOX_URL = api_sandbox_url
     MANGOPAY_USE_SANDBOX = True
     MANGOPAY_API_VERSION = 2
 
