@@ -253,7 +253,7 @@ class FallbackReason(object):
 
     def __str__(self):
         return 'FallbackReason: %s' % \
-            (self.code, self.message)
+               (self.code, self.message)
 
 
 @add_camelcase_aliases
@@ -264,7 +264,7 @@ class InstantPayout(object):
 
     def __str__(self):
         return 'InstantPayout: %s' % \
-            (self.code, self.message)
+               (self.code, self.message)
 
 
 @add_camelcase_aliases
@@ -881,3 +881,29 @@ def truncatechars(value, length=255):
         return (value[:length] + '...') if len(value) > length else value
 
     return value
+
+
+class CountryAuthorizationData(object):
+    def __init__(self, block_user_creation=None, block_bank_account_creation=None, block_payout=None):
+        self.block_user_creation = block_user_creation
+        self.block_bank_account_creation = block_bank_account_creation
+        self.block_payout = block_payout
+
+    def __str__(self):
+        return 'CountryAuthorizationData: %s, %s , %s' % \
+               (self.block_user_creation, self.block_bank_account_creation, self.block_payout)
+
+    def __eq__(self, other):
+        if isinstance(other, CountryAuthorizationData):
+            stat = ((self.block_user_creation == other.block_user_creation) and
+                    (self.block_bank_account_creation == other.block_bank_account_creation) and
+                    (self.block_payout == other.block_payout))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "BlockUserCreation": self.block_user_creation,
+            "BlockBankAccountCreation": self.block_bank_account_creation,
+            "BlockPayout": self.block_payout
+        }

@@ -9,7 +9,7 @@ import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
-    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout
+    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData
 
 
 class FieldDescriptor(object):
@@ -824,6 +824,28 @@ class CurrentStateField(Field):
                 'CumulatedDebitedAmount ': value.cumulated_debited_amount,
                 'CumulatedFeesAmount  ': value.cumulated_debited_fees,
                 'LastPayinId ': value.last_payin_id
+            }
+
+        return value
+
+
+class CountryAuthorizationDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return CountryAuthorizationData(block_user_creation=value['BlockUserCreation'],
+                                            block_bank_account_creation=value['BlockBankAccountCreation'],
+                                            block_payout=value['BlockPayout'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(CountryAuthorizationDataField, self).api_value(value)
+
+        if isinstance(value, CountryAuthorizationData):
+            value = {
+                'BlockUserCreation': value.block_user_creation,
+                'BlockBankAccountCreation': value.block_bank_account_creation,
+                'BlockPayout': value.block_payout
             }
 
         return value
