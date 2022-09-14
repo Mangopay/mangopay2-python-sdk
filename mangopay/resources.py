@@ -1,7 +1,7 @@
 import six
 
 from mangopay.signals import pre_save, post_save
-from mangopay.utils import Money, Address, Birthplace, InstantPayout
+from mangopay.utils import Money, Address, Birthplace
 from . import constants
 from .base import BaseApiModel, BaseApiModelMethods
 from .compat import python_2_unicode_compatible
@@ -13,7 +13,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ShippingAddressField, RefundReasonField, ListField, ReportTransactionsFiltersField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
-                     BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField)
+                     BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
+                     CountryAuthorizationDataField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -547,7 +548,7 @@ class RecurringPayInCIT(PayIn):
 
     def get_read_only_properties(self):
         read_only = ["AuthorId", "Applied3DSVersion", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
-                     , "SecureMode", "SecureModeRedirectURL", "SecurityInfo"]
+            , "SecureMode", "SecureModeRedirectURL", "SecurityInfo"]
         return read_only
 
     class Meta:
@@ -584,7 +585,7 @@ class RecurringPayInMIT(PayIn):
 
     def get_read_only_properties(self):
         read_only = ["AuthorId", "Applied3DSVersion", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
-                     , "SecureMode", "SecureModeRedirectURL", "SecurityInfo", "DebitedFunds", "Fees",
+            , "SecureMode", "SecureModeRedirectURL", "SecurityInfo", "DebitedFunds", "Fees",
                      "StatementDescriptor", "BrowserInfo", "IpAddress", "SecureModeReturnURL"]
         return read_only
 
@@ -694,6 +695,7 @@ class PayPalPayIn(PayIn):
             SelectQuery.identifier: '/payins'
         }
 
+
 @python_2_unicode_compatible
 class PayconiqPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -712,6 +714,7 @@ class PayconiqPayIn(PayIn):
             InsertQuery.identifier: '/payins/payconiq/web',
             SelectQuery.identifier: '/payins'
         }
+
 
 class ApplepayPayIn(PayIn):
     tag = CharField(api_name='Applepay PayIn')
@@ -993,6 +996,7 @@ class BankWirePayOut(BaseModel):
 
     def __str__(self):
         return 'PayOut request from user %s' % self.author_id
+
 
 @python_2_unicode_compatible
 class PayOutEligibilityResult(BaseModel):
@@ -1710,3 +1714,32 @@ class UserBlockStatus(BaseModel):
             'USERS_BLOCK_STATUS': '/users/%(user_id)s/blockStatus',
             'USERS_REGULATORY': '/users/%(user_id)s/Regulatory'
         }
+
+
+class CountryAuthorization(BaseModel):
+    country_code = CharField(api_name='CountryCode')
+    country_name = CharField(api_name='CountryName')
+    authorization = CountryAuthorizationDataField(api_name='Authorization')
+    last_update = DateTimeField(api_name='LastUpdate')
+
+    class Meta:
+        verbose_name = 'country_authorization'
+        verbose_name_plural = 'country_authorizations'
+        url = {
+            'COUNTRY_AUTHORIZATIONS': 'countries/%(id)s/authorizations',
+            'ALL_COUNTRIES_AUTHORIZATIONS': 'countries/authorizations'
+        }
+
+    @classmethod
+    def get_country_authorizations(cls, country_code, **kwargs):
+        kwargs['id'] = country_code
+        args = '',
+        select = SelectQuery(CountryAuthorization, *args, **kwargs)
+        select.identifier = 'COUNTRY_AUTHORIZATIONS'
+        return select.get(without_client_id=True, *args, **kwargs)
+
+    @classmethod
+    def get_all_countries_authorizations(cls, *args, **kwargs):
+        select = SelectQuery(CountryAuthorization, *args, **kwargs)
+        select.identifier = 'ALL_COUNTRIES_AUTHORIZATIONS'
+        return select.all(without_client_id=True, *args, **kwargs)

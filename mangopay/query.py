@@ -43,7 +43,7 @@ class SelectQuery(BaseQuery):
     def __init__(self, model, *args, **kwargs):
         super(SelectQuery, self).__init__(model, 'GET')
 
-    def get(self, reference, handler=None, resource_model=None, **kwargs):
+    def get(self, reference, handler=None, resource_model=None, without_client_id=False, **kwargs):
         model = resource_model or self.model
         handler = handler or self.handler
 
@@ -53,7 +53,7 @@ class SelectQuery(BaseQuery):
         else:
             url = '%s' % meta_url
 
-        result, data = handler.request(self.method, url)
+        result, data = handler.request(self.method, url, without_client_id=without_client_id)
 
         if 'errors' in data:
             if result.status_code == 404:
@@ -78,11 +78,11 @@ class SelectQuery(BaseQuery):
         return [self.model(handler=handler,
                            **dict(self.parse_result(entry))) for entry in data]
 
-    def all(self, handler=None, **params):
+    def all(self, handler=None, without_client_id=False, **params):
         handler = handler or self.handler
 
         url = self.parse_url(self.model._meta.url, params)
-        result, data = handler.request(self.method, url, **params)
+        result, data = handler.request(self.method, url, without_client_id=without_client_id, **params)
 
         if 'errors' in data:
             return handler._create_apierror(result, url)

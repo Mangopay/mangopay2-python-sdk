@@ -60,11 +60,11 @@ class APIRequest(object):
     def get_rate_limits(self):
         return rate_limits
 
-    def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
-        return self.custom_request(method, url, data, idempotency_key, oauth_request, True, **params)
+    def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, without_client_id=False, **params):
+        return self.custom_request(method, url, data, idempotency_key, oauth_request, True, without_client_id, **params)
 
     def custom_request(self, method, url, data=None, idempotency_key=None, oauth_request=False,
-                       is_mangopay_request=False, **params):
+                       is_mangopay_request=False, without_client_id=False, **params):
         params = params or {}
 
         headers = {}
@@ -91,7 +91,7 @@ class APIRequest(object):
         encoded_params = urlrequest.urlencode(params)
 
         if is_mangopay_request:
-            if oauth_request:
+            if oauth_request or without_client_id:
                 url = self.api_url + url
             else:
                 url = self._absolute_url(url, encoded_params)
