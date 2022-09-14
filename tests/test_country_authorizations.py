@@ -6,7 +6,7 @@ from tests import settings
 from tests.test_base import BaseTest
 
 
-class RegulatoryTest(BaseTest):
+class CountryAuthorizationsTest(BaseTest):
     @responses.activate
     def test_get_specific_country_authorizations(self):
         self.register_mock([
