@@ -676,7 +676,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4972485830400056',
+            'cardNumber': '4970105191923460',
             'cardCvx': '123',
             'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,
@@ -700,6 +700,9 @@ class PreAuthorizationsTestLive(BaseTestLive):
         pre_authorization.remaining_funds.currency = "EUR"
         pre_authorization.remaining_funds.amount = 100
         pre_authorization.secure_mode_return_url = "http://www.example.com/"
+        pre_authorization.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        pre_authorization.browser_info = BaseTest.get_browser_info()
+
         billing = Billing()
         billing.address = Address()
         billing.address.address_line_1 = "Main Street"
@@ -726,7 +729,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4972485830400056',
+            'cardNumber': '4970105191923460',
             'cardCvx': '123',
             'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,
@@ -750,6 +753,9 @@ class PreAuthorizationsTestLive(BaseTestLive):
         pre_authorization.remaining_funds.currency = "EUR"
         pre_authorization.remaining_funds.amount = 500
         pre_authorization.secure_mode_return_url = "http://www.example.com/"
+        pre_authorization.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        pre_authorization.browser_info = BaseTest.get_browser_info()
+
         billing = Billing()
         billing.address = Address()
         billing.address.address_line_1 = "Main Street"

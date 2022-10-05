@@ -12,7 +12,7 @@ from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
 from mangopay.constants import LEGAL_USER_TYPE_CHOICES
 from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo
-from mangopay.utils import Address, ReportTransactionsFilters, Birthplace
+from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo
 from tests import settings
 from tests.mocks import RegisteredMocks
 from tests.resources import (NaturalUser, LegalUser, Wallet,
@@ -238,6 +238,21 @@ class BaseTest(RegisteredMocks):
         }
         ubo = Ubo(**params)
         return ubo
+
+    @staticmethod
+    def get_browser_info():
+        browser = BrowserInfo()
+        browser.accept_header = "text/html, application/xhtml+xml, application/xml;q=0.9, /;q=0.8"
+        browser.java_enabled = True
+        browser.language = "FR-FR"
+        browser.color_depth = 4
+        browser.screen_width = 400
+        browser.screen_height = 1800
+        browser.javascript_enabled = True
+        browser.timezone_offset = "+60"
+        browser.user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+
+        return browser
 
 
 class BaseTestLive(unittest.TestCase):
