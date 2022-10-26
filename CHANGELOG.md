@@ -1,3 +1,10 @@
+## [3.23.1] - 2022-10-26
+### Fixed
+
+- Tests after API update
+- 313 Issue with fields for User (not mandatory for some cases)
+- 310 fix for negative timestamp value fields in windows 
+
 ## [3.23.0] - 2022-09-14
 ### Added
 **New country authorizations endpoints**
