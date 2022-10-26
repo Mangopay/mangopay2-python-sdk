@@ -786,6 +786,9 @@ class PayInsTestLive(BaseTestLive):
         pay_in.debited_funds.amount = 1000
         pay_in.debited_funds.currency = "EUR"
         pay_in.secure_mode_return_url = "http://www.example.com/"
+        pay_in.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        pay_in.browser_info = BaseTest.get_browser_info()
+
         address = Address()
         address.address_line_1 = "Big Street"
         address.address_line_2 = "no 2 ap 6"
@@ -840,17 +843,7 @@ class PayInsTestLive(BaseTestLive):
         cit.statement_descriptor = "lorem"
         cit.secure_mode_return_url = "http://www.my-site.com/returnurl"
         cit.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
-        browser = BrowserInfo()
-        browser.accept_header = "text/html, application/xhtml+xml, application/xml;q=0.9, /;q=0.8"
-        browser.java_enabled = True
-        browser.language = "FR-FR"
-        browser.color_depth = 4
-        browser.screen_width = 400
-        browser.screen_height = 1800
-        browser.javascript_enabled = True
-        browser.timezone_offset = "+60"
-        browser.user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
-        cit.browser_info = browser
+        cit.browser_info = BaseTest.get_browser_info()
         cit.debited_funds = Money(12, "EUR")
         cit.fees = Money(1, "EUR")
 
