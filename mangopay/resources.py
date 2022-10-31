@@ -503,7 +503,7 @@ class RecurringPayInRegistration(BaseModel):
     next_transaction_fees = MoneyField(api_name='NextTransactionFees')
     free_cycles = IntegerField(api_name='FreeCycles', required=False)
     cycle_number = IntegerField(api_name='CycleNumber')
-    total_amount = IntegerField(api_name='TotalAmount')
+    total_amount = MoneyField(api_name='TotalAmount')
     recurring_type = CharField(api_name='RecurringType')
     current_state = CurrentStateField(api_name='CurrentState')
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
