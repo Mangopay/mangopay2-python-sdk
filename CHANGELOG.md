@@ -1,3 +1,12 @@
+## [3.23.2] - 2022-11-08
+### Fixed 
+
+- RecurringPayInRegistration total_amount type; 
+
+### Added
+
+- Missing event types
+
 ## [3.23.1] - 2022-10-26
 ### Fixed
 
