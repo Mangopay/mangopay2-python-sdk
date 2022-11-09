@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
+import json
 import time
 import unittest
+from cmath import rect
 from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn
-from mangopay.utils import (Money, ShippingAddress, Billing, Address, SecurityInfo, ApplepayPaymentData, GooglepayPaymentData, DebitedBankAccount)
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, RecurringPayInRegistration, \
+    RecurringPayInCIT, PayInRefund, RecurringPayInMIT
+from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
+                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
 
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
-                             CardWebPayIn, DirectDebitWebPayIn, constants)
+                             PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants)
 from tests.test_base import BaseTest, BaseTestLive
 
 
@@ -221,7 +225,7 @@ class PayInsTest(BaseTest):
                         "PostalCode": "11222",
                         "Country": "FR"
                     },
-                    "IBAN": "CRLYFRPP",
+                    "IBAN": "BNPAFRPP",
                     "BIC": "FR70 3000 2005 5000 0015 7845 Z02"
                 }
             },
@@ -450,6 +454,82 @@ class PayInsTest(BaseTest):
 
         for key, value in paypal_payin_params.items():
             self.assertEqual(getattr(paypal_payin, key), value)
+
+    @responses.activate
+    def test_create_payoniq_payin(self):
+
+        self.mock_natural_user()
+        self.mock_legal_user()
+        self.mock_user_wallet()
+
+        self.register_mock({
+            'method': responses.POST,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/payconiq/web',
+            'body': {
+               "Id": "119683174",
+               "Tag": "custom meta",
+               "CreationDate" :1632985748,
+               "ExpirationDate" :1632986949,
+               "AuthorId": "119683166",
+               "CreditedUserId": "119683166",
+               "DebitedFunds": {
+                  "Currency": "EUR",
+                  "Amount": 22
+               },
+               "CreditedFunds": {
+                  "Currency": "EUR",
+                  "Amount": 12
+               },
+               "Fees": {
+                  "Currency": "EUR",
+                  "Amount": 10
+               },
+               "Status": "CREATED",
+               "ResultCode": None,
+               "ResultMessage": None,
+               "ExecutionDate": None,
+               "Type": "PAYIN",
+               "Nature": "REGULAR",
+               "CreditedWalletId": "119683167",
+               "DebitedWalletId": None,
+               "PaymentType": "PAYCONIQ",
+               "ExecutionType": "WEB",
+               "RedirectURL": "https://portal.payconiq.com/qrcode?c=https%3A%2F%2Fpayconiq.com%2Fpay%2F2%2F52e501a43d878e8846470b8f",
+               "ReturnURL": "http://www.my-site.com/returnURL",
+               "DeepLinkURL": "HTTPS://PAYCONIQ.COM/PAY/2/52E501A43D878E8846470B8F"
+            },
+            'status': 200
+        })
+
+        payconiq_payin_params = {
+            "tag": "custom meta",
+            "author": self.natural_user,
+            "debited_funds": Money(amount=22, currency='EUR'),
+            "fees": Money(amount=10, currency="EUR"),
+            "return_url": "http://www.my-site.com/returnURL",
+            "credited_wallet": self.legal_user_wallet,
+            "country": "BE"
+        }
+
+        payconiq_payin = PayconiqPayIn(**payconiq_payin_params)
+
+        self.assertIsNone(payconiq_payin.get_pk())
+        payconiq_payin.save()
+        self.assertIsInstance(payconiq_payin, PayconiqPayIn)
+        self.assertEqual(payconiq_payin.status, 'CREATED')
+        self.assertEqual(payconiq_payin.type, 'PAYIN')
+        self.assertEqual(payconiq_payin.payment_type, 'PAYCONIQ')
+        self.assertIsNotNone(payconiq_payin.get_pk())
+        self.assertTrue(payconiq_payin.redirect_url.startswith(
+            'https://portal.payconiq.com/qrcode'))
+
+        self.assertTrue(payconiq_payin.return_url.startswith('http://www.my-site.com'))
+
+        self.assertTrue(payconiq_payin.deep_link_url.startswith('HTTPS://PAYCONIQ.COM/PAY'))
+
+        self.assertEqual(payconiq_payin.debited_funds.amount, 22)
+
+        self.assertEqual(payconiq_payin.fees.amount, 10)
 
     @responses.activate
     def test_create_card_via_web_interface_payin(self):
@@ -706,6 +786,9 @@ class PayInsTestLive(BaseTestLive):
         pay_in.debited_funds.amount = 1000
         pay_in.debited_funds.currency = "EUR"
         pay_in.secure_mode_return_url = "http://www.example.com/"
+        pay_in.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        pay_in.browser_info = BaseTest.get_browser_info()
+
         address = Address()
         address.address_line_1 = "Big Street"
         address.address_line_2 = "no 2 ap 6"
@@ -721,6 +804,171 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(security_info)
         self.assertIsInstance(security_info, SecurityInfo)
         self.assertEqual(security_info.avs_result, "NO_CHECK")
+
+    def test_RecurringPayment(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayInRegistration()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money(1, "EUR")
+        recurring.first_transaction_debited_funds = Money(12, "EUR")
+        recurring.free_cycles = 0
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        recurring.end_date = 1768656033
+        recurring.migration = True
+        recurring.next_transaction_fees = Money(1, "EUR")
+        recurring.next_transaction_debited_funds = Money(12, "EUR")
+        result = recurring.save()
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.get('free_cycles'))
+
+        created_recurring = RecurringPayInRegistration.get(result.get('id'))
+        self.assertIsNotNone(created_recurring)
+        print(created_recurring.id)
+        cit = RecurringPayInCIT()
+        cit.recurring_payin_registration_id = created_recurring.id
+        cit.tag = "custom meta"
+        cit.statement_descriptor = "lorem"
+        cit.secure_mode_return_url = "http://www.my-site.com/returnurl"
+        cit.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        cit.browser_info = BaseTest.get_browser_info()
+        cit.debited_funds = Money(12, "EUR")
+        cit.fees = Money(1, "EUR")
+
+        created_cit = cit.save()
+        self.assertIsNotNone(created_cit)
+        cit_id = created_cit.get('id')
+
+        got_cit = RecurringPayInCIT.get(cit_id)
+        self.assertIsNotNone(got_cit)
+        self.assertIsInstance(got_cit, RecurringPayInCIT)
+
+        mit = RecurringPayInMIT()
+        mit.recurring_payin_registration_id = created_recurring.id
+        mit.statement_descriptor = "lorem"
+        mit.tag = "custom meta"
+        mit.debited_funds = Money(10, "EUR")
+        mit.fees = Money(1, "EUR")
+        created_mit = mit.save()
+        self.assertIsNotNone(created_mit)
+
+        got_cit = RecurringPayInCIT.get(cit_id)
+        self.assertIsNotNone(got_cit)
+        #self.assertIsInstance(got_cit, RecurringPayInCIT)
+
+        params = {
+            "author": user,
+            "payin": got_cit
+        }
+
+        payin_refund = PayInRefund(**params)
+
+        self.assertIsNotNone(payin_refund)
+        self.assertIsNone(payin_refund.get_pk())
+        payin_refund.save()
+        self.assertIsInstance(payin_refund, PayInRefund)
+        self.assertEqual(payin_refund.status, 'SUCCEEDED')
+
+        mit_id = created_mit.get('id')
+        got_mit = RecurringPayInMIT.get(mit_id)
+        self.assertIsNotNone(got_mit)
+        self.assertIsInstance(got_mit, RecurringPayInMIT)
+
+        params = {
+            "author": user,
+            "payin": got_mit
+        }
+
+        payin_refund_mit = PayInRefund(**params)
+
+        self.assertIsNotNone(payin_refund_mit)
+        self.assertIsNone(payin_refund_mit.get_pk())
+        payin_refund_mit.save()
+        self.assertIsInstance(payin_refund_mit, PayInRefund)
+        self.assertEqual(payin_refund_mit.status, 'SUCCEEDED')
+
+    def test_RecurringPayment_Get(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayInRegistration()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money()
+        recurring.first_transaction_fees.amount = 1
+        recurring.first_transaction_fees.currency = "EUR"
+        recurring.first_transaction_debited_funds = Money()
+        recurring.first_transaction_debited_funds.amount = 10
+        recurring.first_transaction_debited_funds.currency = "EUR"
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        result = recurring.save()
+        self.assertIsNotNone(result)
+
+        rec_id = result.get("id")
+
+        get = RecurringPayInRegistration.get(rec_id)
+        self.assertIsNotNone(get)
+
+    def test_RecurringPayment_Update(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayInRegistration()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money()
+        recurring.first_transaction_fees.amount = 1
+        recurring.first_transaction_fees.currency = "EUR"
+        recurring.first_transaction_debited_funds = Money()
+        recurring.first_transaction_debited_funds.amount = 10
+        recurring.first_transaction_debited_funds.currency = "EUR"
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        result = recurring.save()
+        self.assertIsNotNone(result)
+
+        rec_id = result.get("id")
+
+        get = RecurringPayInRegistration.get(rec_id)
+        self.assertIsNotNone(get)
+
+        params_to_be_updated = {
+            "status": "ENDED"
+        }
+
+        updated = get.update(get.get_pk(), **params_to_be_updated).execute()
+        self.assertIsNotNone(updated)
 
     def test_ApplePay_Payin(self):
         user = self.get_john(True)

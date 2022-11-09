@@ -12,7 +12,7 @@ from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
 from mangopay.constants import LEGAL_USER_TYPE_CHOICES
 from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo
-from mangopay.utils import Address, ReportTransactionsFilters, Birthplace
+from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo
 from tests import settings
 from tests.mocks import RegisteredMocks
 from tests.resources import (NaturalUser, LegalUser, Wallet,
@@ -66,7 +66,7 @@ class BaseTest(RegisteredMocks):
             "legal_representative_first_name": "Mango",
             "legal_representative_last_name": "Pay",
             "legal_representative_email": "mango@mangopay.com",
-            "legal_representative_birthday": time.mktime(date.today().timetuple()),
+            "legal_representative_birthday": 188301600,
             "legal_representative_nationality": "FR",
             "legal_representative_country_of_residence": "FR",
             "proof_of_registration": None,
@@ -239,6 +239,21 @@ class BaseTest(RegisteredMocks):
         ubo = Ubo(**params)
         return ubo
 
+    @staticmethod
+    def get_browser_info():
+        browser = BrowserInfo()
+        browser.accept_header = "text/html, application/xhtml+xml, application/xml;q=0.9, /;q=0.8"
+        browser.java_enabled = True
+        browser.language = "FR-FR"
+        browser.color_depth = 4
+        browser.screen_width = 400
+        browser.screen_height = 1800
+        browser.javascript_enabled = True
+        browser.timezone_offset = "+60"
+        browser.user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+
+        return browser
+
 
 class BaseTestLive(unittest.TestCase):
     _john = None
@@ -251,6 +266,7 @@ class BaseTestLive(unittest.TestCase):
     _johns_payout = None
     _johns_payin = None
     _johns_card = None
+    _johns_card_3dsecure = None
 
     _user_legal = None
     _ubo_declaration = None
@@ -263,7 +279,7 @@ class BaseTestLive(unittest.TestCase):
         BaseTestLive.get_user_legal()
 
     @staticmethod
-    def get_user_legal(recreate=False):
+    def get_user_legal(recreate=False, terms=False):
         if BaseTestLive._user_legal is None or recreate:
             legal = LegalUser()
             legal.name = 'MatrixSampleOrg_PythonSDK'
@@ -281,6 +297,8 @@ class BaseTestLive(unittest.TestCase):
             legal.legal_representative_country_of_residence = 'FR'
             legal.company_number = 123456789
             legal.tag = 'Python SDK Unit Test'
+            legal.terms_and_conditions_accepted = terms
+            legal.user_category = 'OWNER'
             BaseTestLive._user_legal = LegalUser(**legal.save())
         return BaseTestLive._user_legal
 
@@ -332,8 +350,8 @@ class BaseTestLive(unittest.TestCase):
             account.user = BaseTestLive._john
             account.type = 'IBAN'
             account.owner_address = BaseTestLive._john.address
-            account.iban = 'FR7618829754160173622224154'
-            account.bic = 'CMBRFR2BCME'
+            account.iban = 'FR7630004000031234567890143'
+            account.bic = 'BNPAFRPP'
             BaseTestLive._johns_account = BankAccount(**account.save())
         return BaseTestLive._johns_account
 
@@ -352,7 +370,7 @@ class BaseTestLive(unittest.TestCase):
             account.owner_address.postal_code = "65400"
 
             account.iban = 'FR7630004000031234567890143'
-            account.bic = 'CRLYFRPP'
+            account.bic = 'BNPAFRPP'
             account.tag = 'custom meta'
 
             account.create_client_bank_account()
@@ -362,7 +380,7 @@ class BaseTestLive(unittest.TestCase):
         return BaseTestLive._client_account
 
     @staticmethod
-    def get_john(recreate=False):
+    def get_john(recreate=False, terms=False):
         if BaseTestLive._john is None or recreate:
             user = NaturalUser()
             user.first_name = 'John'
@@ -377,6 +395,8 @@ class BaseTestLive(unittest.TestCase):
             user.occupation = 'programmer'
             user.income_range = '1'
             user.person_type = 'NATURAL'
+            user.terms_and_conditions_accepted = terms
+            user.user_category = 'OWNER'
             BaseTestLive._john = NaturalUser(**user.save())
         return BaseTestLive._john
 
@@ -472,6 +492,30 @@ class BaseTestLive(unittest.TestCase):
                 "data_XXX": card_registration.preregistration_data,
                 "accessKeyRef": card_registration.access_key,
                 "cardNumber": '4970101122334422',
+                "cardExpirationDate": '1224',
+                "cardCvx": '123'
+            }
+            response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
+                                                   False, **params)
+            card_registration.registration_data = response
+            card_registration.save()
+            BaseTestLive._johns_card = card_registration.card
+        return BaseTestLive._johns_card
+
+    @staticmethod
+    def get_johns_card_3dsecure(recreate=False):
+        if BaseTestLive._johns_card_3dsecure is None or recreate:
+            card_params = {
+                "user": BaseTestLive.get_john(),
+                "currency": 'EUR'
+            }
+            card_registration = CardRegistration(**card_params)
+            card_registration.save()
+
+            params = {
+                "data_XXX": card_registration.preregistration_data,
+                "accessKeyRef": card_registration.access_key,
+                "cardNumber": '4970105191923460',
                 "cardExpirationDate": '1224',
                 "cardCvx": '123'
             }

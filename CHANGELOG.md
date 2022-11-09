@@ -1,3 +1,283 @@
+## [3.23.1] - 2022-10-26
+### Fixed
+
+- Tests after API update
+- 313 Issue with fields for User (not mandatory for some cases)
+- 310 fix for negative timestamp value fields in windows 
+
+## [3.23.0] - 2022-09-14
+### Added
+**New country authorizations endpoints**
+
+Country authorizations can now be viewed by using one of the following endpoints:
+
+<a href="https://docs.mangopay.com/endpoints/v2.01/regulatory#e1061_the-country-authorizations-object">View a country's authorizations</a> <br>
+<a href="https://docs.mangopay.com/endpoints/v2.01/regulatory#e1061_the-country-authorizations-object">View all countries' authorizations</a>
+
+With these calls, it is possible to check which countries have:
+
+- Blocked user creation
+- Blocked bank account creation
+- Blocked payout creation
+
+Please refer to the <a href="https://docs.mangopay.com/guide/restrictions-by-country">Restrictions by country</a>
+article for more information.
+
+## [3.22.0] - 2022-06-29
+## Added
+**Recurring: €0 deadlines for CIT**
+
+Setting free recurring payment deadlines is now possible for CIT (customer-initiated transactions) with the **FreeCycles** parameter.
+
+The **FreeCycles** parameter allows platforms to define the number of consecutive deadlines that will be free. The following endpoints have been updated to take into account this new parameter:
+
+<a href="https://docs.mangopay.com/endpoints/v2.01/payins#e1051_create-a-recurring-payin-registration">Create a Recurring PayIn Registration</a><br>
+<a href="https://docs.mangopay.com/endpoints/v2.01/payins#e1056_view-a-recurring-payin-registration">View a Recurring PayIn Registration</a><br>
+
+This feature provides new automation capabilities for platforms with offers such as “Get the first month free” or “free trial” subscriptions.
+
+Please refer to the <a href="https://docs.mangopay.com/guide/recurring-payments-introduction">Recurring payments overview</a> documentation for more information.
+
+## 3.21.0 - 2022.05.24
+### Added 
+
+#### UserCategory management
+
+Users can now be differentiated depending on their MANGOPAY usage.
+
+This is possible with the new UserCategory parameter, whose value can be set to:
+
+- Payer – For users who are only using MANGOPAY to give money to other users (i.e., only pay).
+- Owner – For users who are using MANGOPAY to receive funds (and who are therefore required to accept MANGOPAY’s terms and conditions).
+
+Please note that the following parameters become required as soon as the UserCategory is set to “Owner”: 
+- HeadquartersAddress
+- CompanyNumber (if the LegalPersonType is “Business”)
+- TermsAndConditionsAccepted.
+
+The documentation of user-related endpoints has been updated and reorganised to take into account the new parameter:
+
+[Create a Natural User (Payer)](https://docs.mangopay.com/endpoints/v2.01/users#e255_create-a-natural-user)
+[Create a Natural User (Owner)](https://docs.mangopay.com/endpoints/v2.01/users#e1059_create-natural-user-owner)
+[Update a Natural User](https://docs.mangopay.com/endpoints/v2.01/users#e260_update-a-natural-user)
+[Create a Legal User (Payer)](https://docs.mangopay.com/endpoints/v2.01/users#e259_create-a-legal-user)
+[Create a Legal User (Owner)](https://docs.mangopay.com/endpoints/v2.01/users#e1060_create-a-legal-user-owner)
+[Update a Legal User](https://docs.mangopay.com/endpoints/v2.01/users#e261_update-a-legal-user)
+[View a User](https://docs.mangopay.com/endpoints/v2.01/users#e256_view-a-user)
+[List all Users](https://docs.mangopay.com/endpoints/v2.01/users#e257_list-all-users)
+
+Differentiating the platform users results in a smoother user experience for “Payers” as they will have less declarative data to provide.
+
+
+## 3.20.0 - 2022.05.12
+### Added
+
+#### Terms and conditions acceptance parameter
+
+The acceptance of the MANGOPAY terms and conditions by the end user can now be registered via the SDK.
+
+This information can be managed by using the new `TermsAndConditionsAccepted` parameter added to the `User` object.
+
+The following API endpoints have been updated to take into account the new TermsAndConditionsAccepted parameter:
+
+[Create a Natural User](https://docs.mangopay.com/endpoints/v2.01/users#e255_create-a-natural-user)
+[Update a Natural User](https://docs.mangopay.com/endpoints/v2.01/users#e260_update-a-natural-user)
+[Create a Legal User](https://docs.mangopay.com/endpoints/v2.01/users#e259_create-a-legal-user)
+[Update a Legal User](https://docs.mangopay.com/endpoints/v2.01/users#e261_update-a-legal-user)
+[View a User](https://docs.mangopay.com/endpoints/v2.01/users#e256_view-a-user)
+
+Please note that:
+
+- Existing users have to be updated to include the terms and conditions acceptance information.
+- Once accepted, the terms and conditions cannot be revoked.
+
+
+## 3.19.0 - 2022.03.31
+### Added
+
+#### Instant payment eligibility check
+
+With the function
+`PayOutEligibility(params).check_eligibility()`
+the destination bank reachability can now be verified prior to making an instant payout. This results in a better user experience, as this preliminary check will allow the platform to propose the instant payout option only to end users whose bank is eligible. 
+
+
+## 3.18.1 - 2022.02.18
+### Fixed
+
+- Refund for MIT/CIT has been fixed
+- secure_mode parameter is not set anymore for CIT 
+
+
+## 3.18.0 - 2021.11.19
+## Added
+
+### Instant payouts hooks
+
+We are now providing new hooks for our new feature [Instant payouts](https://docs.mangopay.com/guide/instant-payment-payout) :
+
+- INSTANT_PAYOUT_SUCCEEDED
+- INSTANT_PAYOUT_FALLBACKED
+
+It will allow you to trigger an action depends on the Instant Payout treatment.
+
+### GET a RecurringPayIn ID
+
+You can now request the RecurringPayIn ID to check if the status is valid using
+
+## 3.17.0 - 2021.10.20
+## Added
+
+You can now change the status to "ENDED" for a recurring payment.
+
+## Fixed
+
+- "Status" is now available in the response when you request a recurring payment registration.
+
+## 3.16.0 - 2021.10.11
+## Added
+
+**We provide more information regarding refused KYC documents.** Therefore it will be easier for you to adapt your app behavior and help your end user.
+
+You are now able to see the exact explanation thanks to a new parameter called “Flags”. 
+
+It has been added to 
+
+`$this->_api->KycDocuments->Get($kycDocument->Id);`
+
+It will display one or several error codes that provide the reason(s) why your document validation has failed. These error codes description are available [here](https://docs.mangopay.com/guide/kyc-document).
+
+## 3.15.0 - 2021.09.30
+## Added
+
+As requested by numerous clients, we are now providing [Payconiq](https://www.payconiq.be/fr) as a new mean-of-payment. To request access, please contact MANGOPAY.
+
+## Fixed 
+
++ BillingField & ShippingField are now optionals for RecurringPayIn
++ We have fixed DateTimeField (previously was generating an error due to format) 
+
+## 3.14.1 - 2021.08.05
+## Fixed 
+
+- Change `FallbackReason` parameter's type to object in BankWirePayOut  
+
+## 3.14.0 - 2021.08.04
+## Added
+
+- You can now update and view a Recurring PayIn Registration object. To know more about this feature, please consult the documentation [here](https://docs.mangopay.com/guide/recurring-payments-introduction). 
+- To improve recurring payments, we have added new parameters for CIT : DebitedFunds & Fees. To know more about this feature, please consult the documentation [here](https://docs.mangopay.com/endpoints/v2.01/payins#e1053_create-a-recurring-payin-cit)
+
+## 3.12.0 - 2021.06.10
+## Added 
+
+We have added a new feature **[recurring payments](https://docs.mangopay.com/guide/recurring-payments)** dedicated to clients needing to charge a card repeatedly, such as subscriptions or payments installments. 
+
+You can start testing in sandbox, to help you define your workflow. This release provides the first elements of the full feature.
+
+- [Create a Recurring PayIn Registration object](https://docs.mangopay.com/endpoints/v2.01/payins#e1051_create-a-recurring-payin-registration), containing all the information to define the recurring payment
+- [Initiate your recurring payment flow](https://docs.mangopay.com/endpoints/v2.01/payins#e1053_create-a-recurring-payin-cit) with an authenticated transaction (CIT) using the Card Recurring PayIn endpoint
+- [Continue your recurring payment flow](https://docs.mangopay.com/endpoints/v2.01/payins#e1054_create-a-recurring-payin-mit) with an non-authenticated transaction (MIT) using the Card Recurring PayIn endpoint
+
+This feature is not yet available in production and you need to contact the Support team to request access.
+
+## 3.11.0 - 2021.05.27
+## Added 
+
+Mangopay introduces the instant payment mode. It allows payouts (transfer from wallet to user bank account) to be processed within 25 seconds, rather than the 48 hours for a standard payout.
+
+You can now use this new type of payout with the Python SDK.
+
+Example :
+
+```python
+get_bank_wire = BankWirePayOut.get_bankwire(payout_id)
+# where payout_id is the id of an existing payout
+```
+
+Please note that this feature must be authorized and activated by MANGOPAY. More information [here](https://docs.mangopay.com/guide/instant-payment-payout).
+
+## Fixed
+
+Duplicate BIC in resources 
+
+## 3.10.1
+## Fixed
+
+## Fixed 
+
+### IBAN for testing purposes
+
+⚠️ **IBAN provided for testing purpose should never be used outside of a testing environement!**
+
+- Fix `BankAccount` IBAN reference for tests
+
+More information about how to test payments, click [here](https://docs.mangopay.com/guide/testing-payments).
+
+### Others
+
+- httplib2 has been updated to the last version
+- RemainingFunds was flag wrongly as mandatory for PreAuthorization. It has been fixed.
+- ProcessedDate had the type IntegerField instead of DateTimeField. It has been fixed.
+
+## Added 
+
+### New events for PreAuthorization
+
+Some of you use a lot the [PreAuthorization](https://docs.mangopay.com/endpoints/v2.01/preauthorizations#e183_the-preauthorization-object) feature of our API. To make your life easier, we have added three new events :
+
+- PREAUTHORIZATION_CREATED
+- PREAUTHORIZATION_SUCCEEDED
+- PREAUTHORIZATION_FAILED
+
+The goal is to help you monitor a PreAuthorization with a [webhook](https://docs.mangopay.com/endpoints/v2.01/hooks#e246_the-hook-object).
+
+*Example: If a PreAuthorization is desynchronized, when the status is updated, you will be able to know it.*
+
+### Logging
+
+We have merged @rbarrois pull request. The logging module expects user to provide the string as a first argument, and all interpolation parameters in separate positional or keyword arguments: `logger.debug("trying x=%s", x)`.
+
+This brings two benefits:
+
+- The interpolation is only performed if the logging message is actually
+used (debug messages won't even be interpolated if logging is set to
+WARNING)
+
+- Monitoring libraries like Sentry can group messages based on their
+non-interpolated message, which helps detecting similar issues.
+
+
+## 3.10.0
+## Added
+
+### On demand feature for 3DSv2
+
+> **This on-demand feature is for testing purposes only and will not be available in production**
+
+#### Request
+
+We've added a new parameter `Requested3DSVersion` (not mandatory) that allows you to choose between versions of 3DS protocols (managed by the parameter `SecureMode`). Two values are available: 
+* `V1`
+* `V2_1`
+
+If nothing is sent, the flow will be 3DS V1. 
+
+The `Requested3DSVersion` may be included on all calls to the following endpoints:
+* `/preauthorizations/card/direct`
+* `/payins/card/direct`
+
+#### Response
+
+In the API response, the `Requested3DSVersion` will show the value you requested:
+* `V1`
+* `V2_1`
+* `null` – indicates that nothing was requested
+
+The parameter `Applied3DSVersion` shows you the version of the 3DS protocol used. Two values are possible:
+* `V1`
+* `V2_1`
+
 ## 3.9.0
 - 3DS2 integration with Shipping and Billing objects, including FirstName and LastName fields
 The objects Billing and Shipping may be included on all calls to the following endpoints:

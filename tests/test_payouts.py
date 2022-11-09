@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from tests.resources import BankAccount, BankWirePayOut
+from tests.resources import BankAccount, BankWirePayOut, PayOutEligibility
 from tests.test_base import BaseTest
 
 from mangopay.utils import Money, Address
@@ -30,8 +30,8 @@ class PayOutsTest(BaseTest):
                         "PostalCode": "11222",
                         "Country": "FR"
                     },
-                    "IBAN": "FR3020041010124530725S03383",
-                    "BIC": "CRLYFRPP",
+                    "IBAN": "FR7630004000031234567890143",
+                    "BIC": "BNPAFRPP",
                     "Id": "1169675",
                     "Tag": "custom tag",
                     "CreationDate": 1383561267
@@ -45,7 +45,7 @@ class PayOutsTest(BaseTest):
                     "Id": 30047,
                     "CreditedFunds": None,
                     "BankWireRef": "John Doe's trousers",
-                    "PayoutModeRequested": "INSTANT_PAYMENT",
+                    "PayoutModeRequested": "STANDARD",
                     "DebitedFunds": {"Currency": "EUR", "Amount": 1000},
                     "BankAccountId": 6784645,
                     "AuthorId": 6784642,
@@ -84,7 +84,7 @@ class PayOutsTest(BaseTest):
                     "DebitedWalletId": "30025",
                     "BankAccountId": "30027",
                     "BankWireRef": "John Doe's trousers",
-                    "PayoutModeRequested": "INSTANT_PAYMENT"
+                    "PayoutModeRequested": "STANDARD"
                 },
                 'status': 200
             }])
@@ -96,8 +96,8 @@ class PayOutsTest(BaseTest):
             "owner_address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
                                      city='City', region='Region',
                                      postal_code='11222', country='FR'),
-            "iban": "FR3020041010124530725S03383",
-            "bic": "CRLYFRPP",
+            "iban": "FR7630004000031234567890143",
+            "bic": "BNPAFRPP",
             "tag": "custom tag"
         }
         bankaccount = BankAccount(**params)
@@ -110,7 +110,8 @@ class PayOutsTest(BaseTest):
             "fees": Money(amount=100, currency='EUR'),
             "debited_wallet": self.legal_user_wallet,
             "bank_account": bankaccount,
-            "bank_wire_ref": "John Doe's trousers"
+            "bank_wire_ref": "John Doe's trousers",
+            "payout_mode_requested": "STANDARD"
         }
         bank_wire_payout = BankWirePayOut(**bank_wire_payout_params)
 
@@ -134,3 +135,34 @@ class PayOutsTest(BaseTest):
         self.assertIsInstance(retrieved_payout, BankWirePayOut)
 
         self.assertEqual(getattr(retrieved_payout, 'id'), bank_wire_payout.get_pk())
+
+        # get_bank_wire = BankWirePayOut.get_bankwire(109791242)
+
+    def test_check_eligibility(self):
+        params = {
+            "owner_name": "Victor Hugo",
+            "user": self.legal_user,
+            "type": "IBAN",
+            "owner_address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                     city='City', region='Region',
+                                     postal_code='11222', country='FR'),
+            "iban": "FR7630004000031234567890143",
+            "bic": "BNPAFRPP",
+            "tag": "custom tag"
+        }
+        bankaccount = BankAccount(**params)
+        bankaccount.save()
+
+        eligibility = {
+            "author": self.legal_user,
+            "debited_funds": Money(amount=10, currency='EUR'),
+            "debited_wallet": self.legal_user_wallet,
+            "bank_account": bankaccount,
+            "payout_mode_requested": "INSTANT_PAYMENT"
+        }
+
+        check_eligibility = PayOutEligibility(**eligibility)
+        result = check_eligibility.check_eligibility()
+        self.assertIsNotNone(result)
+        instant_payout = result.get('instant_payout')
+        self.assertIsNotNone(instant_payout)

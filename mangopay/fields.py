@@ -9,7 +9,7 @@ import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
-    ScopeBlocked, BrowserInfo, Shipping
+    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData
 
 
 class FieldDescriptor(object):
@@ -99,7 +99,7 @@ class DateTimeField(Field):
 
         if isinstance(value, six.string_types):
             value = value.rsplit('.', 1)[0]
-            value = datetime(*time.strptime(value, '%Y-%m-%d %H:%M:%S')[:6])
+            value = datetime.datetime(*time.strptime(value, '%Y-%m-%d %H:%M:%S')[:6])
 
         if isinstance(value, six.integer_types):
             value = datetime.datetime.utcfromtimestamp(value)
@@ -123,7 +123,10 @@ class DateField(Field):
             value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
 
         if isinstance(value, six.integer_types):
-            value = datetime.datetime.utcfromtimestamp(value).date()
+            if value < 0:
+                value = (datetime.datetime.utcfromtimestamp(0) + datetime.timedelta(seconds=value)).date()
+            else:
+                value = datetime.datetime.utcfromtimestamp(value).date()
 
         return value
 
@@ -205,6 +208,44 @@ class MoneyField(Field):
             value = {
                 'Currency': value.currency,
                 'Amount': int(value.amount)
+            }
+
+        return value
+
+
+class FallbackReasonField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return FallbackReason(code=value['Code'], message=value['Message'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(FallbackReasonField, self).api_value(value)
+
+        if isinstance(value, FallbackReason):
+            value = {
+                'Code': value.code,
+                'Message': value.message
+            }
+
+        return value
+
+
+class InstantPayoutField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return InstantPayout(is_reachable=value['IsReachable'], unreachable_reason=value['UnreachableReason'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(InstantPayoutField, self).api_value(value)
+
+        if isinstance(value, InstantPayoutField):
+            value = {
+                'IsReachable': value.is_reachable,
+                'UnreachableReason': value.unreachable_reason
             }
 
         return value
@@ -763,6 +804,51 @@ class ShippingField(Field):
                 'FirstName': value.first_name,
                 'LastName': value.last_name,
                 'Address': value.address
+            }
+
+        return value
+
+
+class CurrentStateField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return CurrentState(payins_linked=value['PayinsLinked'],
+                                cumulated_debited_amount=value['CumulatedDebitedAmount'],
+                                cumulated_debited_fees=value['CumulatedFeesAmount'],
+                                last_payin_id=value['LastPayinId'])
+        return value
+
+    def api_value(self, value):
+        value = super(CurrentStateField, self).api_value(value)
+
+        if isinstance(value, CurrentState):
+            value = {
+                'PayinsLinked ': value.payins_linked,
+                'CumulatedDebitedAmount ': value.cumulated_debited_amount,
+                'CumulatedFeesAmount  ': value.cumulated_debited_fees,
+                'LastPayinId ': value.last_payin_id
+            }
+
+        return value
+
+
+class CountryAuthorizationDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return CountryAuthorizationData(block_user_creation=value['BlockUserCreation'],
+                                            block_bank_account_creation=value['BlockBankAccountCreation'],
+                                            block_payout=value['BlockPayout'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(CountryAuthorizationDataField, self).api_value(value)
+
+        if isinstance(value, CountryAuthorizationData):
+            value = {
+                'BlockUserCreation': value.block_user_creation,
+                'BlockBankAccountCreation': value.block_bank_account_creation,
+                'BlockPayout': value.block_payout
             }
 
         return value

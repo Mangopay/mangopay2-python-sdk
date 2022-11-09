@@ -60,11 +60,11 @@ class APIRequest(object):
     def get_rate_limits(self):
         return rate_limits
 
-    def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, **params):
-        return self.custom_request(method, url, data, idempotency_key, oauth_request, True, **params)
+    def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, without_client_id=False, **params):
+        return self.custom_request(method, url, data, idempotency_key, oauth_request, True, without_client_id, **params)
 
     def custom_request(self, method, url, data=None, idempotency_key=None, oauth_request=False,
-                       is_mangopay_request=False, **params):
+                       is_mangopay_request=False, without_client_id=False, **params):
         params = params or {}
 
         headers = {}
@@ -91,7 +91,7 @@ class APIRequest(object):
         encoded_params = urlrequest.urlencode(params)
 
         if is_mangopay_request:
-            if oauth_request:
+            if oauth_request or without_client_id:
                 url = self.api_url + url
             else:
                 url = self._absolute_url(url, encoded_params)
@@ -103,7 +103,7 @@ class APIRequest(object):
 
             data = json.dumps(data, default=lambda x: x.to_api_json())
 
-        logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s' % (url, headers, truncated_data))
+        logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s', url, headers, truncated_data)
 
         ts = time.time()
 
@@ -145,12 +145,12 @@ class APIRequest(object):
                               result=result,
                               laps=laps)
 
-        logger.debug('DATA[OUT -> %s][%2.3f seconds]\n\t- status_code: %s\n\t- headers: %s\n\t- content: %s' % (
+        logger.debug('DATA[OUT -> %s][%2.3f seconds]\n\t- status_code: %s\n\t- headers: %s\n\t- content: %s',
             url,
             laps,
             result.status_code,
             result.headers,
-            result.text if hasattr(result, 'text') else result.content)
+            result.text if hasattr(result, 'text') else result.content
         )
 
         self.read_response_headers(result.headers)
@@ -234,14 +234,14 @@ class APIRequest(object):
 
         headers = result.headers
 
-        logger.error('API ERROR: status_code: %s | url: %s | method: %s | data: %r | headers: %s | content: %s' % (
+        logger.error('API ERROR: status_code: %s | url: %s | method: %s | data: %r | headers: %s | content: %s',
             status_code,
             url,
             method,
             data,
             headers,
-            text
-        ))
+            text,
+        )
 
         request_error.send(url=url, status_code=status_code, headers=headers)
 
@@ -260,9 +260,11 @@ class APIRequest(object):
 
         headers = result.headers
 
-        logger.error('DECODE ERROR: status_code: %s | headers: %s | content: %s' % (status_code,
-                                                                                    headers,
-                                                                                    text))
+        logger.error('DECODE ERROR: status_code: %s | headers: %s | content: %s',
+            status_code,
+            headers,
+            text,
+        )
 
         request_error.send(url=url, status_code=status_code, headers=headers)
 

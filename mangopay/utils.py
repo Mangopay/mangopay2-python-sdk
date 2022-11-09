@@ -246,6 +246,28 @@ class Billing(object):
 
 
 @add_camelcase_aliases
+class FallbackReason(object):
+    def __init__(self, code=None, message=None):
+        self.code = code
+        self.message = message
+
+    def __str__(self):
+        return 'FallbackReason: %s' % \
+               (self.code, self.message)
+
+
+@add_camelcase_aliases
+class InstantPayout(object):
+    def __init__(self, is_reachable=None, unreachable_reason=None):
+        self.is_reachable = is_reachable
+        self.unreachable_reason = unreachable_reason
+
+    def __str__(self):
+        return 'InstantPayout: %s' % \
+               (self.code, self.message)
+
+
+@add_camelcase_aliases
 class SecurityInfo(object):
     def __init__(self, avs_result=None):
         self.avs_result = avs_result
@@ -521,6 +543,20 @@ class Shipping(object):
     def __str__(self):
         return 'Shipping: %s' % \
                (self.first_name, self.last_name, self.address)
+
+
+@add_camelcase_aliases
+class CurrentState(object):
+    def __init__(self, payins_linked=None, cumulated_debited_amount=None, cumulated_debited_fees=None,
+                 last_payin_id=None):
+        self.payins_linked = payins_linked
+        self.cumulated_debited_amount = cumulated_debited_amount
+        self.cumulated_debited_fees = cumulated_debited_fees
+        self.last_payin_id = last_payin_id
+
+    def __str__(self):
+        return 'CurrentState: %s' % \
+               (self.cumulated_debited_amount, self.cumulated_debited_fees, self.last_payin_id, self.payins_linked)
 
 
 @add_camelcase_aliases
@@ -845,3 +881,29 @@ def truncatechars(value, length=255):
         return (value[:length] + '...') if len(value) > length else value
 
     return value
+
+
+class CountryAuthorizationData(object):
+    def __init__(self, block_user_creation=None, block_bank_account_creation=None, block_payout=None):
+        self.block_user_creation = block_user_creation
+        self.block_bank_account_creation = block_bank_account_creation
+        self.block_payout = block_payout
+
+    def __str__(self):
+        return 'CountryAuthorizationData: %s, %s , %s' % \
+               (self.block_user_creation, self.block_bank_account_creation, self.block_payout)
+
+    def __eq__(self, other):
+        if isinstance(other, CountryAuthorizationData):
+            stat = ((self.block_user_creation == other.block_user_creation) and
+                    (self.block_bank_account_creation == other.block_bank_account_creation) and
+                    (self.block_payout == other.block_payout))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "BlockUserCreation": self.block_user_creation,
+            "BlockBankAccountCreation": self.block_bank_account_creation,
+            "BlockPayout": self.block_payout
+        }
