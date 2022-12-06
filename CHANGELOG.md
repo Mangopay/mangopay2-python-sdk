@@ -1,3 +1,8 @@
+## [3.23.3] - 2022-12-06
+### Fixed
+
+- Removed the default value for `LEGAL_USER_TYPE_CHOICES` in order to prevent mistake on user update
+
 ## [3.23.2] - 2022-11-08
 ### Fixed 
 
