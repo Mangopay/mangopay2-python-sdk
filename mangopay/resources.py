@@ -183,7 +183,6 @@ class LegalUser(User):
     name = CharField(api_name='Name', required=True)
     legal_person_type = CharField(api_name='LegalPersonType',
                                   choices=constants.LEGAL_USER_TYPE_CHOICES,
-                                  default=constants.LEGAL_USER_TYPE_CHOICES.organization,
                                   required=True)
     headquarters_address = AddressField(api_name='HeadquartersAddress')
     legal_representative_first_name = CharField(api_name='LegalRepresentativeFirstName', required=True)
