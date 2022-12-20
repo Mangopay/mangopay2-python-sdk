@@ -167,7 +167,15 @@ EVENT_TYPE_CHOICES = Choices(
     ('UBO_DECLARATION_REFUSED', 'ubo_declaration_refused', 'Ubo Declaration Refused'),
     ('UBO_DECLARATION_VALIDATED', 'ubo_declaration_validated', 'Ubo Declaration Validated'),
     ('UBO_DECLARATION_INCOMPLETE', 'ubo_declaration_incomplete', 'Ubo Declaration Incomplete'),
-    ('USER_KYC_LIGHT', 'user_kyc_light', 'User Kyc Light')
+    ('USER_KYC_LIGHT', 'user_kyc_light', 'User Kyc Light'),
+
+    ('DEPOSIT_PREAUTHORIZATION_CREATED', 'deposit_preauthorization_created', 'Deposit Preauthorization Created'),
+    ('DEPOSIT_PREAUTHORIZATION_FAILED', 'deposit_preauthorization_failed', 'Deposit Preauthorization Failed'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_WAITING', 'deposit_preauthorization_payment_waiting', 'Deposit Preauthorization Payment Waiting'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_EXPIRED', 'deposit_preauthorization_payment_expired', 'Deposit Preauthorization Payment Expired'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCEL_REQUESTED', 'deposit_preauthorization_payment_cancel_requested', 'Deposit Preauthorization Payment Cancel Requested'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCELED', 'deposit_preauthorization_payment_canceled', 'Deposit Preauthorization Payment Canceled'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated', 'Deposit Preauthorization Payment Validated')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
@@ -322,4 +330,10 @@ AVS_RESULT_CHOICES = Choices(
     ("POSTAL_CODE_MATCH_ONLY", "postal_code_match_only", "Postal Code Match Only"),
     ("NO_MATCH", "no_match", "No Match"),
     ("NO_CHECK", "no_check", "No Check")
+)
+
+DEPOSIT_STATUS_CHOICES = Choices(
+    ('CREATED', 'created', 'Created'),
+    ('SUCCEEDED', 'succeeded', 'Succeeded'),
+    ('FAILED', 'failed', 'Failed')
 )

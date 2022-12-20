@@ -11,7 +11,7 @@ from mangopay import APIRequest
 from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
 from mangopay.constants import LEGAL_USER_TYPE_CHOICES
-from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo
+from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo, Deposit
 from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo
 from tests import settings
 from tests.mocks import RegisteredMocks
@@ -529,6 +529,47 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_oauth_manager():
         return BaseTestLive._oauth_manager
+
+    @staticmethod
+    def create_new_deposit():
+        user = BaseTestLive.get_john()
+        debited_funds = Money(amount=1000, currency='EUR')
+        card_registration = BaseTestLive.create_new_card_registration_for_deposit()
+
+        params = {
+            "author_id": user.id,
+            "debited_funds": debited_funds,
+            "card_id": card_registration.card_id,
+            "secure_mode_return_url": "http://lorem",
+            "ip_address": "2001:0620:0000:0000:0211:24FF:FE80:C12C",
+            "browser_info": BaseTest.get_browser_info()
+        }
+
+        deposit = Deposit(**params)
+
+        return Deposit(**deposit.save())
+
+    @staticmethod
+    def create_new_card_registration_for_deposit():
+        card_params = {
+            "user": BaseTestLive.get_john(),
+            "currency": 'EUR'
+        }
+        card_registration = CardRegistration(**card_params)
+        card_registration.save()
+
+        params = {
+            "data_XXX": card_registration.preregistration_data,
+            "accessKeyRef": card_registration.access_key,
+            "cardNumber": '4970105181818183',
+            "cardExpirationDate": '1224',
+            "cardCvx": '123'
+        }
+        response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
+                                               False, **params)
+        card_registration.registration_data = response
+
+        return CardRegistration(**card_registration.save())
 
     def test_handler(self):
         api_url = "test_api_url"

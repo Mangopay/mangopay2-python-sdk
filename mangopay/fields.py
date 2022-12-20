@@ -9,7 +9,8 @@ import six
 from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedBankAccount, Address, ShippingAddress, \
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
-    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData
+    ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
+    PayinsLinked
 
 
 class FieldDescriptor(object):
@@ -849,6 +850,24 @@ class CountryAuthorizationDataField(Field):
                 'BlockUserCreation': value.block_user_creation,
                 'BlockBankAccountCreation': value.block_bank_account_creation,
                 'BlockPayout': value.block_payout
+            }
+
+        return value
+
+
+class PayinsLinkedField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PayinsLinked(payin_capture_id=value['PayinCaptureId'], payin_complement_id=value['PayinComplementId'])
+        return value
+
+    def api_value(self, value):
+        value = super(PayinsLinkedField, self).api_value(value)
+
+        if isinstance(value, PayinsLinked):
+            value = {
+                'PayinCaptureId': value.payin_capture_id,
+                'PayinComplementId': value.payin_complement_id
             }
 
         return value
