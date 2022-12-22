@@ -7,8 +7,9 @@ from datetime import date
 
 import responses
 
-from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, RecurringPayInRegistration, \
-    RecurringPayInCIT, PayInRefund, RecurringPayInMIT
+from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
+    RecurringPayInRegistration, \
+    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
 
@@ -1037,3 +1038,24 @@ class PayInsTestLive(BaseTestLive):
         pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
         result = pay_in.save()
         self.assertIsNotNone(result)
+
+    @unittest.skip("can't be tested yet")
+    def test_card_preauthorized_deposit_payin(self):
+        deposit = self.create_new_deposit()
+
+        params = {
+            "credited_wallet_id": self.get_johns_wallet().id,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "deposit_id": deposit.id
+        }
+
+        created = CardPreAuthorizedDepositPayIn(**params).save()
+        pay_in = CardPreAuthorizedDepositPayIn().get(created.get('id'))
+
+        self.assertIsNotNone(pay_in)
+        self.assertEqual("SUCCEEDED", pay_in.status)
+        self.assertEqual("REGULAR", pay_in.nature)
+        self.assertEqual("DIRECT", pay_in.execution_type)
+        self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
+        self.assertEqual("PAYIN", pay_in.type)

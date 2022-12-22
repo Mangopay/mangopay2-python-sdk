@@ -811,6 +811,30 @@ class DirectDebitDirectPayIn(PayIn):
         }
 
 
+class CardPreAuthorizedDepositPayIn(BaseModel):
+    author_id = CharField(api_name='AuthorId')
+    credited_wallet_id = CharField(api_name='CreditedWalletId')
+    deposit_id = CharField(api_name='DepositId')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
+    execution_date = DateTimeField(api_name='ExecutionDate')
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
+    nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    credited_funds = MoneyField(api_name='CreditedFunds')
+    fees = MoneyField(api_name='Fees')
+
+    class Meta:
+        verbose_name = 'card_preauthorized_deposit_payin'
+        verbose_name_plural = 'card_preauthorized_deposit_payins'
+        url = {
+            InsertQuery.identifier: '/payins/deposit-preauthorized/direct/full-capture',
+            SelectQuery.identifier: '/payins'
+        }
+
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
