@@ -14,7 +14,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
-                     CountryAuthorizationDataField)
+                     CountryAuthorizationDataField, PayinsLinkedField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -810,6 +810,30 @@ class DirectDebitDirectPayIn(PayIn):
             SelectQuery.identifier: '/payins'
         }
 
+
+class CardPreAuthorizedDepositPayIn(BaseModel):
+    author_id = CharField(api_name='AuthorId')
+    credited_wallet_id = CharField(api_name='CreditedWalletId')
+    deposit_id = CharField(api_name='DepositId')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
+    execution_date = DateTimeField(api_name='ExecutionDate')
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
+    nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    credited_funds = MoneyField(api_name='CreditedFunds')
+    fees = MoneyField(api_name='Fees')
+
+    class Meta:
+        verbose_name = 'card_preauthorized_deposit_payin'
+        verbose_name_plural = 'card_preauthorized_deposit_payins'
+        url = {
+            InsertQuery.identifier: '/payins/deposit-preauthorized/direct/full-capture',
+            SelectQuery.identifier: '/payins'
+        }
 
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -1740,3 +1764,37 @@ class CountryAuthorization(BaseModel):
         select = SelectQuery(CountryAuthorization, *args, **kwargs)
         select.identifier = 'ALL_COUNTRIES_AUTHORIZATIONS'
         return select.all(without_client_id=True, *args, **kwargs)
+
+
+class Deposit(BaseModel):
+    author_id = CharField(api_name='AuthorId')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    status = CharField(api_name='Status', choices=constants.DEPOSIT_STATUS_CHOICES, default=None)
+    payment_status = CharField(api_name='PaymentStatus', choices=constants.PAYMENT_STATUS_CHOICES, default=None)
+    payins_linked = PayinsLinkedField(api_name="PayinsLinked")
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    card_id = CharField(api_name='CardId')
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL')
+    secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
+    secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
+    expiration_date = DateField(api_name='ExpirationDate')
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    culture = CharField(api_name='Culture')
+    ip_address = CharField(api_name='IpAddress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
+    billing = BillingField(api_name='Billing')
+    shipping = ShippingField(api_name='Shipping')
+    requested_3ds_version = CharField(api_name='Requested3DSVersion')
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
+
+    class Meta:
+        verbose_name = 'deposit'
+        verbose_name_plural = 'deposits'
+        url = {
+            InsertQuery.identifier: '/deposit-preauthorizations/card/direct',
+            SelectQuery.identifier: '/deposit-preauthorizations/',
+            UpdateQuery.identifier: '/deposit-preauthorizations/'
+        }

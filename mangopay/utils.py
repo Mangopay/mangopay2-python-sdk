@@ -907,3 +907,19 @@ class CountryAuthorizationData(object):
             "BlockBankAccountCreation": self.block_bank_account_creation,
             "BlockPayout": self.block_payout
         }
+
+
+class PayinsLinked(object):
+    def __init__(self, payin_capture_id=None, payin_complement_id=None):
+        self.payin_capture_id = payin_capture_id
+        self.payin_complement_id = payin_complement_id
+
+    def __str__(self):
+        return 'PayinsLinked: %s, %s' % \
+               (self.payin_capture_id, self.payin_complement_id)
+
+    def to_api_json(self):
+        return {
+            "PayinCaptureId": self.payin_capture_id,
+            "PayinComplementId": self.payin_complement_id
+        }
