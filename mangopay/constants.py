@@ -8,7 +8,8 @@ USER_TYPE_CHOICES = Choices(
 LEGAL_USER_TYPE_CHOICES = Choices(
     ('BUSINESS', 'business', 'Business'),
     ('ORGANIZATION', 'organization', 'Organization'),
-    ('SOLETRADER', 'soletrader', 'Soletrader')
+    ('SOLETRADER', 'soletrader', 'Soletrader'),
+    ('PARTNERSHIP', 'partnership', 'Partnership')
 )
 
 STATUS_CHOICES = Choices(
