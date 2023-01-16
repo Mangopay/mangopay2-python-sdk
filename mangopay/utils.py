@@ -907,3 +907,8 @@ class CountryAuthorizationData(object):
             "BlockBankAccountCreation": self.block_bank_account_creation,
             "BlockPayout": self.block_payout
         }
+
+def is_env_var_truthy(value):
+  if type(value) == str:
+    return value.lower() in ["yes", "true", "enabled", "1"]
+  return False

@@ -5,7 +5,7 @@ import pytz
 
 from tests.test_base import BaseTest
 
-from mangopay.utils import Address, Money, timestamp_from_datetime
+from mangopay.utils import Address, is_env_var_truthy, Money, timestamp_from_datetime
 
 
 class UtilsTest(BaseTest):
@@ -47,3 +47,21 @@ class UtilsTest(BaseTest):
         self.assertIs(addr.address_line_2, None)
         addr.region = None
         self.assertIs(addr.Region, None)
+
+    def test_is_env_var_truthy(self):
+        self.assertIs(is_env_var_truthy("yes"), True)
+        self.assertIs(is_env_var_truthy("YES"), True)
+        self.assertIs(is_env_var_truthy("true"), True)
+        self.assertIs(is_env_var_truthy("True"), True)
+        self.assertIs(is_env_var_truthy("enabled"), True)
+        self.assertIs(is_env_var_truthy("Enabled"), True)
+        self.assertIs(is_env_var_truthy("1"), True)
+        self.assertIs(is_env_var_truthy("0"), False)
+        self.assertIs(is_env_var_truthy("false"), False)
+        self.assertIs(is_env_var_truthy("False"), False)
+        self.assertIs(is_env_var_truthy(1), False)
+        self.assertIs(is_env_var_truthy(0), False)
+        self.assertIs(is_env_var_truthy(True), False)
+        self.assertIs(is_env_var_truthy(False), False)
+        self.assertIs(is_env_var_truthy("no"), False)
+        self.assertIs(is_env_var_truthy(None), False)
