@@ -65,3 +65,6 @@ tests/credentials.py
 .vscode
 
 local_test_example_*.py
+
+# virtualenv
+venv
