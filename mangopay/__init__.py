@@ -1,23 +1,36 @@
 import os
 
 from .api import APIRequest  # noqa
-from .utils import is_env_var_truthy, memoize
+from .utils import env_to_bool, memoize
 
 client_id = None
 apikey = None
 
-MANGOPAY_IS_MOCK_SERVER_ENABLED = os.getenv("MANGOPAY_IS_MOCK_SERVER_ENABLED", "")
-MANGOPAY_MOCK_SERVER_URL = os.getenv("MANGOPAY_MOCK_SERVER_URL", "")
+PLENTIFIC_NAMESPACE = os.getenv("PLENTIFIC_NAMESPACE", "uk")
+PLENTIFIC_IS_E2E = env_to_bool("PLENTIFIC_IS_E2E", False)
+
 MANGOPAY_URL = os.getenv("MANGOPAY_URL", "https://api.mangopay.com")
 MANGOPAY_SANDBOX_URL = os.getenv("MANGOPAY_URL", "https://api.sandbox.mangopay.com")
 
+MANGOPAY_IS_MOCK_SERVER_ENABLED = os.getenv("MANGOPAY_IS_MOCK_SERVER_ENABLED", "")
+
+MANGOPAY_DEFAULT_E2E_MOCK_SERVER_URL = f"https://localhost.plentific.com/mock-server/{PLENTIFIC_NAMESPACE}/mangopay"
+MANGOPAY_DEFAULT_LOCAL_MOCK_SERVER_URL = f"http://mock-server:5000/mock-server/{PLENTIFIC_NAMESPACE}/mangopay"
+
+MANGOPAY_MOCK_SERVER_URL = os.environ.get(
+    "MANGOPAY_MOCK_SERVER_URL",
+    MANGOPAY_DEFAULT_E2E_MOCK_SERVER_URL
+    if PLENTIFIC_IS_E2E
+    else MANGOPAY_DEFAULT_LOCAL_MOCK_SERVER_URL,
+)
+
 def _get_api_url():
-    if is_env_var_truthy(MANGOPAY_IS_MOCK_SERVER_ENABLED):
+    if env_to_bool("MANGOPAY_IS_MOCK_SERVER_ENABLED", ""):
         return MANGOPAY_MOCK_SERVER_URL
     return MANGOPAY_URL
 
 def _get_sandbox_url():
-    if is_env_var_truthy(MANGOPAY_IS_MOCK_SERVER_ENABLED):
+    if env_to_bool("MANGOPAY_IS_MOCK_SERVER_ENABLED", ""):
         return MANGOPAY_MOCK_SERVER_URL
     return MANGOPAY_SANDBOX_URL
 
