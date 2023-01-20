@@ -5,6 +5,7 @@ import copy
 import datetime
 import decimal
 import inspect
+import os
 import sys
 from calendar import timegm
 from functools import wraps
@@ -907,3 +908,17 @@ class CountryAuthorizationData(object):
             "BlockBankAccountCreation": self.block_bank_account_creation,
             "BlockPayout": self.block_payout
         }
+
+
+def string_to_bool(str_val):
+    str_val = str_val.lower()
+    if str_val in ("y", "yes", "t", "true", "1"):
+        return True
+    if str_val in ("n", "no", "f", "false", "0", ""):
+        return False
+
+    raise Exception("Unknown boolean value {text}").format(text=str_val)
+
+
+def env_to_bool(env_name, default):
+    return string_to_bool(os.environ.get(env_name, str(default)))
