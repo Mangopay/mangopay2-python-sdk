@@ -1,13 +1,9 @@
-
-import unittest
-
 from mangopay.resources import Document
 from tests.test_base import BaseTestLive
 
 
 class KYCDocumentTestLive(BaseTestLive):
 
-    @unittest.skip('see https://plentific.atlassian.net/browse/PAY-1839')
     def test_GetKycDocuments(self):
         documents = Document.all()
 
