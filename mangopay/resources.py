@@ -1276,6 +1276,7 @@ class Dispute(BaseModel):
     contest_deadline_date = DateTimeField(api_name='ContestDeadlineDate')
 
     creation_date = DateTimeField(api_name='CreationDate')
+    closed_date = DateTimeField(api_name='ClosedDate', required=False)
 
     class Meta:
         verbose_name = 'dispute'
