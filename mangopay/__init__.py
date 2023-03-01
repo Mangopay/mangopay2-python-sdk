@@ -6,16 +6,17 @@ from .utils import env_to_bool, memoize
 client_id = None
 apikey = None
 
-PLENTIFIC_NAMESPACE = os.getenv("PLENTIFIC_NAMESPACE", "uk")
-PLENTIFIC_IS_E2E = env_to_bool("PLENTIFIC_IS_E2E", False)
-
 MANGOPAY_URL = os.getenv("MANGOPAY_URL", "https://api.mangopay.com")
 MANGOPAY_SANDBOX_URL = os.getenv("MANGOPAY_URL", "https://api.sandbox.mangopay.com")
 
+# This logic will affect the URL used by this SDK only!
+# On payments service we have similar settings (settings/mangopay.py) that applies
+# to the MangopayAPIClient instead
+PLENTIFIC_NAMESPACE = os.getenv("PLENTIFIC_NAMESPACE", "uk")
+PLENTIFIC_IS_E2E = env_to_bool("PLENTIFIC_IS_E2E", False)
 MANGOPAY_DEFAULT_LOCAL_MOCK_SERVER_URL = f"http://localhost:1081/mock-server/{PLENTIFIC_NAMESPACE}/mangopay"
 MANGOPAY_DEFAULT_E2E_MOCK_SERVER_URL = "http://mock-server:1081/mangopay"
 MANGOPAY_IS_MOCK_SERVER_ENABLED = env_to_bool("MANGOPAY_IS_MOCK_SERVER_ENABLED", False)
-
 MANGOPAY_MOCK_SERVER_URL = os.environ.get(
     "MANGOPAY_MOCK_SERVER_URL",
     MANGOPAY_DEFAULT_E2E_MOCK_SERVER_URL
