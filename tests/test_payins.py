@@ -9,7 +9,7 @@ import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
-    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn
+    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
 
@@ -695,6 +695,69 @@ class PayInsTest(BaseTest):
         self.assertEqual(card_payin.status, 'CREATED')
         self.assertEqual(card_payin.payment_type, 'DIRECT_DEBIT')
 
+    @responses.activate
+    def test_create_mbway_direct_payins(self):
+        self.mock_natural_user()
+        self.mock_user_wallet()
+
+        self.register_mock({
+            'method': responses.POST,
+            'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/payment-methods/mbway',
+            'body': {
+                "Id": "wt_fb9bba33-8978-4e14-86cd-455a2383fe92",
+                "Tag": "MB WAY Tag",
+                "CreationDate": None,
+                "AuthorId": "102110525",
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 500
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 500
+                },
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 0
+                },
+                "Status": "CREATED",
+                "ResultCode": None,
+                "ResultMessage": None,
+                "ExecutionDate": None,
+                "Type": "PAYIN",
+                "Nature": "REGULAR",
+                "CreditedWalletId": "102150481",
+                "PaymentType": "MBWAY",
+                "ExecutionType": "DIRECT",
+                "StatementDescriptor": "My descriptor",
+                "PhoneNumber": "351#269458236"
+            },
+            'status': 200
+        })
+
+        mbway_direct_params = {
+            "author": self.natural_user,
+            "debited_funds": Money(amount=500, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "credited_wallet": self.natural_user_wallet,
+            "statement_descriptor": "My descriptor",
+            "phone_number": "351#269458236",
+            "tag": "MB WAY Tag"
+        }
+        mbway_payin = MbwayPayIn(**mbway_direct_params)
+
+        self.assertIsNone(mbway_payin.get_pk())
+        mbway_payin.save()
+        self.assertIsInstance(mbway_payin, MbwayPayIn)
+        self.assertEqual(mbway_payin.status, 'CREATED')
+        self.assertEqual(mbway_payin.payment_type, 'MBWAY')
+        self.assertEqual(mbway_payin.execution_type, 'DIRECT')
+
+        for key, value in mbway_direct_params.items():
+            self.assertEqual(getattr(mbway_payin, key), value)
+
+        self.assertIsNotNone(mbway_payin.get_pk())
+
     def test_using_api_names_as_payin_attributes(self):
         payin = BankWirePayIn(
             AuthorId=1,
@@ -1059,3 +1122,34 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("DIRECT", pay_in.execution_type)
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
+
+    def test_PayIns_MbwayDirect_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = MbwayPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = "EUR"
+        pay_in.statement_descriptor = "test"
+        pay_in.phone_number = "351#269458236"
+
+        result = MbwayPayIn(**pay_in.save())
+
+        self.assertIsNotNone(result)
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("DIRECT", result.execution_type)
+        self.assertEqual("MBWAY", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
