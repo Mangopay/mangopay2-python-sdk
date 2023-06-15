@@ -1146,8 +1146,12 @@ class PayInsTestLive(BaseTestLive):
         pay_in.phone_number = "351#269458236"
 
         result = MbwayPayIn(**pay_in.save())
+        fetched = MbwayPayIn().get(result.id)
 
         self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
         self.assertEqual("CREATED", result.status)
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("DIRECT", result.execution_type)
