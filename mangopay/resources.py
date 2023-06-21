@@ -476,7 +476,8 @@ class PayIn(BaseModel):
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
             ("APPLEPAY", "DIRECT"): ApplepayPayIn,
-            ("GOOGLEPAY", "DIRECT"): GooglepayPayIn
+            ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
+            ("MBWAY", "DIRECT"): MbwayPayIn
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -714,7 +715,7 @@ class PayconiqPayIn(PayIn):
 
 
 class ApplepayPayIn(PayIn):
-    tag = CharField(api_name='Applepay PayIn')
+    tag = CharField(api_name='Tag')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     payment_data = ApplepayPaymentDataField(api_name='PaymentData', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
@@ -730,7 +731,7 @@ class ApplepayPayIn(PayIn):
 
 
 class GooglepayPayIn(PayIn):
-    tag = CharField(api_name='Googlepay PayIn')
+    tag = CharField(api_name='Tag')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     payment_type = GooglepayPaymentDataField(api_name='PaymentData', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
@@ -744,6 +745,21 @@ class GooglepayPayIn(PayIn):
             InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
+class MbwayPayIn(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    phone_number = CharField(api_name='PhoneNumber', required=True)
+
+    class Meta:
+        verbose_name = 'mbway_payin'
+        verbose_name_plural = 'mbway_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/mbway',
+            SelectQuery.identifier: '/payins'
+        }
 
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
