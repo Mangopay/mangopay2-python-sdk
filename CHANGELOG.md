@@ -1,3 +1,8 @@
+## [3.27.1] - 2023-06-21
+### Fixed
+
+- `Phone` parameter instead of `PhoneNumber` for MBWay
+
 ## [3.27.0] - 2023-06-21
 ### Added
 
