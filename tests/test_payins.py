@@ -741,7 +741,7 @@ class PayInsTest(BaseTest):
             "fees": Money(amount=0, currency='EUR'),
             "credited_wallet": self.natural_user_wallet,
             "statement_descriptor": "My descriptor",
-            "phone_number": "351#269458236",
+            "phone": "351#269458236",
             "tag": "MB WAY Tag"
         }
         mbway_payin = MbwayPayIn(**mbway_direct_params)
@@ -1143,7 +1143,7 @@ class PayInsTestLive(BaseTestLive):
         pay_in.debited_funds.amount = 1000
         pay_in.debited_funds.currency = "EUR"
         pay_in.statement_descriptor = "test"
-        pay_in.phone_number = "351#269458236"
+        pay_in.phone = "351#269458236"
 
         result = MbwayPayIn(**pay_in.save())
         fetched = MbwayPayIn().get(result.id)
