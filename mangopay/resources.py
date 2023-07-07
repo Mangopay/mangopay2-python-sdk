@@ -751,7 +751,7 @@ class MbwayPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     statement_descriptor = CharField(api_name='StatementDescriptor')
-    phone_number = CharField(api_name='PhoneNumber', required=True)
+    phone = CharField(api_name='Phone', required=True)
 
     class Meta:
         verbose_name = 'mbway_payin'
