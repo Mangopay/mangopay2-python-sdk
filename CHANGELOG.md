@@ -1,3 +1,8 @@
+## [3.27.2] - 2023-07-28
+### Fixed
+
+CIT/MIT should not set secure_mode #332 
+
 ## [3.27.1] - 2023-06-21
 ### Fixed
 
