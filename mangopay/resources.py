@@ -538,8 +538,7 @@ class RecurringPayInCIT(PayIn):
     culture = CharField(api_name='Culture')
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
     secure_mode = CharField(api_name='SecureMode',
-                            choices=constants.SECURE_MODE_CHOICES,
-                            default=constants.SECURE_MODE_CHOICES.default)
+                            choices=constants.SECURE_MODE_CHOICES)
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     shipping = ShippingField(api_name='Shipping')
@@ -575,8 +574,7 @@ class RecurringPayInMIT(PayIn):
     culture = CharField(api_name='Culture')
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
     secure_mode = CharField(api_name='SecureMode',
-                            choices=constants.SECURE_MODE_CHOICES,
-                            default=constants.SECURE_MODE_CHOICES.default)
+                            choices=constants.SECURE_MODE_CHOICES)
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     shipping = ShippingField(api_name='Shipping')
