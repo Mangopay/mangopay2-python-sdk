@@ -287,7 +287,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("BANK_WIRE", "bank_wire", "Bank Wire"),
     ("APPLEPAY", "applepay", "Applepay"),
     ("GOOGLEPAY", "googlepay", "Googlepay"),
-    ("MBWAY", "mbway", "Mbway")
+    ("MBWAY", "mbway", "Mbway"),
+    ("MULTIBANCO", "multibanco", "Multibanco")
 )
 
 CARD_STATUS_CHOICES = Choices(

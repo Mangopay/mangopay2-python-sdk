@@ -477,7 +477,8 @@ class PayIn(BaseModel):
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
             ("APPLEPAY", "DIRECT"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
-            ("MBWAY", "DIRECT"): MbwayPayIn
+            ("MBWAY", "DIRECT"): MbwayPayIn,
+            ("MULTIBANCO", "DIRECT"): MultibancoPayIn,
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -756,6 +757,23 @@ class MbwayPayIn(PayIn):
         verbose_name_plural = 'mbway_payins'
         url = {
             InsertQuery.identifier: '/payins/payment-methods/mbway',
+            SelectQuery.identifier: '/payins'
+        }
+
+class MultibancoPayIn(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    redirect_url = CharField(api_name='RedirectURL')
+    return_url = CharField(api_name='ReturnURL', required=True)
+
+    class Meta:
+        verbose_name = 'multibanco_payin'
+        verbose_name_plural = 'multibanco_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/multibanco',
             SelectQuery.identifier: '/payins'
         }
 

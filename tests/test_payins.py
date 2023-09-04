@@ -9,7 +9,7 @@ import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
-    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn
+    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, MultibancoPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
 
@@ -1156,4 +1156,41 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("DIRECT", result.execution_type)
         self.assertEqual("MBWAY", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_MultibancoDirect_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = MultibancoPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = 'EUR'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = 'EUR'
+        pay_in.statement_descriptor = 'test'
+        pay_in.redirect_url = 'https://r3.girogate.de/ti/multibanco?tx=140066339483&rs=XOj6bbIqBxdIHjdDmb1o90RoCiKp8iwj&cs=162f500c5754acdebc8379df496cc6c5ababe4dbe15e3ccda1d691de5e87af26'
+        pay_in.return_url = 'http://www.my-site.com/returnURL?transactionId=wt_8362acb9-6dbc-4660-b826-b9acb9b850b1'
+        pay_in.tag = 'Multibanco tag'
+
+        result = MultibancoPayIn(**pay_in.save())
+        fetched = MultibancoPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("MULTIBANCO", result.payment_type)
         self.assertEqual("PAYIN", result.type)
