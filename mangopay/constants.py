@@ -289,7 +289,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("GOOGLEPAY", "googlepay", "Googlepay"),
     ("MBWAY", "mbway", "Mbway"),
     ("MULTIBANCO", "multibanco", "Multibanco"),
-    ("SATISPAY", "satispay","Satispay"),
+    ("SATISPAY", "satispay", "Satispay"),
+    ("BLIK", "blik", "Blik")
 )
 
 CARD_STATUS_CHOICES = Choices(

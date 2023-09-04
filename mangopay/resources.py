@@ -480,6 +480,7 @@ class PayIn(BaseModel):
             ("MBWAY", "DIRECT"): MbwayPayIn,
             ("MULTIBANCO", "DIRECT"): MultibancoPayIn,
             ("SATISPAY", "DIRECT"): SatispayPayIn,
+            ("BLIK", "DIRECT"): BlikPayIn,
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -795,6 +796,24 @@ class SatispayPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/satispay',
             SelectQuery.identifier: '/payins'
         }
+
+class BlikPayIn(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+
+    class Meta:
+        verbose_name = 'blik_payin'
+        verbose_name_plural = 'blik_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/blik',
+            SelectQuery.identifier: '/payins'
+        }
+
 
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
