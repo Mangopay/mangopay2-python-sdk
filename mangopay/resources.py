@@ -336,12 +336,6 @@ class Card(BaseModel):
         select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
-    def validate(self, *args, **kwargs):
-        kwargs['id'] = self.id
-        insert = InsertQuery(self, **kwargs)
-        insert.identifier = 'CARD_VALIDATE'
-        return insert.execute()
-
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
