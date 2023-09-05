@@ -696,7 +696,7 @@ class PayInsTest(BaseTest):
         self.assertEqual(card_payin.payment_type, 'DIRECT_DEBIT')
 
     @responses.activate
-    def test_create_mbway_direct_payins(self):
+    def test_create_mbway_web_payins(self):
         self.mock_natural_user()
         self.mock_user_wallet()
 
@@ -728,14 +728,14 @@ class PayInsTest(BaseTest):
                 "Nature": "REGULAR",
                 "CreditedWalletId": "102150481",
                 "PaymentType": "MBWAY",
-                "ExecutionType": "DIRECT",
+                "ExecutionType": "WEB",
                 "StatementDescriptor": "My descriptor",
                 "PhoneNumber": "351#269458236"
             },
             'status': 200
         })
 
-        mbway_direct_params = {
+        mbway_web_params = {
             "author": self.natural_user,
             "debited_funds": Money(amount=500, currency='EUR'),
             "fees": Money(amount=0, currency='EUR'),
@@ -744,16 +744,16 @@ class PayInsTest(BaseTest):
             "phone": "351#269458236",
             "tag": "MB WAY Tag"
         }
-        mbway_payin = MbwayPayIn(**mbway_direct_params)
+        mbway_payin = MbwayPayIn(**mbway_web_params)
 
         self.assertIsNone(mbway_payin.get_pk())
         mbway_payin.save()
         self.assertIsInstance(mbway_payin, MbwayPayIn)
         self.assertEqual(mbway_payin.status, 'CREATED')
         self.assertEqual(mbway_payin.payment_type, 'MBWAY')
-        self.assertEqual(mbway_payin.execution_type, 'DIRECT')
+        self.assertEqual(mbway_payin.execution_type, 'WEB')
 
-        for key, value in mbway_direct_params.items():
+        for key, value in mbway_web_params.items():
             self.assertEqual(getattr(mbway_payin, key), value)
 
         self.assertIsNotNone(mbway_payin.get_pk())
@@ -1123,7 +1123,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
 
-    def test_PayIns_MbwayDirect_Create(self):
+    def test_PayIns_MbwayWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
         # create wallet
@@ -1154,7 +1154,7 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertEqual("CREATED", result.status)
         self.assertEqual("REGULAR", result.nature)
-        self.assertEqual("DIRECT", result.execution_type)
+        self.assertEqual("WEB", result.execution_type)
         self.assertEqual("MBWAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
