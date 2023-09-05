@@ -693,6 +693,29 @@ class PayPalPayIn(PayIn):
 
 
 @python_2_unicode_compatible
+class PayPalWebPayIn(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    shipping = ShippingField(api_name='Shipping')
+    line_items = ListField(api_name='LineItems', required=True)
+    culture = CharField(api_name='Culture')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/paypal',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+@python_2_unicode_compatible
 class PayconiqPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
@@ -743,6 +766,7 @@ class GooglepayPayIn(PayIn):
             InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
+
 class MbwayPayIn(PayIn):
     creation_date = DateTimeField(api_name='CreationDate')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -758,6 +782,7 @@ class MbwayPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/mbway',
             SelectQuery.identifier: '/payins'
         }
+
 
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)

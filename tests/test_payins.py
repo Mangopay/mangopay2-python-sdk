@@ -9,9 +9,9 @@ import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
-    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn
+    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
-                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
+                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo, LineItem)
 
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
@@ -1156,4 +1156,49 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("DIRECT", result.execution_type)
         self.assertEqual("MBWAY", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_PayPalWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = PayPalWebPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = "EUR"
+        pay_in.return_url = "http://mangopay.com"
+
+        line_item = LineItem()
+        line_item.name = "test"
+        line_item.quantity = 1
+        line_item.unit_amount = 1000
+        line_item.tax_amount = 0
+        line_item.description = "test"
+        pay_in.line_items = [line_item]
+
+        pay_in.statement_descriptor = "test"
+        pay_in.tag = "test tag"
+
+        result = PayPalWebPayIn(**pay_in.save())
+        fetched = PayPalWebPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("PAYPAL", result.payment_type)
         self.assertEqual("PAYIN", result.type)
