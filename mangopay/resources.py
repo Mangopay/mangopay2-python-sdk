@@ -348,6 +348,7 @@ class Card(BaseModel):
     def __str__(self):
         return '%s of user %s' % (self.card_type, self.user_id)
 
+
 class CardValidation(Card):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     ip_address = CharField(api_name='IpAddress', required=True)
