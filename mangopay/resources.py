@@ -349,7 +349,7 @@ class Card(BaseModel):
         return '%s of user %s' % (self.card_type, self.user_id)
 
 
-class CardValidation(Card):
+class CardValidation(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     ip_address = CharField(api_name='IpAddress', required=True)
     browser_info = BrowserInfoField(api_name='BrowserInfo', required=True)
@@ -368,6 +368,7 @@ class CardValidation(Card):
         url = {
             'CARD_VALIDATE': '/cards/%(id)s/validation'
         }
+
 
 class CardRegistration(BaseModel):
     user = ForeignKeyField(User, api_name='UserId', required=True, related_name='card_registrations')
