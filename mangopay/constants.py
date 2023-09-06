@@ -47,7 +47,8 @@ VALIDITY_CHOICES = Choices(
 TRANSACTION_TYPE_CHOICES = Choices(
     ('PAYIN', 'payin', 'Pay In'),
     ('PAYOUT', 'payout', 'Pay out'),
-    ('TRANSFER', 'transfer', 'Transfer')
+    ('TRANSFER', 'transfer', 'Transfer'),
+    ('CARD_VALIDATION', 'card_validation', 'Card validation')
 )
 
 NATURE_CHOICES = Choices(

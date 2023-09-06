@@ -350,10 +350,24 @@ class Card(BaseModel):
 
 
 class CardValidation(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     ip_address = CharField(api_name='IpAddress', required=True)
     browser_info = BrowserInfoField(api_name='BrowserInfo', required=True)
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
+    secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
+    secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
+    validity = CharField(api_name='Validity',
+                         choices=constants.VALIDITY_CHOICES,
+                         default=constants.VALIDITY_CHOICES.unknown)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
+    status = CharField(api_name='Status',
+                       choices=constants.STATUS_CHOICES,
+                       default=None)
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+
 
     def validate(self, *args, **kwargs):
         kwargs['id'] = self.id
