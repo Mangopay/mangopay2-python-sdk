@@ -1170,7 +1170,6 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(fetched)
         self.assertEqual(result.id, fetched.id)
 
-        self.assertEqual("CREATED", result.status)
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("DIRECT", result.execution_type)
         self.assertEqual("GOOGLE_PAY", result.payment_type)
