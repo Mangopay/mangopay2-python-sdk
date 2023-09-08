@@ -1124,7 +1124,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
 
-    def test_PayIns_MbwayDirect_Create(self):
+    def test_PayIns_MbwayWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
         # create wallet
@@ -1155,11 +1155,11 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertEqual("CREATED", result.status)
         self.assertEqual("REGULAR", result.nature)
-        self.assertEqual("DIRECT", result.execution_type)
+        self.assertEqual("WEB", result.execution_type)
         self.assertEqual("MBWAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
-    def test_PayIns_MultibancoDirect_Create(self):
+    def test_PayIns_MultibancoWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
         # create wallet
@@ -1196,7 +1196,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("MULTIBANCO", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
-    def test_PayIns_SatispayDirect_Create(self):
+    def test_PayIns_SatispayWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
         # create wallet
@@ -1233,7 +1233,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("SATISPAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
-    def test_PayIns_BlikDirect_Create(self):
+    def test_PayIns_BlikWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
         # create wallet
