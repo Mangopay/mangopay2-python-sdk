@@ -477,6 +477,7 @@ class PayIn(BaseModel):
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
             ("APPLEPAY", "DIRECT"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
+            ("GOOGLE_PAY", "DIRECT"): GooglePayDirectPayIn,
             ("MBWAY", "DIRECT"): MbwayPayIn
         }
 
@@ -742,6 +743,33 @@ class GooglepayPayIn(PayIn):
         url = {
             InsertQuery.identifier: '/payins/googlepay/direct'
         }
+
+
+class GooglePayDirectPayIn(PayIn):
+    tag = CharField(api_name='Tag')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
+    secure_mode = CharField(api_name='SecureMode',
+                            choices=constants.SECURE_MODE_CHOICES,
+                            default=constants.SECURE_MODE_CHOICES.default)
+    ip_address = CharField(api_name='IpAddress', required=True)
+    browser_info = BrowserInfoField(api_name='BrowserInfo', required=True)
+    payment_data = CharField(api_name='PaymentData', required=True)
+    shipping = ShippingField(api_name='Shipping')
+    billing = BillingField(api_name='Billing')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'googlepay_direct_payin'
+        verbose_name_plural = 'googlepay_direct_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/googlepay',
+            SelectQuery.identifier: '/payins'
+        }
+
 
 class MbwayPayIn(PayIn):
     creation_date = DateTimeField(api_name='CreationDate')

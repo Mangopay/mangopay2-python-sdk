@@ -287,6 +287,7 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("BANK_WIRE", "bank_wire", "Bank Wire"),
     ("APPLEPAY", "applepay", "Applepay"),
     ("GOOGLEPAY", "googlepay", "Googlepay"),
+    ("GOOGLE_PAY", "google_pay", "Google Pay"),
     ("MBWAY", "mbway", "Mbway")
 )
 
