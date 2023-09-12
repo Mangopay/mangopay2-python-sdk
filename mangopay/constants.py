@@ -290,7 +290,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("MBWAY", "mbway", "Mbway"),
     ("MULTIBANCO", "multibanco", "Multibanco"),
     ("SATISPAY", "satispay", "Satispay"),
-    ("BLIK", "blik", "Blik")
+    ("BLIK", "blik", "Blik"),
+    ("KLARNA","klarna","Klarna")
 )
 
 CARD_STATUS_CHOICES = Choices(

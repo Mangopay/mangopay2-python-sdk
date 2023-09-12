@@ -477,10 +477,11 @@ class PayIn(BaseModel):
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
             ("APPLEPAY", "DIRECT"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
-            ("MBWAY", "DIRECT"): MbwayPayIn,
-            ("MULTIBANCO", "DIRECT"): MultibancoPayIn,
-            ("SATISPAY", "DIRECT"): SatispayPayIn,
-            ("BLIK", "DIRECT"): BlikPayIn,
+            ("MBWAY", "WEB"): MbwayPayIn,
+            ("MULTIBANCO", "WEB"): MultibancoPayIn,
+            ("SATISPAY", "WEB"): SatispayPayIn,
+            ("BLIK", "WEB"): BlikPayIn,
+            ("KLARNA", "WEB"): KlarnaPayIn
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -813,6 +814,36 @@ class BlikPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/blik',
             SelectQuery.identifier: '/payins'
         }
+
+
+class KlarnaPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    line_items = ListField(api_name='LineItems', required=True)
+    country = CharField(api_name='Country', required=True)
+    phone = CharField(api_name='Phone', required=True)
+    email = EmailField(api_name='Email', required=True)
+    additional_data = CharField(api_name='AdditionalData', required=True)
+    billing = BillingField(api_name='Billing', required=True)
+    merchant_order_id = CharField(api_name='MerchantOrderId', required=True)
+    culture = CharField(api_name='Culture', required=True)
+    shipping = ShippingField(api_name='Shipping')
+    creation_date = DateTimeField(api_name='CreationDate')
+    credited_funds = MoneyField(api_name='CreditedFunds')
+    redirect_url = CharField(api_name='RedirectURL')
+    payment_method = CharField(api_name='PaymentMethod')
+
+
+    class Meta:
+        verbose_name = 'klarna_payin'
+        verbose_name_plural = 'klarna_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/klarna',
+            SelectQuery.identifier: '/payins'
+        }
+
 
 
 class CardWebPayIn(PayIn):

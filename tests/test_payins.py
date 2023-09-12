@@ -10,9 +10,9 @@ import responses
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, MultibancoPayIn, SatispayPayIn, \
-    BlikPayIn
+    BlikPayIn, KlarnaPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
-                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo)
+                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo, LineItem)
 
 from tests import settings
 from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
@@ -1268,4 +1268,69 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("BLIK", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+
+    def test_PayIns_KlarnaWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = KlarnaPayIn()
+        pay_in.author = user
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = "EUR"
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = "EUR"
+
+        pay_in.return_url = "http://www.my-site.com/returnURL"
+
+        line_item = LineItem()
+        line_item.name = "test"
+        line_item.quantity = 1
+        line_item.unit_amount = 1000
+        line_item.tax_amount = 0
+        pay_in.line_items = [line_item]
+
+        pay_in.country = 'FR'
+        pay_in.culture = 'FR'
+        pay_in.phone = "33#607080900"
+        pay_in.email= "mango@mangopay.com"
+        pay_in.additional_data = "{}"
+
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        address.region = "Ile de France"
+        pay_in.billing = Billing(first_name="John", last_name="Doe", address=address)
+        pay_in.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+
+        pay_in.merchant_order_id = "afd48-879d-48fg"
+
+        pay_in.statement_descriptor = "test"
+        pay_in.tag = "test tag"
+
+        pay_in.credited_wallet = credited_wallet
+
+        result = KlarnaPayIn(**pay_in.save())
+        fetched = KlarnaPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("KLARNA", result.payment_type)
         self.assertEqual("PAYIN", result.type)
