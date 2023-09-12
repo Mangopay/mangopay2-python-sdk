@@ -340,3 +340,9 @@ DEPOSIT_STATUS_CHOICES = Choices(
     ('SUCCEEDED', 'succeeded', 'Succeeded'),
     ('FAILED', 'failed', 'Failed')
 )
+
+SHIPPING_PREFERENCE_CHOICES = Choices(
+    ('SET_PROVIDED_ADDRESS', 'set_provided_address', 'Set Provided Address'),
+    ('GET_FROM_FILE', 'get_from_file', 'Get From File'),
+    ('NO_SHIPPING', 'no_shipping', 'No Shipping')
+)

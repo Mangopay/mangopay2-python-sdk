@@ -705,6 +705,8 @@ class PayPalWebPayIn(PayIn):
     shipping = ShippingField(api_name='Shipping')
     line_items = ListField(api_name='LineItems', required=True)
     culture = CharField(api_name='Culture')
+    shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
+                                    default=None)
 
     class Meta:
         verbose_name = 'payin'

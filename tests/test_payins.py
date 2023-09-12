@@ -1178,6 +1178,7 @@ class PayInsTestLive(BaseTestLive):
         pay_in.debited_funds.amount = 1000
         pay_in.debited_funds.currency = "EUR"
         pay_in.return_url = "http://mangopay.com"
+        pay_in.shipping_preference = "NO_SHIPPING"
 
         line_item = LineItem()
         line_item.name = "test"
