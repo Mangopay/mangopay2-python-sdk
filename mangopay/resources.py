@@ -336,23 +336,51 @@ class Card(BaseModel):
         select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
-    def validate(self, *args, **kwargs):
-        kwargs['id'] = self.id
-        insert = InsertQuery(self, **kwargs)
-        insert.identifier = 'CARD_VALIDATE'
-        return insert.execute()
-
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
         url = {
             SelectQuery.identifier: '/cards',
             UpdateQuery.identifier: '/cards',
-            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s',
-            'CARD_VALIDATE': '/cards/%(id)s/validate'}
+            'CARDS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s'
+        }
 
     def __str__(self):
         return '%s of user %s' % (self.card_type, self.user_id)
+
+
+class CardValidation(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    ip_address = CharField(api_name='IpAddress', required=True)
+    browser_info = BrowserInfoField(api_name='BrowserInfo', required=True)
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
+    secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
+    secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
+    validity = CharField(api_name='Validity',
+                         choices=constants.VALIDITY_CHOICES,
+                         default=constants.VALIDITY_CHOICES.unknown)
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
+    applied_3ds_version = CharField(api_name='Applied3DSVersion')
+    status = CharField(api_name='Status',
+                       choices=constants.STATUS_CHOICES,
+                       default=None)
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+
+    def validate(self, card_id, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.insert_query['id'] = card_id
+        insert.identifier = 'CARD_VALIDATE'
+        return insert.execute()
+
+    class Meta:
+        verbose_name = 'card_validation'
+        verbose_name_plural = 'card_validations'
+        url = {
+            'CARD_VALIDATE': '/cards/%(id)s/validation'
+        }
 
 
 class CardRegistration(BaseModel):
@@ -771,6 +799,7 @@ class GooglepayPayIn(PayIn):
         }
 
 
+
 class GooglePayDirectPayIn(PayIn):
     tag = CharField(api_name='Tag')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -903,6 +932,7 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
             InsertQuery.identifier: '/payins/deposit-preauthorized/direct/full-capture',
             SelectQuery.identifier: '/payins'
         }
+
 
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)

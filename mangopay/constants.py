@@ -47,7 +47,8 @@ VALIDITY_CHOICES = Choices(
 TRANSACTION_TYPE_CHOICES = Choices(
     ('PAYIN', 'payin', 'Pay In'),
     ('PAYOUT', 'payout', 'Pay out'),
-    ('TRANSFER', 'transfer', 'Transfer')
+    ('TRANSFER', 'transfer', 'Transfer'),
+    ('CARD_VALIDATION', 'card_validation', 'Card validation')
 )
 
 NATURE_CHOICES = Choices(
@@ -176,7 +177,11 @@ EVENT_TYPE_CHOICES = Choices(
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_EXPIRED', 'deposit_preauthorization_payment_expired', 'Deposit Preauthorization Payment Expired'),
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCEL_REQUESTED', 'deposit_preauthorization_payment_cancel_requested', 'Deposit Preauthorization Payment Cancel Requested'),
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCELED', 'deposit_preauthorization_payment_canceled', 'Deposit Preauthorization Payment Canceled'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated', 'Deposit Preauthorization Payment Validated')
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated', 'Deposit Preauthorization Payment Validated'),
+
+    ('CARD_VALIDATION_CREATED', 'card_validation_created', 'Card Validation Created'),
+    ('CARD_VALIDATION_FAILED', 'card_validation_failed', 'Card Validation Failed'),
+    ('CARD_VALIDATION_SUCCEEDED', 'card_validation_succeeded', 'Card Validation Succeeded'),
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
