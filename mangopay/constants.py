@@ -47,7 +47,8 @@ VALIDITY_CHOICES = Choices(
 TRANSACTION_TYPE_CHOICES = Choices(
     ('PAYIN', 'payin', 'Pay In'),
     ('PAYOUT', 'payout', 'Pay out'),
-    ('TRANSFER', 'transfer', 'Transfer')
+    ('TRANSFER', 'transfer', 'Transfer'),
+    ('CARD_VALIDATION', 'card_validation', 'Card validation')
 )
 
 NATURE_CHOICES = Choices(
@@ -176,7 +177,11 @@ EVENT_TYPE_CHOICES = Choices(
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_EXPIRED', 'deposit_preauthorization_payment_expired', 'Deposit Preauthorization Payment Expired'),
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCEL_REQUESTED', 'deposit_preauthorization_payment_cancel_requested', 'Deposit Preauthorization Payment Cancel Requested'),
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCELED', 'deposit_preauthorization_payment_canceled', 'Deposit Preauthorization Payment Canceled'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated', 'Deposit Preauthorization Payment Validated')
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated', 'Deposit Preauthorization Payment Validated'),
+
+    ('CARD_VALIDATION_CREATED', 'card_validation_created', 'Card Validation Created'),
+    ('CARD_VALIDATION_FAILED', 'card_validation_failed', 'Card Validation Failed'),
+    ('CARD_VALIDATION_SUCCEEDED', 'card_validation_succeeded', 'Card Validation Succeeded'),
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
@@ -287,11 +292,13 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("BANK_WIRE", "bank_wire", "Bank Wire"),
     ("APPLEPAY", "applepay", "Applepay"),
     ("GOOGLEPAY", "googlepay", "Googlepay"),
+    ("GOOGLE_PAY", "google_pay", "Google Pay"),
     ("MBWAY", "mbway", "Mbway"),
+    ("PAYPAL", "paypal", "PayPal"),
     ("MULTIBANCO", "multibanco", "Multibanco"),
     ("SATISPAY", "satispay", "Satispay"),
     ("BLIK", "blik", "Blik"),
-    ("KLARNA","klarna","Klarna")
+    ("KLARNA", "klarna", "Klarna")
 )
 
 CARD_STATUS_CHOICES = Choices(
@@ -342,4 +349,10 @@ DEPOSIT_STATUS_CHOICES = Choices(
     ('CREATED', 'created', 'Created'),
     ('SUCCEEDED', 'succeeded', 'Succeeded'),
     ('FAILED', 'failed', 'Failed')
+)
+
+SHIPPING_PREFERENCE_CHOICES = Choices(
+    ('SET_PROVIDED_ADDRESS', 'set_provided_address', 'Set Provided Address'),
+    ('GET_FROM_FILE', 'get_from_file', 'Get From File'),
+    ('NO_SHIPPING', 'no_shipping', 'No Shipping')
 )
