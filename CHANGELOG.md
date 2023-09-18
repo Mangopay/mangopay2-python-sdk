@@ -1,3 +1,17 @@
+## [3.28.0] - 2023-09-18
+### Added
+
+- Multibanco, Satispay, Blik, Klarna are now available as a payment method with Mangopay. This payment method is in private beta. Please contact support if you have any questions.
+- Card validation endpoint is now available (Private beta)
+
+### Updated
+
+- Google Pay integration & Paypal with Mangopay have been improved. These payment methods are in private beta. Please contact support if you have any questions.
+
+### Fixed
+
+- MBWay & PayPal are now using Web Execution Type.
+
 ## [3.27.2] - 2023-07-28
 ### Fixed
 
