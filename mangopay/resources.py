@@ -505,7 +505,9 @@ class PayIn(BaseModel):
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
             ("APPLEPAY", "DIRECT"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
-            ("MBWAY", "DIRECT"): MbwayPayIn
+            ("GOOGLE_PAY", "DIRECT"): GooglePayDirectPayIn,
+            ("MBWAY", "WEB"): MbwayPayIn,
+            ("PAYPAL", "WEB"): PayPalWebPayIn
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -721,6 +723,31 @@ class PayPalPayIn(PayIn):
 
 
 @python_2_unicode_compatible
+class PayPalWebPayIn(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    shipping = ShippingField(api_name='Shipping')
+    line_items = ListField(api_name='LineItems', required=True)
+    culture = CharField(api_name='Culture')
+    shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
+                                    default=None)
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/paypal',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+@python_2_unicode_compatible
 class PayconiqPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
@@ -769,6 +796,33 @@ class GooglepayPayIn(PayIn):
         verbose_name_plural = 'googlepay_payins'
         url = {
             InsertQuery.identifier: '/payins/googlepay/direct'
+        }
+
+
+
+class GooglePayDirectPayIn(PayIn):
+    tag = CharField(api_name='Tag')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
+    secure_mode = CharField(api_name='SecureMode',
+                            choices=constants.SECURE_MODE_CHOICES,
+                            default=constants.SECURE_MODE_CHOICES.default)
+    ip_address = CharField(api_name='IpAddress', required=True)
+    browser_info = BrowserInfoField(api_name='BrowserInfo', required=True)
+    payment_data = CharField(api_name='PaymentData', required=True)
+    shipping = ShippingField(api_name='Shipping')
+    billing = BillingField(api_name='Billing')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+
+    class Meta:
+        verbose_name = 'googlepay_direct_payin'
+        verbose_name_plural = 'googlepay_direct_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/googlepay',
+            SelectQuery.identifier: '/payins'
         }
 
 

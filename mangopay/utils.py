@@ -923,3 +923,25 @@ class PayinsLinked(object):
             "PayinCaptureId": self.payin_capture_id,
             "PayinComplementId": self.payin_complement_id
         }
+
+
+class LineItem(object):
+    def __init__(self, name=None, quantity=None, unit_amount=None, tax_amount=None, description=None):
+        self.name = name
+        self.quantity = quantity
+        self.unit_amount = unit_amount
+        self.tax_amount = tax_amount
+        self.description = description
+
+    def __str__(self):
+        return 'LineItem: %s %s %s %s %s' % \
+               (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description)
+
+    def to_api_json(self):
+        return {
+            "Name": self.name,
+            "Quantity": self.quantity,
+            "UnitAmount": self.unit_amount,
+            "TaxAmount": self.tax_amount,
+            "Description": self.description
+        }
