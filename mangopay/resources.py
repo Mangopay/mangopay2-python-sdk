@@ -475,10 +475,10 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
-            ("APPLEPAY", "DIRECT"): ApplepayPayIn,
+            ("APPLEPAY", "WEB"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
             ("GOOGLE_PAY", "DIRECT"): GooglePayDirectPayIn,
-            ("MBWAY", "DIRECT"): MbwayPayIn
+            ("MBWAY", "WEB"): MbwayPayIn
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -694,6 +694,31 @@ class PayPalPayIn(PayIn):
 
 
 @python_2_unicode_compatible
+class PayPalWebPayIn(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    shipping = ShippingField(api_name='Shipping')
+    line_items = ListField(api_name='LineItems', required=True)
+    culture = CharField(api_name='Culture')
+    shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
+                                    default=None)
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/paypal',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+@python_2_unicode_compatible
 class PayconiqPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
@@ -786,6 +811,7 @@ class MbwayPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/mbway',
             SelectQuery.identifier: '/payins'
         }
+
 
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)

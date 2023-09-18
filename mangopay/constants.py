@@ -288,7 +288,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("APPLEPAY", "applepay", "Applepay"),
     ("GOOGLEPAY", "googlepay", "Googlepay"),
     ("GOOGLE_PAY", "google_pay", "Google Pay"),
-    ("MBWAY", "mbway", "Mbway")
+    ("MBWAY", "mbway", "Mbway"),
+    ("PAYPAL", "paypal", "PayPal")
 )
 
 CARD_STATUS_CHOICES = Choices(
@@ -339,4 +340,10 @@ DEPOSIT_STATUS_CHOICES = Choices(
     ('CREATED', 'created', 'Created'),
     ('SUCCEEDED', 'succeeded', 'Succeeded'),
     ('FAILED', 'failed', 'Failed')
+)
+
+SHIPPING_PREFERENCE_CHOICES = Choices(
+    ('SET_PROVIDED_ADDRESS', 'set_provided_address', 'Set Provided Address'),
+    ('GET_FROM_FILE', 'get_from_file', 'Get From File'),
+    ('NO_SHIPPING', 'no_shipping', 'No Shipping')
 )
