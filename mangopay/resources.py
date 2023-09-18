@@ -803,7 +803,6 @@ class GooglepayPayIn(PayIn):
         }
 
 
-
 class GooglePayDirectPayIn(PayIn):
     tag = CharField(api_name='Tag')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -864,6 +863,7 @@ class MultibancoPayIn(PayIn):
             SelectQuery.identifier: '/payins'
         }
 
+
 class SatispayPayIn(PayIn):
     creation_date = DateTimeField(api_name='CreationDate')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -881,6 +881,7 @@ class SatispayPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/satispay',
             SelectQuery.identifier: '/payins'
         }
+
 
 class BlikPayIn(PayIn):
     creation_date = DateTimeField(api_name='CreationDate')
@@ -919,7 +920,6 @@ class KlarnaPayIn(PayIn):
     redirect_url = CharField(api_name='RedirectURL')
     payment_method = CharField(api_name='PaymentMethod')
 
-
     class Meta:
         verbose_name = 'klarna_payin'
         verbose_name_plural = 'klarna_payins'
@@ -927,7 +927,6 @@ class KlarnaPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/klarna',
             SelectQuery.identifier: '/payins'
         }
-
 
 
 class CardWebPayIn(PayIn):

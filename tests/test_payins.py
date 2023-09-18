@@ -1,23 +1,16 @@
 # -*- coding: utf-8 -*-
-import json
-import time
 import unittest
-from cmath import rect
-from datetime import date
 
 import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
-    GooglePayDirectPayIn
-    RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, MultibancoPayIn, SatispayPayIn, \
-    BlikPayIn, KlarnaPayIn
+    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
-                            GooglepayPaymentData, DebitedBankAccount, BrowserInfo, LineItem)
-
+                            GooglepayPaymentData, DebitedBankAccount, LineItem)
 from tests import settings
-from tests.resources import (Wallet, PayIn, DirectPayIn, BankWirePayIn, BankWirePayInExternalInstruction, PayPalPayIn,
+from tests.resources import (Wallet, DirectPayIn, BankWirePayIn, PayPalPayIn,
                              PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants)
 from tests.test_base import BaseTest, BaseTestLive
 
@@ -265,13 +258,13 @@ class PayInsTest(BaseTest):
     @responses.activate
     def test_get_bank_wire_external_instructions_iban(self):
         debited_bank_account_params = {
-                    "owner_name": None,
-                    "account_number": None,
-                    "iban": "1234567",
-                    "bic": None,
-                    "type": "IBAN",
-                    "country": None
-                }
+            "owner_name": None,
+            "account_number": None,
+            "iban": "1234567",
+            "bic": None,
+            "type": "IBAN",
+            "country": None
+        }
         debited_bank_account = DebitedBankAccount(**debited_bank_account_params)
         self.register_mock({
             'method': responses.GET,
@@ -470,37 +463,37 @@ class PayInsTest(BaseTest):
             'method': responses.POST,
             'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/payins/payconiq/web',
             'body': {
-               "Id": "119683174",
-               "Tag": "custom meta",
-               "CreationDate" :1632985748,
-               "ExpirationDate" :1632986949,
-               "AuthorId": "119683166",
-               "CreditedUserId": "119683166",
-               "DebitedFunds": {
-                  "Currency": "EUR",
-                  "Amount": 22
-               },
-               "CreditedFunds": {
-                  "Currency": "EUR",
-                  "Amount": 12
-               },
-               "Fees": {
-                  "Currency": "EUR",
-                  "Amount": 10
-               },
-               "Status": "CREATED",
-               "ResultCode": None,
-               "ResultMessage": None,
-               "ExecutionDate": None,
-               "Type": "PAYIN",
-               "Nature": "REGULAR",
-               "CreditedWalletId": "119683167",
-               "DebitedWalletId": None,
-               "PaymentType": "PAYCONIQ",
-               "ExecutionType": "WEB",
-               "RedirectURL": "https://portal.payconiq.com/qrcode?c=https%3A%2F%2Fpayconiq.com%2Fpay%2F2%2F52e501a43d878e8846470b8f",
-               "ReturnURL": "http://www.my-site.com/returnURL",
-               "DeepLinkURL": "HTTPS://PAYCONIQ.COM/PAY/2/52E501A43D878E8846470B8F"
+                "Id": "119683174",
+                "Tag": "custom meta",
+                "CreationDate": 1632985748,
+                "ExpirationDate": 1632986949,
+                "AuthorId": "119683166",
+                "CreditedUserId": "119683166",
+                "DebitedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 22
+                },
+                "CreditedFunds": {
+                    "Currency": "EUR",
+                    "Amount": 12
+                },
+                "Fees": {
+                    "Currency": "EUR",
+                    "Amount": 10
+                },
+                "Status": "CREATED",
+                "ResultCode": None,
+                "ResultMessage": None,
+                "ExecutionDate": None,
+                "Type": "PAYIN",
+                "Nature": "REGULAR",
+                "CreditedWalletId": "119683167",
+                "DebitedWalletId": None,
+                "PaymentType": "PAYCONIQ",
+                "ExecutionType": "WEB",
+                "RedirectURL": "https://portal.payconiq.com/qrcode?c=https%3A%2F%2Fpayconiq.com%2Fpay%2F2%2F52e501a43d878e8846470b8f",
+                "ReturnURL": "http://www.my-site.com/returnURL",
+                "DeepLinkURL": "HTTPS://PAYCONIQ.COM/PAY/2/52E501A43D878E8846470B8F"
             },
             'status': 200
         })
@@ -933,7 +926,7 @@ class PayInsTestLive(BaseTestLive):
 
         got_cit = RecurringPayInCIT.get(cit_id)
         self.assertIsNotNone(got_cit)
-        #self.assertIsInstance(got_cit, RecurringPayInCIT)
+        # self.assertIsInstance(got_cit, RecurringPayInCIT)
 
         params = {
             "author": user,
@@ -1370,7 +1363,6 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("BLIK", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
-
     def test_PayIns_KlarnaWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
@@ -1402,7 +1394,7 @@ class PayInsTestLive(BaseTestLive):
         pay_in.country = 'FR'
         pay_in.culture = 'FR'
         pay_in.phone = "33#607080900"
-        pay_in.email= "mango@mangopay.com"
+        pay_in.email = "mango@mangopay.com"
         pay_in.additional_data = "{}"
 
         address = Address()
