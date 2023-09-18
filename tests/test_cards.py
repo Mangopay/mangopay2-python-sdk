@@ -6,7 +6,7 @@ try:
 except ImportError:
     import urllib as urlrequest
 
-from mangopay.resources import Card, CardRegistration
+from mangopay.resources import Card, CardRegistration, CardValidation
 from tests.test_base import BaseTest
 from tests.test_base import BaseTestLive
 
@@ -279,7 +279,36 @@ class CardsLiveTest(BaseTestLive):
         self.assertIsInstance(transactions_page.data, list)
 
     def test_cardValidation(self):
-        card = BaseTestLive.get_johns_card()
-        validatedCard = card.validate()
+        user = BaseTestLive.get_john()
 
-        self.assertIsNotNone(validatedCard)
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = 'EUR'
+
+        saved_registration = card_registration.save()
+        data = {
+            'cardNumber': '4970107111111119',
+            'cardCvx': '123',
+            'cardExpirationDate': '1224',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+        card_id = updated_registration['card_id']
+
+        card_validation = CardValidation()
+        card_validation.author = user
+        card_validation.tag = "test"
+        card_validation.secure_mode_return_url = "http://www.example.com/"
+        card_validation.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        card_validation.browser_info = BaseTest.get_browser_info()
+
+        validation_response = card_validation.validate(card_id)
+
+        self.assertIsNotNone(validation_response)
+        self.assertIsNotNone(validation_response['id'])
