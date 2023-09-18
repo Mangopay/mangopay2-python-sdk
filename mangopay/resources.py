@@ -368,11 +368,10 @@ class CardValidation(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
 
-
-    def validate(self, *args, **kwargs):
-        kwargs['id'] = self.id
+    def validate(self, card_id, **kwargs):
         insert = InsertQuery(self, **kwargs)
         insert.insert_query = self.get_field_dict()
+        insert.insert_query['id'] = card_id
         insert.identifier = 'CARD_VALIDATE'
         return insert.execute()
 
@@ -772,6 +771,7 @@ class GooglepayPayIn(PayIn):
             InsertQuery.identifier: '/payins/googlepay/direct'
         }
 
+
 class MbwayPayIn(PayIn):
     creation_date = DateTimeField(api_name='CreationDate')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -787,6 +787,7 @@ class MbwayPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/mbway',
             SelectQuery.identifier: '/payins'
         }
+
 
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -877,6 +878,7 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
             InsertQuery.identifier: '/payins/deposit-preauthorized/direct/full-capture',
             SelectQuery.identifier: '/payins'
         }
+
 
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)

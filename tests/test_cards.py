@@ -299,16 +299,16 @@ class CardsLiveTest(BaseTestLive):
         registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
         saved_registration['registration_data'] = registration_data_response.text
         updated_registration = CardRegistration(**saved_registration).save()
+        card_id = updated_registration['card_id']
 
         card_validation = CardValidation()
         card_validation.author = user
-        card_validation.id = updated_registration['card_id']
         card_validation.tag = "test"
         card_validation.secure_mode_return_url = "http://www.example.com/"
         card_validation.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
         card_validation.browser_info = BaseTest.get_browser_info()
 
-        validation_response = card_validation.validate()
+        validation_response = card_validation.validate(card_id)
 
         self.assertIsNotNone(validation_response)
         self.assertIsNotNone(validation_response['id'])
