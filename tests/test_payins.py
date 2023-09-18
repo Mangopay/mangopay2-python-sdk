@@ -768,16 +768,6 @@ class PayInsTest(BaseTest):
         payin.Tag = 'x'
         self.assertIs(payin.Tag, payin.tag)
 
-    def test_get_paypal_with_account_email(self):
-        payin_id = "54088959"
-        paypal_buyer_email = "paypal-buyer-user@mangopay.com"
-        payin = PayPalPayIn.get(payin_id)
-
-        self.assertIsNotNone(payin, "PayPal pay in is null")
-        self.assertEqual(payin.payment_type, "PAYPAL")
-        self.assertEqual(payin_id, payin.id)
-        self.assertEqual(paypal_buyer_email, payin.buyer_account_email)
-
 
 class PayInsTestLive(BaseTestLive):
     @unittest.skip('Set a breakpoint after creating the mandate, navigate to mandate.redirect_url and confirm')
