@@ -173,11 +173,16 @@ EVENT_TYPE_CHOICES = Choices(
 
     ('DEPOSIT_PREAUTHORIZATION_CREATED', 'deposit_preauthorization_created', 'Deposit Preauthorization Created'),
     ('DEPOSIT_PREAUTHORIZATION_FAILED', 'deposit_preauthorization_failed', 'Deposit Preauthorization Failed'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_WAITING', 'deposit_preauthorization_payment_waiting', 'Deposit Preauthorization Payment Waiting'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_EXPIRED', 'deposit_preauthorization_payment_expired', 'Deposit Preauthorization Payment Expired'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCEL_REQUESTED', 'deposit_preauthorization_payment_cancel_requested', 'Deposit Preauthorization Payment Cancel Requested'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCELED', 'deposit_preauthorization_payment_canceled', 'Deposit Preauthorization Payment Canceled'),
-    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated', 'Deposit Preauthorization Payment Validated'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_WAITING', 'deposit_preauthorization_payment_waiting',
+     'Deposit Preauthorization Payment Waiting'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_EXPIRED', 'deposit_preauthorization_payment_expired',
+     'Deposit Preauthorization Payment Expired'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCEL_REQUESTED', 'deposit_preauthorization_payment_cancel_requested',
+     'Deposit Preauthorization Payment Cancel Requested'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_CANCELED', 'deposit_preauthorization_payment_canceled',
+     'Deposit Preauthorization Payment Canceled'),
+    ('DEPOSIT_PREAUTHORIZATION_PAYMENT_VALIDATED', 'deposit_preauthorization_payment_validated',
+     'Deposit Preauthorization Payment Validated'),
 
     ('CARD_VALIDATION_CREATED', 'card_validation_created', 'Card Validation Created'),
     ('CARD_VALIDATION_FAILED', 'card_validation_failed', 'Card Validation Failed'),
@@ -294,7 +299,11 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("GOOGLEPAY", "googlepay", "Googlepay"),
     ("GOOGLE_PAY", "google_pay", "Google Pay"),
     ("MBWAY", "mbway", "Mbway"),
-    ("PAYPAL", "paypal", "PayPal")
+    ("PAYPAL", "paypal", "PayPal"),
+    ("MULTIBANCO", "multibanco", "Multibanco"),
+    ("SATISPAY", "satispay", "Satispay"),
+    ("BLIK", "blik", "Blik"),
+    ("KLARNA", "klarna", "Klarna")
 )
 
 CARD_STATUS_CHOICES = Choices(
