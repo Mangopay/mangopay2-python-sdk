@@ -475,10 +475,11 @@ class PayIn(BaseModel):
             ("PREAUTHORIZED", "DIRECT"): PreAuthorizedPayIn,
             ("BANK_WIRE", "DIRECT"): BankWirePayIn,
             ("BANK_WIRE", "EXTERNAL_INSTRUCTION"): BankWirePayInExternalInstruction,
-            ("APPLEPAY", "WEB"): ApplepayPayIn,
+            ("APPLEPAY", "DIRECT"): ApplepayPayIn,
             ("GOOGLEPAY", "DIRECT"): GooglepayPayIn,
             ("GOOGLE_PAY", "DIRECT"): GooglePayDirectPayIn,
-            ("MBWAY", "WEB"): MbwayPayIn
+            ("MBWAY", "WEB"): MbwayPayIn,
+            ("PAYPAL", "WEB"): PayPalWebPayIn
         }
 
         return types.get((payment_type, execution_type), cls)
