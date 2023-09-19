@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from tests import settings
-from tests.resources import NaturalUser, Wallet, Transfer
-from tests.test_base import BaseTest
+from tests.resources import NaturalUser, Wallet, Transfer, ConversionRate, InstantConversion
+from mangopay.utils import DebitedFunds, CreditedFunds
+from tests.test_base import BaseTest, BaseTestLive
 
 from datetime import date
 
@@ -17,7 +18,7 @@ class WalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets',
                 'body': {
                     "Owners": [
                         "1169419"
@@ -36,7 +37,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
                 'body': {
                     "Owners": [
                         "1169419"
@@ -55,7 +56,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.PUT,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
                 'body': {
                     "Owners": [
                         "1169419"
@@ -74,7 +75,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/wallets',
                 'body': [
                     {
                         "Owners": [
@@ -131,7 +132,7 @@ class WalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets',
                 'body': {
                     "Owners": [
                         "1167492"
@@ -150,7 +151,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/1169419',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/natural/1169419',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Claver",
@@ -160,7 +161,7 @@ class WalletsTest(BaseTest):
                         "City": "City",
                         "Region": "Region",
                         "PostalCode": "11222",
-                    "Country": "FR"
+                        "Country": "FR"
                     },
                     "Birthday": int(time.mktime(date.today().timetuple())),
                     "Nationality": "FR",
@@ -178,7 +179,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/wallets',
                 'body': [
                     {
                         "Owners": [
@@ -219,7 +220,7 @@ class WalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets',
                 'body': {
                     "Owners": [
                         "1167492"
@@ -238,7 +239,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/transfers',
                 'body': {
                     "Id": "1169434",
                     "Tag": "custom tag",
@@ -270,7 +271,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421/transactions',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421/transactions',
                 'body': [
                     {
                         "Id": "1169215",
@@ -327,3 +328,86 @@ class WalletsTest(BaseTest):
 
         self.assertEqual(len(transactions), 1)
         self.assertEqual(transactions[0].type, 'TRANSFER')
+
+    def test_get_conversion_rate(self):
+        self.mock_natural_user()
+        user = BaseTestLive.get_john()
+
+        conversion_rate = ConversionRate()
+        conversion_rate.debited_currency = 'EUR'
+        conversion_rate.credited_currency = 'GBP'
+
+        complete_conversion_rate = conversion_rate.get_conversion_rate(user.id)
+
+        self.assertIsNotNone(complete_conversion_rate)
+
+    def test_create_instant_conversion(self):
+        user = BaseTestLive.get_john()
+
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        debited_wallet = Wallet()
+        debited_wallet.owners = (user,)
+        debited_wallet.currency = 'GBP'
+        debited_wallet.description = 'WALLET IN GBP'
+        debited_wallet = Wallet(**credited_wallet.save())
+
+        credited_funds = CreditedFunds()
+        credited_funds.currency = 'EUR'
+
+        debited_funds = DebitedFunds()
+        debited_funds.currency = 'GBP'
+        debited_funds.amount = 79
+
+        instant_conversion = InstantConversion()
+        instant_conversion.author = user
+        instant_conversion.credited_wallet = credited_wallet
+        instant_conversion.debited_wallet = debited_wallet
+        instant_conversion.credited_funds = credited_funds
+        instant_conversion.debited_funds = debited_funds
+        instant_conversion.tag = "instant conversion test"
+
+        instant_conversion_response = instant_conversion.create_instant_conversion(user.id)
+
+        self.assertIsNotNone(instant_conversion_response)
+
+    def test_get_instant_conversion(self):
+        user = BaseTestLive.get_john()
+
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        debited_wallet = Wallet()
+        debited_wallet.owners = (user,)
+        debited_wallet.currency = 'GBP'
+        debited_wallet.description = 'WALLET IN GBP'
+        debited_wallet = Wallet(**credited_wallet.save())
+
+        credited_funds = CreditedFunds()
+        credited_funds.currency = 'EUR'
+
+        debited_funds = DebitedFunds()
+        debited_funds.currency = 'GBP'
+        debited_funds.amount = 79
+
+        instant_conversion = InstantConversion()
+        instant_conversion.author = user
+        instant_conversion.credited_wallet = credited_wallet
+        instant_conversion.debited_wallet = debited_wallet
+        instant_conversion.credited_funds = credited_funds
+        instant_conversion.debited_funds = debited_funds
+        instant_conversion.tag = "instant conversion test"
+
+        instant_conversion_response = instant_conversion.create_instant_conversion(user.id)
+        returned_conversion_response = instant_conversion_response.get_instant_conversion(user.id)
+
+        self.assertIsNotNone(returned_conversion_response)
+
+
