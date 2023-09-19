@@ -14,7 +14,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
-                     CountryAuthorizationDataField, PayinsLinkedField, DebitedFundsField, CreditedFundsField, ConversionRateField)
+                     CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -266,13 +266,12 @@ class Wallet(BaseModel):
 
 @python_2_unicode_compatible
 class ConversionRate(BaseModel):
-    debited_currency = CharField(api_name='DebitedCurrency')
-    credited_currency = CharField(api_name='CreditedCurrency')
+    debited_currency = CharField(api_name='DebitedCurrency', required=True)
+    credited_currency = CharField(api_name='CreditedCurrency', required=True)
     client_rate = CharField(api_name='ClientRate')
     market_rate = CharField(api_name='MarketRate')
 
-    def get_conversion_rate(self, client_id, *args, **kwargs):
-        kwargs['id'] = client_id
+    def get_conversion_rate(self, *args, **kwargs):
         kwargs['debited_currency'] = self.debited_currency
         kwargs['credited_currency'] = self.credited_currency
         select = SelectQuery(ConversionRate, *args, **kwargs)
@@ -283,7 +282,7 @@ class ConversionRate(BaseModel):
         verbose_name = 'conversion_rate'
         verbose_name_plural = 'conversion_rates'
         url = {
-            'GET_CONVERSION_RATE' : '/%(id)s/conversion/rate/%(debited_currency)s/%(credited_currency)s'
+            'GET_CONVERSION_RATE' : '/conversion/rate/%(debited_currency)s/%(credited_currency)s'
         }
 
 @python_2_unicode_compatible
@@ -291,8 +290,8 @@ class InstantConversion(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
-    debited_funds = DebitedFundsField(api_name='DebitedFunds', required=True)
-    credited_funds = CreditedFundsField(api_name='CreditedFunds', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    credited_funds = MoneyField(api_name='CreditedFunds', required=True)
     conversion_rate = ConversionRateField(api_name='ConversionRate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
@@ -303,16 +302,15 @@ class InstantConversion(BaseModel):
     execution_date = DateTimeField(api_name='ExecutionDate')
     currency = CharField(api_name='Currency')
 
-    def create_instant_conversion(self, client_id, **kwargs):
+    def create_instant_conversion(self, **kwargs):
         insert = InsertQuery(self, **kwargs)
         insert.insert_query = self.get_field_dict()
-        insert.insert_query['client_id'] = client_id
         insert.identifier = 'CREATE_INSTANT_CONVERSION'
         return insert.execute()
 
-    def get_instant_conversion(self, client_id, *args, **kwargs):
-        kwargs['client_id'] = client_id
-        kwargs['id'] = self.id
+    @staticmethod
+    def get_instant_conversion(id, *args, **kwargs):
+        kwargs['id'] = id
         select = SelectQuery(InstantConversion, *args, **kwargs)
         select.identifier = 'GET_INSTANT_CONVERSION'
         return select.all(*args, **kwargs)
@@ -321,8 +319,8 @@ class InstantConversion(BaseModel):
         verbose_name = 'instant_conversion'
         verbose_name_plural = 'instant_conversions'
         url = {
-            'CREATE_INSTANT_CONVERSION' : '/%(client_id)s/instant-conversion',
-            'GET_INSTANT_CONVERSION': '/%(client_id)s/instant-conversion/%(id)s'
+            'CREATE_INSTANT_CONVERSION' : '/instant-conversion',
+            'GET_INSTANT_CONVERSION': '/instant-conversion/%(id)s'
         }
 
 

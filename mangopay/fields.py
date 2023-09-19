@@ -10,7 +10,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
-    PayinsLinked, DebitedFunds, CreditedFunds, ConversionRate
+    PayinsLinked, ConversionRate
 
 
 class FieldDescriptor(object):
@@ -869,41 +869,6 @@ class PayinsLinkedField(Field):
             value = {
                 'PayinCaptureId': value.payin_capture_id,
                 'PayinComplementId': value.payin_complement_id
-            }
-
-        return value
-
-
-class DebitedFundsField(Field):
-    def python_value(self, value):
-        if value is not None:
-            return DebitedFunds(currency=value['Currency'], amount=value['Amount'])
-        return value
-
-    def api_value(self, value):
-        value = super(DebitedFundsField, self).api_value(value)
-
-        if isinstance(value, DebitedFunds):
-            value = {
-                'Currency': value.currency,
-                'Amount': value.amount
-            }
-
-        return value
-
-class CreditedFundsField(Field):
-    def python_value(self, value):
-        if value is not None:
-            return CreditedFunds(currency=value['Currency'], amount=value['Amount'])
-        return value
-
-    def api_value(self, value):
-        value = super(CreditedFundsField, self).api_value(value)
-
-        if isinstance(value, CreditedFunds):
-            value = {
-                'Currency': value.currency,
-                'Amount': value.amount
             }
 
         return value
