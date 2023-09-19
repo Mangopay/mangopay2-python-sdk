@@ -300,7 +300,6 @@ class InstantConversion(BaseModel):
     result_message = CharField(api_name='ResultMessage')
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     execution_date = DateTimeField(api_name='ExecutionDate')
-    currency = CharField(api_name='Currency')
 
     def create_instant_conversion(self, **kwargs):
         insert = InsertQuery(self, **kwargs)
