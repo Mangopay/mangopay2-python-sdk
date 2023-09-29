@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from tests import settings
 from tests.resources import NaturalUser, Wallet, Transfer
+
 from tests.test_base import BaseTest
 
 from datetime import date
@@ -17,7 +18,7 @@ class WalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets',
                 'body': {
                     "Owners": [
                         "1169419"
@@ -36,7 +37,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
                 'body': {
                     "Owners": [
                         "1169419"
@@ -55,7 +56,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.PUT,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421',
                 'body': {
                     "Owners": [
                         "1169419"
@@ -74,7 +75,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/wallets',
                 'body': [
                     {
                         "Owners": [
@@ -131,7 +132,7 @@ class WalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets',
                 'body': {
                     "Owners": [
                         "1167492"
@@ -150,7 +151,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/natural/1169419',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/natural/1169419',
                 'body': {
                     "FirstName": "Victor",
                     "LastName": "Claver",
@@ -160,7 +161,7 @@ class WalletsTest(BaseTest):
                         "City": "City",
                         "Region": "Region",
                         "PostalCode": "11222",
-                    "Country": "FR"
+                        "Country": "FR"
                     },
                     "Birthday": int(time.mktime(date.today().timetuple())),
                     "Nationality": "FR",
@@ -178,7 +179,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/users/1169419/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/users/1169419/wallets',
                 'body': [
                     {
                         "Owners": [
@@ -219,7 +220,7 @@ class WalletsTest(BaseTest):
         self.register_mock([
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets',
                 'body': {
                     "Owners": [
                         "1167492"
@@ -238,7 +239,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.POST,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/transfers',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/transfers',
                 'body': {
                     "Id": "1169434",
                     "Tag": "custom tag",
@@ -270,7 +271,7 @@ class WalletsTest(BaseTest):
             },
             {
                 'method': responses.GET,
-                'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/wallets/1169421/transactions',
+                'url': settings.MANGOPAY_API_SANDBOX_URL + settings.MANGOPAY_CLIENT_ID + '/wallets/1169421/transactions',
                 'body': [
                     {
                         "Id": "1169215",

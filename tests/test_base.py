@@ -10,8 +10,7 @@ from exam.decorators import fixture
 from mangopay import APIRequest
 from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
-from mangopay.constants import LEGAL_USER_TYPE_CHOICES
-from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo, Deposit
+from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo, Deposit, DirectPayIn
 from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo
 from tests import settings
 from tests.mocks import RegisteredMocks
@@ -416,12 +415,61 @@ class BaseTestLive(unittest.TestCase):
         return BaseTestLive._johns_wallet
 
     @staticmethod
+    def get_johns_wallet_with_money(recreate=False):
+        if BaseTestLive._johns_wallet is None or recreate:
+            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet_with_money()
+        return BaseTestLive._johns_wallet
+
+    @staticmethod
     def create_new_wallet():
         wallet = Wallet()
         wallet.owners = (BaseTestLive._john,)
         wallet.currency = 'EUR'
         wallet.description = 'WALLET IN EUR'
         return Wallet(**wallet.save())
+
+    @staticmethod
+    def create_new_wallet_with_money():
+        user = BaseTestLive.get_john()
+
+        wallet = Wallet()
+        wallet.owners = (user,)
+        wallet.currency = 'EUR'
+        wallet.description = 'WALLET IN EUR'
+        wallet = Wallet(**wallet.save())
+
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = 'EUR'
+
+        saved_registration = card_registration.save()
+        data = {
+            'cardNumber': '4970107111111119',
+            'cardCvx': '123',
+            'cardExpirationDate': '1224',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+        card_id = updated_registration['card_id']
+
+        direct_payin = DirectPayIn(author=user,
+                                   debited_funds=Money(amount=100, currency='EUR'),
+                                   fees=Money(amount=1, currency='EUR'),
+                                   credited_wallet_id=wallet,
+                                   card_id=card_id,
+                                   secure_mode="DEFAULT",
+                                   ip_address="2001:0620:0000:0000:0211:24FF:FE80:C12C",
+                                   browser_info=BaseTest.get_browser_info(),
+                                   secure_mode_return_url="https://www.ulule.com/")
+
+        direct_payin.save()
+        return direct_payin.credited_wallet
 
     @staticmethod
     def get_johns_transfer(recreate=False):

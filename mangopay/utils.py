@@ -945,3 +945,13 @@ class LineItem(object):
             "TaxAmount": self.tax_amount,
             "Description": self.description
         }
+
+@add_camelcase_aliases
+class ConversionRate(object):
+    def __init__(self, client_rate=None, market_rate=None):
+        self.client_rate = client_rate
+        self.market_rate = market_rate
+
+    def __str__(self):
+        return 'Conversion rate: %s' % \
+               (self.client_rate, self.market_rate)

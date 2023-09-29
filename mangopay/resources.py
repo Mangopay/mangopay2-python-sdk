@@ -14,7 +14,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
-                     CountryAuthorizationDataField, PayinsLinkedField)
+                     CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -263,6 +263,64 @@ class Wallet(BaseModel):
         if len(args) == 1 and cls.is_client_wallet(args[0]):
             return ClientWallet.get(*tuple(args[0].split('_')), **kwargs)
         return super(Wallet, cls).get(*args, **kwargs)
+
+@python_2_unicode_compatible
+class ConversionRate(BaseModel):
+    debited_currency = CharField(api_name='DebitedCurrency', required=True)
+    credited_currency = CharField(api_name='CreditedCurrency', required=True)
+    client_rate = CharField(api_name='ClientRate')
+    market_rate = CharField(api_name='MarketRate')
+
+    def get_conversion_rate(self, *args, **kwargs):
+        kwargs['debited_currency'] = self.debited_currency
+        kwargs['credited_currency'] = self.credited_currency
+        select = SelectQuery(ConversionRate, *args, **kwargs)
+        select.identifier = 'GET_CONVERSION_RATE'
+        return select.all(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'conversion_rate'
+        verbose_name_plural = 'conversion_rates'
+        url = {
+            'GET_CONVERSION_RATE' : '/conversion/rate/%(debited_currency)s/%(credited_currency)s'
+        }
+
+@python_2_unicode_compatible
+class InstantConversion(BaseModel):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    credited_funds = MoneyField(api_name='CreditedFunds', required=True)
+    conversion_rate = ConversionRateField(api_name='ConversionRate')
+    type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
+    nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
+    creation_date = DateTimeField(api_name='CreationDate')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
+    execution_date = DateTimeField(api_name='ExecutionDate')
+
+    def create_instant_conversion(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE_INSTANT_CONVERSION'
+        return insert.execute()
+
+    @staticmethod
+    def get_instant_conversion(id, *args, **kwargs):
+        kwargs['id'] = id
+        select = SelectQuery(InstantConversion, *args, **kwargs)
+        select.identifier = 'GET_INSTANT_CONVERSION'
+        return select.all(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'instant_conversion'
+        verbose_name_plural = 'instant_conversions'
+        url = {
+            'CREATE_INSTANT_CONVERSION' : '/instant-conversion',
+            'GET_INSTANT_CONVERSION': '/instant-conversion/%(id)s'
+        }
 
 
 @python_2_unicode_compatible
