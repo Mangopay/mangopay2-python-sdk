@@ -303,7 +303,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("MULTIBANCO", "multibanco", "Multibanco"),
     ("SATISPAY", "satispay", "Satispay"),
     ("BLIK", "blik", "Blik"),
-    ("KLARNA", "klarna", "Klarna")
+    ("IDEAL", "ideal", "Ideal"),
+    ("GIROPAY", "giropay", "Giropay")
 )
 
 CARD_STATUS_CHOICES = Choices(
@@ -360,4 +361,34 @@ SHIPPING_PREFERENCE_CHOICES = Choices(
     ('SET_PROVIDED_ADDRESS', 'set_provided_address', 'Set Provided Address'),
     ('GET_FROM_FILE', 'get_from_file', 'Get From File'),
     ('NO_SHIPPING', 'no_shipping', 'No Shipping')
+)
+
+BIC_CHOICES = Choices(
+    ('RABONL2U'),
+    ('ABNANL2A'),
+    ('FVLBNL22'),
+    ('TRIONL2U'),
+    ('INGBNL2A'),
+    ('SNSBNL2A'),
+    ('ASNBNL21'),
+    ('RBRBNL21'),
+    ('KNABNL2H'),
+    ('BUNQNL2A'),
+    ('REVOLT21'),
+    ('BITSNL2A')
+)
+
+BANK_NAME_CHOICES = Choices(
+    ('Rabobank'),
+    ('ABN AMRO'),
+    ('Van Lanschot Baniers'),
+    ('Triodos Bank'),
+    ('ING Bank'),
+    ('SNS Bank'),
+    ('ASN'),
+    ('RegioBank'),
+    ('Knab'),
+    ('Bunq'),
+    ('Revolut'),
+    ('Yoursafe')
 )
