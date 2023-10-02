@@ -994,11 +994,11 @@ class IdealPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     return_url = CharField(api_name='ReturnURL', required=True)
-    bic = CharField(api_name='Bic', required=True)
+    bic = CharField(api_name='Bic', choices=constants.BIC_CHOICES, required=True)
     statement_descriptor = CharField(api_name='StatementDescriptor')
     creation_date = DateTimeField(api_name='CreationDate')
     redirect_url = CharField(api_name='RedirectURL')
-    bank_name = CharField(api_name='BankName')
+    bank_name = CharField(api_name='BankName', choices=constants.BANK_NAME_CHOICES)
 
     class Meta:
         verbose_name = 'ideal_payin'
