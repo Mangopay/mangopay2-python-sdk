@@ -6,7 +6,7 @@ import responses
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
-    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn
+    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem)
 from tests import settings
@@ -1415,4 +1415,78 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("KLARNA", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_IdealWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = IdealPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 200
+        pay_in.fees.currency = 'EUR'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 2000
+        pay_in.debited_funds.currency = 'EUR'
+        pay_in.statement_descriptor = 'test'
+        pay_in.return_url = 'https://mangopay.com/'
+        pay_in.bic = 'INGBNL2A'
+        pay_in.tag = 'Ideal PayIn'
+
+        result = IdealPayIn(**pay_in.save())
+        fetched = IdealPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("IDEAL", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+
+    def test_PayIns_GiropayWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = GiropayPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 200
+        pay_in.fees.currency = 'EUR'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 2000
+        pay_in.debited_funds.currency = 'EUR'
+        pay_in.statement_descriptor = 'test'
+        pay_in.return_url = 'https://mangopay.com/'
+        pay_in.tag = 'Giropay PayIn'
+
+        result = GiropayPayIn(**pay_in.save())
+        fetched = GiropayPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("GIROPAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)

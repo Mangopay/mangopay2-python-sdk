@@ -569,7 +569,9 @@ class PayIn(BaseModel):
             ("MULTIBANCO", "WEB"): MultibancoPayIn,
             ("SATISPAY", "WEB"): SatispayPayIn,
             ("BLIK", "WEB"): BlikPayIn,
-            ("KLARNA", "WEB"): KlarnaPayIn
+            ("KLARNA", "WEB"): KlarnaPayIn,
+            ("IDEAL", "WEB"): IdealPayIn,
+            ("GIROPAY", "WEB"): GiropayPayIn,
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -983,6 +985,44 @@ class KlarnaPayIn(PayIn):
         verbose_name_plural = 'klarna_payins'
         url = {
             InsertQuery.identifier: '/payins/payment-methods/klarna',
+            SelectQuery.identifier: '/payins'
+        }
+
+class IdealPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    bic = CharField(api_name='Bic', choices=constants.BIC_CHOICES, required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    redirect_url = CharField(api_name='RedirectURL')
+    bank_name = CharField(api_name='BankName', choices=constants.BANK_NAME_CHOICES)
+
+    class Meta:
+        verbose_name = 'ideal_payin'
+        verbose_name_plural = 'ideal_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/ideal',
+            SelectQuery.identifier: '/payins'
+        }
+
+class GiropayPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    redirect_url = CharField(api_name='RedirectURL')
+
+    class Meta:
+        verbose_name = 'giropay_payin'
+        verbose_name_plural = 'giropay_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/giropay',
             SelectQuery.identifier: '/payins'
         }
 
