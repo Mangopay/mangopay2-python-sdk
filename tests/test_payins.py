@@ -1109,6 +1109,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
 
+    @unittest.skip('Skip because we cannot generate new payment date in tests')
     def test_PayIns_GooglePayDirect_Create(self):
         user = BaseTestLive.get_john(True)
 
@@ -1397,7 +1398,7 @@ class PayInsTestLive(BaseTestLive):
         pay_in.billing = Billing(first_name="John", last_name="Doe", address=address)
         pay_in.shipping = Shipping(first_name="John", last_name="Doe", address=address)
 
-        pay_in.merchant_order_id = "afd48-879d-48fg"
+        pay_in.reference = "afd48-879d-48fg"
 
         pay_in.statement_descriptor = "test"
         pay_in.tag = "test tag"

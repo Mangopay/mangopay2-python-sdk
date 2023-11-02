@@ -973,7 +973,7 @@ class KlarnaPayIn(PayIn):
     email = EmailField(api_name='Email', required=True)
     additional_data = CharField(api_name='AdditionalData', required=True)
     billing = BillingField(api_name='Billing', required=True)
-    merchant_order_id = CharField(api_name='MerchantOrderId', required=True)
+    reference = CharField(api_name='Reference', required=True)
     culture = CharField(api_name='Culture', required=True)
     shipping = ShippingField(api_name='Shipping')
     creation_date = DateTimeField(api_name='CreationDate')
