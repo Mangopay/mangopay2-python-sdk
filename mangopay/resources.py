@@ -801,6 +801,7 @@ class PayPalWebPayIn(PayIn):
     culture = CharField(api_name='Culture')
     shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
                                     default=None)
+    reference = CharField(api_name='Reference')
 
     class Meta:
         verbose_name = 'payin'
@@ -1349,6 +1350,7 @@ class Refund(BaseModel):
     initial_transaction_id = CharField(api_name='InitialTransactionId')
     initial_transaction_type = CharField(api_name='InitialTransactionType', choices=constants.TRANSACTION_TYPE_CHOICES,
                                          default=None)
+    reference = CharField(api_name='Reference')
 
     class Meta:
         verbose_name = 'refund'
@@ -1384,6 +1386,7 @@ class PayInRefund(Refund):
     debited_funds = MoneyField(api_name='DebitedFunds')
     fees = MoneyField(api_name='Fees')
     payin = ForeignKeyField(PayIn)
+    reference = CharField(api_name='Reference')
 
     class Meta:
         verbose_name = 'refund'
