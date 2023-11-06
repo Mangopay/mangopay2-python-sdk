@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import unittest
 
+import requests
 import responses
 
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
-    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn
+    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, CardRegistration
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem)
 from tests import settings
@@ -1491,3 +1492,61 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("GIROPAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
+
+    def test_create_partial_refund_for_payin(self):
+        user = BaseTestLive.get_john()
+
+        wallet = Wallet()
+        wallet.owners = (user,)
+        wallet.currency = 'EUR'
+        wallet.description = 'WALLET IN EUR'
+        wallet = Wallet(**wallet.save())
+
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = 'EUR'
+
+        saved_registration = card_registration.save()
+        data = {
+            'cardNumber': '4970107111111119',
+            'cardCvx': '123',
+            'cardExpirationDate': '1224',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+        card_id = updated_registration['card_id']
+
+        direct_payin = DirectPayIn(author=user,
+                                   debited_funds=Money(amount=1000, currency='EUR'),
+                                   fees=Money(amount=100, currency='EUR'),
+                                   credited_wallet_id=wallet,
+                                   card_id=card_id,
+                                   secure_mode="DEFAULT",
+                                   ip_address="2001:0620:0000:0000:0211:24FF:FE80:C12C",
+                                   browser_info=BaseTest.get_browser_info(),
+                                   secure_mode_return_url="https://www.ulule.com/")
+
+        direct_payin.save()
+
+        refund = PayInRefund()
+        refund.payin = direct_payin
+        refund.author = user
+        refund.fees = Money()
+        refund.fees.amount = 4
+        refund.fees.currency = 'EUR'
+        refund.debited_funds = Money()
+        refund.debited_funds.amount = 15
+        refund.debited_funds.currency = 'EUR'
+
+        refund_result = refund.save()
+
+        self.assertIsNotNone(refund_result['id'])
+        self.assertEqual('PAYOUT', refund_result['type'])
+        self.assertEqual('REFUND', refund_result['nature'])
+
