@@ -1043,6 +1043,8 @@ class CardWebPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     shipping = ShippingField(api_name='Shipping')
+    bic = CharField(api_name='Bic', choices=constants.BIC_CHOICES)
+    bank_name = CharField(api_name='BankName', choices=constants.BANK_NAME_CHOICES)
 
     class Meta:
         verbose_name = 'card_payin'
