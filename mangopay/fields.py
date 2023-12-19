@@ -10,7 +10,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
-    PayinsLinked, ConversionRate
+    PayinsLinked, ConversionRate, CardInfo
 
 
 class FieldDescriptor(object):
@@ -886,6 +886,34 @@ class ConversionRateField(Field):
             value = {
                 'ClientRate': value.client_rate,
                 'MarketRate': value.market_rate
+            }
+
+        return value
+
+
+class CardInfoField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return CardInfo(
+                bin=value['BIN'],
+                issuing_bank=value['IssuingBank'],
+                issuer_country_code=value['IssuerCountryCode'],
+                type=value['Type'],
+                brand=value['Brand'],
+                sub_type=value['SubType'])
+        return value
+
+    def api_value(self, value):
+        value = super(CardInfoField, self).api_value(value)
+
+        if isinstance(value, CardInfo):
+            value = {
+                'BIN': value.bin,
+                'IssuingBank': value.issuing_bank,
+                'IssuerCountryCode': value.issuer_country_code,
+                'Type': value.type,
+                'Brand': value.brand,
+                'SubType': value.sub_type,
             }
 
         return value

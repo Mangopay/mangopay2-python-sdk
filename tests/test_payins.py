@@ -9,7 +9,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, CardRegistration
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
-                            GooglepayPaymentData, DebitedBankAccount, LineItem)
+                            GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
 from tests.resources import (Wallet, DirectPayIn, BankWirePayIn, PayPalPayIn,
                              PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants)
@@ -1110,6 +1110,25 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
 
+    @unittest.skip("can't be tested yet")
+    def test_card_preauthorized_deposit_payin_check_card_info(self):
+        deposit = self.create_new_deposit()
+
+        params = {
+            "credited_wallet_id": self.get_johns_wallet().id,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "deposit_id": deposit.id
+        }
+
+        created = CardPreAuthorizedDepositPayIn(**params).save()
+        pay_in = CardPreAuthorizedDepositPayIn().get(created.get('id'))
+
+        self.assertIsNotNone(pay_in)
+        card_info = pay_in['card_info']
+        self.assertIsNotNone(card_info)
+        self.assertIsInstance(card_info, CardInfo)
+
     @unittest.skip('Skip because we cannot generate new payment date in tests')
     def test_PayIns_GooglePayDirect_Create(self):
         user = BaseTestLive.get_john(True)
@@ -1550,3 +1569,104 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual('PAYOUT', refund_result['type'])
         self.assertEqual('REFUND', refund_result['nature'])
 
+    def test_PayIns_CardDirect_CheckCardInfo(self):
+        user = BaseTestLive.get_john(True)
+        debited_wallet = BaseTestLive.get_johns_wallet(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+        card = BaseTestLive.get_johns_card(True)
+
+        pay_in = DirectPayIn()
+        pay_in.author = user
+        pay_in.debited_wallet = debited_wallet
+        pay_in.credited_wallet = credited_wallet
+        pay_in.card = card
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = "EUR"
+        pay_in.secure_mode_return_url = "http://www.example.com/"
+        pay_in.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        pay_in.browser_info = BaseTest.get_browser_info()
+
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        pay_in.billing = Billing(first_name="John", last_name="Doe", address=address)
+
+        result = pay_in.save()
+
+        self.assertIsNotNone(result)
+        card_info = result['card_info']
+        self.assertIsNotNone(card_info)
+        self.assertIsInstance(card_info, CardInfo)
+
+    def test_RecurringPayment_CheckCardInfo(self):
+        user = self.get_john(True)
+        wallet = self.get_johns_wallet(True)
+        card = BaseTestLive.get_johns_card_3dsecure(True)
+
+        recurring = RecurringPayInRegistration()
+        recurring.author = user
+        recurring.card = card
+        recurring.user = user
+        recurring.credited_wallet = wallet
+        recurring.first_transaction_fees = Money(1, "EUR")
+        recurring.first_transaction_debited_funds = Money(12, "EUR")
+        recurring.free_cycles = 0
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        recurring.billing = Billing(first_name="John", last_name="Doe", address=address)
+        recurring.shipping = Shipping(first_name="John", last_name="Doe", address=address)
+        recurring.end_date = 1768656033
+        recurring.migration = True
+        recurring.next_transaction_fees = Money(1, "EUR")
+        recurring.next_transaction_debited_funds = Money(12, "EUR")
+        result = recurring.save()
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.get('free_cycles'))
+
+        created_recurring = RecurringPayInRegistration.get(result.get('id'))
+        self.assertIsNotNone(created_recurring)
+        print(created_recurring.id)
+        cit = RecurringPayInCIT()
+        cit.recurring_payin_registration_id = created_recurring.id
+        cit.tag = "custom meta"
+        cit.statement_descriptor = "lorem"
+        cit.secure_mode_return_url = "http://www.my-site.com/returnurl"
+        cit.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        cit.browser_info = BaseTest.get_browser_info()
+        cit.debited_funds = Money(12, "EUR")
+        cit.fees = Money(1, "EUR")
+
+        created_cit = cit.save()
+        self.assertIsNotNone(created_cit)
+        cit_card_info = created_cit['card_info']
+        self.assertIsNotNone(cit_card_info)
+        self.assertIsInstance(cit_card_info, CardInfo)
+
+        mit = RecurringPayInMIT()
+        mit.recurring_payin_registration_id = created_recurring.id
+        mit.statement_descriptor = "lorem"
+        mit.tag = "custom meta"
+        mit.debited_funds = Money(10, "EUR")
+        mit.fees = Money(1, "EUR")
+        created_mit = mit.save()
+        self.assertIsNotNone(created_mit)
+        mit_card_info = created_mit['card_info']
+        self.assertIsNotNone(mit_card_info)
+        self.assertIsInstance(mit_card_info, CardInfo)

@@ -242,7 +242,7 @@ class Billing(object):
 
     def __str__(self):
         return 'Billing: %s' % \
-               (self.first_name, self.last_name, self.address)
+            (self.first_name, self.last_name, self.address)
 
 
 @add_camelcase_aliases
@@ -253,7 +253,7 @@ class FallbackReason(object):
 
     def __str__(self):
         return 'FallbackReason: %s' % \
-               (self.code, self.message)
+            (self.code, self.message)
 
 
 @add_camelcase_aliases
@@ -264,7 +264,7 @@ class InstantPayout(object):
 
     def __str__(self):
         return 'InstantPayout: %s' % \
-               (self.code, self.message)
+            (self.code, self.message)
 
 
 @add_camelcase_aliases
@@ -289,7 +289,7 @@ class DebitedBankAccount(object):
 
     def __str__(self):
         return 'DebitedBankAccount: %s' % \
-               (self.owner_name, self.account_number, self.iban, self.bic, self.type, self.country)
+            (self.owner_name, self.account_number, self.iban, self.bic, self.type, self.country)
 
     def __eq__(self, other):
         if isinstance(other, DebitedBankAccount):
@@ -317,7 +317,7 @@ class Address(object):
 
     def __str__(self):
         return 'Address: %s, %s , %s, %s, %s , %s' % \
-               (self.address_line_1, self.address_line_2, self.postal_code, self.city, self.region, self.country)
+            (self.address_line_1, self.address_line_2, self.postal_code, self.city, self.region, self.country)
 
     def __eq__(self, other):
         if isinstance(other, Address):
@@ -542,7 +542,7 @@ class Shipping(object):
 
     def __str__(self):
         return 'Shipping: %s' % \
-               (self.first_name, self.last_name, self.address)
+            (self.first_name, self.last_name, self.address)
 
 
 @add_camelcase_aliases
@@ -556,7 +556,7 @@ class CurrentState(object):
 
     def __str__(self):
         return 'CurrentState: %s' % \
-               (self.cumulated_debited_amount, self.cumulated_debited_fees, self.last_payin_id, self.payins_linked)
+            (self.cumulated_debited_amount, self.cumulated_debited_fees, self.last_payin_id, self.payins_linked)
 
 
 @add_camelcase_aliases
@@ -891,7 +891,7 @@ class CountryAuthorizationData(object):
 
     def __str__(self):
         return 'CountryAuthorizationData: %s, %s , %s' % \
-               (self.block_user_creation, self.block_bank_account_creation, self.block_payout)
+            (self.block_user_creation, self.block_bank_account_creation, self.block_payout)
 
     def __eq__(self, other):
         if isinstance(other, CountryAuthorizationData):
@@ -916,7 +916,7 @@ class PayinsLinked(object):
 
     def __str__(self):
         return 'PayinsLinked: %s, %s' % \
-               (self.payin_capture_id, self.payin_complement_id)
+            (self.payin_capture_id, self.payin_complement_id)
 
     def to_api_json(self):
         return {
@@ -935,7 +935,7 @@ class LineItem(object):
 
     def __str__(self):
         return 'LineItem: %s %s %s %s %s' % \
-               (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description)
+            (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description)
 
     def to_api_json(self):
         return {
@@ -946,6 +946,7 @@ class LineItem(object):
             "Description": self.description
         }
 
+
 @add_camelcase_aliases
 class ConversionRate(object):
     def __init__(self, client_rate=None, market_rate=None):
@@ -954,4 +955,25 @@ class ConversionRate(object):
 
     def __str__(self):
         return 'Conversion rate: %s' % \
-               (self.client_rate, self.market_rate)
+            (self.client_rate, self.market_rate)
+
+
+@add_camelcase_aliases
+class CardInfo(object):
+    def __init__(self,
+                 bin=None,
+                 issuing_bank=None,
+                 issuer_country_code=None,
+                 type=None,
+                 brand=None,
+                 sub_type=None):
+        self.bin = bin
+        self.issuing_bank = issuing_bank
+        self.issuer_country_code = issuer_country_code
+        self.type = type
+        self.brand = brand
+        self.sub_type = sub_type
+
+    def __str__(self):
+        return 'Card info: %s' % \
+            (self.bin, self.issuing_bank, self.issuer_country_code, self.type, self.brand, self.sub_type)
