@@ -1116,7 +1116,7 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
     debited_funds = MoneyField(api_name='DebitedFunds')
     credited_funds = MoneyField(api_name='CreditedFunds')
     fees = MoneyField(api_name='Fees')
-    card_info = CardInfoField(api_name='ApiName')
+    card_info = CardInfoField(api_name='CardInfo')
 
     class Meta:
         verbose_name = 'card_preauthorized_deposit_payin'
