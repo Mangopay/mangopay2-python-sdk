@@ -14,7 +14,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
-                     CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField)
+                     CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -264,6 +264,7 @@ class Wallet(BaseModel):
             return ClientWallet.get(*tuple(args[0].split('_')), **kwargs)
         return super(Wallet, cls).get(*args, **kwargs)
 
+
 @python_2_unicode_compatible
 class ConversionRate(BaseModel):
     debited_currency = CharField(api_name='DebitedCurrency', required=True)
@@ -282,8 +283,9 @@ class ConversionRate(BaseModel):
         verbose_name = 'conversion_rate'
         verbose_name_plural = 'conversion_rates'
         url = {
-            'GET_CONVERSION_RATE' : '/conversion/rate/%(debited_currency)s/%(credited_currency)s'
+            'GET_CONVERSION_RATE': '/conversion/rate/%(debited_currency)s/%(credited_currency)s'
         }
+
 
 @python_2_unicode_compatible
 class InstantConversion(BaseModel):
@@ -318,7 +320,7 @@ class InstantConversion(BaseModel):
         verbose_name = 'instant_conversion'
         verbose_name_plural = 'instant_conversions'
         url = {
-            'CREATE_INSTANT_CONVERSION' : '/instant-conversion',
+            'CREATE_INSTANT_CONVERSION': '/instant-conversion',
             'GET_INSTANT_CONVERSION': '/instant-conversion/%(id)s'
         }
 
@@ -636,6 +638,7 @@ class RecurringPayInCIT(PayIn):
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     shipping = ShippingField(api_name='Shipping')
+    card_info = CardInfoField(api_name='CardInfo')
 
     def get_read_only_properties(self):
         read_only = ["AuthorId", "Applied3DSVersion", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
@@ -672,6 +675,7 @@ class RecurringPayInMIT(PayIn):
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     security_info = SecurityInfoField(api_name='SecurityInfo')
     shipping = ShippingField(api_name='Shipping')
+    card_info = CardInfoField(api_name='CardInfo')
 
     def get_read_only_properties(self):
         read_only = ["AuthorId", "Applied3DSVersion", "CardId", "CreationDate", "Culture", "SecureModeNeeded"
@@ -711,6 +715,7 @@ class DirectPayIn(PayIn):
     shipping = ShippingField(api_name='Shipping')
     requested_3ds_version = CharField(api_name='Requested3DSVersion')
     applied_3ds_version = CharField(api_name='Applied3DSVersion')
+    card_info = CardInfoField(api_name='CardInfo')
 
     class Meta:
         verbose_name = 'payin'
@@ -989,6 +994,7 @@ class KlarnaPayIn(PayIn):
             SelectQuery.identifier: '/payins'
         }
 
+
 class IdealPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -1008,6 +1014,7 @@ class IdealPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/ideal',
             SelectQuery.identifier: '/payins'
         }
+
 
 class GiropayPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
@@ -1111,6 +1118,7 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
     debited_funds = MoneyField(api_name='DebitedFunds')
     credited_funds = MoneyField(api_name='CreditedFunds')
     fees = MoneyField(api_name='Fees')
+    card_info = CardInfoField(api_name='CardInfo')
 
     class Meta:
         verbose_name = 'card_preauthorized_deposit_payin'
@@ -1148,6 +1156,7 @@ class PreAuthorization(BaseModel):
     shipping = ShippingField(api_name='Shipping')
     requested_3ds_version = CharField(api_name='Requested3DSVersion')
     applied_3ds_version = CharField(api_name='Applied3DSVersion')
+    card_info = CardInfoField(api_name='CardInfo')
 
     def get_transactions(self, *args, **kwargs):
         kwargs['id'] = self.id
