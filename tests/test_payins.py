@@ -1493,6 +1493,39 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("GIROPAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
+    def test_PayIns_Legacy_IdealWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        payin = CardWebPayIn()
+        payin.credited_wallet = credited_wallet
+        payin.author = user
+        payin.debited_funds = Money(amount=10000, currency='EUR')
+        payin.fees = Money(amount=0, currency='EUR')
+        payin.card_type = 'IDEAL'
+        payin.return_url = 'https://test.com'
+        payin.template_url = 'https://TemplateURL.com'
+        payin.secure_mode = 'DEFAULT'
+        payin.culture = 'fr'
+        payin.bic = 'RBRBNL21'
+        result = CardWebPayIn(**payin.save())
+
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.bank_name)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("CARD", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
     def test_create_partial_refund_for_payin(self):
         user = BaseTestLive.get_john()
 
