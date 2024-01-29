@@ -392,3 +392,24 @@ BANK_NAME_CHOICES = Choices(
     ('Revolut'),
     ('Yoursafe')
 )
+
+PAYMENT_METHOD_TYPE_CHOICES = Choices(
+    ('BIN'),
+    ('GOOGLE_PAY')
+)
+
+TOKEN_FORMAT_CHOICES = Choices(
+    ('PAN_ONLY'),
+    ('CRYPTOGRAM_3DS')
+)
+
+PAYMENT_METHOD_CARD_TYPE_CHOICES = Choices(
+    ('CREDIT'),
+    ('DEBIT'),
+    ('CHARGE CARD')
+)
+
+COMMERCIAL_INDICATOR_CHOICES = Choices(
+    ('PERSONAL'),
+    ('COMMERCIAL')
+)

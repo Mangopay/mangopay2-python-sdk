@@ -1129,6 +1129,25 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
         }
 
 
+class PaymentMethodMetadata(BaseModel):
+    type = CharField(api_name='Type', choices=constants.PAYMENT_METHOD_TYPE_CHOICES)
+    bin = CharField(api_name='Bin')
+    token = CharField(api_name='Token')
+    token_format = CharField(api_name='TokenFormat', choices=constants.TOKEN_FORMAT_CHOICES)
+    card_type = CharField(api_name='CardType', choices=constants.PAYMENT_METHOD_CARD_TYPE_CHOICES)
+    issuer_country_code = CharField(api_name='IssuerCountryCode')
+    issuing_bank = CharField(api_name='IssuingBank')
+    commercial_indicator = CharField(api_name='CommercialIndicator', choices=constants.COMMERCIAL_INDICATOR_CHOICES)
+    bin_data = ListField(api_name='BinData')
+
+    class Meta:
+        verbose_name = 'payment_method_metadata'
+        verbose_name_plural = 'payment_method_metadatas'
+        url = {
+            InsertQuery.identifier: '/payment-methods/metadata'
+        }
+
+
 class PreAuthorization(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
