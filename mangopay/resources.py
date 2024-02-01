@@ -1130,14 +1130,14 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
 
 
 class PaymentMethodMetadata(BaseModel):
-    type = CharField(api_name='Type', choices=constants.PAYMENT_METHOD_TYPE_CHOICES)
+    type = CharField(api_name='Type')
     bin = CharField(api_name='Bin')
     token = CharField(api_name='Token')
-    token_format = CharField(api_name='TokenFormat', choices=constants.TOKEN_FORMAT_CHOICES)
-    card_type = CharField(api_name='CardType', choices=constants.PAYMENT_METHOD_CARD_TYPE_CHOICES)
+    token_format = CharField(api_name='TokenFormat')
+    card_type = CharField(api_name='CardType')
     issuer_country_code = CharField(api_name='IssuerCountryCode')
     issuing_bank = CharField(api_name='IssuingBank')
-    commercial_indicator = CharField(api_name='CommercialIndicator', choices=constants.COMMERCIAL_INDICATOR_CHOICES)
+    commercial_indicator = CharField(api_name='CommercialIndicator')
     bin_data = ListField(api_name='BinData')
 
     class Meta:
