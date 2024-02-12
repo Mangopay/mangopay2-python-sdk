@@ -215,7 +215,7 @@ class NotificationsTest(BaseTest):
                     "Status": "DISABLED",
                     "Validity": "VALID",
                     "EventType": "PAYIN_NORMAL_SUCCEEDED",
-                    "Id": "1248727",
+                    "Id": "wt_f01178bd-1cb7-405d-bafc-b5af46537e2e",
                     "Tag": "custom tag",
                     "CreationDate": 1392808584
                 },
@@ -226,12 +226,12 @@ class NotificationsTest(BaseTest):
                 'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/events',
                 'body': [
                     {
-                        "RessourceId": "88263",
+                        "ResourceId": "wt_f01178bd-1cb7-405d-bafc-b5af46537e2e",
                         "EventType": "PAYIN_NORMAL_CREATED",
                         "Date": 1383066833
                     },
                     {
-                        "RessourceId": "88265",
+                        "ResourceId": "wt_f01178bd-1cb7-405d-bafc-b5af46537e2e",
                         "EventType": "PAYIN_NORMAL_CREATED",
                         "Date": 1383067144
                     }
@@ -265,7 +265,7 @@ class NotificationsTest(BaseTest):
                 'method': responses.POST,
                 'url': settings.MANGOPAY_API_SANDBOX_URL+settings.MANGOPAY_CLIENT_ID+'/events',
                 'body': {
-                    "RessourceId": "88263",
+                    "ResourceId": "wt_f01178bd-1cb7-405d-bafc-b5af46537e2e",
                     "EventType": "PAYIN_NORMAL_CREATED",
                     "Date": 1383066833
                 },
