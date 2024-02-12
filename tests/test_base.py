@@ -122,7 +122,7 @@ class BaseTest(RegisteredMocks):
         self.mock_tokenization_request()
 
         response = requests.post(card_registration.card_registration_url, data={
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
@@ -148,7 +148,7 @@ class BaseTest(RegisteredMocks):
         self.mock_tokenization_request()
 
         response = requests.post(card_registration.card_registration_url, data={
-            'cardNumber': '4970101122334422',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
@@ -174,7 +174,7 @@ class BaseTest(RegisteredMocks):
         self.mock_tokenization_request()
 
         response = requests.post(card_registration.card_registration_url, data={
-            'cardNumber': '4970101122334406',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0124',
             'accessKeyRef': card_registration.access_key,
@@ -539,7 +539,7 @@ class BaseTestLive(unittest.TestCase):
             params = {
                 "data_XXX": card_registration.preregistration_data,
                 "accessKeyRef": card_registration.access_key,
-                "cardNumber": '4970101122334422',
+                "cardNumber": '4970107111111119',
                 "cardExpirationDate": '1224',
                 "cardCvx": '123'
             }
@@ -563,7 +563,7 @@ class BaseTestLive(unittest.TestCase):
             params = {
                 "data_XXX": card_registration.preregistration_data,
                 "accessKeyRef": card_registration.access_key,
-                "cardNumber": '4970105191923460',
+                "cardNumber": '4970107111111119',
                 "cardExpirationDate": '1224',
                 "cardCvx": '123'
             }
@@ -609,7 +609,7 @@ class BaseTestLive(unittest.TestCase):
         params = {
             "data_XXX": card_registration.preregistration_data,
             "accessKeyRef": card_registration.access_key,
-            "cardNumber": '4970105181818183',
+            "cardNumber": '4970107111111119',
             "cardExpirationDate": '1224',
             "cardCvx": '123'
         }

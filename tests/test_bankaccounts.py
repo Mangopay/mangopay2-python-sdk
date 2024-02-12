@@ -486,6 +486,7 @@ class BankAccountTestLive(BaseTestLive):
     def test_BankAccount_getTransactions(self):
         account = BaseTestLive.get_johns_account()
 
+        time.sleep(2)
         transactions_page = account.get_transactions()
 
         self.assertIsNotNone(transactions_page.data)

@@ -676,7 +676,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4970105191923460',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,
@@ -729,7 +729,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4970105191923460',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,
@@ -782,6 +782,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         payin.culture = 'fr'
         BaseTestLive._johns_payin = PreAuthorizedPayIn(**payin.save())
 
+        time.sleep(2)
         transactions = pre_authorization.get_transactions()
 
         self.assertIsNotNone(saved_pre_authorization)
@@ -799,7 +800,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
 
         saved_registration = card_registration.save()
         data = {
-            'cardNumber': '4970105191923460',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '1224',
             'accessKeyRef': card_registration.access_key,

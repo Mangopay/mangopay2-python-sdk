@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 from tests import settings
 
 try:
@@ -67,7 +69,7 @@ class CardsTest(BaseTest):
 
         # Send card details to the Tokenization server
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
@@ -163,7 +165,7 @@ class CardsTest(BaseTest):
         self.assertIsNotNone(card_registration.get_pk())
 
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
@@ -239,7 +241,7 @@ class CardsTest(BaseTest):
 
         # Send card details to the Tokenization server
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
@@ -273,6 +275,7 @@ class CardsLiveTest(BaseTestLive):
     def test_getCardTransactions(self):
         card = BaseTestLive.get_johns_card()
 
+        time.sleep(2)
         transactions_page = card.get_transactions()
 
         self.assertIsNotNone(transactions_page.data)
@@ -312,3 +315,43 @@ class CardsLiveTest(BaseTestLive):
 
         self.assertIsNotNone(validation_response)
         self.assertIsNotNone(validation_response['id'])
+
+    def test_getCardValidation(self):
+        user = BaseTestLive.get_john()
+
+        card_registration = CardRegistration()
+        card_registration.user = user
+        card_registration.currency = 'EUR'
+
+        saved_registration = card_registration.save()
+        data = {
+            'cardNumber': '4970107111111119',
+            'cardCvx': '123',
+            'cardExpirationDate': '1224',
+            'accessKeyRef': card_registration.access_key,
+            'data': card_registration.preregistration_data
+        }
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
+        saved_registration['registration_data'] = registration_data_response.text
+        updated_registration = CardRegistration(**saved_registration).save()
+        card_id = updated_registration['card_id']
+
+        card_validation = CardValidation()
+        card_validation.author = user
+        card_validation.tag = "test"
+        card_validation.secure_mode_return_url = "http://www.example.com/"
+        card_validation.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        card_validation.browser_info = BaseTest.get_browser_info()
+
+        validation_response = card_validation.validate(card_id)
+
+        get_card_validation = CardValidation()
+        get_card_validation.id = validation_response['id']
+        get_card_validation_response = get_card_validation.get_card_validation(card_id)
+
+        self.assertIsNotNone(get_card_validation_response.data[0])
+        self.assertIsNotNone(get_card_validation_response.data[0].id)
+        self.assertEqual(get_card_validation_response.data[0].id, validation_response['id'])

@@ -427,6 +427,9 @@ class CardValidation(BaseModel):
                        default=None)
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
+    preferred_card_network = CharField(api_name='PreferredCardNetwork')
+    authorization_date = DateTimeField(api_name='AuthorizationDate')
+    card_info = CardInfoField(api_name='CardInfo')
 
     def validate(self, card_id, **kwargs):
         insert = InsertQuery(self, **kwargs)
@@ -435,11 +438,19 @@ class CardValidation(BaseModel):
         insert.identifier = 'CARD_VALIDATE'
         return insert.execute()
 
+    def get_card_validation(self, card_id, *args, **kwargs):
+        kwargs['card_id'] = card_id
+        kwargs['id'] = self.id
+        select = SelectQuery(CardValidation, *args, **kwargs)
+        select.identifier = 'GET_CARD_VALIDATION'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'card_validation'
         verbose_name_plural = 'card_validations'
         url = {
-            'CARD_VALIDATE': '/cards/%(id)s/validation'
+            'CARD_VALIDATE': '/cards/%(id)s/validation',
+            'GET_CARD_VALIDATION': '/cards/%(card_id)s/validation/%(id)s'
         }
 
 
