@@ -1,3 +1,13 @@
+## [3.32.0] - 2024-02-12
+### Added
+
+- New endpoint to look up metadata from BIN or Google Pay token. More information [here](https://mangopay.com/docs/release-notes/kisale)
+- [Get a card validation endpoint](https://mangopay.com/docs/endpoints/card-validations#view-card-validation)
+
+### Fixed
+
+- Resolved an issue in our Python SDK where certain events were unable to process string-based IDs
+
 ## [3.31.0] - 2023-12-22
 ### Added
 
