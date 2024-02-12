@@ -1522,7 +1522,7 @@ class Transaction(BaseModel):
 
 
 class Event(BaseModel):
-    resource_id = IntegerField(api_name='ResourceId')
+    resource_id = CharField(api_name='ResourceId')
     event_type = CharField(api_name='EventType', choices=constants.EVENT_TYPE_CHOICES, default=None)
     date = DateTimeField(api_name='Date')
 
