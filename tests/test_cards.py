@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 from tests import settings
 
 try:
@@ -273,6 +275,7 @@ class CardsLiveTest(BaseTestLive):
     def test_getCardTransactions(self):
         card = BaseTestLive.get_johns_card()
 
+        time.sleep(2)
         transactions_page = card.get_transactions()
 
         self.assertIsNotNone(transactions_page.data)

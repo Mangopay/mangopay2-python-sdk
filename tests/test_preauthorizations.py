@@ -782,6 +782,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         payin.culture = 'fr'
         BaseTestLive._johns_payin = PreAuthorizedPayIn(**payin.save())
 
+        time.sleep(2)
         transactions = pre_authorization.get_transactions()
 
         self.assertIsNotNone(saved_pre_authorization)
