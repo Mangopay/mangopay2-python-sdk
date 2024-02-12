@@ -67,7 +67,7 @@ class CardsTest(BaseTest):
 
         # Send card details to the Tokenization server
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
@@ -163,7 +163,7 @@ class CardsTest(BaseTest):
         self.assertIsNotNone(card_registration.get_pk())
 
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
@@ -239,7 +239,7 @@ class CardsTest(BaseTest):
 
         # Send card details to the Tokenization server
         response = requests.post(card_registration.card_registration_url, urlrequest.urlencode({
-            'cardNumber': '4970100000000154',
+            'cardNumber': '4970107111111119',
             'cardCvx': '123',
             'cardExpirationDate': '0128',
             'accessKeyRef': card_registration.access_key,
