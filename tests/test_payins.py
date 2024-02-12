@@ -12,7 +12,7 @@ from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, 
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
 from tests.resources import (Wallet, DirectPayIn, BankWirePayIn, PayPalPayIn,
-                             PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants)
+                             PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants, PaymentMethodMetadata)
 from tests.test_base import BaseTest, BaseTestLive
 
 
@@ -1090,6 +1090,49 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(result)
 
     @unittest.skip("can't be tested yet")
+    def test_GooglePay_GetPaymentMethodMetadata(self):
+        user = self.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = GooglepayPayIn()
+        pay_in.author = user
+        pay_in.credited_user = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 1
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 199
+        pay_in.debited_funds.currency = "EUR"
+        payment_data = GooglepayPaymentData()
+        # can't be tested
+        payment_data.transaction_id = "placeholder"
+        payment_data.network = 'VISA'
+        payment_data.token_data = "placeholder"
+        pay_in.payment_data = payment_data
+        pay_in.statement_descriptor = 'Python'
+        pay_in.payment_type = constants.PAYIN_PAYMENT_TYPE.googlepay
+        pay_in.execution_type = constants.EXECUTION_TYPE_CHOICES.direct
+        result = pay_in.save()
+
+        payment_method_metadata = PaymentMethodMetadata()
+        payment_method_metadata.type = 'GOOGLE_PAY'
+        payment_method_metadata.token = result.payment_type.token_data
+        result_metadata = payment_method_metadata.save()
+
+        self.assertIsNotNone(result_metadata)
+        self.assertIsNotNone(result_metadata['card_type'])
+        self.assertIsNotNone(result_metadata['issuer_country_code'])
+        self.assertIsNotNone(result_metadata['issuing_bank'])
+        self.assertIsNotNone(result_metadata['bin_data'])
+
+    @unittest.skip("can't be tested yet")
     def test_card_preauthorized_deposit_payin(self):
         deposit = self.create_new_deposit()
 
@@ -1643,6 +1686,56 @@ class PayInsTestLive(BaseTestLive):
         card_info = result['card_info']
         self.assertIsNotNone(card_info)
         self.assertIsInstance(card_info, CardInfo)
+
+    def test_PayIns_CardDirect_GetPaymentMethodMetadata(self):
+        user = BaseTestLive.get_john(True)
+        debited_wallet = BaseTestLive.get_johns_wallet(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+        card = BaseTestLive.get_johns_card(True)
+
+        pay_in = DirectPayIn()
+        pay_in.author = user
+        pay_in.debited_wallet = debited_wallet
+        pay_in.credited_wallet = credited_wallet
+        pay_in.card = card
+        pay_in.fees = Money()
+        pay_in.fees.amount = 100
+        pay_in.fees.currency = "EUR"
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 1000
+        pay_in.debited_funds.currency = "EUR"
+        pay_in.secure_mode_return_url = "http://www.example.com/"
+        pay_in.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
+        pay_in.browser_info = BaseTest.get_browser_info()
+
+        address = Address()
+        address.address_line_1 = "Big Street"
+        address.address_line_2 = "no 2 ap 6"
+        address.country = "FR"
+        address.city = "Lyon"
+        address.postal_code = "68400"
+        pay_in.billing = Billing(first_name="John", last_name="Doe", address=address)
+
+        result = pay_in.save()
+
+        self.assertIsNotNone(result)
+        card_info = result['card_info']
+        payment_method_metadata = PaymentMethodMetadata()
+        payment_method_metadata.type = 'BIN'
+        payment_method_metadata.bin = card_info.Bin
+        result_metadata = payment_method_metadata.save()
+
+        self.assertIsNotNone(result_metadata)
+        self.assertIsNotNone(result_metadata['card_type'])
+        self.assertIsNotNone(result_metadata['issuer_country_code'])
+        self.assertIsNotNone(result_metadata['issuing_bank'])
+        self.assertIsNotNone(result_metadata['bin_data'])
 
     def test_RecurringPayment_CheckCardInfo(self):
         user = self.get_john(True)
