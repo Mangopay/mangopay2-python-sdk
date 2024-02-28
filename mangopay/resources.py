@@ -288,7 +288,7 @@ class ConversionRate(BaseModel):
 
 
 @python_2_unicode_compatible
-class InstantConversion(BaseModel):
+class Conversion(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     debited_wallet = ForeignKeyField(Wallet, api_name='DebitedWalletId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -303,25 +303,55 @@ class InstantConversion(BaseModel):
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
     execution_date = DateTimeField(api_name='ExecutionDate')
 
-    def create_instant_conversion(self, **kwargs):
+    def create_conversion(self, **kwargs):
         insert = InsertQuery(self, **kwargs)
         insert.insert_query = self.get_field_dict()
-        insert.identifier = 'CREATE_INSTANT_CONVERSION'
+        insert.identifier = 'CREATE_CONVERSION'
         return insert.execute()
 
     @staticmethod
-    def get_instant_conversion(id, *args, **kwargs):
+    def get_conversion(id, *args, **kwargs):
         kwargs['id'] = id
-        select = SelectQuery(InstantConversion, *args, **kwargs)
-        select.identifier = 'GET_INSTANT_CONVERSION'
+        select = SelectQuery(Conversion, *args, **kwargs)
+        select.identifier = 'GET_CONVERSION'
         return select.all(*args, **kwargs)
 
     class Meta:
-        verbose_name = 'instant_conversion'
-        verbose_name_plural = 'instant_conversions'
+        verbose_name = 'conversion'
+        verbose_name_plural = 'conversions'
         url = {
-            'CREATE_INSTANT_CONVERSION': '/instant-conversion',
-            'GET_INSTANT_CONVERSION': '/instant-conversion/%(id)s'
+            'CREATE_CONVERSION': '/instant-conversion',
+            'GET_CONVERSION': '/instant-conversion/%(id)s'
+        }
+
+
+class ConversionQuote(BaseModel):
+    expiration_date = DateTimeField(api_name='ExpirationDate')
+    status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
+    duration = IntegerField(api_name='Duration')
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    credited_funds = MoneyField(api_name='CreditedFunds', required=True)
+    conversion_rate = ConversionRateField(api_name='ConversionRateResponse')
+
+    def create_conversion_quote(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE_CONVERSION_QUOTE'
+        return insert.execute()
+
+    @staticmethod
+    def get_conversion_quote(id, *args, **kwargs):
+        kwargs['id'] = id
+        select = SelectQuery(ConversionQuote, *args, **kwargs)
+        select.identifier = 'GET_CONVERSION_QUOTE'
+        return select.all(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'conversion_quote'
+        verbose_name_plural = 'conversions'
+        url = {
+            'CREATE_CONVERSION_QUOTE': '/conversions/quote',
+            'GET_CONVERSION_QUOTE': '/conversions/quote/%(id)s'
         }
 
 
