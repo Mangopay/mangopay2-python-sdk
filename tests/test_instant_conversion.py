@@ -38,6 +38,7 @@ class InstantConversionTest(BaseTestLive):
         instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money()
         instant_conversion.credited_funds = credited_funds
         instant_conversion.debited_funds = debited_funds
+        instant_conversion.fees = Money(amount=9, currency='EUR')
         instant_conversion.tag = "instant conversion test"
 
         instant_conversion_response = instant_conversion.create_instant_conversion()
@@ -45,6 +46,7 @@ class InstantConversionTest(BaseTestLive):
         self.assertIsNotNone(instant_conversion_response)
         self.assertIsNotNone(instant_conversion_response['debited_funds'].amount)
         self.assertIsNotNone(instant_conversion_response['credited_funds'].amount)
+        self.assertIsNotNone(instant_conversion_response['fees'].amount)
         self.assertEqual(instant_conversion_response['status'], 'SUCCEEDED')
 
     def test_get_instant_conversion(self):
