@@ -283,7 +283,7 @@ class ConversionRate(BaseModel):
         verbose_name = 'conversion_rate'
         verbose_name_plural = 'conversion_rates'
         url = {
-            'GET_CONVERSION_RATE': '/conversion/rate/%(debited_currency)s/%(credited_currency)s'
+            'GET_CONVERSION_RATE': '/conversions/rate/%(debited_currency)s/%(credited_currency)s'
         }
 
 
@@ -320,8 +320,8 @@ class InstantConversion(BaseModel):
         verbose_name = 'instant_conversion'
         verbose_name_plural = 'instant_conversions'
         url = {
-            'CREATE_INSTANT_CONVERSION': '/instant-conversion',
-            'GET_INSTANT_CONVERSION': '/instant-conversion/%(id)s'
+            'CREATE_INSTANT_CONVERSION': '/conversions/instant-conversion',
+            'GET_INSTANT_CONVERSION': '/conversions/%(id)s'
         }
 
 
