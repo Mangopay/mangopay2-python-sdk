@@ -1,4 +1,4 @@
-from mangopay.resources import ConversionQuote
+from mangopay.resources import ConversionQuote, QuotedConversion
 from mangopay.utils import Money
 from tests.resources import ConversionRate, Conversion, Wallet
 from tests.test_base import BaseTestLive
@@ -111,4 +111,31 @@ class ConversionsTest(BaseTestLive):
         self.assertIsNotNone(response.credited_funds)
         self.assertIsNotNone(response.conversion_rate)
         self.assertEqual('ACTIVE', response.status)
+
+    def test_create_quoted_conversion(self):
+        user = BaseTestLive.get_john()
+
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'GBP'
+        credited_wallet.description = 'WALLET IN GBP'
+        credited_wallet = Wallet(**credited_wallet.save())
+        debited_wallet = BaseTestLive.create_new_wallet_with_money()
+
+        conversion_quote = ConversionQuote()
+        conversion_quote.credited_funds = Money(currency='GBP')
+        conversion_quote.debited_funds = Money(currency='EUR', amount=50)
+        conversion_quote.duration = 90
+        conversion_quote.tag = "Created using the Mangopay Python SDK"
+        created_conversion_quote = conversion_quote.create_conversion_quote()
+
+        quotedConversion = QuotedConversion()
+        quotedConversion.quote_id = created_conversion_quote['id']
+        quotedConversion.author_id = debited_wallet.owners_ids[0]
+        quotedConversion.credited_wallet = credited_wallet
+        quotedConversion.debited_wallet = debited_wallet
+
+        response = quotedConversion.save()
+        self.assertIsNotNone(response)
+
 
