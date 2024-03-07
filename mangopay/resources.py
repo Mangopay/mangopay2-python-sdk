@@ -2157,3 +2157,15 @@ class Deposit(BaseModel):
             SelectQuery.identifier: '/deposit-preauthorizations/',
             UpdateQuery.identifier: '/deposit-preauthorizations/'
         }
+
+
+class QuotedConversion(Transaction):
+    quote_id = CharField(api_name='QuoteId')
+    conversion_rate = ConversionRateField(api_name='ConversionRateResponse')
+
+    class Meta:
+        verbose_name = 'quoted_conversion'
+        verbose_name_plural = 'quoted_conversions'
+        url = {
+            InsertQuery.identifier: '/conversions/quoted-conversion'
+        }
