@@ -283,7 +283,7 @@ class ConversionRate(BaseModel):
         verbose_name = 'conversion_rate'
         verbose_name_plural = 'conversion_rates'
         url = {
-            'GET_CONVERSION_RATE': '/conversion/rate/%(debited_currency)s/%(credited_currency)s'
+            'GET_CONVERSION_RATE': '/conversions/rate/%(debited_currency)s/%(credited_currency)s'
         }
 
 
@@ -294,6 +294,7 @@ class Conversion(BaseModel):
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     credited_funds = MoneyField(api_name='CreditedFunds', required=True)
+    fees = MoneyField(api_name="Fees", required=True)
     conversion_rate = ConversionRateField(api_name='ConversionRate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
@@ -320,8 +321,8 @@ class Conversion(BaseModel):
         verbose_name = 'conversion'
         verbose_name_plural = 'conversions'
         url = {
-            'CREATE_CONVERSION': '/instant-conversion',
-            'GET_CONVERSION': '/instant-conversion/%(id)s'
+            'CREATE_CONVERSION': '/conversions/instant-conversion',
+            'GET_CONVERSION': '/conversions/%(id)s'
         }
 
 
