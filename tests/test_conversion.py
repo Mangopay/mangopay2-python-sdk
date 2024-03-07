@@ -1,9 +1,10 @@
+from mangopay.resources import ConversionQuote
 from mangopay.utils import Money
-from tests.resources import ConversionRate, InstantConversion, Wallet
+from tests.resources import ConversionRate, Conversion, Wallet
 from tests.test_base import BaseTestLive
 
 
-class InstantConversionTest(BaseTestLive):
+class ConversionsTest(BaseTestLive):
 
     def test_get_conversion_rate(self):
         conversion_rate = ConversionRate()
@@ -32,7 +33,7 @@ class InstantConversionTest(BaseTestLive):
         debited_funds.currency = 'EUR'
         debited_funds.amount = 79
 
-        instant_conversion = InstantConversion()
+        instant_conversion = Conversion()
         instant_conversion.author = user
         instant_conversion.credited_wallet = credited_wallet
         instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money()
@@ -41,7 +42,7 @@ class InstantConversionTest(BaseTestLive):
         instant_conversion.fees = Money(amount=9, currency='EUR')
         instant_conversion.tag = "instant conversion test"
 
-        instant_conversion_response = instant_conversion.create_instant_conversion()
+        instant_conversion_response = instant_conversion.create_conversion()
 
         self.assertIsNotNone(instant_conversion_response)
         self.assertIsNotNone(instant_conversion_response['debited_funds'].amount)
@@ -65,7 +66,7 @@ class InstantConversionTest(BaseTestLive):
         debited_funds.currency = 'EUR'
         debited_funds.amount = 79
 
-        instant_conversion = InstantConversion()
+        instant_conversion = Conversion()
         instant_conversion.author = user
         instant_conversion.credited_wallet = credited_wallet
         instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money()
@@ -73,11 +74,43 @@ class InstantConversionTest(BaseTestLive):
         instant_conversion.debited_funds = debited_funds
         instant_conversion.tag = "instant conversion test"
 
-        instant_conversion_response = instant_conversion.create_instant_conversion()
-        returned_conversion_response = InstantConversion.get_instant_conversion(instant_conversion_response['id'])
+        instant_conversion_response = instant_conversion.create_conversion()
+        returned_conversion_response = Conversion.get_conversion(instant_conversion_response['id'])
 
         self.assertIsNotNone(returned_conversion_response)
         self.assertIsNotNone(returned_conversion_response.data[0])
         self.assertIsNotNone(returned_conversion_response.data[0].debited_funds.amount)
         self.assertIsNotNone(returned_conversion_response.data[0].credited_funds.amount)
         self.assertEqual(returned_conversion_response.data[0].status, 'SUCCEEDED')
+
+    def test_create_conversion_quote(self):
+        conversion_quote = ConversionQuote()
+        conversion_quote.credited_funds = Money(currency='USD')
+        conversion_quote.debited_funds = Money(currency='GBP', amount=100)
+        conversion_quote.duration = 90
+        conversion_quote.tag = "Created using the Mangopay Python SDK"
+
+        created_conversion_quote = conversion_quote.create_conversion_quote()
+
+        self.assertIsNotNone(created_conversion_quote)
+        self.assertIsNotNone(created_conversion_quote['debited_funds'])
+        self.assertIsNotNone(created_conversion_quote['credited_funds'])
+        self.assertIsNotNone(created_conversion_quote['conversion_rate'])
+        self.assertEqual('ACTIVE', created_conversion_quote['status'])
+
+    def test_get_conversion_quote(self):
+        conversion_quote = ConversionQuote()
+        conversion_quote.credited_funds = Money(currency='USD')
+        conversion_quote.debited_funds = Money(currency='GBP', amount=100)
+        conversion_quote.duration = 90
+        conversion_quote.tag = "Created using the Mangopay Python SDK"
+
+        created_conversion_quote = conversion_quote.create_conversion_quote()
+        returned_conversion_quote = ConversionQuote.get_conversion_quote(created_conversion_quote['id'])
+        response = returned_conversion_quote.data[0]
+        self.assertIsNotNone(response)
+        self.assertIsNotNone(response.debited_funds)
+        self.assertIsNotNone(response.credited_funds)
+        self.assertIsNotNone(response.conversion_rate)
+        self.assertEqual('ACTIVE', response.status)
+
