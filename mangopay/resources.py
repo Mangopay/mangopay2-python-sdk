@@ -294,6 +294,7 @@ class InstantConversion(BaseModel):
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     credited_funds = MoneyField(api_name='CreditedFunds', required=True)
+    fees = MoneyField(api_name="Fees", required=True)
     conversion_rate = ConversionRateField(api_name='ConversionRate')
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
