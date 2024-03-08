@@ -5,6 +5,7 @@ api_sandbox_url = 'https://api.sandbox.mangopay.com/v2.01/'
 temp_dir = None
 api_version = 2.01
 sandbox = True
+uk_header_flag = False
 
 package_version = None
 try:

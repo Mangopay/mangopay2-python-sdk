@@ -38,7 +38,7 @@ class APIRequest(object):
 
 
     def __init__(self, client_id=None, apikey=None, api_url=None, api_sandbox_url=None, sandbox=None,
-                 timeout=30.0, storage_strategy=None, proxies=None):
+                 timeout=30.0, storage_strategy=None, proxies=None, uk_header_flag=False):
         global rate_limits
         rate_limits = None
         if (sandbox is None and mangopay.sandbox) or sandbox:
@@ -51,6 +51,7 @@ class APIRequest(object):
         self.auth_manager = AuthorizationTokenManager(self, storage_strategy)
         self.timeout = timeout
         self.proxies = proxies
+        self.uk_header_flag = uk_header_flag or mangopay.uk_header_flag
 
     def set_rate_limit(self, rate_limit):
         global rate_limits
@@ -80,6 +81,9 @@ class APIRequest(object):
 
             if idempotency_key:
                 headers['Idempotency-Key'] = idempotency_key
+
+            if self.uk_header_flag:
+                headers['x-tenant-id'] = 'uk'
         else:
             if "data_XXX" in params:
                 params[str("data")] = params[str("data_XXX")]
