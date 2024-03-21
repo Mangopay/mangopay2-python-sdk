@@ -633,7 +633,7 @@ V3
                                   user_id="8494514",
                                   type="IBAN",
                                   owner_address=Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                  postal_code='11222', country='FR'),
+                                  city='Bordeaux', postal_code='11222', country='FR'),
                                   iban="FR7630004000031234567890143",
                                   bic="BNPAFRPP")
 
