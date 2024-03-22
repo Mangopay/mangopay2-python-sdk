@@ -599,7 +599,7 @@ V3
                                fees=Money(amount=1, currency='EUR'),
                                credited_wallet_id=legal_user_wallet,
                                card_id=card,
-                               secure_mode=DEFAULT",
+                               secure_mode="DEFAULT",
                                secure_mode_return_url="https://www.ulule.com/")
 
     direct_payin.save()
