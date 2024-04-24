@@ -486,6 +486,8 @@ class CardValidation(BaseModel):
     secure_mode_return_url = CharField(api_name='SecureModeReturnURL', required=True)
     secure_mode_redirect_url = CharField(api_name='SecureModeRedirectURL')
     secure_mode_needed = BooleanField(api_name='SecureModeNeeded')
+    secure_mode = CharField(api_name='SecureMode',
+                            choices=constants.SECURE_MODE_CHOICES)
     validity = CharField(api_name='Validity',
                          choices=constants.VALIDITY_CHOICES,
                          default=constants.VALIDITY_CHOICES.unknown)
@@ -887,14 +889,31 @@ class PayPalWebPayIn(PayIn):
     shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
                                     default=None)
     reference = CharField(api_name='Reference')
+    cancel_url = CharField(api_name='CancelURL')
+    buyer_country = CharField(api_name='BuyerCountry')
+    buyer_first_name = CharField(api_name='BuyerFirstname')
+    buyer_last_name = CharField(api_name='BuyerLastname')
+    buyer_phone = CharField(api_name='BuyerPhone')
+    paypal_order_id = CharField(api_name='PaypalOrderID')
+    trackings = ListField(api_name='Trackings')
 
     class Meta:
         verbose_name = 'payin'
         verbose_name_plural = 'payins'
         url = {
             InsertQuery.identifier: '/payins/payment-methods/paypal',
-            SelectQuery.identifier: '/payins'
+            SelectQuery.identifier: '/payins',
+            'ADD_TRACKING_INFORMATION': '/payins/%(id)s/trackings'
         }
+
+    @classmethod
+    def add_tracking_information(cls, **query):
+        # kwargs['id'] = cls.id
+        # args = '',
+        update = UpdateQuery(cls, cls.id, **query)
+        update.identifier = 'ADD_TRACKING_INFORMATION'
+        # update.update_query = query
+        return update.execute()
 
 
 @python_2_unicode_compatible
@@ -1081,7 +1100,7 @@ class IdealPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     return_url = CharField(api_name='ReturnURL', required=True)
-    bic = CharField(api_name='Bic', choices=constants.BIC_CHOICES, required=True)
+    bic = CharField(api_name='Bic', choices=constants.BIC_CHOICES, required=False)
     statement_descriptor = CharField(api_name='StatementDescriptor')
     creation_date = DateTimeField(api_name='CreationDate')
     redirect_url = CharField(api_name='RedirectURL')

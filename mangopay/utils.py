@@ -926,16 +926,17 @@ class PayinsLinked(object):
 
 
 class LineItem(object):
-    def __init__(self, name=None, quantity=None, unit_amount=None, tax_amount=None, description=None):
+    def __init__(self, name=None, quantity=None, unit_amount=None, tax_amount=None, description=None, category=None):
         self.name = name
         self.quantity = quantity
         self.unit_amount = unit_amount
         self.tax_amount = tax_amount
         self.description = description
+        self.category = category
 
     def __str__(self):
-        return 'LineItem: %s %s %s %s %s' % \
-            (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description)
+        return 'LineItem: %s %s %s %s %s %s' % \
+            (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description, self.category)
 
     def to_api_json(self):
         return {
@@ -943,7 +944,8 @@ class LineItem(object):
             "Quantity": self.quantity,
             "UnitAmount": self.unit_amount,
             "TaxAmount": self.tax_amount,
-            "Description": self.description
+            "Description": self.description,
+            "Category": self.category
         }
 
 
@@ -954,8 +956,14 @@ class ConversionRate(object):
         self.market_rate = market_rate
 
     def __str__(self):
-        return 'Conversion rate: %s' % \
+        return 'Conversion rate: %s %s' % \
             (self.client_rate, self.market_rate)
+
+    def to_api_json(self):
+        return {
+            "ClientRate": self.client_rate,
+            "MarketRate": self.market_rate
+        }
 
 
 @add_camelcase_aliases
@@ -975,5 +983,33 @@ class CardInfo(object):
         self.sub_type = sub_type
 
     def __str__(self):
-        return 'Card info: %s' % \
+        return 'Card info: %s %s %s %s %s %s' % \
             (self.bin, self.issuing_bank, self.issuer_country_code, self.type, self.brand, self.sub_type)
+
+    def to_api_json(self):
+        return {
+            "BIN": self.bin,
+            "IssuingBank": self.issuing_bank,
+            "IssuerCountryCode": self.issuer_country_code,
+            "Type": self.type,
+            "Brand": self.brand,
+            "SubType": self.sub_type
+        }
+
+
+class PayPalTrackingInformation(object):
+    def __init__(self, tracking_number=None, carrier=None, notify_buyer=None):
+        self.tracking_number = tracking_number
+        self.carrier = carrier
+        self.notify_buyer = notify_buyer
+
+    def __str__(self):
+        return 'PayPalTrackingInformation: %s %s %s' % \
+            (self.tracking_number, self.carrier, self.notify_buyer)
+
+    def to_api_json(self):
+        return {
+            "TrackingNumber": self.tracking_number,
+            "Carrier": self.carrier,
+            "NotifyBuyer": self.notify_buyer
+        }
