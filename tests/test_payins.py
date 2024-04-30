@@ -1128,7 +1128,7 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertIsNotNone(result_metadata)
         self.assertIsNotNone(result_metadata['bin_data'])
-        self.assertIsNotNone(result_metadata['bin_data'][0]['card_type'])
+        self.assertIsNotNone(result_metadata['bin_data'][0].card_type)
         self.assertIsNotNone(result_metadata['issuer_country_code'])
         self.assertIsNotNone(result_metadata['issuing_bank'])
 
@@ -1733,7 +1733,7 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertIsNotNone(result_metadata)
         self.assertIsNotNone(result_metadata['bin_data'])
-        self.assertIsNotNone(result_metadata['bin_data'][0]['card_type'])
+        self.assertIsNotNone(result_metadata['bin_data'][0].card_type)
         self.assertIsNotNone(result_metadata['issuer_country_code'])
         self.assertIsNotNone(result_metadata['issuing_bank'])
 
