@@ -1127,10 +1127,10 @@ class PayInsTestLive(BaseTestLive):
         result_metadata = payment_method_metadata.save()
 
         self.assertIsNotNone(result_metadata)
-        self.assertIsNotNone(result_metadata['card_type'])
+        self.assertIsNotNone(result_metadata['bin_data'])
+        self.assertIsNotNone(result_metadata['bin_data'][0])
         self.assertIsNotNone(result_metadata['issuer_country_code'])
         self.assertIsNotNone(result_metadata['issuing_bank'])
-        self.assertIsNotNone(result_metadata['bin_data'])
 
     @unittest.skip("can't be tested yet")
     def test_card_preauthorized_deposit_payin(self):
@@ -1732,10 +1732,10 @@ class PayInsTestLive(BaseTestLive):
         result_metadata = payment_method_metadata.save()
 
         self.assertIsNotNone(result_metadata)
-        self.assertIsNotNone(result_metadata['card_type'])
+        self.assertIsNotNone(result_metadata['bin_data'])
+        self.assertIsNotNone(result_metadata['bin_data'][0])
         self.assertIsNotNone(result_metadata['issuer_country_code'])
         self.assertIsNotNone(result_metadata['issuing_bank'])
-        self.assertIsNotNone(result_metadata['bin_data'])
 
     def test_RecurringPayment_CheckCardInfo(self):
         user = self.get_john(True)

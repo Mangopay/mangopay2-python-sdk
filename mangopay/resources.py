@@ -1214,10 +1214,8 @@ class PaymentMethodMetadata(BaseModel):
     bin = CharField(api_name='Bin')
     token = CharField(api_name='Token')
     token_format = CharField(api_name='TokenFormat')
-    card_type = CharField(api_name='CardType')
     issuer_country_code = CharField(api_name='IssuerCountryCode')
     issuing_bank = CharField(api_name='IssuingBank')
-    commercial_indicator = CharField(api_name='CommercialIndicator')
     bin_data = ListField(api_name='BinData')
 
     class Meta:
