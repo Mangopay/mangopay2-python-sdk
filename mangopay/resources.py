@@ -445,6 +445,7 @@ class Card(BaseModel):
                          default=constants.VALIDITY_CHOICES.unknown)
     user = ForeignKeyField(User, api_name='UserId', required=True, related_name='cards')
     fingerprint = CharField(api_name='Fingerprint')
+    card_holder_name = CharField(api_name='CardHolderName')
 
     @classmethod
     def get_by_fingerprint(cls, fingerprint, *args, **kwargs):
@@ -536,6 +537,7 @@ class CardRegistration(BaseModel):
     result_message = CharField(api_name='ResultMessage')
     status = CharField(api_name='Status', choices=constants.CARD_STATUS_CHOICES, default=None)
     creation_date = DateTimeField(api_name='CreationDate')
+    card_holder_name = CharField(api_name='CardHolderName')
 
     class Meta:
         verbose_name = 'cardregistration'

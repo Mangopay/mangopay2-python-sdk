@@ -740,6 +740,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         }
         registration_data_response = requests.post(card_registration.card_registration_url, data=data, headers=headers)
         saved_registration['registration_data'] = registration_data_response.text
+        saved_registration['card_holder_name'] = "John Silver"
         updated_registration = CardRegistration(**saved_registration).save()
 
         card = Card.get(updated_registration['card_id'])
@@ -791,6 +792,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         self.assertEqual(security_info.avs_result, "NO_CHECK")
         self.assertEqual(payin.status, "SUCCEEDED")
         self.assertEqual(transactions[0].status, "SUCCEEDED")
+        self.assertIsNotNone(card.card_holder_name)
 
     def test_PreAuthorizations_CheckCardInfo(self):
         user = BaseTestLive.get_john()
