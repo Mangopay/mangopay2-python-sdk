@@ -908,13 +908,16 @@ class PayPalWebPayIn(PayIn):
         }
 
     @classmethod
-    def add_tracking_information(cls, **query):
-        # kwargs['id'] = cls.id
-        # args = '',
-        update = UpdateQuery(cls, cls.id, **query)
-        update.identifier = 'ADD_TRACKING_INFORMATION'
-        # update.update_query = query
-        return update.execute()
+    def add_tracking_information(cls, pay_in_id, tracking_information):
+        action = ActionQuery(
+            model=cls,
+            reference=cls.id,
+            identifier='ADD_TRACKING_INFORMATION',
+            method='PUT',
+            params={'id': pay_in_id}
+        )
+        action.action_query = tracking_information.to_api_json()
+        return action.execute()
 
 
 @python_2_unicode_compatible
