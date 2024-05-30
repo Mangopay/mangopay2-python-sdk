@@ -338,12 +338,20 @@ class ReportTransactionsFiltersField(Field):
         if value is not None:
             local_min_debited_funds_amount = ''
             local_max_debited_funds_amount = ''
+            local_min_fees_amount = ''
+            local_max_fees_amount = ''
 
             if 'MinDebitedFundsAmount' in value and value['MinDebitedFundsAmount']:
                 local_min_debited_funds_amount = int(value['MinDebitedFundsAmount'])
 
             if 'MaxDebitedFundsAmount' in value and value['MaxDebitedFundsAmount']:
                 local_max_debited_funds_amount = int(value['MaxDebitedFundsAmount'])
+
+            if 'MinFeesAmount' in value and value['MinFeesAmount']:
+                local_min_fees_amount = int(value['MinFeesAmount'])
+
+            if 'MaxFeesAmount' in value and value['MaxFeesAmount']:
+                local_max_fees_amount = int(value['MaxFeesAmount'])
 
             author_id = None
             wallet_id = None
@@ -361,6 +369,11 @@ class ReportTransactionsFiltersField(Field):
                                              min_debited_funds_currency=value['MinDebitedFundsCurrency'],
                                              max_debited_funds_amount=local_max_debited_funds_amount,
                                              max_debited_funds_currency=value['MaxDebitedFundsCurrency'],
+                                             result_code=value['ResultCode'],
+                                             min_fees_amount=local_min_fees_amount,
+                                             min_fees_currency=value['MinFeesCurrency'],
+                                             max_fees_amount=local_max_fees_amount,
+                                             max_fees_currency=value['MaxFeesCurrency'],
                                              author_id=author_id, wallet_id=wallet_id
                                              )
         return value
@@ -390,6 +403,11 @@ class ReportTransactionsFiltersField(Field):
                 'MinDebitedFundsCurrency': value.min_debited_funds_currency,
                 'MaxDebitedFundsAmount': value.max_debited_funds_amount,
                 'MaxDebitedFundsCurrency': value.max_debited_funds_currency,
+                'ResultCode': value.result_code,
+                'MinFeesAmount': value.min_fees_amount,
+                'MinFeesCurrency': value.min_fees_currency,
+                'MaxFeesAmount': value.max_fees_amount,
+                'MaxFeesCurrency': value.max_fees_currency,
                 'AuthorId': value.author_id,
                 'WalletId': value.wallet_id,
             }
