@@ -1281,6 +1281,7 @@ class PayInsTestLive(BaseTestLive):
         pay_in.debited_funds.currency = "EUR"
         pay_in.return_url = "http://mangopay.com"
         pay_in.shipping_preference = "NO_SHIPPING"
+        pay_in.cancel_url = "http://mangopay.com"
 
         line_item = LineItem()
         line_item.name = "test"
@@ -1288,6 +1289,7 @@ class PayInsTestLive(BaseTestLive):
         line_item.unit_amount = 1000
         line_item.tax_amount = 0
         line_item.description = "test"
+        line_item.category = "DIGITAL_GOODS"
         pay_in.line_items = [line_item]
 
         pay_in.statement_descriptor = "test"

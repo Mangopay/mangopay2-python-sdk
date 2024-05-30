@@ -890,6 +890,7 @@ class PayPalWebPayIn(PayIn):
                                     default=None)
     reference = CharField(api_name='Reference')
     cancel_url = CharField(api_name='CancelURL')
+    paypal_payer_id = CharField(api_name='PaypalPayerID')
     buyer_country = CharField(api_name='BuyerCountry')
     buyer_first_name = CharField(api_name='BuyerFirstname')
     buyer_last_name = CharField(api_name='BuyerLastname')
