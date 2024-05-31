@@ -1673,6 +1673,7 @@ class PayInsTestLive(BaseTestLive):
         pay_in.secure_mode_return_url = "http://www.example.com/"
         pay_in.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
         pay_in.browser_info = BaseTest.get_browser_info()
+        pay_in.payment_category = 'TelephoneOrder'
 
         address = Address()
         address.address_line_1 = "Big Street"
@@ -1688,6 +1689,7 @@ class PayInsTestLive(BaseTestLive):
         card_info = result['card_info']
         self.assertIsNotNone(card_info)
         self.assertIsInstance(card_info, CardInfo)
+        self.assertEqual('TelephoneOrder', result['payment_category'])
 
     def test_PayIns_CardDirect_GetPaymentMethodMetadata(self):
         user = BaseTestLive.get_john(True)
