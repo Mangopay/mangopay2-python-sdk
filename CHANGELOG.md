@@ -1,3 +1,16 @@
+## [3.34.0] - 2024-05-31
+### Fixed 
+
+- Usage of filters with `ReportTransactions` and the `create()` method
+- BIC is not required for iDeal 
+
+### Added
+
+- New endpoint [Add tracking to Paypal payin](https://mangopay.com/docs/endpoints/paypal#add-tracking-paypal-payin)
+- New parameter `SecureMode` for [Create card validation](https://mangopay.com/docs/endpoints/card-validations#create-card-validation)
+- New parameters for Paypal mean of payment : `CancelURL` & `Category` (sub-parameter of `LineItems`). And management of `PaypalPayerID`, `BuyerCountry`, `BuyerFirstname`, `BuyerLastname`, `BuyerPhone`, `PaypalOrderID` in the response.
+- New parameter `PaymentCategory` for [Create card validation](https://mangopay.com/docs/endpoints/card-validations#create-card-validation) and two additional endpoints [More info](https://mangopay.com/docs/release-notes/kivu)
+
 ## [3.33.2] - 2024-05-24
 ### Added
 
