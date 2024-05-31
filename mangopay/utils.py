@@ -386,7 +386,8 @@ class GooglepayPaymentData(object):
 class ReportTransactionsFilters(object):
     def __init__(self, before_date=None, after_date=None, transaction_type=None, status=None, nature=None,
                  min_debited_funds_amount=None, min_debited_funds_currency=None, max_debited_funds_amount=None,
-                 max_debited_funds_currency=None, author_id=None, wallet_id=None):
+                 max_debited_funds_currency=None, author_id=None, wallet_id=None, result_code=None,
+                 min_fees_amount=None, min_fees_currency=None, max_fees_amount=None, max_fees_currency=None):
         self.before_date = before_date
         self.after_date = after_date
         self.transaction_type = transaction_type
@@ -398,6 +399,11 @@ class ReportTransactionsFilters(object):
         self.max_debited_funds_currency = max_debited_funds_currency
         self.author_id = author_id
         self.wallet_id = wallet_id
+        self.result_code = result_code
+        self.min_fees_amount = min_fees_amount
+        self.min_fees_currency = min_fees_currency
+        self.max_fees_amount = max_fees_amount
+        self.max_fees_currency = max_fees_currency
 
     def __eq__(self, other):
         if isinstance(other, ReportTransactionsFilters):
@@ -411,7 +417,12 @@ class ReportTransactionsFilters(object):
                     (self.max_debited_funds_amount == other.max_debited_funds_amount) and
                     (self.max_debited_funds_currency == other.max_debited_funds_currency) and
                     (self.author_id == other.author_id) and
-                    (self.wallet_id == other.wallet_id)
+                    (self.wallet_id == other.wallet_id) and
+                    (self.result_code == other.result_code) and
+                    (self.min_fees_amount == other.min_fees_amount) and
+                    (self.min_fees_currency == other.min_fees_currency) and
+                    (self.max_fees_amount == other.max_fees_amount) and
+                    (self.max_fees_currency == other.max_fees_currency)
                     )
             return stat
         return False
