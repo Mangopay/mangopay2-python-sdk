@@ -310,11 +310,13 @@ class CardsLiveTest(BaseTestLive):
         card_validation.secure_mode_return_url = "http://www.example.com/"
         card_validation.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
         card_validation.browser_info = BaseTest.get_browser_info()
+        card_validation.payment_category = 'TelephoneOrder'
 
         validation_response = card_validation.validate(card_id)
 
         self.assertIsNotNone(validation_response)
         self.assertIsNotNone(validation_response['id'])
+        self.assertEqual('TelephoneOrder', validation_response['payment_category'])
 
     def test_getCardValidation(self):
         user = BaseTestLive.get_john()

@@ -500,6 +500,7 @@ class CardValidation(BaseModel):
     preferred_card_network = CharField(api_name='PreferredCardNetwork')
     authorization_date = DateTimeField(api_name='AuthorizationDate')
     card_info = CardInfoField(api_name='CardInfo')
+    payment_category = CharField(api_name='PaymentCategory')
 
     def validate(self, card_id, **kwargs):
         insert = InsertQuery(self, **kwargs)
@@ -798,6 +799,7 @@ class DirectPayIn(PayIn):
     requested_3ds_version = CharField(api_name='Requested3DSVersion')
     applied_3ds_version = CharField(api_name='Applied3DSVersion')
     card_info = CardInfoField(api_name='CardInfo')
+    payment_category = CharField(api_name='PaymentCategory')
 
     class Meta:
         verbose_name = 'payin'
@@ -1256,6 +1258,7 @@ class PreAuthorization(BaseModel):
     requested_3ds_version = CharField(api_name='Requested3DSVersion')
     applied_3ds_version = CharField(api_name='Applied3DSVersion')
     card_info = CardInfoField(api_name='CardInfo')
+    payment_category = CharField(api_name='PaymentCategory')
 
     def get_transactions(self, *args, **kwargs):
         kwargs['id'] = self.id

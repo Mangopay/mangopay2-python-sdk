@@ -828,6 +828,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         pre_authorization.secure_mode_return_url = "http://www.example.com/"
         pre_authorization.ip_address = "2001:0620:0000:0000:0211:24FF:FE80:C12C"
         pre_authorization.browser_info = BaseTest.get_browser_info()
+        pre_authorization.payment_category = 'TelephoneOrder'
 
         billing = Billing()
         billing.address = Address()
@@ -846,3 +847,4 @@ class PreAuthorizationsTestLive(BaseTestLive):
         card_info = saved_pre_authorization['card_info']
         self.assertIsNotNone(card_info)
         self.assertIsInstance(card_info, CardInfo)
+        self.assertEqual('TelephoneOrder', saved_pre_authorization['payment_category'])
