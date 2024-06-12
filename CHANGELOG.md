@@ -1,3 +1,8 @@
+## [3.34.1] - 2024-06-12
+### Added
+
+- New endpoint [List Transactions for a Client Wallet](https://mangopay.com/docs/endpoints/wallets#list-transactions-client-wallet)
+
 ## [3.34.0] - 2024-05-31
 ### Fixed 
 
