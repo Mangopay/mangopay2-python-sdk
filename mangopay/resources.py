@@ -1609,7 +1609,8 @@ class Transaction(BaseModel):
             'MANDATE_GET_TRANSACTIONS': '/mandates/%(id)s/transactions',
             'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
             'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
-            'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions'
+            'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions',
+            'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions'
         }
 
     def __str__(self):
@@ -1675,6 +1676,13 @@ class ClientWallet(Wallet):
     def all_by_funds_type(cls, fund_type, *args, **kwargs):
         select = SelectQuery(cls, *args, **kwargs)
         select.identifier = cls._meta.fund_type_url[fund_type]
+        return select.all(*args, **kwargs)
+
+    def get_transactions(cls, fund_type, currency, **kwargs):
+        kwargs['fund_type'], kwargs['currency'] = fund_type, currency
+        args = '',
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'CLIENT_WALLET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
     def get_pk(self):
