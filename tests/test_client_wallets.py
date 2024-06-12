@@ -190,3 +190,11 @@ class ClientWalletsLiveTest(BaseTestLive):
             self.assertIsNotNone(result)
             self.assertTrue(result.funds_type == wallet.funds_type)
             self.assertTrue(result.currency == wallet.currency)
+
+    def test_ViewClientTransactions(self):
+        wallets = ClientWallet.all()
+        client_wallet = wallets[0]
+        client_wallet_transactions = client_wallet.get_transactions(client_wallet.funds_type, client_wallet.currency)
+        self.assertIsNotNone(client_wallet_transactions)
+        self.assertTrue(len(client_wallet_transactions) > 0)
+
