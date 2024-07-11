@@ -1487,6 +1487,7 @@ class Refund(BaseModel):
     initial_transaction_type = CharField(api_name='InitialTransactionType', choices=constants.TRANSACTION_TYPE_CHOICES,
                                          default=None)
     reference = CharField(api_name='Reference')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
 
     class Meta:
         verbose_name = 'refund'
