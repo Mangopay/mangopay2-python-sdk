@@ -403,7 +403,8 @@ class RefundsTest(BaseTest):
 
         params = {
             "author": self.card.user,
-            "payin": direct_payin
+            "payin": direct_payin,
+            "statement_descriptor": "My descriptor"
         }
         payin_refund = PayInRefund(**params)
 
