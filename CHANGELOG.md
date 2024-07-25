@@ -1,3 +1,8 @@
+## [3.34.2] - 2024-07-25
+### Added
+- New parameter SecureModeRedirectURL for [Google Pay PayIn](https://mangopay.com/docs/endpoints/google-pay#google-pay-payin-object)
+- New parameters StatementDescriptor for [Refund](https://mangopay.com/docs/endpoints/refunds#refund-object)
+
 ## [3.34.1] - 2024-06-12
 ### Added
 
