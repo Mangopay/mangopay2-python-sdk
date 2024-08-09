@@ -90,7 +90,7 @@ class APIRequest(object):
                 params.__delitem__(str("data_XXX"))
                 headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
-        truncated_data = None
+        # truncated_data = None
 
         encoded_params = urlrequest.urlencode(params)
 
@@ -103,16 +103,16 @@ class APIRequest(object):
             url = '%s?%s' % (url, encoded_params)
 
         if data or data == {}:
-            truncated_data = truncatechars(copy.copy(data))
+            # truncated_data = truncatechars(copy.copy(data))
 
             data = json.dumps(data, default=lambda x: x.to_api_json())
 
-        logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s', url, headers, truncated_data)
+        logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- content: %s', url, headers, data)
 
         ts = time.time()
 
         # signal:
-        request_started.send(url=url, data=truncated_data, headers=headers, method=method)
+        request_started.send(url=url, data=data, headers=headers, method=method)
 
         try:
             result = requests_session.request(method, url,
@@ -143,7 +143,7 @@ class APIRequest(object):
 
         # signal:
         request_finished.send(url=url,
-                              data=truncated_data,
+                              data=data,
                               headers=headers,
                               method=method,
                               result=result,
@@ -162,7 +162,7 @@ class APIRequest(object):
         if result.status_code not in (requests.codes.ok, requests.codes.not_found,
                                       requests.codes.created, requests.codes.accepted,
                                       requests.codes.no_content):
-            self._create_apierror(result, url=url, data=truncated_data, method=method)
+            self._create_apierror(result, url=url, data=data, method=method)
         elif result.status_code == requests.codes.no_content:
             return result, None
         else:
