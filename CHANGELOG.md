@@ -1,3 +1,8 @@
+## [3.34.3] - 2024-08-09
+### Fixed
+
+- Disable `truncatechars` function that would truncate data if it's over 255 characters.
+
 ## [3.34.2] - 2024-07-25
 ### Added
 - New parameter SecureModeRedirectURL for [Google Pay PayIn](https://mangopay.com/docs/endpoints/google-pay#google-pay-payin-object)
