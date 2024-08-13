@@ -304,7 +304,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("SATISPAY", "satispay", "Satispay"),
     ("BLIK", "blik", "Blik"),
     ("IDEAL", "ideal", "Ideal"),
-    ("GIROPAY", "giropay", "Giropay")
+    ("GIROPAY", "giropay", "Giropay"),
+    ("BCMC", "bancontact", "Bancontact")
 )
 
 CARD_STATUS_CHOICES = Choices(
