@@ -1,3 +1,7 @@
+## [3.35.0] - 2024-08-13
+### Added
+- New endpoint: [Create a Bancontact PayIn](https://mangopay.com/docs/endpoints/bancontact#create-bancontact-payin)
+
 ## [3.34.3] - 2024-08-09
 ### Fixed
 
