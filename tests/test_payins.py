@@ -7,7 +7,8 @@ import responses
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
-    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, CardRegistration
+    GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
+    CardRegistration, BancontactPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
@@ -1520,7 +1521,6 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("IDEAL", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
-
     def test_PayIns_GiropayWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
@@ -1557,6 +1557,44 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("GIROPAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
+    def test_PayIns_BancontactWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = BancontactPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 200
+        pay_in.fees.currency = 'EUR'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 2000
+        pay_in.debited_funds.currency = 'EUR'
+        pay_in.statement_descriptor = 'test'
+        pay_in.return_url = 'https://mangopay.com/'
+        pay_in.tag = 'Bancontact PayIn'
+        pay_in.recurring = True
+        pay_in.culture = 'FR'
+
+        result = BancontactPayIn(**pay_in.save())
+        fetched = BancontactPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("BCMC", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
     def test_PayIns_Legacy_IdealWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
@@ -1579,7 +1617,6 @@ class PayInsTestLive(BaseTestLive):
         payin.culture = 'fr'
         payin.bic = 'RBRBNL21'
         result = CardWebPayIn(**payin.save())
-
 
         self.assertIsNotNone(result)
         self.assertIsNotNone(result.bank_name)
