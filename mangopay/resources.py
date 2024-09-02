@@ -801,6 +801,7 @@ class DirectPayIn(PayIn):
     shipping = ShippingField(api_name='Shipping')
     requested_3ds_version = CharField(api_name='Requested3DSVersion')
     applied_3ds_version = CharField(api_name='Applied3DSVersion')
+    preferred_card_network = CharField(api_name='PreferredCardNetwork')
     card_info = CardInfoField(api_name='CardInfo')
     payment_category = CharField(api_name='PaymentCategory')
 
