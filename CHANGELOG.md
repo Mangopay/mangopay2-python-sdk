@@ -1,3 +1,8 @@
+## [3.35.1] - 2024-09-03
+### Fixed
+
+- Add `PreferredCardNetwork` parameter to Direct Card PayIn object. (thank you @pmourlanne) 
+
 ## [3.35.0] - 2024-08-13
 ### Added
 - New endpoint: [Create a Bancontact PayIn](https://mangopay.com/docs/endpoints/bancontact#create-bancontact-payin)
