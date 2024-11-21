@@ -30,7 +30,9 @@ class VirtualAccountTest(BaseTestLive):
     def test_deactivate_virtual_account(self):
         virtual_account = BaseTestLive.create_new_virtual_account()
         wallet = BaseTestLive.get_johns_wallet()
-        deactivated = VirtualAccount.update(virtual_account.id, **{'wallet_id': wallet.id})
+
+        result_dict = VirtualAccount.update(virtual_account.id, **{'wallet_id': wallet.id}).execute()
+        deactivated = VirtualAccount(**result_dict)
 
         self.assertIsNotNone(deactivated)
         self.assertEqual(virtual_account.id, deactivated.id)
