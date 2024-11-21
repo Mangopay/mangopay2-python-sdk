@@ -14,7 +14,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      ReportWalletsFiltersField, BillingField, SecurityInfoField, PlatformCategorizationField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
-                     CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField)
+                     CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField,
+                     LocalAccountDetailsField, VirtualAccountCapabilitiesField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -2255,4 +2256,36 @@ class Deposit(BaseModel):
             InsertQuery.identifier: '/deposit-preauthorizations/card/direct',
             SelectQuery.identifier: '/deposit-preauthorizations/',
             UpdateQuery.identifier: '/deposit-preauthorizations/'
+        }
+
+
+class VirtualAccount(BaseModel):
+    wallet_id = CharField(api_name='WalletId', required=True)
+    credited_user_id = CharField(api_name='CreditedUserId')
+    virtual_account_purpose = CharField(api_name='VirtualAccountPurpose', required=True)
+    country = CharField(api_name='Country', required=True)
+    status = CharField(api_name='Status')
+    active = BooleanField(api_name='Active')
+    account_owner = CharField(api_name='AccountOwner')
+    local_account_details = LocalAccountDetailsField(api_name='LocalAccountDetails')
+    international_account_details = ListField(api_name='InternationalAccountDetails')
+    capabilities = VirtualAccountCapabilitiesField(api_name='Capabilities')
+
+    class Meta:
+        verbose_name = 'virtual_account'
+        verbose_name_plural = 'virtual_accounts'
+
+        url = '/wallets/%(wallet_id)s/virtual-accounts'
+
+
+class VirtualAccountAvailability(BaseModel):
+    collection = ListField(api_name='Collection')
+    user_owned = ListField(api_name='UserOwned')
+
+    class Meta:
+        verbose_name = 'virtual_account_availability'
+        verbose_name_plural = 'virtual_account_availabilities'
+
+        url = {
+            SelectQuery.identifier: '/virtual-accounts/availability'
         }
