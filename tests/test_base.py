@@ -10,7 +10,8 @@ from exam.decorators import fixture
 from mangopay import APIRequest
 from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
-from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo, Deposit, DirectPayIn
+from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo, Deposit, DirectPayIn, \
+    VirtualAccount
 from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo
 from tests import settings
 from tests.mocks import RegisteredMocks
@@ -618,6 +619,18 @@ class BaseTestLive(unittest.TestCase):
         card_registration.registration_data = response
 
         return CardRegistration(**card_registration.save())
+
+    @staticmethod
+    def create_new_virtual_account():
+        BaseTestLive.get_john()
+        wallet = BaseTestLive.get_johns_wallet()
+
+        virtual_account = VirtualAccount()
+        virtual_account.wallet_id = wallet.id
+        virtual_account.country = 'FR'
+        virtual_account.virtual_account_purpose = 'COLLECTION'
+
+        return VirtualAccount(**virtual_account.save())
 
     def test_handler(self):
         api_url = "test_api_url"

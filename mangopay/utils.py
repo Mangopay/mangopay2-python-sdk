@@ -1024,3 +1024,53 @@ class PayPalTrackingInformation(object):
             "Carrier": self.carrier,
             "NotifyBuyer": self.notify_buyer
         }
+
+
+class LocalAccountDetails(object):
+    def __init__(self, address=None, account=None):
+        self.address = address
+        self.account = account
+
+    def __str__(self):
+        return 'LocalAccountDetails: %s %s' % \
+            (self.address, self.account)
+
+    def to_api_json(self):
+        return {
+            "Address": self.address,
+            "Account": self.account
+        }
+
+
+class InternationalAccountDetails(object):
+    def __init__(self, address=None, account=None):
+        self.address = address
+        self.account = account
+
+    def __str__(self):
+        return 'InternationalAccountDetails: %s %s' % \
+            (self.address, self.account)
+
+    def to_api_json(self):
+        return {
+            "Address": self.address,
+            "Account": self.account
+        }
+
+
+class VirtualAccountCapabilities(object):
+    def __init__(self, local_pay_in_available=None, international_pay_in_available=None, currencies=None):
+        self.local_pay_in_available = local_pay_in_available
+        self.international_pay_in_available = international_pay_in_available
+        self.currencies = currencies
+
+    def __str__(self):
+        return 'VirtualAccountCapabilities: %s %s %s' % \
+            (self.local_pay_in_available, self.international_pay_in_available, self.currencies)
+
+    def to_api_json(self):
+        return {
+            "LocalPayinAvailable": self.local_pay_in_available,
+            "InternationalPayinAvailable": self.international_pay_in_available,
+            "Currencies": self.currencies
+        }

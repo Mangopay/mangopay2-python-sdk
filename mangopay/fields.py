@@ -10,7 +10,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
-    PayinsLinked, ConversionRate, CardInfo
+    PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, VirtualAccountCapabilities
 
 
 class FieldDescriptor(object):
@@ -932,6 +932,63 @@ class CardInfoField(Field):
                 'Type': value.type,
                 'Brand': value.brand,
                 'SubType': value.sub_type,
+            }
+
+        return value
+
+
+class LocalAccountDetailsField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return LocalAccountDetails(address=value['Address'], account=value['Account'])
+        return value
+
+    def api_value(self, value):
+        value = super(LocalAccountDetailsField, self).api_value(value)
+
+        if isinstance(value, LocalAccountDetails):
+            value = {
+                'Address': value.address,
+                'Account': value.account
+            }
+
+        return value
+
+
+class InternationalAccountDetailsField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return InternationalAccountDetails(address=value['Address'], account=value['Account'])
+        return value
+
+    def api_value(self, value):
+        value = super(InternationalAccountDetailsField, self).api_value(value)
+
+        if isinstance(value, InternationalAccountDetails):
+            value = {
+                'Address': value.address,
+                'Account': value.account
+            }
+
+        return value
+
+
+class VirtualAccountCapabilitiesField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return VirtualAccountCapabilities(local_pay_in_available=value['LocalPayinAvailable'],
+                                              international_pay_in_available=value['InternationalPayinAvailable'],
+                                              currencies=value['Currencies'])
+        return value
+
+    def api_value(self, value):
+        value = super(VirtualAccountCapabilitiesField, self).api_value(value)
+
+        if isinstance(value, VirtualAccountCapabilities):
+            value = {
+                'LocalPayinAvailable': value.local_pay_in_available,
+                'InternationalPayinAvailable': value.international_pay_in_available,
+                'Currencies': value.currencies
             }
 
         return value
