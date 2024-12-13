@@ -258,13 +258,13 @@ class FallbackReason(object):
 
 @add_camelcase_aliases
 class PaymentRef(object):
-    def __init__(self, reasonType=None, ReferenceId=None):
+    def __init__(self, reasonType=None, referenceId=None):
         self.reasonType = reasonType
-        self.ReferenceId = ReferenceId
+        self.referenceId = referenceId
 
     def __str__(self):
         return 'PaymentRef: %s' % \
-            (self.reasonType, self.ReferenceId)
+            (self.reasonType, self.referenceId)
 
 
 @add_camelcase_aliases

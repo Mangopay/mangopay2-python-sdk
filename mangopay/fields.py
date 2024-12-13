@@ -218,7 +218,7 @@ class MoneyField(Field):
 class PaymentRefField(Field):
     def python_value(self, value):
         if value is not None:
-            return PaymentRef(reasonType=value['ReasonType'], ReferenceId=value['ReferenceId'])
+            return PaymentRef(reasonType=value['ReasonType'], referenceId=value['ReferenceId'])
 
         return value
 
@@ -228,7 +228,7 @@ class PaymentRefField(Field):
         if isinstance(value, PaymentRefField):
             value = {
                 'ReasonType': value.reasonType,
-                'ReferenceId': value.ReferenceId
+                'ReferenceId': value.referenceId
             }
 
         return value
