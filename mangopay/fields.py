@@ -225,7 +225,7 @@ class PaymentRefField(Field):
     def api_value(self, value):
         value = super(PaymentRefField, self).api_value(value)
 
-        if isinstance(value, PaymentRefField):
+        if isinstance(value, PaymentRef):
             value = {
                 'ReasonType': value.reasonType,
                 'ReferenceId': value.referenceId
