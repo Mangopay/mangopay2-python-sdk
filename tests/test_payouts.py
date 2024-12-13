@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
+import responses
+
+from mangopay.utils import Money, Address
 from tests import settings
 from tests.resources import BankAccount, BankWirePayOut, PayOutEligibility
 from tests.test_base import BaseTest
-
-from mangopay.utils import Money, Address
-
-import responses
 
 
 class PayOutsTest(BaseTest):
@@ -153,6 +152,18 @@ class PayOutsTest(BaseTest):
         bankaccount = BankAccount(**params)
         bankaccount.save()
 
+        bank_wire_payout_params = {
+            "tag": "Custom data",
+            "author": self.legal_user,
+            "debited_funds": Money(amount=10, currency='EUR'),
+            "fees": Money(amount=1, currency='EUR'),
+            "debited_wallet": self.legal_user_wallet,
+            "bank_account": bankaccount,
+            "bank_wire_ref": "John Doe's trousers",
+            "payout_mode_requested": "STANDARD"
+        }
+        bank_wire_payout = BankWirePayOut(**bank_wire_payout_params)
+
         eligibility = {
             "author": self.legal_user,
             "debited_funds": Money(amount=10, currency='EUR'),
@@ -166,3 +177,32 @@ class PayOutsTest(BaseTest):
         self.assertIsNotNone(result)
         instant_payout = result.get('instant_payout')
         self.assertIsNotNone(instant_payout)
+
+    def test_create_pay_out(self):
+        params = {
+            "owner_name": "Victor Hugo",
+            "user": self.legal_user,
+            "type": "IBAN",
+            "owner_address": Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                     city='City', region='Region',
+                                     postal_code='11222', country='FR'),
+            "iban": "FR7630004000031234567890143",
+            "bic": "BNPAFRPP",
+            "tag": "custom tag"
+        }
+        bankaccount = BankAccount(**params)
+        bankaccount.save()
+
+        bank_wire_payout_params = {
+            "tag": "Custom data",
+            "author": self.legal_user,
+            "debited_funds": Money(amount=10, currency='EUR'),
+            "fees": Money(amount=1, currency='EUR'),
+            "debited_wallet": self.legal_user_wallet,
+            "bank_account": bankaccount,
+            "bank_wire_ref": "John Doe's trousers",
+            "payout_mode_requested": "STANDARD"
+        }
+        bank_wire_payout = BankWirePayOut(**bank_wire_payout_params)
+
+        self.assertIsNotNone(bank_wire_payout)

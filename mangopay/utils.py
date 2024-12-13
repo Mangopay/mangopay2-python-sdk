@@ -257,6 +257,17 @@ class FallbackReason(object):
 
 
 @add_camelcase_aliases
+class PaymentRef(object):
+    def __init__(self, reason_type=None, reference_id=None):
+        self.reason_type = reason_type
+        self.reference_id = reference_id
+
+    def __str__(self):
+        return 'PaymentRef: %s' % \
+            (self.reason_type, self.reference_id)
+
+
+@add_camelcase_aliases
 class InstantPayout(object):
     def __init__(self, is_reachable=None, unreachable_reason=None):
         self.is_reachable = is_reachable

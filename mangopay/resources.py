@@ -15,7 +15,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
                      CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField,
-                     LocalAccountDetailsField, VirtualAccountCapabilitiesField)
+                     LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -1424,6 +1424,7 @@ class BankWirePayOut(BaseModel):
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYOUT_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
     bank_wire_ref = CharField(api_name='BankWireRef')
+    payment_ref = PaymentRefField(api_name='PaymentRef', default=None)
     payout_mode_requested = CharField(api_name='PayoutModeRequested')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
     creation_date = DateTimeField(api_name='CreationDate')
