@@ -171,11 +171,6 @@ EVENT_TYPE_CHOICES = Choices(
     ('UBO_DECLARATION_INCOMPLETE', 'ubo_declaration_incomplete', 'Ubo Declaration Incomplete'),
     ('USER_KYC_LIGHT', 'user_kyc_light', 'User Kyc Light'),
 
-    ('VIRTUAL_ACCOUNT_ACTIVE', 'virtual_account_active', 'Virtual Account Active'),
-    ('VIRTUAL_ACCOUNT_BLOCKED', 'virtual_account_blocked', 'Virtual Account Blocked'),
-    ('VIRTUAL_ACCOUNT_CLOSED', 'virtual_account_closed', 'Virtual Account Closed'),
-    ('VIRTUAL_ACCOUNT_FAILED', 'virtual_account_failed', 'Virtual Account Failed'),
-
     ('DEPOSIT_PREAUTHORIZATION_CREATED', 'deposit_preauthorization_created', 'Deposit Preauthorization Created'),
     ('DEPOSIT_PREAUTHORIZATION_FAILED', 'deposit_preauthorization_failed', 'Deposit Preauthorization Failed'),
     ('DEPOSIT_PREAUTHORIZATION_PAYMENT_WAITING', 'deposit_preauthorization_payment_waiting',
