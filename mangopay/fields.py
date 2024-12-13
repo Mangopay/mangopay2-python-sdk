@@ -10,7 +10,8 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     Reason, ReportTransactionsFilters, ReportWalletsFilters, \
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
-    PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, VirtualAccountCapabilities
+    PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
+    VirtualAccountCapabilities, PaymentRef
 
 
 class FieldDescriptor(object):
@@ -209,6 +210,25 @@ class MoneyField(Field):
             value = {
                 'Currency': value.currency,
                 'Amount': int(value.amount)
+            }
+
+        return value
+
+
+class PaymentRefField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PaymentRef(reasonType=value['ReasonType'], ReferenceId=value['ReferenceId'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(PaymentRefField, self).api_value(value)
+
+        if isinstance(value, PaymentRefField):
+            value = {
+                'ReasonType': value.reasonType,
+                'ReferenceId': value.ReferenceId
             }
 
         return value
