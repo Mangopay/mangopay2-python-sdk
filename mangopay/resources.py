@@ -846,6 +846,8 @@ class BankWirePayInExternalInstruction(PayIn):
     banking_alias_id = CharField(api_name='BankingAliasId')
     wire_reference = CharField(api_name='WireReference')
     debited_bank_account = DebitedBankAccountField(api_name='DebitedBankAccount')
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
 
     class Meta:
         verbose_name = 'payin'
