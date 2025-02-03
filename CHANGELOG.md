@@ -1,3 +1,8 @@
+## [3.37.1] - 2025-02-03
+### Fixed
+
+Added missing `debited_funds` and `fees` parameters to the `BankWirePayInExternalInstruction` class.
+
 ## [3.37.0] - 2024-12-13
 ### Added
 
