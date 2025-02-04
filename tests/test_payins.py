@@ -1133,7 +1133,6 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(result_metadata['issuer_country_code'])
         self.assertIsNotNone(result_metadata['issuing_bank'])
 
-    @unittest.skip("can't be tested yet")
     def test_card_preauthorized_deposit_payin(self):
         deposit = self.create_new_deposit()
 
@@ -1644,7 +1643,7 @@ class PayInsTestLive(BaseTestLive):
         data = {
             'cardNumber': '4970107111111119',
             'cardCvx': '123',
-            'cardExpirationDate': '1224',
+            'cardExpirationDate': '1229',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }

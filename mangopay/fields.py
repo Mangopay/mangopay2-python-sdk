@@ -207,10 +207,16 @@ class MoneyField(Field):
         value = super(MoneyField, self).api_value(value)
 
         if isinstance(value, Money):
-            value = {
-                'Currency': value.currency,
-                'Amount': int(value.amount)
-            }
+            if value.amount is not None:
+                value = {
+                    'Currency': value.currency,
+                    'Amount': int(value.amount)
+                }
+            else:
+                value = {
+                    'Currency': value.currency,
+                    'Amount': None
+                }
 
         return value
 

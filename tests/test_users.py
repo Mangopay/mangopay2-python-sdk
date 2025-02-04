@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import unittest
 
 import requests
 import responses
@@ -722,6 +723,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(get_preauthorizations_page.data)
         self.assertIsInstance(get_preauthorizations_page.data, list)
 
+    @unittest.skip("endpoint has been removed")
     def test_User_get_block_status(self):
         user = BaseTestLive.get_john()
         block_status = user.get_block_status()

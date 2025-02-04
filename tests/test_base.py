@@ -447,7 +447,7 @@ class BaseTestLive(unittest.TestCase):
         data = {
             'cardNumber': '4970107111111119',
             'cardCvx': '123',
-            'cardExpirationDate': '1224',
+            'cardExpirationDate': '1229',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
@@ -537,16 +537,19 @@ class BaseTestLive(unittest.TestCase):
             card_registration = CardRegistration(**card_params)
             card_registration.save()
 
-            params = {
-                "data_XXX": card_registration.preregistration_data,
-                "accessKeyRef": card_registration.access_key,
-                "cardNumber": '4970107111111119',
-                "cardExpirationDate": '1224',
-                "cardCvx": '123'
+            data = {
+                'data': card_registration.preregistration_data,
+                'accessKeyRef': card_registration.access_key,
+                'cardNumber': '4970107111111119',
+                'cardExpirationDate': '1229',
+                'cardCvx': '123'
             }
-            response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
-                                                   False, **params)
-            card_registration.registration_data = response
+            headers = {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+            registration_data_response = requests.post(card_registration.card_registration_url, data=data,
+                                                       headers=headers)
+            card_registration.registration_data = registration_data_response.text
             card_registration.save()
             BaseTestLive._johns_card = card_registration.card
         return BaseTestLive._johns_card
@@ -561,16 +564,19 @@ class BaseTestLive(unittest.TestCase):
             card_registration = CardRegistration(**card_params)
             card_registration.save()
 
-            params = {
-                "data_XXX": card_registration.preregistration_data,
-                "accessKeyRef": card_registration.access_key,
-                "cardNumber": '4970107111111119',
-                "cardExpirationDate": '1224',
-                "cardCvx": '123'
+            data = {
+                'data': card_registration.preregistration_data,
+                'accessKeyRef': card_registration.access_key,
+                'cardNumber': '4970107111111119',
+                'cardExpirationDate': '1229',
+                'cardCvx': '123'
             }
-            response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
-                                                   False, **params)
-            card_registration.registration_data = response
+            headers = {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+            registration_data_response = requests.post(card_registration.card_registration_url, data=data,
+                                                       headers=headers)
+            card_registration.registration_data = registration_data_response.text
             card_registration.save()
             BaseTestLive._johns_card = card_registration.card
         return BaseTestLive._johns_card
@@ -607,16 +613,19 @@ class BaseTestLive(unittest.TestCase):
         card_registration = CardRegistration(**card_params)
         card_registration.save()
 
-        params = {
-            "data_XXX": card_registration.preregistration_data,
-            "accessKeyRef": card_registration.access_key,
-            "cardNumber": '4970107111111119',
-            "cardExpirationDate": '1224',
-            "cardCvx": '123'
+        data = {
+            'data': card_registration.preregistration_data,
+            'accessKeyRef': card_registration.access_key,
+            'cardNumber': '4970107111111119',
+            'cardExpirationDate': '1229',
+            'cardCvx': '123'
         }
-        response = APIRequest().custom_request('POST', card_registration.card_registration_url, None, None, False,
-                                               False, **params)
-        card_registration.registration_data = response
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        registration_data_response = requests.post(card_registration.card_registration_url, data=data,
+                                                   headers=headers)
+        card_registration.registration_data = registration_data_response.text
 
         return CardRegistration(**card_registration.save())
 

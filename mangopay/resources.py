@@ -1568,6 +1568,8 @@ class PayInRefund(Refund):
 
 
 class KYC(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+
     class Meta:
         verbose_name = 'kyc'
         verbose_name_plural = 'kycs'

@@ -85,9 +85,9 @@ class ConversionsTest(BaseTestLive):
 
     def test_create_conversion_quote(self):
         conversion_quote = ConversionQuote()
-        conversion_quote.credited_funds = Money(currency='USD')
+        conversion_quote.credited_funds = Money(currency='USD', amount=None)
         conversion_quote.debited_funds = Money(currency='GBP', amount=100)
-        conversion_quote.duration = 90
+        conversion_quote.duration = 300
         conversion_quote.tag = "Created using the Mangopay Python SDK"
 
         created_conversion_quote = conversion_quote.create_conversion_quote()
@@ -100,9 +100,9 @@ class ConversionsTest(BaseTestLive):
 
     def test_get_conversion_quote(self):
         conversion_quote = ConversionQuote()
-        conversion_quote.credited_funds = Money(currency='USD')
+        conversion_quote.credited_funds = Money(currency='USD', amount=None)
         conversion_quote.debited_funds = Money(currency='GBP', amount=100)
-        conversion_quote.duration = 90
+        conversion_quote.duration = 300
         conversion_quote.tag = "Created using the Mangopay Python SDK"
 
         created_conversion_quote = conversion_quote.create_conversion_quote()
@@ -125,9 +125,9 @@ class ConversionsTest(BaseTestLive):
         debited_wallet = BaseTestLive.create_new_wallet_with_money()
 
         conversion_quote = ConversionQuote()
-        conversion_quote.credited_funds = Money(currency='GBP')
+        conversion_quote.credited_funds = Money(currency='GBP', amount=None)
         conversion_quote.debited_funds = Money(currency='EUR', amount=50)
-        conversion_quote.duration = 90
+        conversion_quote.duration = 300
         conversion_quote.tag = "Created using the Mangopay Python SDK"
         created_conversion_quote = conversion_quote.create_conversion_quote()
 
@@ -154,9 +154,9 @@ class ConversionsTest(BaseTestLive):
         debited_wallet = BaseTestLive.create_new_wallet_with_money()
 
         conversion_quote = ConversionQuote()
-        conversion_quote.credited_funds = Money(currency='GBP')
+        conversion_quote.credited_funds = Money(currency='GBP', amount=None)
         conversion_quote.debited_funds = Money(currency='EUR', amount=50)
-        conversion_quote.duration = 90
+        conversion_quote.duration = 300
         conversion_quote.tag = "Created using the Mangopay Python SDK"
         created_conversion_quote = conversion_quote.create_conversion_quote()
 
