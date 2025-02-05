@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+
 import pytz
 
-from tests.test_base import BaseTest
-
 from mangopay.utils import Address, Money, timestamp_from_datetime
+from tests.test_base import BaseTest
 
 
 class UtilsTest(BaseTest):
@@ -14,8 +14,8 @@ class UtilsTest(BaseTest):
         """
         The timestamp should be correctly calculated on a timezone unaware datetime.
         """
-        unaware_datetime = datetime(2016, 1, 1, 10, 0, 0, 0)
-        self.assertEqual(timestamp_from_datetime(unaware_datetime), 1451642400)
+        unaware_datetime = datetime(2025, 1, 1, 10, 0, 0)
+        self.assertEqual(timestamp_from_datetime(unaware_datetime), 1735725600)
 
     def test_timestamp_from_datetime_timezone_aware(self):
         """

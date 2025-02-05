@@ -53,7 +53,10 @@ class Money(object):
 
     def __init__(self, amount="0", currency=None):
         try:
-            self.amount = decimal.Decimal(amount)
+            if amount is not None:
+                self.amount = decimal.Decimal(amount)
+            else:
+                self.amount = None
         except decimal.InvalidOperation:
             raise ValueError("amount value could not be converted to "
                              "Decimal(): '{}'".format(amount))

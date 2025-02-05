@@ -678,7 +678,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         data = {
             'cardNumber': '4970107111111119',
             'cardCvx': '123',
-            'cardExpirationDate': '1224',
+            'cardExpirationDate': '1229',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
@@ -731,7 +731,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         data = {
             'cardNumber': '4970107111111119',
             'cardCvx': '123',
-            'cardExpirationDate': '1224',
+            'cardExpirationDate': '1229',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
@@ -804,7 +804,7 @@ class PreAuthorizationsTestLive(BaseTestLive):
         data = {
             'cardNumber': '4970107111111119',
             'cardCvx': '123',
-            'cardExpirationDate': '1224',
+            'cardExpirationDate': '1229',
             'accessKeyRef': card_registration.access_key,
             'data': card_registration.preregistration_data
         }
