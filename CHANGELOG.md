@@ -1,3 +1,8 @@
+## [3.37.2] - 2025-02-05
+### Updated
+
+Revised tests to improve reliability and address any outdated tests.
+
 ## [3.37.1] - 2025-02-03
 ### Fixed
 
