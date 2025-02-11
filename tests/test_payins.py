@@ -8,7 +8,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
-    CardRegistration, BancontactPayIn
+    CardRegistration, BancontactPayIn, SwishPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
@@ -1554,6 +1554,41 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("GIROPAY", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_SwishWeb_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'SEK'
+        credited_wallet.description = 'WALLET IN SEK'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = SwishPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 0
+        pay_in.fees.currency = 'SEK'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 100
+        pay_in.debited_funds.currency = 'SEK'
+        pay_in.return_url = 'https://mangopay.com/'
+        pay_in.tag = 'Swish PayIn'
+
+        result = SwishPayIn(**pay_in.save())
+        fetched = SwishPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("SWISH", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
     def test_PayIns_BancontactWeb_Create(self):
