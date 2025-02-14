@@ -660,7 +660,8 @@ class PayIn(BaseModel):
             ("KLARNA", "WEB"): KlarnaPayIn,
             ("IDEAL", "WEB"): IdealPayIn,
             ("GIROPAY", "WEB"): GiropayPayIn,
-            ("BANCONTACT", "WEB"): BancontactPayIn
+            ("BANCONTACT", "WEB"): BancontactPayIn,
+            ("SWISH", "WEB"): SwishPayIn,
         }
 
         return types.get((payment_type, execution_type), cls)
@@ -1144,6 +1145,28 @@ class GiropayPayIn(PayIn):
         verbose_name_plural = 'giropay_payins'
         url = {
             InsertQuery.identifier: '/payins/payment-methods/giropay',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+class SwishPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    redirect_url = CharField(api_name='RedirectURL')
+    deep_link_url = CharField(api_name='DeepLinkURL')
+    qr_code_url = CharField(api_name='QRCodeURL')
+    payment_flow = CharField(api_name='PaymentFlow')
+
+    class Meta:
+        verbose_name = 'swish_payin'
+        verbose_name_plural = 'swish_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/swish',
             SelectQuery.identifier: '/payins'
         }
 
