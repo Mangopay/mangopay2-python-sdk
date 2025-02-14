@@ -1,3 +1,11 @@
+## [3.38.0] - 2025-02-14
+### Added
+
+New endpoint for the [Swish PayIn](https://docs.mangopay.com/api-reference/swish/swish-payin-object) object:
+
+-  [Create a Swish PayIn](https://docs.mangopay.com/api-reference/swish/create-swish-payin)
+-  [View a PayIn (Swish)](https://docs.mangopay.com/api-reference/swish/view-payin-swish)
+
 ## [3.37.2] - 2025-02-05
 ### Updated
 
