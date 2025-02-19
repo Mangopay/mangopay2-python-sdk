@@ -25,11 +25,15 @@ class BaseQuery(object):
 
         return pairs
 
-    def parse_url(self, meta_url, params=None):
+    def parse_url(self, meta_url, params=None, path_params=None):
         if isinstance(meta_url, dict):
             url = meta_url.get(self.identifier)
         else:
             url = meta_url
+
+        # useful when there is a need to pass a path param which should not be part of the object
+        if path_params:
+            url = url % path_params
 
         if params:
             url = url % params
@@ -105,9 +109,10 @@ class SelectQuery(BaseQuery):
 class InsertQuery(BaseQuery):
     identifier = 'INSERT'
 
-    def __init__(self, model, idempotency_key=None, **kwargs):
+    def __init__(self, model, idempotency_key=None, path_params=None, **kwargs):
         self.insert_query = kwargs
         self.idempotency_key = idempotency_key
+        self.path_params = path_params
         super(InsertQuery, self).__init__(model, 'POST')
 
     def parse_insert(self):
@@ -126,7 +131,7 @@ class InsertQuery(BaseQuery):
 
         data = self.parse_insert()
 
-        url = self.parse_url(self.model._meta.url, self.insert_query)
+        url = self.parse_url(self.model._meta.url, self.insert_query, self.path_params)
 
         result, data = handler.request(self.method,
                                        url,

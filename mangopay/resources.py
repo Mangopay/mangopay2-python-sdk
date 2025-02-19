@@ -2317,3 +2317,25 @@ class VirtualAccountAvailability(BaseModel):
         url = {
             SelectQuery.identifier: '/virtual-accounts/availability'
         }
+
+
+class IdentityVerification(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+    hosted_url = CharField(api_name='HostedUrl')
+    return_url = CharField(api_name='ReturnUrl', required=True)
+    status = CharField(api_name='Status')
+
+    class Meta:
+        verbose_name = 'identity_verification'
+        verbose_name_plural = 'identity_verifications'
+
+        url = {
+            InsertQuery.identifier: '/users/%(user_id)s/identity-verifications',
+            SelectQuery.identifier: '/identity-verifications',
+        }
+
+    def create(self, user_id, idempotency_key=None, **kwargs):
+        path_params = {'user_id': user_id}
+        insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
