@@ -2331,7 +2331,7 @@ class IdentityVerification(BaseModel):
 
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/identity-verifications',
-            SelectQuery.identifier: '/identity-verifications',
+            SelectQuery.identifier: '/identity-verifications'
         }
 
     def create(self, user_id, idempotency_key=None, **kwargs):
@@ -2339,3 +2339,32 @@ class IdentityVerification(BaseModel):
         insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
         insert.insert_query = self.get_field_dict()
         return insert.execute()
+
+    def get_checks(self, *args, **kwargs):
+        kwargs['id'] = self.id
+        select = SelectQuery(IdentityVerificationCheck, *args, **kwargs)
+        select.identifier = 'GET_CHECKS'
+        return select.get("", *args, **kwargs)
+
+
+class IdentityVerificationCheck(BaseModel):
+    session_id = CharField(api_name='SessionId')
+    status = CharField(api_name='Status')
+    creation_date = DateTimeField(api_name='CreationDate')
+    last_update = DateTimeField(api_name='LastUpdate')
+    checks = ListField(api_name='Checks')
+
+    class Meta:
+        verbose_name = 'identity_verification_check'
+        verbose_name_plural = 'identity_verifications_checks'
+
+        url = {
+            'GET_CHECKS': '/identity-verifications/%(id)s/checks'
+        }
+
+    @classmethod
+    def get(cls, identity_verification_id, *args, **kwargs):
+        kwargs['id'] = identity_verification_id
+        select = SelectQuery(IdentityVerificationCheck, *args, **kwargs)
+        select.identifier = 'GET_CHECKS'
+        return select.get("", *args, **kwargs)

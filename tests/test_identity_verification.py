@@ -1,4 +1,5 @@
-from mangopay.resources import IdentityVerification
+from mangopay.resources import IdentityVerification, IdentityVerificationCheck
+from mangopay.utils import timestamp_from_datetime
 from tests.test_base import BaseTestLive
 
 
@@ -20,6 +21,20 @@ class IdentityVerificationTest(BaseTestLive):
         self.assertEqual(IdentityVerificationTest._identity_verification.hosted_url, fetched.hosted_url)
         self.assertEqual(IdentityVerificationTest._identity_verification.return_url, fetched.return_url)
         self.assertEqual(IdentityVerificationTest._identity_verification.status, fetched.status)
+
+    def test_get_checks(self):
+        self.create_new_identity_verification()
+        # can be fetched in 2 ways:
+
+        # checks: IdentityVerificationCheck = IdentityVerificationCheck.get(
+        #     IdentityVerificationTest._identity_verification.id)
+        checks: IdentityVerificationCheck = IdentityVerificationTest._identity_verification.get_checks()
+
+        self.assertIsNotNone(checks)
+        self.assertEqual(checks.status, 'PENDING')
+        self.assertTrue(timestamp_from_datetime(checks.creation_date) > 0)
+        self.assertTrue(timestamp_from_datetime(checks.last_update) > 0)
+        self.assertIsNotNone(checks.checks)
 
     @staticmethod
     def create_new_identity_verification():
