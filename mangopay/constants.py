@@ -192,6 +192,12 @@ EVENT_TYPE_CHOICES = Choices(
     ('CARD_VALIDATION_CREATED', 'card_validation_created', 'Card Validation Created'),
     ('CARD_VALIDATION_FAILED', 'card_validation_failed', 'Card Validation Failed'),
     ('CARD_VALIDATION_SUCCEEDED', 'card_validation_succeeded', 'Card Validation Succeeded'),
+
+    ('IDENTITY_VERIFICATION_VALIDATED', 'identity_verification_validated', 'Identity Verification Validated'),
+    ('IDENTITY_VERIFICATION_FAILED', 'identity_verification_failed', 'Identity Verification Failed'),
+    ('IDENTITY_VERIFICATION_INCONCLUSIVE', 'identity_verification_inconclusive', 'Identity Verification Inconclusive'),
+    ('IDENTITY_VERIFICATION_OUTDATED', 'identity_verification_outdated', 'Identity Verification Outdated'),
+    ('IDENTITY_VERIFICATION_TIMEOUT', 'identity_verification_timeout', 'Identity Verification Timeout')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
