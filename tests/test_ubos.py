@@ -1,8 +1,9 @@
+from datetime import date
+
 from mangopay import constants
 from mangopay.resources import UboDeclaration, Ubo
 from mangopay.utils import Birthplace
 from tests.test_base import BaseTestLive
-from datetime import date
 
 
 class UbosTests(BaseTestLive):
@@ -61,6 +62,19 @@ class UbosTests(BaseTestLive):
         self.assertEqual(updated_ubo['first_name'], "UpdatedFirstName")
         self.assertEqual(updated_ubo['nationality'], "GB")
         self.assertEqual(updated_ubo["isActive"], True)
+
+    def test_update_ubo_partial(self):
+        to_be_updated = self.get_ubo(True)
+        to_be_updated.first_name = "updated fn"
+        to_be_updated.last_name = "updated ln"
+        updated_ubo = to_be_updated.save()
+
+        self.assertEqual(updated_ubo['first_name'], "updated fn")
+        self.assertEqual(updated_ubo['last_name'], "updated ln")
+        self.assertEqual(updated_ubo['birthday'], to_be_updated.birthday)
+        self.assertEqual(updated_ubo['birthplace'], to_be_updated.birthplace)
+        self.assertEqual(updated_ubo['address'], to_be_updated.address)
+
 
     def test_get_ubo(self):
         existing_ubo = self.get_ubo(True)
