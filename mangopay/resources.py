@@ -957,6 +957,7 @@ class ApplepayPayIn(PayIn):
     debited_funds = MoneyField(api_name='DebitedFunds', required=True)
     fees = MoneyField(api_name='Fees', required=True)
     statement_descriptor = CharField(api_name='StatementDescriptor')
+    card_info = CardInfoField(api_name='CardInfo')
 
     class Meta:
         verbose_name = 'applepay_payin'
@@ -999,6 +1000,7 @@ class GooglePayDirectPayIn(PayIn):
     shipping = ShippingField(api_name='Shipping')
     billing = BillingField(api_name='Billing')
     statement_descriptor = CharField(api_name='StatementDescriptor')
+    card_info = CardInfoField(api_name='CardInfo')
 
     class Meta:
         verbose_name = 'googlepay_direct_payin'
