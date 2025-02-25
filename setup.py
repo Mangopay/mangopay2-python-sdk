@@ -10,7 +10,7 @@ with open(path.join(here, 'DESCRIPTION.md'), encoding='utf-8') as f:
 
 setup(
     name='mangopaysdk',
-    version='3.38.0',
+    version='3.39.0',
     description='A client library written in python to work with mangopay v2 api',
     long_description='This SDK is a client library for interacting with the Mangopay API.',
     url='https://github.com/Mangopay/mangopay2-python-sdk',

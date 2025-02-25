@@ -1,3 +1,29 @@
+## [3.39.0] - 2025-02-25
+### Added
+
+Endpoints and webhooks for [hosted KYC/B solution](https://docs.mangopay.com/guides/users/verification/hosted) (in beta)
+
+- Endpoints
+  - [Create an IDV Session](https://docs.mangopay.com/api-reference/idv-sessions/create-idv-session)
+  - [View an IDV Session](https://docs.mangopay.com/api-reference/idv-sessions/view-idv-session)
+  - [View Checks for an IDV Session](https://mangopay-idv.mintlify.app/api-reference/idv-sessions/view-idv-session-checks)
+
+- Event types 
+  - `IDENTITY_VERIFICATION_VALIDATED`
+  - `IDENTITY_VERIFICATION_FAILED`
+  - `IDENTITY_VERIFICATION_INCONCLUSIVE`
+  - `IDENTITY_VERIFICATION_OUTDATED`
+
+`CardInfo` added for [Apple Pay](https://docs.mangopay.com/api-reference/apple-pay/create-apple-pay-payin) and [Google Pay](https://docs.mangopay.com/api-reference/google-pay/create-google-pay-payin)
+
+### Fixed
+
+Test for KYC documents test_GetKycDocuments
+
+Updating the UBO should not require the full object
+
+Get User EMoney wrong output
+
 ## [3.38.0] - 2025-02-14
 ### Added
 
