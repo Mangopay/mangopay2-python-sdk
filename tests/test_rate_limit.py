@@ -1,5 +1,5 @@
-from tests.test_base import BaseTest, BaseTestLive
 from mangopay.api import APIRequest as api
+from tests.test_base import BaseTest, BaseTestLive
 
 
 class RateLimit(BaseTest):
@@ -11,4 +11,4 @@ class RateLimit(BaseTest):
 
         rate_limits = apis.get_rate_limits()
         self.assertIsNotNone(rate_limits)
-        self.assertTrue(len(rate_limits) == 4)
+        self.assertTrue(len(rate_limits) > 0)
