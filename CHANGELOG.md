@@ -1,3 +1,8 @@
+## [3.39.1] - 2025-02-28
+### Fixed
+
+Rate limiting headers interpreted dynamically based on `X-RateLimit-Reset` time and for a variable number of bucket values.
+
 ## [3.39.0] - 2025-02-25
 ### Added
 
