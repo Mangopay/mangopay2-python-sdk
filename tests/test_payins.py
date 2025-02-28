@@ -8,7 +8,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
-    CardRegistration, BancontactPayIn, SwishPayIn
+    CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
@@ -1871,3 +1871,30 @@ class PayInsTestLive(BaseTestLive):
         mit_card_info = created_mit['card_info']
         self.assertIsNotNone(mit_card_info)
         self.assertIsInstance(mit_card_info, CardInfo)
+
+    def test_PayIns_Payconiq_Web_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        payin = PayconiqV2PayIn()
+        payin.credited_wallet = credited_wallet
+        payin.author = user
+        payin.debited_funds = Money(amount=10000, currency='EUR')
+        payin.fees = Money(amount=0, currency='EUR')
+        payin.return_url = 'https://test.com'
+        payin.country = 'BE'
+        result = PayconiqV2PayIn(**payin.save())
+
+        self.assertIsNotNone(result)
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("REGULAR", result.nature)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("PAYCONIQ", result.payment_type)
+        self.assertIsNotNone(result.deep_link_url)
+        self.assertIsNotNone(result.qr_code_url)

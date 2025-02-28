@@ -950,6 +950,30 @@ class PayconiqPayIn(PayIn):
         }
 
 
+@python_2_unicode_compatible
+class PayconiqV2PayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    creation_date = DateField(api_name='CreationDate')
+    expiration_date = CharField(api_name='ExpirationDate')
+    deep_link_url = CharField(api_name='DeepLinkURL')
+    country = CharField(api_name='Country', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    qr_code_url = CharField(api_name='QRCodeURL')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/payconiq',
+            SelectQuery.identifier: '/payins'
+        }
+
+
 class ApplepayPayIn(PayIn):
     tag = CharField(api_name='Tag')
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
