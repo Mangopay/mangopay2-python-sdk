@@ -695,6 +695,43 @@ class UserTestLive(BaseTestLive):
 
         self.assertTrue(documents)
 
+    def test_Users_CreateNaturalPayerSca(self):
+        user = BaseTestLive.get_john_sca_payer()
+        self.assertIsNotNone(user)
+        self.assertEqual('NATURAL', user.person_type)
+        self.assertEqual('PAYER', user.user_category)
+        self.assertEqual('ACTIVE', user.user_status)
+        self.assertIsNotNone(user.phone_number)
+        self.assertIsNotNone(user.phone_number_country)
+
+    def test_Users_CreateNaturalOwnerSca(self):
+        user = BaseTestLive.get_john_sca_owner()
+        self.assertIsNotNone(user)
+        self.assertEqual('NATURAL', user.person_type)
+        self.assertEqual('OWNER', user.user_category)
+        self.assertEqual('PENDING_USER_ACTION', user.user_status)
+        self.assertIsNotNone(user.phone_number)
+        self.assertIsNotNone(user.phone_number_country)
+        self.assertIsNotNone(user.pending_user_action.redirect_url)
+
+    def test_Users_CreateLegalScaPayer(self):
+        user = BaseTestLive.get_user_legal_sca_payer()
+        self.assertIsNotNone(user)
+        self.assertEqual('LEGAL', user.person_type)
+        self.assertEqual('PAYER', user.user_category)
+        self.assertEqual('ACTIVE', user.user_status)
+        self.assertIsNotNone(user.legal_representative.phone_number)
+        self.assertIsNotNone(user.legal_representative.phone_number_country)
+
+    def test_Users_CreateLegalScaOwner(self):
+        user = BaseTestLive.get_user_legal_sca_owner()
+        self.assertIsNotNone(user)
+        self.assertEqual('LEGAL', user.person_type)
+        self.assertEqual('OWNER', user.user_category)
+        self.assertEqual('PENDING_USER_ACTION', user.user_status)
+        self.assertIsNotNone(user.legal_representative.phone_number)
+        self.assertIsNotNone(user.legal_representative.phone_number_country)
+        self.assertIsNotNone(user.pending_user_action.redirect_url)
 
 class PayOutsTestLive(BaseTestLive):
 

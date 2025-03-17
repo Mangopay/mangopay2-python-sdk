@@ -1088,3 +1088,67 @@ class VirtualAccountCapabilities(object):
             "InternationalPayinAvailable": self.international_pay_in_available,
             "Currencies": self.currencies
         }
+
+
+@add_camelcase_aliases
+class PendingUserAction(object):
+    def __init__(self, redirect_url=None):
+        self.redirect_url = redirect_url
+
+    def __str__(self):
+        return 'PendingUserAction: %s' % self.redirect_url
+
+    def __eq__(self, other):
+        if isinstance(other, PendingUserAction):
+            stat = (self.redirect_url == other.redirect_url)
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "RedirectUrl": self.redirect_url
+        }
+
+
+@add_camelcase_aliases
+class LegalRepresentative(object):
+    def __init__(self, first_name=None, last_name=None, birthday=None, nationality=None, country_of_residence=None,
+                 email=None, phone_number=None, phone_number_country=None):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.birthday = birthday
+        self.nationality = nationality
+        self.country_of_residence = country_of_residence
+        self.email = email
+        self.phone_number = phone_number
+        self.phone_number_country = phone_number_country
+
+    def __str__(self):
+        return 'LegalRepresentative: %s , %s, %s, %s, %s, %s, %s, %s' % \
+            (self.first_name, self.last_name, self.birthday, self.nationality,
+             self.country_of_residence, self.email, self.phone_number, self.phone_number_country)
+
+    def __eq__(self, other):
+        if isinstance(other, LegalRepresentative):
+            stat = ((self.first_name == other.first_name) and
+                    (self.last_name == other.last_name) and
+                    (self.birthday == other.birthday) and
+                    (self.nationality == other.nationality) and
+                    (self.country_of_residence == other.country_of_residence) and
+                    (self.email == other.email) and
+                    (self.phone_number == other.phone_number) and
+                    (self.phone_number_country == other.phone_number_country))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "FirstName": self.first_name,
+            "LastName": self.last_name,
+            "Birthday": self.birthday,
+            "Nationality": self.nationality,
+            "CountryOfResidence": self.country_of_residence,
+            "Email": self.email,
+            "PhoneNumber": self.phone_number,
+            "PhoneNumberCountry": self.phone_number_country
+        }

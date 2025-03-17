@@ -15,7 +15,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      BirthplaceField, ApplepayPaymentDataField, GooglepayPaymentDataField, ScopeBlockedField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
                      CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField,
-                     LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField)
+                     LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
+                     LegalRepresentativeField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -92,6 +93,7 @@ class User(BaseModel):
     terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted')
     terms_and_conditions_accepted_date = DateTimeField(api_name='TermsAndConditionsAcceptedDate')
     user_category = CharField(api_name='UserCategory')
+    user_status = CharField(api_name='UserStatus')
 
     def fixed_kwargs(self):
         return {"user_id": self.id}
@@ -176,6 +178,38 @@ class NaturalUser(User):
 
 
 @python_2_unicode_compatible
+class NaturalUserSca(User):
+    creation_date = DateTimeField(api_name='CreationDate')
+    terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted', required=True)
+    user_category = CharField(api_name='UserCategory', required=True)
+    person_type = CharField(api_name='PersonType',
+                            choices=constants.USER_TYPE_CHOICES,
+                            default=constants.USER_TYPE_CHOICES.natural)
+    first_name = CharField(api_name='FirstName', required=True)
+    last_name = CharField(api_name='LastName', required=True)
+    birthday = DateField(api_name='Birthday')
+    nationality = CharField(api_name='Nationality')
+    country_of_residence = CharField(api_name='CountryOfResidence')
+    occupation = CharField(api_name='Occupation')
+    income_range = CharField(api_name='IncomeRange')
+    proof_of_identity = CharField(api_name='ProofOfIdentity')
+    proof_of_address = CharField(api_name='ProofOfAddress')
+    capacity = CharField(api_name='Capacity', choices=constants.NATURAL_USER_CAPACITY_CHOICES)
+    phone_number = CharField(api_name='PhoneNumber')
+    phone_number_country = CharField(api_name='PhoneNumberCountry')
+    address = AddressField(api_name='Address')
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+
+    class Meta:
+        verbose_name = 'sca_user'
+        verbose_name_plural = 'sca_users'
+        url = '/sca/users/natural'
+
+    def __str__(self):
+        return '%s' % self.email
+
+
+@python_2_unicode_compatible
 class LegalUser(User):
     person_type = CharField(api_name='PersonType',
                             choices=constants.USER_TYPE_CHOICES,
@@ -202,6 +236,36 @@ class LegalUser(User):
         verbose_name = 'user'
         verbose_name_plural = 'users'
         url = '/users/legal'
+
+    def __str__(self):
+        return '%s' % self.email
+
+
+@python_2_unicode_compatible
+class LegalUserSca(User):
+    creation_date = DateTimeField(api_name='CreationDate')
+    person_type = CharField(api_name='PersonType',
+                            choices=constants.USER_TYPE_CHOICES,
+                            default=constants.USER_TYPE_CHOICES.legal)
+    name = CharField(api_name='Name', required=True)
+    legal_person_type = CharField(api_name='LegalPersonType',
+                                  choices=constants.LEGAL_USER_TYPE_CHOICES,
+                                  required=True)
+    legal_representative = LegalRepresentativeField(api_name='LegalRepresentative', required=True)
+    proof_of_registration = CharField(api_name='ProofOfRegistration')
+    shareholder_declaration = CharField(api_name='ShareholderDeclaration')
+    statute = CharField(api_name='Statute')
+    company_number = CharField(api_name='CompanyNumber')
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+    headquarters_address = AddressField(api_name='HeadquartersAddress')
+    terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted', required=True)
+    user_category = CharField(api_name='UserCategory', required=True)
+    legal_representative_address = AddressField(api_name='LegalRepresentativeAddress')
+
+    class Meta:
+        verbose_name = 'sca_user'
+        verbose_name_plural = 'sca_users'
+        url = '/sca/users/legal'
 
     def __str__(self):
         return '%s' % self.email
