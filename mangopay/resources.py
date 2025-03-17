@@ -101,7 +101,12 @@ class User(BaseModel):
     class Meta:
         verbose_name = 'user'
         verbose_name_plural = 'users'
-        url = '/users'
+        url = {
+            InsertQuery.identifier: '/users',
+            SelectQuery.identifier: '/users',
+            UpdateQuery.identifier: '/users',
+            'USERS_GET_SCA': '/sca/users',
+        }
 
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
@@ -111,11 +116,21 @@ class User(BaseModel):
     def cast(cls, result):
         if 'PersonType' in result:
             if result['PersonType'] == 'NATURAL':
+                if 'PendingUserAction' in result:
+                    return NaturalUserSca
                 return NaturalUser
             elif result['PersonType'] == 'LEGAL':
+                if 'PendingUserAction' in result:
+                    return LegalUserSca
                 return LegalUser
 
         return cls
+
+    @staticmethod
+    def get_sca(id, *args, **kwargs):
+        select = SelectQuery(User, *args, **kwargs)
+        select.identifier = 'USERS_GET_SCA'
+        return select.get(id, *args, **kwargs)
 
     def get_emoney(self, *args, **kwargs):
         kwargs['user_id'] = self.id

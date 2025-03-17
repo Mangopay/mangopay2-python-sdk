@@ -7,7 +7,7 @@ import requests
 import responses
 
 from mangopay.resources import (User, NaturalUser, Wallet,
-                                LegalUser, Transfer, Transaction)
+                                LegalUser, Transfer, Transaction, NaturalUserSca, LegalUserSca)
 from mangopay.utils import Money, Address
 from tests import settings
 from tests.mocks import today, today_timestamp
@@ -732,6 +732,54 @@ class UserTestLive(BaseTestLive):
         self.assertIsNotNone(user.legal_representative.phone_number)
         self.assertIsNotNone(user.legal_representative.phone_number_country)
         self.assertIsNotNone(user.pending_user_action.redirect_url)
+
+    def test_Users_GetNatural(self):
+        user = BaseTestLive.get_john()
+        fetched = NaturalUser.get(user.id)
+        fetched_again = User.get(user.id)
+
+        self.assertIsInstance(fetched, NaturalUser)
+        self.assertIsInstance(fetched_again, NaturalUser)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_GetLegal(self):
+        user = BaseTestLive.get_user_legal()
+        fetched = LegalUser.get(user.id)
+        fetched_again = User.get(user.id)
+
+        self.assertIsInstance(fetched, LegalUser)
+        self.assertIsInstance(fetched_again, LegalUser)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_GetNaturalSca(self):
+        user = BaseTestLive.get_john_sca_owner()
+        fetched = NaturalUserSca.get(user.id)
+        fetched_again = User.get_sca(user.id)
+
+        self.assertIsInstance(fetched, NaturalUserSca)
+        self.assertIsInstance(fetched_again, NaturalUserSca)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_GetLegalSca(self):
+        user = BaseTestLive.get_user_legal_sca_owner()
+        fetched = LegalUserSca.get(user.id)
+        fetched_again = User.get_sca(user.id)
+
+        self.assertIsInstance(fetched, LegalUserSca)
+        self.assertIsInstance(fetched_again, LegalUserSca)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
 
 class PayOutsTestLive(BaseTestLive):
 
