@@ -781,6 +781,26 @@ class UserTestLive(BaseTestLive):
         self.assertEqual(user.user_category, fetched.user_category)
         self.assertEqual(fetched.user_category, fetched_again.user_category)
 
+    def test_Users_UpdateNaturalSca(self):
+        user = BaseTestLive.get_john_sca_owner()
+        changed_name = user.first_name + " - CHANGED"
+        user.first_name = changed_name
+
+        user.save()
+        fetched = NaturalUserSca.get(user.id)
+
+        self.assertEqual(changed_name, fetched.first_name)
+
+    def test_Users_UpdateLegalSca(self):
+        user = BaseTestLive.get_user_legal_sca_owner()
+        changed_name = user.name + " - CHANGED"
+        user.name = changed_name
+
+        user.save()
+        fetched = LegalUserSca.get(user.id)
+
+        self.assertEqual(changed_name, fetched.name)
+
 class PayOutsTestLive(BaseTestLive):
 
     def test_PayOut_GetRefunds(self):

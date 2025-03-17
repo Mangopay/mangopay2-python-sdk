@@ -166,6 +166,7 @@ class UpdateQuery(BaseQuery):
 
         meta_url = self.parse_url(self.model._meta.url, self.update_query)
         url = '%s/%s' % (meta_url, self.reference)
+        print(url)
 
         result, data = handler.request(self.method,
                                        url,
