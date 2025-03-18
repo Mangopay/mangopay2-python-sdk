@@ -106,6 +106,7 @@ class User(BaseModel):
             SelectQuery.identifier: '/users',
             UpdateQuery.identifier: '/users',
             'USERS_GET_SCA': '/sca/users',
+            'USERS_ENROLL_SCA': '/sca/users/%(id)s/enrollment'
         }
 
     def __init__(self, *args, **kwargs):
@@ -127,10 +128,18 @@ class User(BaseModel):
         return cls
 
     @staticmethod
-    def get_sca(id, *args, **kwargs):
+    def get_sca(user_id, *args, **kwargs):
         select = SelectQuery(User, *args, **kwargs)
         select.identifier = 'USERS_GET_SCA'
-        return select.get(id, *args, **kwargs)
+        return select.get(user_id, *args, **kwargs)
+
+    @staticmethod
+    def enroll_sca(user_id, **kwargs):
+        insert = InsertQuery(ScaEnrollment, **kwargs)
+        insert.insert_query['id'] = user_id
+        insert.identifier = 'USERS_ENROLL_SCA'
+        result = insert.execute()
+        return ScaEnrollment(**result)
 
     def get_emoney(self, *args, **kwargs):
         kwargs['user_id'] = self.id
@@ -163,6 +172,18 @@ class User(BaseModel):
 
     def __str__(self):
         return '%s' % self.email
+
+
+@python_2_unicode_compatible
+class ScaEnrollment(BaseModel):
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+
+    class Meta:
+        verbose_name = 'sca_enrollment'
+        verbose_name_plural = 'sca_enrollments'
+        url = {
+            'USERS_ENROLL_SCA': '/sca/users/%(id)s/enrollment'
+        }
 
 
 @python_2_unicode_compatible
