@@ -801,6 +801,74 @@ class UserTestLive(BaseTestLive):
 
         self.assertEqual(changed_name, fetched.name)
 
+    @unittest.skip("can't be tested")
+    def test_Users_categorizeNatural(self):
+        user = BaseTestLive.get_john_sca_payer()
+
+        # option 1: send just the required fields
+        categorized = user.categorize(**{
+            'id': user.id,
+            'user_category': 'OWNER',
+            'terms_and_conditions_accepted': True,
+            'birthday': 188352000,
+            'nationality': 'FR',
+            'country_of_residence': 'FR'
+        })
+
+        # option 2: use the whole object with the updated fields
+        # user.birthday = 188352000
+        # user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+        #                        city='City', region='Region',
+        #                        postal_code='11222', country='FR')
+        # user.nationality = 'FR'
+        # user.country_of_residence = 'FR'
+        # user.occupation = 'programmer'
+        # user.income_range = '1'
+        # user.user_category = 'OWNER'
+        #
+        # categorized_2 = user.categorize()
+
+        self.assertIsNotNone(categorized)
+
+    @unittest.skip("can't be tested")
+    def test_Users_categorizeLegal(self):
+        user = BaseTestLive.get_user_legal_sca_payer()
+
+        # option 1: send just the required fields
+        categorized = user.categorize(**{
+            'id': user.id,
+            'user_category': 'OWNER',
+            'terms_and_conditions_accepted': True,
+            'legal_representative': {
+                'Birthday': 188352000,
+                'Nationality': 'FR',
+                'CountryOfResidence': 'FR'
+            },
+            'headquarters_address': {
+                'AddressLine1': 'AddressLine1',
+                'AddressLine2': 'AddressLine2',
+                'City': 'City',
+                'Region': 'Region',
+                'PostalCode': '11222',
+                'Country': 'FR'
+            },
+            'company_number': '123456789'
+        })
+
+        # option 2: use the whole object with the updated fields
+        # user.legal_representative.birthday = 188352000
+        # user.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+        #                        city='City', region='Region',
+        #                        postal_code='11222', country='FR')
+        # user.legal_representative.nationality = 'FR'
+        # user.legal_representative.country_of_residence = 'FR'
+        # user.user_category = 'OWNER'
+        #
+        # categorized_2 = user.categorize()
+
+        self.assertIsNotNone(categorized)
+
+
 class PayOutsTestLive(BaseTestLive):
 
     def test_PayOut_GetRefunds(self):

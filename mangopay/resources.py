@@ -218,10 +218,24 @@ class NaturalUserSca(User):
     class Meta:
         verbose_name = 'sca_user'
         verbose_name_plural = 'sca_users'
-        url = '/sca/users/natural'
+        url = {
+            InsertQuery.identifier: '/sca/users/natural',
+            SelectQuery.identifier: '/sca/users/natural',
+            UpdateQuery.identifier: '/sca/users/natural',
+            'USERS_NATURAL_SCA_CATEGORIZE': '/sca/users/natural/%(id)s/category'
+        }
 
     def __str__(self):
         return '%s' % self.email
+
+    def categorize(self, **kwargs):
+        update = UpdateQuery(NaturalUserSca, '', **kwargs)
+        update.identifier = 'USERS_NATURAL_SCA_CATEGORIZE'
+
+        if kwargs == {}:
+            update.update_query = self.__dict__['_data']
+
+        return update.execute(self.handler)
 
 
 @python_2_unicode_compatible
@@ -280,10 +294,24 @@ class LegalUserSca(User):
     class Meta:
         verbose_name = 'sca_user'
         verbose_name_plural = 'sca_users'
-        url = '/sca/users/legal'
+        url = {
+            InsertQuery.identifier: '/sca/users/legal',
+            SelectQuery.identifier: '/sca/users/legal',
+            UpdateQuery.identifier: '/sca/users/legal',
+            'USERS_LEGAL_SCA_CATEGORIZE': '/sca/users/legal/%(id)s/category'
+        }
 
     def __str__(self):
         return '%s' % self.email
+
+    def categorize(self, **kwargs):
+        update = UpdateQuery(LegalUserSca, '', **kwargs)
+        update.identifier = 'USERS_LEGAL_SCA_CATEGORIZE'
+
+        if kwargs == {}:
+            update.update_query = self.__dict__['_data']
+
+        return update.execute(self.handler)
 
 
 @python_2_unicode_compatible
