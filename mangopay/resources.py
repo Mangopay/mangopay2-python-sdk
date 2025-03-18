@@ -105,8 +105,7 @@ class User(BaseModel):
             InsertQuery.identifier: '/users',
             SelectQuery.identifier: '/users',
             UpdateQuery.identifier: '/users',
-            'USERS_GET_SCA': '/sca/users',
-            'USERS_ENROLL_SCA': '/sca/users/%(id)s/enrollment'
+            'USERS_GET_SCA': '/sca/users'
         }
 
     def __init__(self, *args, **kwargs):
@@ -134,8 +133,8 @@ class User(BaseModel):
         return select.get(user_id, *args, **kwargs)
 
     @staticmethod
-    def enroll_sca(user_id, **kwargs):
-        insert = InsertQuery(ScaEnrollment, **kwargs)
+    def enroll_sca(user_id):
+        insert = InsertQuery(ScaEnrollment)
         insert.insert_query['id'] = user_id
         insert.identifier = 'USERS_ENROLL_SCA'
         result = insert.execute()
