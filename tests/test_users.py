@@ -7,7 +7,7 @@ import requests
 import responses
 
 from mangopay.resources import (User, NaturalUser, Wallet,
-                                LegalUser, Transfer, Transaction)
+                                LegalUser, Transfer, Transaction, NaturalUserSca, LegalUserSca)
 from mangopay.utils import Money, Address
 from tests import settings
 from tests.mocks import today, today_timestamp
@@ -694,6 +694,184 @@ class UserTestLive(BaseTestLive):
         documents = user.documents.all()
 
         self.assertTrue(documents)
+
+    def test_Users_CreateNaturalPayerSca(self):
+        user = BaseTestLive.get_john_sca_payer()
+        self.assertIsNotNone(user)
+        self.assertEqual('NATURAL', user.person_type)
+        self.assertEqual('PAYER', user.user_category)
+        self.assertEqual('ACTIVE', user.user_status)
+        self.assertIsNotNone(user.phone_number)
+        self.assertIsNotNone(user.phone_number_country)
+
+    def test_Users_CreateNaturalOwnerSca(self):
+        user = BaseTestLive.get_john_sca_owner()
+        self.assertIsNotNone(user)
+        self.assertEqual('NATURAL', user.person_type)
+        self.assertEqual('OWNER', user.user_category)
+        self.assertEqual('PENDING_USER_ACTION', user.user_status)
+        self.assertIsNotNone(user.phone_number)
+        self.assertIsNotNone(user.phone_number_country)
+        self.assertIsNotNone(user.pending_user_action.redirect_url)
+
+    def test_Users_CreateLegalScaPayer(self):
+        user = BaseTestLive.get_user_legal_sca_payer()
+        self.assertIsNotNone(user)
+        self.assertEqual('LEGAL', user.person_type)
+        self.assertEqual('PAYER', user.user_category)
+        self.assertEqual('ACTIVE', user.user_status)
+        self.assertIsNotNone(user.legal_representative.phone_number)
+        self.assertIsNotNone(user.legal_representative.phone_number_country)
+
+    def test_Users_CreateLegalScaOwner(self):
+        user = BaseTestLive.get_user_legal_sca_owner()
+        self.assertIsNotNone(user)
+        self.assertEqual('LEGAL', user.person_type)
+        self.assertEqual('OWNER', user.user_category)
+        self.assertEqual('PENDING_USER_ACTION', user.user_status)
+        self.assertIsNotNone(user.legal_representative.phone_number)
+        self.assertIsNotNone(user.legal_representative.phone_number_country)
+        self.assertIsNotNone(user.pending_user_action.redirect_url)
+
+    def test_Users_GetNatural(self):
+        user = BaseTestLive.get_john()
+        fetched = NaturalUser.get(user.id)
+        fetched_again = User.get(user.id)
+
+        self.assertIsInstance(fetched, NaturalUser)
+        self.assertIsInstance(fetched_again, NaturalUser)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_GetLegal(self):
+        user = BaseTestLive.get_user_legal()
+        fetched = LegalUser.get(user.id)
+        fetched_again = User.get(user.id)
+
+        self.assertIsInstance(fetched, LegalUser)
+        self.assertIsInstance(fetched_again, LegalUser)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_GetNaturalSca(self):
+        user = BaseTestLive.get_john_sca_owner()
+        fetched = NaturalUserSca.get(user.id)
+        fetched_again = User.get_sca(user.id)
+
+        self.assertIsInstance(fetched, NaturalUserSca)
+        self.assertIsInstance(fetched_again, NaturalUserSca)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_GetLegalSca(self):
+        user = BaseTestLive.get_user_legal_sca_owner()
+        fetched = LegalUserSca.get(user.id)
+        fetched_again = User.get_sca(user.id)
+
+        self.assertIsInstance(fetched, LegalUserSca)
+        self.assertIsInstance(fetched_again, LegalUserSca)
+        self.assertEqual(user.id, fetched.id)
+        self.assertEqual(fetched.id, fetched_again.id)
+        self.assertEqual(user.user_category, fetched.user_category)
+        self.assertEqual(fetched.user_category, fetched_again.user_category)
+
+    def test_Users_UpdateNaturalSca(self):
+        user = BaseTestLive.get_john_sca_owner()
+        changed_name = user.first_name + " - CHANGED"
+        user.first_name = changed_name
+
+        user.save()
+        fetched = NaturalUserSca.get(user.id)
+
+        self.assertEqual(changed_name, fetched.first_name)
+
+    def test_Users_UpdateLegalSca(self):
+        user = BaseTestLive.get_user_legal_sca_owner()
+        changed_name = user.name + " - CHANGED"
+        user.name = changed_name
+
+        user.save()
+        fetched = LegalUserSca.get(user.id)
+
+        self.assertEqual(changed_name, fetched.name)
+
+    @unittest.skip("can't be tested")
+    def test_Users_categorizeNatural(self):
+        user = BaseTestLive.get_john_sca_payer()
+
+        # option 1: send just the required fields
+        categorized = user.categorize(**{
+            'id': user.id,
+            'user_category': 'OWNER',
+            'terms_and_conditions_accepted': True,
+            'birthday': 188352000,
+            'nationality': 'FR',
+            'country_of_residence': 'FR'
+        })
+
+        # option 2: use the whole object with the updated fields
+        # user.birthday = 188352000
+        # user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+        #                        city='City', region='Region',
+        #                        postal_code='11222', country='FR')
+        # user.nationality = 'FR'
+        # user.country_of_residence = 'FR'
+        # user.occupation = 'programmer'
+        # user.income_range = '1'
+        # user.user_category = 'OWNER'
+        #
+        # categorized_2 = user.categorize()
+
+        self.assertIsNotNone(categorized)
+
+    def test_Users_enrollSca(self):
+        user = BaseTestLive.get_john()
+        enrollment_result = User.enroll_sca(user.id)
+        self.assertIsNotNone(enrollment_result.pending_user_action.redirect_url)
+
+    @unittest.skip("can't be tested")
+    def test_Users_categorizeLegal(self):
+        user = BaseTestLive.get_user_legal_sca_payer()
+
+        # option 1: send just the required fields
+        categorized = user.categorize(**{
+            'id': user.id,
+            'user_category': 'OWNER',
+            'terms_and_conditions_accepted': True,
+            'legal_representative': {
+                'Birthday': 188352000,
+                'Nationality': 'FR',
+                'CountryOfResidence': 'FR'
+            },
+            'headquarters_address': {
+                'AddressLine1': 'AddressLine1',
+                'AddressLine2': 'AddressLine2',
+                'City': 'City',
+                'Region': 'Region',
+                'PostalCode': '11222',
+                'Country': 'FR'
+            },
+            'company_number': '123456789'
+        })
+
+        # option 2: use the whole object with the updated fields
+        # user.legal_representative.birthday = 188352000
+        # user.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+        #                        city='City', region='Region',
+        #                        postal_code='11222', country='FR')
+        # user.legal_representative.nationality = 'FR'
+        # user.legal_representative.country_of_residence = 'FR'
+        # user.user_category = 'OWNER'
+        #
+        # categorized_2 = user.categorize()
+
+        self.assertIsNotNone(categorized)
 
 
 class PayOutsTestLive(BaseTestLive):

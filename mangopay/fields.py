@@ -11,7 +11,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
     PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
-    VirtualAccountCapabilities, PaymentRef
+    VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative
 
 
 class FieldDescriptor(object):
@@ -1015,6 +1015,54 @@ class VirtualAccountCapabilitiesField(Field):
                 'LocalPayinAvailable': value.local_pay_in_available,
                 'InternationalPayinAvailable': value.international_pay_in_available,
                 'Currencies': value.currencies
+            }
+
+        return value
+
+
+class PendingUserActionField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PendingUserAction(redirect_url=value['RedirectUrl'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(PendingUserActionField, self).api_value(value)
+
+        if isinstance(value, PendingUserAction):
+            value = {
+                'RedirectUrl': value.redirect_url
+            }
+
+        return value
+
+
+class LegalRepresentativeField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return LegalRepresentative(first_name=value['FirstName'], last_name=value['LastName'],
+                                       birthday=value['Birthday'],
+                                       nationality=value['Nationality'],
+                                       country_of_residence=value['CountryOfResidence'],
+                                       email=value['Email'], phone_number=value['PhoneNumber'],
+                                       phone_number_country=value['PhoneNumberCountry'])
+
+        return value
+
+    def api_value(self, value):
+        value = super(LegalRepresentativeField, self).api_value(value)
+
+        if isinstance(value, LegalRepresentative):
+            value = {
+                'FirstName': value.first_name,
+                'LastName': value.last_name,
+                'Birthday': value.birthday,
+                'Nationality': value.nationality,
+                'CountryOfResidence': value.country_of_residence,
+                'Email': value.email,
+                'PhoneNumber': value.phone_number,
+                'PhoneNumberCountry': value.phone_number_country
             }
 
         return value
