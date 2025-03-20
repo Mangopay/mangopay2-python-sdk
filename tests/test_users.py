@@ -801,7 +801,6 @@ class UserTestLive(BaseTestLive):
 
         self.assertEqual(changed_name, fetched.name)
 
-    @unittest.skip("can't be tested")
     def test_Users_categorizeNatural(self):
         user = BaseTestLive.get_john_sca_payer()
 
@@ -835,7 +834,6 @@ class UserTestLive(BaseTestLive):
         enrollment_result = User.enroll_sca(user.id)
         self.assertIsNotNone(enrollment_result.pending_user_action.redirect_url)
 
-    @unittest.skip("can't be tested")
     def test_Users_categorizeLegal(self):
         user = BaseTestLive.get_user_legal_sca_payer()
 
@@ -847,7 +845,12 @@ class UserTestLive(BaseTestLive):
             'legal_representative': {
                 'Birthday': 188352000,
                 'Nationality': 'FR',
-                'CountryOfResidence': 'FR'
+                'CountryOfResidence': 'FR',
+                'FirstName': 'John SCA',
+                'LastName': 'Doe SCA review',
+                'Email': 'john.doe.sca@sample.org',
+                'PhoneNumber': '',
+                'PhoneNumberCountry': 'FR'
             },
             'headquarters_address': {
                 'AddressLine1': 'AddressLine1',
