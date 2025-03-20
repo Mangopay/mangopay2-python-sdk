@@ -323,6 +323,9 @@ class BaseTestLive(unittest.TestCase):
                                                              phone_number='0611111111',
                                                              phone_number_country='FR')
             user.user_category = 'PAYER'
+            user.legal_representative_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                                 city='City', region='Region',
+                                                 postal_code='11222', country='FR')
             BaseTestLive._user_legal_sca_payer = LegalUserSca(**user.save())
         return BaseTestLive._user_legal_sca_payer
 
@@ -461,6 +464,9 @@ class BaseTestLive(unittest.TestCase):
             user.user_category = 'PAYER'
             user.phone_number = '+33611111111'
             user.phone_number_country = 'FR'
+            user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                   city='City', region='Region',
+                                   postal_code='11222', country='FR')
             BaseTestLive._john_sca_payer = NaturalUserSca(**user.save())
         return BaseTestLive._john_sca_payer
 
