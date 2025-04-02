@@ -3,6 +3,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import logging
+import platform
 import time
 
 import requests
@@ -69,7 +70,8 @@ class APIRequest(object):
         headers = {}
 
         if is_mangopay_request:
-            headers['User-Agent'] = 'MangoPay V2 Python/' + str(mangopay.package_version)
+            headers['User-Agent'] = 'Mangopay-SDK/' + str(
+                mangopay.package_version) + ' (Python/' + platform.python_version() + ')'
             if oauth_request:
                 headers['Authorization'] = self.auth_manager.basic_token()
                 headers['Content-Type'] = 'application/x-www-form-urlencoded'
