@@ -1,3 +1,10 @@
+## [3.40.1] - 2025-03-19
+### Changed
+- User-Agent Header value standardized on format: User-Agent: Mangopay-SDK/`SDKVersion` (`Language`/`LanguageVersion`)
+
+### Fixed
+- Fixed tests for categorize SCA users endpoint
+
 ## [3.40.0] - 2025-03-19
 ### Added
 
