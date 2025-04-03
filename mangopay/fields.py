@@ -11,7 +11,8 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     PlatformCategorization, Billing, SecurityInfo, Birthplace, ApplepayPaymentData, GooglepayPaymentData, \
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
     PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
-    VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative
+    VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative, IndividualRecipient, \
+    BusinessRecipient, RecipientPropertySchema, IndividualRecipientPropertySchema, BusinessRecipientPropertySchema
 
 
 class FieldDescriptor(object):
@@ -161,7 +162,7 @@ class FloatField(Field):
 
 class DictField(Field):
     def api_value(self, value):
-        return json.dumps(value)
+        return value
 
     def python_value(self, value):
         if value is not None and isinstance(value, str):
@@ -917,6 +918,7 @@ class PayinsLinkedField(Field):
 
         return value
 
+
 class ConversionRateField(Field):
     def python_value(self, value):
         if value is not None:
@@ -1063,6 +1065,114 @@ class LegalRepresentativeField(Field):
                 'Email': value.email,
                 'PhoneNumber': value.phone_number,
                 'PhoneNumberCountry': value.phone_number_country
+            }
+
+        return value
+
+
+class IndividualRecipientField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return IndividualRecipient(first_name=value.get('FirstName', None), last_name=value.get('LastName', None),
+                                       address=value.get('Address', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(IndividualRecipientField, self).api_value(value)
+
+        if isinstance(value, IndividualRecipient):
+            value = {
+                'FirstName': value.first_name,
+                'LastName': value.last_name,
+                'Address': value.address
+            }
+
+        return value
+
+
+class BusinessRecipientField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return BusinessRecipient(business_name=value.get('BusinessName', None), address=value.get('Address', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(BusinessRecipientField, self).api_value(value)
+
+        if isinstance(value, BusinessRecipient):
+            value = {
+                'BusinessName': value.business_name,
+                'Address': value.address
+            }
+
+        return value
+
+
+class RecipientPropertySchemaField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return RecipientPropertySchema(required=value.get('Required', None),
+                                           max_length=value.get('MaxLength', None),
+                                           min_length=value.get('MinLength', None),
+                                           pattern=value.get('Pattern', None),
+                                           allowed_values=value.get('AllowedValues', None), )
+
+        return value
+
+    def api_value(self, value):
+        value = super(RecipientPropertySchemaField, self).api_value(value)
+
+        if isinstance(value, RecipientPropertySchema):
+            value = {
+                'Required': value.required,
+                'MaxLength': value.max_length,
+                'MinLength': value.min_length,
+                'Pattern': value.pattern,
+                'AllowedValues': value.allowed_values
+            }
+
+        return value
+
+
+class IndividualRecipientPropertySchemaField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return IndividualRecipientPropertySchema(first_name=value.get('FirstName', None),
+                                                     last_name=value.get('LastName', None),
+                                                     address=value.get('Address', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(IndividualRecipientPropertySchemaField, self).api_value(value)
+
+        if isinstance(value, IndividualRecipientPropertySchema):
+            value = {
+                'FirstName': value.first_name,
+                'LastName': value.last_name,
+                'Address': value.address
+            }
+
+        return value
+
+
+class BusinessRecipientPropertySchemaField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return BusinessRecipientPropertySchema(business_name=value.get('BusinessName', None),
+                                                   address=value.get('Address', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(BusinessRecipientPropertySchemaField, self).api_value(value)
+
+        if isinstance(value, BusinessRecipientPropertySchema):
+            value = {
+                'BusinessName': value.business_name,
+                'Address': value.address
             }
 
         return value

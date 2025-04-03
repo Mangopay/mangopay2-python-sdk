@@ -1,4 +1,4 @@
-## [3.40.1] - 2025-03-19
+## [3.40.1] - 2025-04-02
 ### Changed
 - User-Agent Header value standardized on format: User-Agent: Mangopay-SDK/`SDKVersion` (`Language`/`LanguageVersion`)
 

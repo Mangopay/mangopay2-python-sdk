@@ -1152,3 +1152,138 @@ class LegalRepresentative(object):
             "PhoneNumber": self.phone_number,
             "PhoneNumberCountry": self.phone_number_country
         }
+
+
+@add_camelcase_aliases
+class IndividualRecipient(object):
+    def __init__(self, first_name=None, last_name=None, address=None):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.address = address
+
+    def __str__(self):
+        return 'IndividualRecipient: %s , %s, %s' % \
+            (self.first_name, self.last_name, self.address)
+
+    def __eq__(self, other):
+        if isinstance(other, IndividualRecipient):
+            stat = ((self.first_name == other.first_name) and
+                    (self.last_name == other.last_name) and
+                    (self.address == other.address))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "FirstName": self.first_name,
+            "LastName": self.last_name,
+            "Address": self.address
+        }
+
+
+@add_camelcase_aliases
+class BusinessRecipient(object):
+    def __init__(self, business_name=None, address=None):
+        self.business_name = business_name
+        self.address = address
+
+    def __str__(self):
+        return 'BusinessRecipient: %s , %s' % \
+            (self.business_name, self.address)
+
+    def __eq__(self, other):
+        if isinstance(other, BusinessRecipient):
+            stat = ((self.business_name == other.business_name) and
+                    (self.address == other.address))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "BusinessName": self.business_name,
+            "Address": self.address
+        }
+
+
+@add_camelcase_aliases
+class RecipientPropertySchema(object):
+    def __init__(self, required=None, max_length=None, min_length=None, pattern=None, allowed_values=None):
+        self.required = required
+        self.max_length = max_length
+        self.min_length = min_length
+        self.pattern = pattern
+        self.allowed_values = allowed_values
+
+    def __str__(self):
+        return 'RecipientPropertySchema: %s , %s, %s, %s, %s' % \
+            (self.required, self.max_length, self.min_length, self.pattern, self.allowed_values)
+
+    def __eq__(self, other):
+        if isinstance(other, RecipientPropertySchema):
+            stat = ((self.required == other.required) and
+                    (self.max_length == other.max_length) and
+                    (self.min_length == other.min_length) and
+                    (self.pattern == other.pattern) and
+                    (self.allowed_values == other.allowed_values))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "Required": self.required,
+            "MaxLength": self.max_length,
+            "MinLength": self.min_length,
+            "Pattern": self.pattern,
+            "AllowedValues": self.allowed_values
+        }
+
+
+@add_camelcase_aliases
+class IndividualRecipientPropertySchema(object):
+    def __init__(self, first_name=None, last_name=None, address=None):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.address = address
+
+    def __str__(self):
+        return 'IndividualRecipientPropertySchema: %s , %s, %s' % \
+            (self.first_name, self.last_name, self.address)
+
+    def __eq__(self, other):
+        if isinstance(other, IndividualRecipientPropertySchema):
+            stat = ((self.first_name == other.first_name) and
+                    (self.last_name == other.last_name) and
+                    (self.address == other.address))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "FirstName": self.first_name,
+            "LastName": self.last_name,
+            "Address": self.address
+        }
+
+
+@add_camelcase_aliases
+class BusinessRecipientPropertySchema(object):
+    def __init__(self, business_name=None, address=None):
+        self.business_name = business_name
+        self.address = address
+
+    def __str__(self):
+        return 'BusinessRecipientPropertySchema: %s , %s' % \
+            (self.business_name, self.address)
+
+    def __eq__(self, other):
+        if isinstance(other, BusinessRecipientPropertySchema):
+            stat = ((self.business_name == other.business_name) and
+                    (self.address == other.address))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "BusinessName": self.business_name,
+            "Address": self.address
+        }
