@@ -2580,6 +2580,8 @@ class RecipientSchema(BaseModel):
     payout_method_type = RecipientPropertySchemaField(api_name='PayoutMethodType')
     recipient_type = RecipientPropertySchemaField(api_name='RecipientType')
     currency = RecipientPropertySchemaField(api_name='Currency')
+    recipient_scope = RecipientPropertySchemaField(api_name='RecipientScope')
+    tag = RecipientPropertySchemaField(api_name='Tag')
     individual_recipient = IndividualRecipientPropertySchemaField(api_name='IndividualRecipient')
     business_recipient = BusinessRecipientPropertySchemaField(api_name='BusinessRecipient')
     local_bank_transfer = DictField(api_name='LocalBankTransfer')
