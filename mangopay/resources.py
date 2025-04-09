@@ -2531,6 +2531,8 @@ class Recipient(BaseModel):
     payout_method_type = CharField(api_name='PayoutMethodType', required=True)
     recipient_type = CharField(api_name='RecipientType', required=True)
     currency = CharField(api_name='Currency', required=True)
+    recipient_scope = CharField(api_name='RecipientScope')
+    user_id = CharField(api_name='UserId')
     individual_recipient = IndividualRecipientField(api_name='IndividualRecipient')
     business_recipient = BusinessRecipientField(api_name='BusinessRecipient')
     local_bank_transfer = DictField(api_name='LocalBankTransfer')

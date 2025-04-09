@@ -16,6 +16,8 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNotNone(RecipientsTest._recipient.payout_method_type)
         self.assertIsNotNone(RecipientsTest._recipient.recipient_type)
         self.assertIsNotNone(RecipientsTest._recipient.currency)
+        self.assertIsNotNone(RecipientsTest._recipient.recipient_scope)
+        self.assertIsNotNone(RecipientsTest._recipient.user_id)
         self.assertIsNotNone(RecipientsTest._recipient.individual_recipient)
         self.assertIsNotNone(RecipientsTest._recipient.local_bank_transfer)
         self.assertIsNone(RecipientsTest._recipient.international_bank_transfer)
