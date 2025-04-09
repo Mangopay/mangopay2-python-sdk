@@ -1207,16 +1207,20 @@ class BusinessRecipient(object):
 
 @add_camelcase_aliases
 class RecipientPropertySchema(object):
-    def __init__(self, required=None, max_length=None, min_length=None, pattern=None, allowed_values=None):
+    def __init__(self, required=None, max_length=None, min_length=None, pattern=None, allowed_values=None, label=None,
+                 end_user_display=None):
         self.required = required
         self.max_length = max_length
         self.min_length = min_length
         self.pattern = pattern
         self.allowed_values = allowed_values
+        self.label = label
+        self.end_user_display = end_user_display
 
     def __str__(self):
-        return 'RecipientPropertySchema: %s , %s, %s, %s, %s' % \
-            (self.required, self.max_length, self.min_length, self.pattern, self.allowed_values)
+        return 'RecipientPropertySchema: %s , %s, %s, %s, %s, %s, %s' % \
+            (self.required, self.max_length, self.min_length, self.pattern, self.allowed_values, self.label,
+             self.end_user_display)
 
     def __eq__(self, other):
         if isinstance(other, RecipientPropertySchema):
@@ -1224,7 +1228,9 @@ class RecipientPropertySchema(object):
                     (self.max_length == other.max_length) and
                     (self.min_length == other.min_length) and
                     (self.pattern == other.pattern) and
-                    (self.allowed_values == other.allowed_values))
+                    (self.allowed_values == other.allowed_values) and
+                    (self.label == other.label) and
+                    (self.end_user_display == other.end_user_display))
             return stat
         return False
 
@@ -1234,7 +1240,9 @@ class RecipientPropertySchema(object):
             "MaxLength": self.max_length,
             "MinLength": self.min_length,
             "Pattern": self.pattern,
-            "AllowedValues": self.allowed_values
+            "AllowedValues": self.allowed_values,
+            "Label": self.label,
+            "EndUserDisplay": self.end_user_display
         }
 
 

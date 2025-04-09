@@ -1117,7 +1117,9 @@ class RecipientPropertySchemaField(Field):
                                            max_length=value.get('MaxLength', None),
                                            min_length=value.get('MinLength', None),
                                            pattern=value.get('Pattern', None),
-                                           allowed_values=value.get('AllowedValues', None), )
+                                           allowed_values=value.get('AllowedValues', None),
+                                           label=value.get('Label', None),
+                                           end_user_display=value.get('EndUserDisplay', None))
 
         return value
 
@@ -1130,7 +1132,9 @@ class RecipientPropertySchemaField(Field):
                 'MaxLength': value.max_length,
                 'MinLength': value.min_length,
                 'Pattern': value.pattern,
-                'AllowedValues': value.allowed_values
+                'AllowedValues': value.allowed_values,
+                'Label': value.label,
+                'EndUserDisplay': value.end_user_display
             }
 
         return value
