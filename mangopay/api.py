@@ -163,7 +163,7 @@ class APIRequest(object):
                                       requests.codes.created, requests.codes.accepted,
                                       requests.codes.no_content):
             self._create_apierror(result, url=url, data=data, method=method)
-        elif result.status_code == requests.codes.no_content:
+        elif result.status_code == requests.codes.no_content or (result.status_code == requests.codes.ok and result.content == b''):
             return result, None
         else:
             if result.content:
