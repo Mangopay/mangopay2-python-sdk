@@ -538,6 +538,8 @@ class Transfer(BaseModel):
     result_code = CharField(api_name='ResultCode')
     result_message = CharField(api_name='ResultMessage')
     execution_date = DateTimeField(api_name='ExecutionDate')
+    sca_context = CharField(api_name='ScaContext')
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
