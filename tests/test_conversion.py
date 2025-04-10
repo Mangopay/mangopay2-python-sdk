@@ -36,7 +36,7 @@ class ConversionsTest(BaseTestLive):
         instant_conversion = InstantConversion()
         instant_conversion.author = user
         instant_conversion.credited_wallet = credited_wallet
-        instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money()
+        instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money(user)
         instant_conversion.credited_funds = credited_funds
         instant_conversion.debited_funds = debited_funds
         instant_conversion.fees = Money(amount=9, currency='EUR')
@@ -69,7 +69,7 @@ class ConversionsTest(BaseTestLive):
         instant_conversion = InstantConversion()
         instant_conversion.author = user
         instant_conversion.credited_wallet = credited_wallet
-        instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money()
+        instant_conversion.debited_wallet = BaseTestLive.create_new_wallet_with_money(user)
         instant_conversion.credited_funds = credited_funds
         instant_conversion.debited_funds = debited_funds
         instant_conversion.tag = "instant conversion test"
@@ -122,7 +122,7 @@ class ConversionsTest(BaseTestLive):
         credited_wallet.currency = 'GBP'
         credited_wallet.description = 'WALLET IN GBP'
         credited_wallet = Wallet(**credited_wallet.save())
-        debited_wallet = BaseTestLive.create_new_wallet_with_money()
+        debited_wallet = BaseTestLive.create_new_wallet_with_money(user)
 
         conversion_quote = ConversionQuote()
         conversion_quote.credited_funds = Money(currency='GBP', amount=None)
@@ -151,7 +151,7 @@ class ConversionsTest(BaseTestLive):
         credited_wallet.currency = 'GBP'
         credited_wallet.description = 'WALLET IN GBP'
         credited_wallet = Wallet(**credited_wallet.save())
-        debited_wallet = BaseTestLive.create_new_wallet_with_money()
+        debited_wallet = BaseTestLive.create_new_wallet_with_money(user)
 
         conversion_quote = ConversionQuote()
         conversion_quote.credited_funds = Money(currency='GBP', amount=None)
