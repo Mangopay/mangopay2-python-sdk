@@ -317,7 +317,8 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("IDEAL", "ideal", "Ideal"),
     ("GIROPAY", "giropay", "Giropay"),
     ("BCMC", "bancontact", "Bancontact"),
-    ("SWISH", "swish", "Swish")
+    ("SWISH", "swish", "Swish"),
+    ("TWINT", "twint", "Twint")
 )
 
 CARD_STATUS_CHOICES = Choices(
