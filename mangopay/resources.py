@@ -1401,6 +1401,25 @@ class SwishPayIn(PayIn):
         }
 
 
+class TwintPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    redirect_url = CharField(api_name='RedirectURL')
+
+    class Meta:
+        verbose_name = 'twint_payin'
+        verbose_name_plural = 'twint_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/twint',
+            SelectQuery.identifier: '/payins'
+        }
+
+
 class BancontactPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -1601,6 +1620,33 @@ class PreAuthorizedPayIn(PayIn):
         verbose_name_plural = 'preauthorized_payins'
         url = {
             InsertQuery.identifier: '/payins/PreAuthorized/direct',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+class PayByBankPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    country = CharField(api_name='Country', required=True)
+    bic = CharField(api_name='BIC')
+    iban = CharField(api_name='IBAN')
+    payment_flow = CharField(api_name='PaymentFlow')
+    bank_name = CharField(api_name='BankName')
+    culture = CharField(api_name='Culture')
+    scheme = CharField(api_name='Scheme')
+    processing_status = CharField(api_name='ProcessingStatus')
+
+    class Meta:
+        verbose_name = 'pay_by_bank_payin'
+        verbose_name_plural = 'pay_by_bank_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/openbanking',
             SelectQuery.identifier: '/payins'
         }
 
