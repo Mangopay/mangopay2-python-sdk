@@ -323,6 +323,11 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("TWINT", "twint", "Twint")
 )
 
+RECURRING_PAYIN_REGISTRATION_PAYMENT_TYPE = Choices(
+    ("CARD_DIRECT", "card_direct", "Card Direct"),
+    ("PAYPAL", "paypal", "PayPal"),
+)
+
 CARD_STATUS_CHOICES = Choices(
     ("CREATED", "created", "Created"),
     ("VALIDATED", "validated", "Validated"),

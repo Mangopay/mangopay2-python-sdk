@@ -823,7 +823,7 @@ class RecurringPayInRegistration(BaseModel):
     recurring_type = CharField(api_name='RecurringType')
     current_state = CurrentStateField(api_name='CurrentState')
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
-    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    payment_type = CharField(api_name='PaymentType', choices=constants.RECURRING_PAYIN_REGISTRATION_PAYMENT_TYPE, default=None)
 
     def get_read_only_properties(self):
         read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status", "CurrentState"]
