@@ -1324,25 +1324,6 @@ class SwishPayIn(PayIn):
         }
 
 
-class TwintPayIn(PayIn):
-    author = ForeignKeyField(User, api_name='AuthorId', required=True)
-    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
-    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
-    fees = MoneyField(api_name='Fees', required=True)
-    return_url = CharField(api_name='ReturnURL', required=True)
-    statement_descriptor = CharField(api_name='StatementDescriptor')
-    creation_date = DateTimeField(api_name='CreationDate')
-    redirect_url = CharField(api_name='RedirectURL')
-
-    class Meta:
-        verbose_name = 'twint_payin'
-        verbose_name_plural = 'twint_payins'
-        url = {
-            InsertQuery.identifier: '/payins/payment-methods/twint',
-            SelectQuery.identifier: '/payins'
-        }
-
-
 class BancontactPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)

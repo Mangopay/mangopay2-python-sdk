@@ -8,7 +8,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
-    CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn
+    CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
@@ -1589,41 +1589,6 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("SWISH", result.payment_type)
-        self.assertEqual("PAYIN", result.type)
-
-    def test_PayIns_TwintWeb_Create(self):
-        user = BaseTestLive.get_john(True)
-
-        # create wallet
-        credited_wallet = Wallet()
-        credited_wallet.owners = (user,)
-        credited_wallet.currency = 'CHF'
-        credited_wallet.description = 'WALLET IN CHF'
-        credited_wallet = Wallet(**credited_wallet.save())
-
-        pay_in = TwintPayIn()
-        pay_in.author = user
-        pay_in.credited_wallet = credited_wallet
-        pay_in.fees = Money()
-        pay_in.fees.amount = 0
-        pay_in.fees.currency = 'CHF'
-        pay_in.debited_funds = Money()
-        pay_in.debited_funds.amount = 100
-        pay_in.debited_funds.currency = 'CHF'
-        pay_in.return_url = 'https://mangopay.com/'
-        pay_in.tag = 'Twint PayIn'
-
-        result = TwintPayIn(**pay_in.save())
-        fetched = TwintPayIn().get(result.id)
-
-        self.assertIsNotNone(result)
-        self.assertIsNotNone(fetched)
-        self.assertEqual(result.id, fetched.id)
-
-        self.assertEqual("CREATED", result.status)
-        self.assertEqual("REGULAR", result.nature)
-        self.assertEqual("WEB", result.execution_type)
-        self.assertEqual("TWINT", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
     def test_PayIns_BancontactWeb_Create(self):
