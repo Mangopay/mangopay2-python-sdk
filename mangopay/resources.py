@@ -1547,6 +1547,33 @@ class PreAuthorizedPayIn(PayIn):
         }
 
 
+class PayByBankPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    country = CharField(api_name='Country', required=True)
+    bic = CharField(api_name='BIC')
+    iban = CharField(api_name='IBAN')
+    payment_flow = CharField(api_name='PaymentFlow')
+    bank_name = CharField(api_name='BankName')
+    culture = CharField(api_name='Culture')
+    scheme = CharField(api_name='Scheme')
+    processing_status = CharField(api_name='ProcessingStatus')
+
+    class Meta:
+        verbose_name = 'pay_by_bank_payin'
+        verbose_name_plural = 'pay_by_bank_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/openbanking',
+            SelectQuery.identifier: '/payins'
+        }
+
+
 @python_2_unicode_compatible
 class BankAccount(BaseModel):
     user = ForeignKeyField(User, api_name='UserId', related_name='bankaccounts')
