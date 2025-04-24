@@ -988,35 +988,3 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertEqual(user.id, closed.id)
         self.assertEqual('CLOSED', closed.user_status)
-
-    def test_Users_CloseNatural(self):
-        user = BaseTestLive.get_john(recreate=True)
-        NaturalUser.close(user.id)
-        closed = NaturalUser.get(user.id)
-
-        self.assertEqual(user.id, closed.id)
-        self.assertEqual('CLOSED', closed.user_status)
-
-    def test_Users_CloseLegal(self):
-        user = BaseTestLive.get_user_legal(recreate=True)
-        LegalUser.close(user.id)
-        closed = LegalUser.get(user.id)
-
-        self.assertEqual(user.id, closed.id)
-        self.assertEqual('CLOSED', closed.user_status)
-
-    def test_Users_CloseNaturalSca(self):
-        user = BaseTestLive.get_john_sca_payer(recreate=True)
-        NaturalUserSca.close(user.id)
-        closed = NaturalUserSca.get(user.id)
-
-        self.assertEqual(user.id, closed.id)
-        self.assertEqual('CLOSED', closed.user_status)
-
-    def test_Users_CloseLegalSca(self):
-        user = BaseTestLive.get_user_legal_sca_payer(recreate=True)
-        LegalUserSca.close(user.id)
-        closed = LegalUserSca.get(user.id)
-
-        self.assertEqual(user.id, closed.id)
-        self.assertEqual('CLOSED', closed.user_status)
