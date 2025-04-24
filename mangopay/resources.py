@@ -16,7 +16,9 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      BrowserInfoField, ShippingField, CurrentStateField, FallbackReasonField, InstantPayoutField,
                      CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
-                     LegalRepresentativeField)
+                     LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
+                     RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
+                     BusinessRecipientPropertySchemaField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 
 
@@ -2643,4 +2645,105 @@ class IdentityVerificationCheck(BaseModel):
         kwargs['id'] = identity_verification_id
         select = SelectQuery(IdentityVerificationCheck, *args, **kwargs)
         select.identifier = 'GET_CHECKS'
+        return select.get("", *args, **kwargs)
+
+
+class Recipient(BaseModel):
+    status = CharField(api_name='Status')
+    display_name = CharField(api_name='DisplayName', required=True)
+    payout_method_type = CharField(api_name='PayoutMethodType', required=True)
+    recipient_type = CharField(api_name='RecipientType', required=True)
+    currency = CharField(api_name='Currency', required=True)
+    recipient_scope = CharField(api_name='RecipientScope')
+    user_id = CharField(api_name='UserId')
+    individual_recipient = IndividualRecipientField(api_name='IndividualRecipient')
+    business_recipient = BusinessRecipientField(api_name='BusinessRecipient')
+    local_bank_transfer = DictField(api_name='LocalBankTransfer')
+    international_bank_transfer = DictField(api_name='InternationalBankTransfer')
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+
+    class Meta:
+        verbose_name = 'recipient'
+        verbose_name_plural = 'recipients'
+
+        url = {
+            InsertQuery.identifier: '/users/%(user_id)s/recipients',
+            SelectQuery.identifier: '/recipients',
+            UpdateQuery.identifier: '/recipients',
+            'GET_USER_RECIPIENTS': '/users/%(user_id)s/recipients',
+            'VALIDATE': '/users/%(user_id)s/recipients/validate'
+        }
+
+    def create(self, user_id, idempotency_key=None, **kwargs):
+        path_params = {'user_id': user_id}
+        insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
+    def validate(self, user_id, idempotency_key=None, **kwargs):
+        path_params = {'user_id': user_id}
+        insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'VALIDATE'
+        insert.execute()
+
+    @classmethod
+    def get_user_recipients(cls, user_id, *args, **kwargs):
+        kwargs['user_id'] = user_id
+        select = SelectQuery(Recipient, *args, **kwargs)
+        select.identifier = 'GET_USER_RECIPIENTS'
+        return select.all(*args, **kwargs)
+
+    @classmethod
+    def deactivate(cls, recipient_id, **kwargs):
+        update = UpdateQuery(Recipient, recipient_id, **kwargs)
+        return update.execute()
+
+
+class RecipientSchema(BaseModel):
+    display_name = RecipientPropertySchemaField(api_name='DisplayName')
+    payout_method_type = RecipientPropertySchemaField(api_name='PayoutMethodType')
+    recipient_type = RecipientPropertySchemaField(api_name='RecipientType')
+    currency = RecipientPropertySchemaField(api_name='Currency')
+    recipient_scope = RecipientPropertySchemaField(api_name='RecipientScope')
+    tag = RecipientPropertySchemaField(api_name='Tag')
+    individual_recipient = IndividualRecipientPropertySchemaField(api_name='IndividualRecipient')
+    business_recipient = BusinessRecipientPropertySchemaField(api_name='BusinessRecipient')
+    local_bank_transfer = DictField(api_name='LocalBankTransfer')
+    international_bank_transfer = DictField(api_name='InternationalBankTransfer')
+
+    class Meta:
+        verbose_name = 'recipient_schema'
+        verbose_name_plural = 'recipient_schemas'
+
+        url = {
+            SelectQuery.identifier: '/recipients/schema?payoutMethodType=%(payout_method_type)s&recipientType=%('
+                                    'recipient_type)s&currency=%(currency)s'
+        }
+
+    @classmethod
+    def get(cls, payout_method_type, recipient_type, currency, *args, **kwargs):
+        kwargs['payout_method_type'] = payout_method_type
+        kwargs['recipient_type'] = recipient_type
+        kwargs['currency'] = currency
+        select = SelectQuery(RecipientSchema, *args, **kwargs)
+        return select.get("", *args, **kwargs)
+
+
+class PayoutMethod(BaseModel):
+    available_payout_methods = ListField(api_name='AvailablePayoutMethods')
+
+    class Meta:
+        verbose_name = 'payout_method'
+        verbose_name_plural = 'payout_methods'
+
+        url = {
+            SelectQuery.identifier: '/recipients/payout-methods?country=%(country)s&currency=%(currency)s'
+        }
+
+    @classmethod
+    def get(cls, country, currency, *args, **kwargs):
+        kwargs['country'] = country
+        kwargs['currency'] = currency
+        select = SelectQuery(PayoutMethod, *args, **kwargs)
         return select.get("", *args, **kwargs)
