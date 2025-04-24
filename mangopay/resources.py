@@ -765,6 +765,12 @@ class PayIn(BaseModel):
         if cls.__name__ == "RecurringPayInMIT":
             return RecurringPayInMIT
 
+        if cls.__name__ == "RecurringPayPalPayInCIT":
+            return RecurringPayPalPayInCIT
+
+        if cls.__name__ == "RecurringPayPalPayInMIT":
+            return RecurringPayPalPayInMIT
+
         payment_type = result.get('PaymentType')
         execution_type = result.get('ExecutionType')
 
@@ -797,7 +803,7 @@ class PayIn(BaseModel):
 @python_2_unicode_compatible
 class RecurringPayInRegistration(BaseModel):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
-    card = ForeignKeyField(Card, api_name='CardId', required=True)
+    card = ForeignKeyField(Card, api_name='CardId')
     user = ForeignKeyField(User, api_name='CreditedUserId')
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId')
     first_transaction_debited_funds = MoneyField(api_name='FirstTransactionDebitedFunds', required=True)
@@ -817,6 +823,7 @@ class RecurringPayInRegistration(BaseModel):
     recurring_type = CharField(api_name='RecurringType')
     current_state = CurrentStateField(api_name='CurrentState')
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
+    payment_type = CharField(api_name='PaymentType', choices=constants.RECURRING_PAYIN_REGISTRATION_PAYMENT_TYPE, default=None)
 
     def get_read_only_properties(self):
         read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status", "CurrentState"]
@@ -903,6 +910,76 @@ class RecurringPayInMIT(PayIn):
         verbose_name_plural = 'recurring_payins'
         url = {
             InsertQuery.identifier: '/payins/recurring/card/direct',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+@python_2_unicode_compatible
+class RecurringPayPalPayInCIT(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+    author = ForeignKeyField(User, api_name='AuthorId')
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    shipping = ShippingField(api_name='Shipping')
+    line_items = ListField(api_name='LineItems', required=True)
+    culture = CharField(api_name='Culture')
+    shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
+                                    default=None)
+    buyer_account_email = CharField(api_name="PaypalBuyerAccountEmail")
+    reference = CharField(api_name='Reference')
+    trackings = ListField(api_name='Trackings')
+    cancel_url = CharField(api_name='CancelURL')
+    paypal_order_id = CharField(api_name='PaypalOrderID')
+    buyer_country = CharField(api_name='BuyerCountry')
+    buyer_first_name = CharField(api_name='BuyerFirstname')
+    buyer_last_name = CharField(api_name='BuyerLastname')
+    buyer_phone = CharField(api_name='BuyerPhone')
+    paypal_payer_id = CharField(api_name='PaypalPayerID')
+    recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+
+    class Meta:
+        verbose_name = 'recurring_paypal_payin'
+        verbose_name_plural = 'recurring_paypal_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/paypal/recurring',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+@python_2_unicode_compatible
+class RecurringPayPalPayInMIT(PayIn):
+    creation_date = DateTimeField(api_name='CreationDate')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+    author = ForeignKeyField(User, api_name='AuthorId')
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    shipping = ShippingField(api_name='Shipping')
+    line_items = ListField(api_name='LineItems', required=True)
+    culture = CharField(api_name='Culture')
+    shipping_preference = CharField(api_name='ShippingPreference', choices=constants.SHIPPING_PREFERENCE_CHOICES,
+                                    default=None)
+    buyer_account_email = CharField(api_name="PaypalBuyerAccountEmail")
+    reference = CharField(api_name='Reference')
+    trackings = ListField(api_name='Trackings')
+    cancel_url = CharField(api_name='CancelURL')
+    paypal_order_id = CharField(api_name='PaypalOrderID')
+    buyer_country = CharField(api_name='BuyerCountry')
+    buyer_first_name = CharField(api_name='BuyerFirstname')
+    buyer_last_name = CharField(api_name='BuyerLastname')
+    buyer_phone = CharField(api_name='BuyerPhone')
+    paypal_payer_id = CharField(api_name='PaypalPayerID')
+    recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+
+    class Meta:
+        verbose_name = 'recurring_paypal_payin'
+        verbose_name_plural = 'recurring_paypal_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/paypal/recurring',
             SelectQuery.identifier: '/payins'
         }
 
@@ -1324,6 +1401,25 @@ class SwishPayIn(PayIn):
         }
 
 
+class TwintPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    redirect_url = CharField(api_name='RedirectURL')
+
+    class Meta:
+        verbose_name = 'twint_payin'
+        verbose_name_plural = 'twint_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/twint',
+            SelectQuery.identifier: '/payins'
+        }
+
+
 class BancontactPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -1524,6 +1620,33 @@ class PreAuthorizedPayIn(PayIn):
         verbose_name_plural = 'preauthorized_payins'
         url = {
             InsertQuery.identifier: '/payins/PreAuthorized/direct',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+class PayByBankPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    return_url = CharField(api_name='ReturnURL', required=True)
+    redirect_url = CharField(api_name='RedirectURL')
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    creation_date = DateTimeField(api_name='CreationDate')
+    country = CharField(api_name='Country', required=True)
+    bic = CharField(api_name='BIC')
+    iban = CharField(api_name='IBAN')
+    payment_flow = CharField(api_name='PaymentFlow')
+    bank_name = CharField(api_name='BankName')
+    culture = CharField(api_name='Culture')
+    scheme = CharField(api_name='Scheme')
+    processing_status = CharField(api_name='ProcessingStatus')
+
+    class Meta:
+        verbose_name = 'pay_by_bank_payin'
+        verbose_name_plural = 'pay_by_bank_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/openbanking',
             SelectQuery.identifier: '/payins'
         }
 
