@@ -17,7 +17,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      CountryAuthorizationDataField, PayinsLinkedField, ConversionRateField, CardInfoField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField)
-from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
+from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
 
 
 class BaseModel(BaseApiModel):
@@ -208,6 +208,10 @@ class NaturalUser(User):
         verbose_name_plural = 'users'
         url = '/users/natural'
 
+    @classmethod
+    def close(cls, *args, **kwargs):
+        return DeleteQuery(cls, *args, **kwargs).execute()
+
     def __str__(self):
         return '%s' % self.email
 
@@ -242,6 +246,7 @@ class NaturalUserSca(User):
             InsertQuery.identifier: '/sca/users/natural',
             SelectQuery.identifier: '/sca/users/natural',
             UpdateQuery.identifier: '/sca/users/natural',
+            DeleteQuery.identifier: '/users/natural',
             'USERS_NATURAL_SCA_CATEGORIZE': '/sca/users/natural/%(id)s/category'
         }
 
@@ -256,6 +261,10 @@ class NaturalUserSca(User):
             update.update_query = self.__dict__['_data']
 
         return update.execute(self.handler)
+
+    @classmethod
+    def close(cls, *args, **kwargs):
+        return DeleteQuery(cls, *args, **kwargs).execute()
 
 
 @python_2_unicode_compatible
@@ -289,6 +298,10 @@ class LegalUser(User):
     def __str__(self):
         return '%s' % self.email
 
+    @classmethod
+    def close(cls, *args, **kwargs):
+        return DeleteQuery(cls, *args, **kwargs).execute()
+
 
 @python_2_unicode_compatible
 class LegalUserSca(User):
@@ -318,6 +331,7 @@ class LegalUserSca(User):
             InsertQuery.identifier: '/sca/users/legal',
             SelectQuery.identifier: '/sca/users/legal',
             UpdateQuery.identifier: '/sca/users/legal',
+            DeleteQuery.identifier: '/users/legal',
             'USERS_LEGAL_SCA_CATEGORIZE': '/sca/users/legal/%(id)s/category'
         }
 
@@ -332,6 +346,10 @@ class LegalUserSca(User):
             update.update_query = self.__dict__['_data']
 
         return update.execute(self.handler)
+
+    @classmethod
+    def close(cls, *args, **kwargs):
+        return DeleteQuery(cls, *args, **kwargs).execute()
 
 
 @python_2_unicode_compatible
