@@ -504,27 +504,25 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_johns_wallet(recreate=False):
         if BaseTestLive._johns_wallet is None or recreate:
-            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet()
+            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet(BaseTestLive._john)
         return BaseTestLive._johns_wallet
 
     @staticmethod
-    def get_johns_wallet_with_money(recreate=False):
+    def get_johns_wallet_with_money(user, recreate=False):
         if BaseTestLive._johns_wallet is None or recreate:
-            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet_with_money()
+            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet_with_money(user)
         return BaseTestLive._johns_wallet
 
     @staticmethod
-    def create_new_wallet():
+    def create_new_wallet(user):
         wallet = Wallet()
-        wallet.owners = (BaseTestLive._john,)
+        wallet.owners = (user,)
         wallet.currency = 'EUR'
         wallet.description = 'WALLET IN EUR'
         return Wallet(**wallet.save())
 
     @staticmethod
-    def create_new_wallet_with_money():
-        user = BaseTestLive.get_john()
-
+    def create_new_wallet_with_money(user):
         wallet = Wallet()
         wallet.owners = (user,)
         wallet.currency = 'EUR'
@@ -552,8 +550,8 @@ class BaseTestLive(unittest.TestCase):
         card_id = updated_registration['card_id']
 
         direct_payin = DirectPayIn(author=user,
-                                   debited_funds=Money(amount=100, currency='EUR'),
-                                   fees=Money(amount=1, currency='EUR'),
+                                   debited_funds=Money(amount=10000, currency='EUR'),
+                                   fees=Money(amount=0, currency='EUR'),
                                    credited_wallet_id=wallet,
                                    card_id=card_id,
                                    secure_mode="DEFAULT",
@@ -569,7 +567,7 @@ class BaseTestLive(unittest.TestCase):
         if BaseTestLive._johns_transfer is None or recreate:
             john = BaseTestLive.get_john()
             wallet1 = BaseTestLive.get_johns_wallet()
-            wallet2 = BaseTestLive.create_new_wallet()
+            wallet2 = BaseTestLive.create_new_wallet(john)
 
             transfer = Transfer()
             transfer.author = john
@@ -581,6 +579,26 @@ class BaseTestLive(unittest.TestCase):
             transfer.credited_wallet = wallet2
             BaseTestLive._johns_transfer = Transfer(**transfer.save())
         return BaseTestLive._johns_transfer
+
+    @staticmethod
+    def get_johns_transfer_sca(sca_context, amount):
+        valid_john_sca_id = 'user_m_01JRG5WE99JYRCEBHZ8EKBRE8Y'
+        valid_matrix_sca_id = 'user_m_01JRG4ZWZ85RNZDKKTSFRMG6ZW'
+        john_sca = NaturalUserSca.get(valid_john_sca_id)
+        matrix_sca = LegalUserSca.get(valid_matrix_sca_id)
+
+        debited_wallet = BaseTestLive.create_new_wallet_with_money(john_sca)
+        credited_wallet = BaseTestLive.create_new_wallet(matrix_sca)
+
+        transfer = Transfer()
+        transfer.author = john_sca
+        transfer.credited_user = matrix_sca
+        transfer.debited_funds = Money(amount=amount, currency='EUR')
+        transfer.fees = Money(amount=0, currency='EUR')
+        transfer.debited_wallet = debited_wallet
+        transfer.credited_wallet = credited_wallet
+        transfer.sca_context = sca_context
+        return Transfer(**transfer.save())
 
     @staticmethod
     def get_johns_payout(recreate=False):

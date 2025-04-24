@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from tests import settings
-from tests.resources import Transfer, Wallet, DirectPayIn
-from tests.test_base import BaseTest, BaseTestLive
-
-from mangopay.utils import Money
-
+import time
 from datetime import date
 
 import responses
-import time
+
+from mangopay.utils import Money
+from tests import settings
+from tests.resources import Transfer, Wallet, DirectPayIn
+from tests.test_base import BaseTest, BaseTestLive
 
 
 class TransfersTest(BaseTest):
@@ -211,3 +210,17 @@ class Transfers(BaseTestLive):
 
         self.assertIsNotNone(refunds_page.data)
         self.assertIsInstance(refunds_page.data, list)
+
+    def test_transfer_createWithScaUserPresent(self):
+        user_present_transfer = BaseTestLive.get_johns_transfer_sca('USER_PRESENT', 3001)
+        user_present_transfer_low_amount = BaseTestLive.get_johns_transfer_sca('USER_PRESENT', 20)
+        user_not_present_transfer = BaseTestLive.get_johns_transfer_sca('USER_NOT_PRESENT', 10)
+
+        self.assertEqual('CREATED', user_present_transfer.status)
+        self.assertIsNotNone(user_present_transfer.pending_user_action)
+
+        self.assertEqual('SUCCEEDED', user_present_transfer_low_amount.status)
+        self.assertIsNone(user_present_transfer_low_amount.pending_user_action)
+
+        self.assertEqual('SUCCEEDED', user_not_present_transfer.status)
+        self.assertIsNone(user_not_present_transfer.pending_user_action)
