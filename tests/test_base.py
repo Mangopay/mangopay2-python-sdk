@@ -289,45 +289,55 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_user_legal(recreate=False, terms=False):
         if BaseTestLive._user_legal is None or recreate:
-            legal = LegalUser()
-            legal.name = 'MatrixSampleOrg_PythonSDK'
-            legal.email = 'mail@test.com'
-            legal.legal_person_type = "BUSINESS"
-            legal.legal_representative_first_name = "Mango"
-            legal.legal_representative_last_name = 'Pay'
-            legal.legal_representative_email = 'mango@mangopay.com'
-            legal.person_type = 'LEGAL'
-            legal.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                                 city='City', region='Region',
-                                                 postal_code='11222', country='FR')
-            legal.legal_representative_birthday = 1300186358
-            legal.legal_representative_nationality = 'FR'
-            legal.legal_representative_country_of_residence = 'FR'
-            legal.company_number = 123456789
-            legal.tag = 'Python SDK Unit Test'
-            legal.terms_and_conditions_accepted = terms
-            legal.user_category = 'OWNER'
+            legal = BaseTestLive.get_user_legal_instance(terms)
             BaseTestLive._user_legal = LegalUser(**legal.save())
         return BaseTestLive._user_legal
 
     @staticmethod
+    def get_user_legal_instance(terms=False):
+        legal = LegalUser()
+        legal.name = 'MatrixSampleOrg_PythonSDK'
+        legal.email = 'mail@test.com'
+        legal.legal_person_type = "BUSINESS"
+        legal.legal_representative_first_name = "Mango"
+        legal.legal_representative_last_name = 'Pay'
+        legal.legal_representative_email = 'mango@mangopay.com'
+        legal.person_type = 'LEGAL'
+        legal.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                             city='City', region='Region',
+                                             postal_code='11222', country='FR')
+        legal.legal_representative_birthday = 1300186358
+        legal.legal_representative_nationality = 'FR'
+        legal.legal_representative_country_of_residence = 'FR'
+        legal.company_number = 123456789
+        legal.tag = 'Python SDK Unit Test'
+        legal.terms_and_conditions_accepted = terms
+        legal.user_category = 'OWNER'
+        return legal
+
+    @staticmethod
     def get_user_legal_sca_payer(recreate=False, terms=True):
         if BaseTestLive._user_legal_sca_payer is None or recreate:
-            user = LegalUserSca()
-            user.name = 'Alex Smith'
-            user.email = 'alex.smith.services@example.com'
-            user.legal_person_type = "SOLETRADER"
-            user.terms_and_conditions_accepted = terms
-            user.legal_representative = LegalRepresentative(first_name='Alex', last_name='Smith',
-                                                             email='alex.smith.services@example.com',
-                                                             phone_number='0611111111',
-                                                             phone_number_country='FR')
-            user.user_category = 'PAYER'
-            user.legal_representative_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                                 city='City', region='Region',
-                                                 postal_code='11222', country='FR')
+            user = BaseTestLive.get_user_legal_sca_payer_instance(terms)
             BaseTestLive._user_legal_sca_payer = LegalUserSca(**user.save())
         return BaseTestLive._user_legal_sca_payer
+
+    @staticmethod
+    def get_user_legal_sca_payer_instance(terms=True):
+        user = LegalUserSca()
+        user.name = 'Alex Smith'
+        user.email = 'alex.smith.services@example.com'
+        user.legal_person_type = "SOLETRADER"
+        user.terms_and_conditions_accepted = terms
+        user.legal_representative = LegalRepresentative(first_name='Alex', last_name='Smith',
+                                                        email='alex.smith.services@example.com',
+                                                        phone_number='0611111111',
+                                                        phone_number_country='FR')
+        user.user_category = 'PAYER'
+        user.legal_representative_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                                    city='City', region='Region',
+                                                    postal_code='11222', country='FR')
+        return user
 
     @staticmethod
     def get_user_legal_sca_owner(recreate=False, terms=True):
@@ -435,40 +445,50 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_john(recreate=False, terms=False):
         if BaseTestLive._john is None or recreate:
-            user = NaturalUser()
-            user.first_name = 'John'
-            user.last_name = 'Doe'
-            user.birthday = 188352000
-            user.email = "john.doe@sample.org"
-            user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                   city='City', region='Region',
-                                   postal_code='11222', country='FR')
-            user.nationality = 'FR'
-            user.country_of_residence = 'FR'
-            user.occupation = 'programmer'
-            user.income_range = '1'
-            user.person_type = 'NATURAL'
-            user.terms_and_conditions_accepted = terms
-            user.user_category = 'OWNER'
+            user = BaseTestLive.get_john_instance(terms)
             BaseTestLive._john = NaturalUser(**user.save())
         return BaseTestLive._john
 
     @staticmethod
+    def get_john_instance(terms=False):
+        user = NaturalUser()
+        user.first_name = 'John'
+        user.last_name = 'Doe'
+        user.birthday = 188352000
+        user.email = "john.doe@sample.org"
+        user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR')
+        user.nationality = 'FR'
+        user.country_of_residence = 'FR'
+        user.occupation = 'programmer'
+        user.income_range = '1'
+        user.person_type = 'NATURAL'
+        user.terms_and_conditions_accepted = terms
+        user.user_category = 'OWNER'
+        return user
+
+    @staticmethod
     def get_john_sca_payer(recreate=False, terms=True):
         if BaseTestLive._john_sca_payer is None or recreate:
-            user = NaturalUserSca()
-            user.first_name = 'John SCA'
-            user.last_name = 'Doe SCA Review'
-            user.email = "john.doe.sca@sample.org"
-            user.terms_and_conditions_accepted = terms
-            user.user_category = 'PAYER'
-            user.phone_number = '+33611111111'
-            user.phone_number_country = 'FR'
-            user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                   city='City', region='Region',
-                                   postal_code='11222', country='FR')
+            user = BaseTestLive.get_john_sca_payer_instance(terms)
             BaseTestLive._john_sca_payer = NaturalUserSca(**user.save())
         return BaseTestLive._john_sca_payer
+
+    @staticmethod
+    def get_john_sca_payer_instance(terms=True):
+        user = NaturalUserSca()
+        user.first_name = 'John SCA'
+        user.last_name = 'Doe SCA Review'
+        user.email = "john.doe.sca@sample.org"
+        user.terms_and_conditions_accepted = terms
+        user.user_category = 'PAYER'
+        user.phone_number = '+33611111111'
+        user.phone_number_country = 'FR'
+        user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR')
+        return user
 
     @staticmethod
     def get_john_sca_owner(recreate=False, terms=True):
