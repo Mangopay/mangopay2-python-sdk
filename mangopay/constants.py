@@ -108,6 +108,8 @@ EVENT_TYPE_CHOICES = Choices(
     ('PAYIN_NORMAL_CREATED', 'payin_normal_created', 'Payin normal created'),
     ('PAYIN_NORMAL_SUCCEEDED', 'payin_normal_succeeded', 'Payin normal succeeded'),
     ('PAYIN_NORMAL_FAILED', 'payin_normal_failed', 'Payin normal failed'),
+    ('PAYIN_NORMAL_PROCESSING_STATUS_PENDING_SUCCEEDED',
+     'payin_normal_processing_status_pending_succeeded', 'Payin normal processing status pending succeeded'),
     ('PAYOUT_NORMAL_CREATED', 'payout_normal_created', 'Payout normal created'),
     ('PAYOUT_NORMAL_SUCCEEDED', 'payout_normal_succeeded', 'Payout normal succeeded'),
     ('PAYOUT_NORMAL_FAILED', 'payout_normal_failed', 'Payout normal failed'),
@@ -321,7 +323,13 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("IDEAL", "ideal", "Ideal"),
     ("GIROPAY", "giropay", "Giropay"),
     ("BCMC", "bancontact", "Bancontact"),
-    ("SWISH", "swish", "Swish")
+    ("SWISH", "swish", "Swish"),
+    ("TWINT", "twint", "Twint")
+)
+
+RECURRING_PAYIN_REGISTRATION_PAYMENT_TYPE = Choices(
+    ("CARD_DIRECT", "card_direct", "Card Direct"),
+    ("PAYPAL", "paypal", "PayPal"),
 )
 
 CARD_STATUS_CHOICES = Choices(

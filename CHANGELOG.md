@@ -1,3 +1,19 @@
+## [3.41.0] - 2025-04-24
+### Changed
+- ⚠️ **Caution – Minimum language requirement changed to Python 3.9** ⚠️ 
+
+The SDK has been upgraded to require Python 3.9 as a minimum version. This is due to dependencies in the SDK's deployment pipeline on GitHub Actions and Ubuntu runners, which no longer support lower than Python 3.9. Older versions of Python reached end-of-life in 2024 or before.
+
+Failure to upgrade your Python language version to 3.9 before updating to this version of the SDK will result in errors. For more information on the differences between Python 3.9 and earlier, see the [Python docs](https://docs.python.org/3/whatsnew/3.9.html).
+
+The SDK supports Python 3.9, 3.10, 3.11, and 3.12.
+
+
+#### Added
+- [POST Create a TWINT PayIn](https://docs.mangopay.com/api-reference/twint/create-twint-payin)
+- [POST Create a Pay by Bank PayIn](https://docs.mangopay.com/api-reference/pay-by-bank/create-pay-by-bank-payin), including related `PAYIN_NORMAL_PROCESSING_STATUS_PENDING_SUCCEEDED` webhook event type
+- PayPal recurring payments, thanks to the `PaymentType` value `PAYPAL` on [Recurring PayIn Registrations](https://docs.mangopay.com/api-reference/recurring-payin-registrations/create-recurring-payin-registration-paypal) and new endpoints ([POST Create a Recurring PayPal PayIn (CIT)](https://docs.mangopay.com/api-reference/paypal/create-recurring-paypal-payin-cit) and [POST Create a Recurring PayPal PayIn (MIT)](https://docs.mangopay.com/api-reference/paypal/create-recurring-paypal-payin-mit)
+
 ## [3.40.1] - 2025-04-02
 ### Changed
 - User-Agent Header value standardized on format: User-Agent: Mangopay-SDK/`SDKVersion` (`Language`/`LanguageVersion`)
