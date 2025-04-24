@@ -199,7 +199,11 @@ EVENT_TYPE_CHOICES = Choices(
     ('IDENTITY_VERIFICATION_FAILED', 'identity_verification_failed', 'Identity Verification Failed'),
     ('IDENTITY_VERIFICATION_INCONCLUSIVE', 'identity_verification_inconclusive', 'Identity Verification Inconclusive'),
     ('IDENTITY_VERIFICATION_OUTDATED', 'identity_verification_outdated', 'Identity Verification Outdated'),
-    ('IDENTITY_VERIFICATION_TIMEOUT', 'identity_verification_timeout', 'Identity Verification Timeout')
+    ('IDENTITY_VERIFICATION_TIMEOUT', 'identity_verification_timeout', 'Identity Verification Timeout'),
+
+    ('RECIPIENT_ACTIVE', 'recipient_active', 'Recipient Active'),
+    ('RECIPIENT_CANCELED', 'recipient_canceled', 'Recipient Canceled'),
+    ('RECIPIENT_DEACTIVATED', 'recipient_deactivated', 'Recipient Deactivated'),
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(

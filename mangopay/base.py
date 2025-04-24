@@ -1,12 +1,12 @@
-import six
-
 from copy import deepcopy
 
+import six
+
+from . import get_default_handler
 from .fields import PrimaryKeyField, FieldDescriptor, Field, ForeignRelatedObject
-from .query import UpdateQuery, InsertQuery, SelectQuery
+from .query import UpdateQuery, InsertQuery, SelectQuery, DeleteQuery
 from .signals import pre_save, post_save
 from .utils import force_text, force_str
-from . import get_default_handler
 
 
 class DoesNotExist(Exception):
@@ -262,6 +262,10 @@ class BaseApiModel(BaseApiModelMethods):
     @classmethod
     def all(cls, *args, **kwargs):
         return cls.select().all(*args, **kwargs)
+
+    @classmethod
+    def delete(cls, *args, **kwargs):
+        return DeleteQuery(cls, *args, **kwargs).execute()
 
     def get_pk(self):
         return getattr(self, self._meta.pk_name, None)

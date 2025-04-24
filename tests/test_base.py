@@ -289,45 +289,55 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_user_legal(recreate=False, terms=False):
         if BaseTestLive._user_legal is None or recreate:
-            legal = LegalUser()
-            legal.name = 'MatrixSampleOrg_PythonSDK'
-            legal.email = 'mail@test.com'
-            legal.legal_person_type = "BUSINESS"
-            legal.legal_representative_first_name = "Mango"
-            legal.legal_representative_last_name = 'Pay'
-            legal.legal_representative_email = 'mango@mangopay.com'
-            legal.person_type = 'LEGAL'
-            legal.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                                 city='City', region='Region',
-                                                 postal_code='11222', country='FR')
-            legal.legal_representative_birthday = 1300186358
-            legal.legal_representative_nationality = 'FR'
-            legal.legal_representative_country_of_residence = 'FR'
-            legal.company_number = 123456789
-            legal.tag = 'Python SDK Unit Test'
-            legal.terms_and_conditions_accepted = terms
-            legal.user_category = 'OWNER'
+            legal = BaseTestLive.get_user_legal_instance(terms)
             BaseTestLive._user_legal = LegalUser(**legal.save())
         return BaseTestLive._user_legal
 
     @staticmethod
+    def get_user_legal_instance(terms=False):
+        legal = LegalUser()
+        legal.name = 'MatrixSampleOrg_PythonSDK'
+        legal.email = 'mail@test.com'
+        legal.legal_person_type = "BUSINESS"
+        legal.legal_representative_first_name = "Mango"
+        legal.legal_representative_last_name = 'Pay'
+        legal.legal_representative_email = 'mango@mangopay.com'
+        legal.person_type = 'LEGAL'
+        legal.headquarters_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                             city='City', region='Region',
+                                             postal_code='11222', country='FR')
+        legal.legal_representative_birthday = 1300186358
+        legal.legal_representative_nationality = 'FR'
+        legal.legal_representative_country_of_residence = 'FR'
+        legal.company_number = 123456789
+        legal.tag = 'Python SDK Unit Test'
+        legal.terms_and_conditions_accepted = terms
+        legal.user_category = 'OWNER'
+        return legal
+
+    @staticmethod
     def get_user_legal_sca_payer(recreate=False, terms=True):
         if BaseTestLive._user_legal_sca_payer is None or recreate:
-            user = LegalUserSca()
-            user.name = 'Alex Smith'
-            user.email = 'alex.smith.services@example.com'
-            user.legal_person_type = "SOLETRADER"
-            user.terms_and_conditions_accepted = terms
-            user.legal_representative = LegalRepresentative(first_name='Alex', last_name='Smith',
-                                                             email='alex.smith.services@example.com',
-                                                             phone_number='0611111111',
-                                                             phone_number_country='FR')
-            user.user_category = 'PAYER'
-            user.legal_representative_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                                 city='City', region='Region',
-                                                 postal_code='11222', country='FR')
+            user = BaseTestLive.get_user_legal_sca_payer_instance(terms)
             BaseTestLive._user_legal_sca_payer = LegalUserSca(**user.save())
         return BaseTestLive._user_legal_sca_payer
+
+    @staticmethod
+    def get_user_legal_sca_payer_instance(terms=True):
+        user = LegalUserSca()
+        user.name = 'Alex Smith'
+        user.email = 'alex.smith.services@example.com'
+        user.legal_person_type = "SOLETRADER"
+        user.terms_and_conditions_accepted = terms
+        user.legal_representative = LegalRepresentative(first_name='Alex', last_name='Smith',
+                                                        email='alex.smith.services@example.com',
+                                                        phone_number='0611111111',
+                                                        phone_number_country='FR')
+        user.user_category = 'PAYER'
+        user.legal_representative_address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                                    city='City', region='Region',
+                                                    postal_code='11222', country='FR')
+        return user
 
     @staticmethod
     def get_user_legal_sca_owner(recreate=False, terms=True):
@@ -435,40 +445,50 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_john(recreate=False, terms=False):
         if BaseTestLive._john is None or recreate:
-            user = NaturalUser()
-            user.first_name = 'John'
-            user.last_name = 'Doe'
-            user.birthday = 188352000
-            user.email = "john.doe@sample.org"
-            user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                   city='City', region='Region',
-                                   postal_code='11222', country='FR')
-            user.nationality = 'FR'
-            user.country_of_residence = 'FR'
-            user.occupation = 'programmer'
-            user.income_range = '1'
-            user.person_type = 'NATURAL'
-            user.terms_and_conditions_accepted = terms
-            user.user_category = 'OWNER'
+            user = BaseTestLive.get_john_instance(terms)
             BaseTestLive._john = NaturalUser(**user.save())
         return BaseTestLive._john
 
     @staticmethod
+    def get_john_instance(terms=False):
+        user = NaturalUser()
+        user.first_name = 'John'
+        user.last_name = 'Doe'
+        user.birthday = 188352000
+        user.email = "john.doe@sample.org"
+        user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR')
+        user.nationality = 'FR'
+        user.country_of_residence = 'FR'
+        user.occupation = 'programmer'
+        user.income_range = '1'
+        user.person_type = 'NATURAL'
+        user.terms_and_conditions_accepted = terms
+        user.user_category = 'OWNER'
+        return user
+
+    @staticmethod
     def get_john_sca_payer(recreate=False, terms=True):
         if BaseTestLive._john_sca_payer is None or recreate:
-            user = NaturalUserSca()
-            user.first_name = 'John SCA'
-            user.last_name = 'Doe SCA Review'
-            user.email = "john.doe.sca@sample.org"
-            user.terms_and_conditions_accepted = terms
-            user.user_category = 'PAYER'
-            user.phone_number = '+33611111111'
-            user.phone_number_country = 'FR'
-            user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
-                                   city='City', region='Region',
-                                   postal_code='11222', country='FR')
+            user = BaseTestLive.get_john_sca_payer_instance(terms)
             BaseTestLive._john_sca_payer = NaturalUserSca(**user.save())
         return BaseTestLive._john_sca_payer
+
+    @staticmethod
+    def get_john_sca_payer_instance(terms=True):
+        user = NaturalUserSca()
+        user.first_name = 'John SCA'
+        user.last_name = 'Doe SCA Review'
+        user.email = "john.doe.sca@sample.org"
+        user.terms_and_conditions_accepted = terms
+        user.user_category = 'PAYER'
+        user.phone_number = '+33611111111'
+        user.phone_number_country = 'FR'
+        user.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                               city='City', region='Region',
+                               postal_code='11222', country='FR')
+        return user
 
     @staticmethod
     def get_john_sca_owner(recreate=False, terms=True):
@@ -504,27 +524,25 @@ class BaseTestLive(unittest.TestCase):
     @staticmethod
     def get_johns_wallet(recreate=False):
         if BaseTestLive._johns_wallet is None or recreate:
-            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet()
+            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet(BaseTestLive._john)
         return BaseTestLive._johns_wallet
 
     @staticmethod
-    def get_johns_wallet_with_money(recreate=False):
+    def get_johns_wallet_with_money(user, recreate=False):
         if BaseTestLive._johns_wallet is None or recreate:
-            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet_with_money()
+            BaseTestLive._johns_wallet = BaseTestLive.create_new_wallet_with_money(user)
         return BaseTestLive._johns_wallet
 
     @staticmethod
-    def create_new_wallet():
+    def create_new_wallet(user):
         wallet = Wallet()
-        wallet.owners = (BaseTestLive._john,)
+        wallet.owners = (user,)
         wallet.currency = 'EUR'
         wallet.description = 'WALLET IN EUR'
         return Wallet(**wallet.save())
 
     @staticmethod
-    def create_new_wallet_with_money():
-        user = BaseTestLive.get_john()
-
+    def create_new_wallet_with_money(user):
         wallet = Wallet()
         wallet.owners = (user,)
         wallet.currency = 'EUR'
@@ -552,8 +570,8 @@ class BaseTestLive(unittest.TestCase):
         card_id = updated_registration['card_id']
 
         direct_payin = DirectPayIn(author=user,
-                                   debited_funds=Money(amount=100, currency='EUR'),
-                                   fees=Money(amount=1, currency='EUR'),
+                                   debited_funds=Money(amount=10000, currency='EUR'),
+                                   fees=Money(amount=0, currency='EUR'),
                                    credited_wallet_id=wallet,
                                    card_id=card_id,
                                    secure_mode="DEFAULT",
@@ -569,7 +587,7 @@ class BaseTestLive(unittest.TestCase):
         if BaseTestLive._johns_transfer is None or recreate:
             john = BaseTestLive.get_john()
             wallet1 = BaseTestLive.get_johns_wallet()
-            wallet2 = BaseTestLive.create_new_wallet()
+            wallet2 = BaseTestLive.create_new_wallet(john)
 
             transfer = Transfer()
             transfer.author = john
@@ -581,6 +599,26 @@ class BaseTestLive(unittest.TestCase):
             transfer.credited_wallet = wallet2
             BaseTestLive._johns_transfer = Transfer(**transfer.save())
         return BaseTestLive._johns_transfer
+
+    @staticmethod
+    def get_johns_transfer_sca(sca_context, amount):
+        valid_john_sca_id = 'user_m_01JRG5WE99JYRCEBHZ8EKBRE8Y'
+        valid_matrix_sca_id = 'user_m_01JRG4ZWZ85RNZDKKTSFRMG6ZW'
+        john_sca = NaturalUserSca.get(valid_john_sca_id)
+        matrix_sca = LegalUserSca.get(valid_matrix_sca_id)
+
+        debited_wallet = BaseTestLive.create_new_wallet_with_money(john_sca)
+        credited_wallet = BaseTestLive.create_new_wallet(matrix_sca)
+
+        transfer = Transfer()
+        transfer.author = john_sca
+        transfer.credited_user = matrix_sca
+        transfer.debited_funds = Money(amount=amount, currency='EUR')
+        transfer.fees = Money(amount=0, currency='EUR')
+        transfer.debited_wallet = debited_wallet
+        transfer.credited_wallet = credited_wallet
+        transfer.sca_context = sca_context
+        return Transfer(**transfer.save())
 
     @staticmethod
     def get_johns_payout(recreate=False):

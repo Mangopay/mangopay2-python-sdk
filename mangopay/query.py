@@ -174,6 +174,25 @@ class UpdateQuery(BaseQuery):
         return self.parse_result(data)
 
 
+class DeleteQuery(BaseQuery):
+    identifier = 'DELETE'
+
+    def __init__(self, model, reference, **kwargs):
+        self.delete_query = kwargs
+        self.reference = reference
+        super(DeleteQuery, self).__init__(model, 'DELETE')
+
+    def execute(self, handler=None):
+        handler = handler or self.handler
+
+        meta_url = self.parse_url(self.model._meta.url, self.delete_query)
+        url = '%s/%s' % (meta_url, self.reference)
+
+        result, data = handler.request(self.method, url)
+
+        return self.parse_result(data)
+
+
 class ActionQuery(BaseQuery):
 
     def __init__(self, model, reference, identifier, method='PUT', params=None, **kwargs):
