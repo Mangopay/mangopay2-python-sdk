@@ -1323,6 +1323,9 @@ class BlikPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     return_url = CharField(api_name='ReturnURL', required=True)
     redirect_url = CharField(api_name='RedirectURL')
+    code = CharField(api_name='Code')
+    ip_address = CharField(api_name='IpAddress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
 
     class Meta:
         verbose_name = 'blik_payin'

@@ -8,7 +8,8 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
-    CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, RecurringPayPalPayInMIT
+    CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, \
+    RecurringPayPalPayInMIT
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
@@ -771,6 +772,23 @@ class PayInsTest(BaseTest):
         self.assertIs(payin.Tag, payin.tag)
 
 
+def new_blik(user, credited_wallet):
+    pay_in = BlikPayIn()
+    pay_in.author = user
+    pay_in.credited_wallet = credited_wallet
+    pay_in.fees = Money()
+    pay_in.fees.amount = 300
+    pay_in.fees.currency = 'PLN'
+    pay_in.debited_funds = Money()
+    pay_in.debited_funds.amount = 1000
+    pay_in.debited_funds.currency = 'PLN'
+    pay_in.statement_descriptor = 'test'
+    pay_in.return_url = 'https://example.com?transactionId=wt_57b8f69d-cbcc-4202-9a4f-9a3f3668240b'
+    pay_in.redirect_url = 'https://r3.girogate.de/ti/dumbdummy?tx=140079495229&rs=oHkl4WvsgwtWpMptWpqWlFa90j0EzzO9&cs=e43baf1ae4a556dfb823fd304acc408580c193e04c1a9bcb26699b4185393b05'
+    pay_in.tag = 'Blik tag'
+    return pay_in
+
+
 class PayInsTestLive(BaseTestLive):
     @unittest.skip('Set a breakpoint after creating the mandate, navigate to mandate.redirect_url and confirm')
     def test_PayIns_DirectDebitDirect_Create(self):
@@ -1500,19 +1518,7 @@ class PayInsTestLive(BaseTestLive):
         credited_wallet.description = 'WALLET IN PLN'
         credited_wallet = Wallet(**credited_wallet.save())
 
-        pay_in = BlikPayIn()
-        pay_in.author = user
-        pay_in.credited_wallet = credited_wallet
-        pay_in.fees = Money()
-        pay_in.fees.amount = 300
-        pay_in.fees.currency = 'PLN'
-        pay_in.debited_funds = Money()
-        pay_in.debited_funds.amount = 1000
-        pay_in.debited_funds.currency = 'PLN'
-        pay_in.statement_descriptor = 'test'
-        pay_in.return_url = 'https://example.com?transactionId=wt_57b8f69d-cbcc-4202-9a4f-9a3f3668240b'
-        pay_in.redirect_url = 'https://r3.girogate.de/ti/dumbdummy?tx=140079495229&rs=oHkl4WvsgwtWpMptWpqWlFa90j0EzzO9&cs=e43baf1ae4a556dfb823fd304acc408580c193e04c1a9bcb26699b4185393b05'
-        pay_in.tag = 'Blik tag'
+        pay_in = new_blik(user, credited_wallet)
 
         result = BlikPayIn(**pay_in.save())
         fetched = BlikPayIn().get(result.id)
@@ -1526,6 +1532,34 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("BLIK", result.payment_type)
         self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_BlikWebWithCode_Create(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'PLN'
+        credited_wallet.description = 'WALLET IN PLN'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = new_blik(user, credited_wallet)
+        pay_in.code = '777365'
+        pay_in.ip_address = '159.180.248.187'
+        pay_in.browser_info = BaseTest.get_browser_info()
+
+        result = BlikPayIn(**pay_in.save())
+        fetched = BlikPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("BLIK", result.payment_type)
+        self.assertIsNotNone(result.code)
+        self.assertIsNotNone(result.ip_address)
+        self.assertIsNotNone(result.browser_info)
 
     def test_PayIns_KlarnaWeb_Create(self):
         user = BaseTestLive.get_john(True)
