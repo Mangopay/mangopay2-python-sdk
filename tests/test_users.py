@@ -6,6 +6,7 @@ import unittest
 import requests
 import responses
 
+from mangopay.exceptions import APIError
 from mangopay.resources import (User, NaturalUser, Wallet,
                                 LegalUser, Transfer, Transaction, NaturalUserSca, LegalUserSca)
 from mangopay.utils import Money, Address
@@ -988,3 +989,14 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertEqual(user.id, closed.id)
         self.assertEqual('CLOSED', closed.user_status)
+
+    def test_users_GetTransactionsSca(self):
+        user = BaseTestLive.get_john()
+        with self.assertRaises(APIError):
+            Transaction.all(**{"user_id": user.id, "ScaContext": 'USER_PRESENT'})
+        try:
+            Transaction.all(**{"user_id": user.id, "ScaContext": 'USER_PRESENT'})
+        except APIError as ex:
+            self.assertTrue('PendingUserAction RedirectUrl' in ex.headers.get('www-authenticate'))
+        except Exception as ex:
+            self.assertTrue('PendingUserAction RedirectUrl' in ex.headers.get('www-authenticate'))

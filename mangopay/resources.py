@@ -410,7 +410,7 @@ class Wallet(BaseModel):
     def get(cls, *args, **kwargs):
         if len(args) == 1 and cls.is_client_wallet(args[0]):
             return ClientWallet.get(*tuple(args[0].split('_')), **kwargs)
-        return super(Wallet, cls).get(*args, **kwargs)
+        return super(Wallet, cls).get(with_query_params=True, *args, **kwargs)
 
 
 @python_2_unicode_compatible
@@ -1323,6 +1323,9 @@ class BlikPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     return_url = CharField(api_name='ReturnURL', required=True)
     redirect_url = CharField(api_name='RedirectURL')
+    code = CharField(api_name='Code')
+    ip_address = CharField(api_name='IpAddress')
+    browser_info = BrowserInfoField(api_name='BrowserInfo')
 
     class Meta:
         verbose_name = 'blik_payin'
