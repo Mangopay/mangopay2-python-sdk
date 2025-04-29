@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from tests import settings
-from tests.resources import NaturalUser, Wallet, Transfer
-
-from tests.test_base import BaseTest
-
+import time
 from datetime import date
 
 import responses
-import time
+
+from mangopay.exceptions import APIError
+from tests import settings
+from tests.resources import NaturalUser, Wallet, Transfer
+from tests.test_base import BaseTest, BaseTestLive
 
 
 class WalletsTest(BaseTest):
@@ -328,3 +328,21 @@ class WalletsTest(BaseTest):
 
         self.assertEqual(len(transactions), 1)
         self.assertEqual(transactions[0].type, 'TRANSFER')
+
+
+class WalletsTestLive(BaseTestLive):
+    def test_Wallets_get(self):
+        wallet = BaseTestLive.get_johns_wallet()
+        fetched = Wallet.get(wallet.id)
+        self.assertEqual(wallet.id, fetched.id)
+
+    def test_Wallets_getSca(self):
+        wallet = BaseTestLive.get_johns_wallet()
+        with self.assertRaises(APIError):
+            Wallet.get(wallet.id, ScaContext='USER_PRESENT')
+        try:
+            Wallet.get(wallet.id, ScaContext='USER_PRESENT')
+        except APIError as ex:
+            self.assertTrue('PendingUserAction RedirectUrl' in ex.headers.get('www-authenticate'))
+        except Exception as ex:
+            self.assertTrue('PendingUserAction RedirectUrl' in ex.headers.get('www-authenticate'))

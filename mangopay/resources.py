@@ -410,7 +410,7 @@ class Wallet(BaseModel):
     def get(cls, *args, **kwargs):
         if len(args) == 1 and cls.is_client_wallet(args[0]):
             return ClientWallet.get(*tuple(args[0].split('_')), **kwargs)
-        return super(Wallet, cls).get(*args, **kwargs)
+        return super(Wallet, cls).get(with_query_params=True, *args, **kwargs)
 
 
 @python_2_unicode_compatible
