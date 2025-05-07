@@ -200,6 +200,7 @@ EVENT_TYPE_CHOICES = Choices(
     ('IDENTITY_VERIFICATION_INCONCLUSIVE', 'identity_verification_inconclusive', 'Identity Verification Inconclusive'),
     ('IDENTITY_VERIFICATION_OUTDATED', 'identity_verification_outdated', 'Identity Verification Outdated'),
     ('IDENTITY_VERIFICATION_TIMEOUT', 'identity_verification_timeout', 'Identity Verification Timeout'),
+    ('IDENTITY_VERIFICATION_PENDING', 'identity_verification_pending', 'Identity Verification Pending'),
 
     ('RECIPIENT_ACTIVE', 'recipient_active', 'Recipient Active'),
     ('RECIPIENT_CANCELED', 'recipient_canceled', 'Recipient Canceled'),
