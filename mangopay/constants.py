@@ -35,7 +35,12 @@ PAYMENT_STATUS_CHOICES = Choices(
     ('WAITING', 'waiting', 'Waiting'),
     ('CANCELED', 'canceled', 'Canceled'),
     ('EXPIRED', 'expired', 'Expired'),
-    ('VALIDATED', 'validated', 'Validated')
+    ('VALIDATED', 'validated', 'Validated'),
+    ('CANCEL_REQUESTED', 'cancel_requested', 'Cancel Requested'),
+    ('TO_BE_COMPLETED', 'to_be_completed', 'To Be Completed'),
+    ('NO_SHOW_REQUESTED', 'no_show_requested', 'No Show Requested'),
+    ('NO_SHOW', 'no_show', 'No Show'),
+    ('FAILED', 'failed', 'Failed')
 )
 
 VALIDITY_CHOICES = Choices(

@@ -2584,8 +2584,24 @@ class Deposit(BaseModel):
         url = {
             InsertQuery.identifier: '/deposit-preauthorizations/card/direct',
             SelectQuery.identifier: '/deposit-preauthorizations/',
-            UpdateQuery.identifier: '/deposit-preauthorizations/'
+            UpdateQuery.identifier: '/deposit-preauthorizations/',
+            'GET_ALL_FOR_USER': '/users/%(user_id)s/deposit-preauthorizations/',
+            'GET_ALL_FOR_CARD': '/cards/%(card_id)s/deposit-preauthorizations/'
         }
+
+    @classmethod
+    def get_all_for_user(cls, user_id, *args, **kwargs):
+        kwargs['user_id'] = user_id
+        select = SelectQuery(Deposit, *args, **kwargs)
+        select.identifier = 'GET_ALL_FOR_USER'
+        return select.all(*args, **kwargs)
+
+    @classmethod
+    def get_all_for_card(cls, card_id, *args, **kwargs):
+        kwargs['card_id'] = card_id
+        select = SelectQuery(Deposit, *args, **kwargs)
+        select.identifier = 'GET_ALL_FOR_CARD'
+        return select.all(*args, **kwargs)
 
 
 class VirtualAccount(BaseModel):
