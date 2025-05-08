@@ -17,6 +17,22 @@ class DepositsTest(BaseTestLive):
         self.assertIsNotNone(fetched_deposit)
         self.assertEqual(deposit.id, fetched_deposit.id)
 
+    def test_get_all_for_user(self):
+        deposit = self.create_new_deposit()
+        result = Deposit.get_all_for_user(deposit.author_id)
+
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result.data, list)
+        self.assertTrue(len(result.data) > 0)
+
+    def test_get_all_for_card(self):
+        deposit = self.create_new_deposit()
+        result = Deposit.get_all_for_card(deposit.card_id)
+
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result.data, list)
+        self.assertTrue(len(result.data) > 0)
+
     @unittest.skip("can't be tested yet")
     def test_cancel(self):
         deposit = self.create_new_deposit()
