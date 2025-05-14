@@ -2677,6 +2677,7 @@ class Recipient(BaseModel):
     payout_method_type = CharField(api_name='PayoutMethodType', required=True)
     recipient_type = CharField(api_name='RecipientType', required=True)
     currency = CharField(api_name='Currency', required=True)
+    country = CharField(api_name='Country')
     recipient_scope = CharField(api_name='RecipientScope')
     user_id = CharField(api_name='UserId')
     individual_recipient = IndividualRecipientField(api_name='IndividualRecipient')
@@ -2728,6 +2729,7 @@ class RecipientSchema(BaseModel):
     payout_method_type = RecipientPropertySchemaField(api_name='PayoutMethodType')
     recipient_type = RecipientPropertySchemaField(api_name='RecipientType')
     currency = RecipientPropertySchemaField(api_name='Currency')
+    country = RecipientPropertySchemaField(api_name='Country')
     recipient_scope = RecipientPropertySchemaField(api_name='RecipientScope')
     tag = RecipientPropertySchemaField(api_name='Tag')
     individual_recipient = IndividualRecipientPropertySchemaField(api_name='IndividualRecipient')
@@ -2741,14 +2743,15 @@ class RecipientSchema(BaseModel):
 
         url = {
             SelectQuery.identifier: '/recipients/schema?payoutMethodType=%(payout_method_type)s&recipientType=%('
-                                    'recipient_type)s&currency=%(currency)s'
+                                    'recipient_type)s&currency=%(currency)s&country=%(country)s'
         }
 
     @classmethod
-    def get(cls, payout_method_type, recipient_type, currency, *args, **kwargs):
+    def get(cls, payout_method_type, recipient_type, currency, country, *args, **kwargs):
         kwargs['payout_method_type'] = payout_method_type
         kwargs['recipient_type'] = recipient_type
         kwargs['currency'] = currency
+        kwargs['country'] = country
         select = SelectQuery(RecipientSchema, *args, **kwargs)
         return select.get("", *args, **kwargs)
 
