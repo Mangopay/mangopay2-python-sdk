@@ -35,7 +35,12 @@ PAYMENT_STATUS_CHOICES = Choices(
     ('WAITING', 'waiting', 'Waiting'),
     ('CANCELED', 'canceled', 'Canceled'),
     ('EXPIRED', 'expired', 'Expired'),
-    ('VALIDATED', 'validated', 'Validated')
+    ('VALIDATED', 'validated', 'Validated'),
+    ('CANCEL_REQUESTED', 'cancel_requested', 'Cancel Requested'),
+    ('TO_BE_COMPLETED', 'to_be_completed', 'To Be Completed'),
+    ('NO_SHOW_REQUESTED', 'no_show_requested', 'No Show Requested'),
+    ('NO_SHOW', 'no_show', 'No Show'),
+    ('FAILED', 'failed', 'Failed')
 )
 
 VALIDITY_CHOICES = Choices(
@@ -200,6 +205,7 @@ EVENT_TYPE_CHOICES = Choices(
     ('IDENTITY_VERIFICATION_INCONCLUSIVE', 'identity_verification_inconclusive', 'Identity Verification Inconclusive'),
     ('IDENTITY_VERIFICATION_OUTDATED', 'identity_verification_outdated', 'Identity Verification Outdated'),
     ('IDENTITY_VERIFICATION_TIMEOUT', 'identity_verification_timeout', 'Identity Verification Timeout'),
+    ('IDENTITY_VERIFICATION_PENDING', 'identity_verification_pending', 'Identity Verification Pending'),
 
     ('RECIPIENT_ACTIVE', 'recipient_active', 'Recipient Active'),
     ('RECIPIENT_CANCELED', 'recipient_canceled', 'Recipient Canceled'),

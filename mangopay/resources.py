@@ -2584,8 +2584,24 @@ class Deposit(BaseModel):
         url = {
             InsertQuery.identifier: '/deposit-preauthorizations/card/direct',
             SelectQuery.identifier: '/deposit-preauthorizations/',
-            UpdateQuery.identifier: '/deposit-preauthorizations/'
+            UpdateQuery.identifier: '/deposit-preauthorizations/',
+            'GET_ALL_FOR_USER': '/users/%(user_id)s/deposit-preauthorizations/',
+            'GET_ALL_FOR_CARD': '/cards/%(card_id)s/deposit-preauthorizations/'
         }
+
+    @classmethod
+    def get_all_for_user(cls, user_id, *args, **kwargs):
+        kwargs['user_id'] = user_id
+        select = SelectQuery(Deposit, *args, **kwargs)
+        select.identifier = 'GET_ALL_FOR_USER'
+        return select.all(*args, **kwargs)
+
+    @classmethod
+    def get_all_for_card(cls, card_id, *args, **kwargs):
+        kwargs['card_id'] = card_id
+        select = SelectQuery(Deposit, *args, **kwargs)
+        select.identifier = 'GET_ALL_FOR_CARD'
+        return select.all(*args, **kwargs)
 
 
 class VirtualAccount(BaseModel):
@@ -2625,6 +2641,9 @@ class IdentityVerification(BaseModel):
     hosted_url = CharField(api_name='HostedUrl')
     return_url = CharField(api_name='ReturnUrl', required=True)
     status = CharField(api_name='Status')
+    last_update = DateTimeField(api_name='UpdateDate')
+    user_id = CharField(api_name='UserId')
+    checks = ListField(api_name='Checks')
 
     class Meta:
         verbose_name = 'identity_verification'
@@ -2632,7 +2651,8 @@ class IdentityVerification(BaseModel):
 
         url = {
             InsertQuery.identifier: '/users/%(user_id)s/identity-verifications',
-            SelectQuery.identifier: '/identity-verifications'
+            SelectQuery.identifier: '/identity-verifications',
+            'GET_ALL': '/users/%(user_id)s/identity-verifications'
         }
 
     def create(self, user_id, idempotency_key=None, **kwargs):
@@ -2641,34 +2661,12 @@ class IdentityVerification(BaseModel):
         insert.insert_query = self.get_field_dict()
         return insert.execute()
 
-    def get_checks(self, *args, **kwargs):
-        kwargs['id'] = self.id
-        select = SelectQuery(IdentityVerificationCheck, *args, **kwargs)
-        select.identifier = 'GET_CHECKS'
-        return select.get("", *args, **kwargs)
-
-
-class IdentityVerificationCheck(BaseModel):
-    session_id = CharField(api_name='SessionId')
-    status = CharField(api_name='Status')
-    creation_date = DateTimeField(api_name='CreationDate')
-    last_update = DateTimeField(api_name='LastUpdate')
-    checks = ListField(api_name='Checks')
-
-    class Meta:
-        verbose_name = 'identity_verification_check'
-        verbose_name_plural = 'identity_verifications_checks'
-
-        url = {
-            'GET_CHECKS': '/identity-verifications/%(id)s/checks'
-        }
-
     @classmethod
-    def get(cls, identity_verification_id, *args, **kwargs):
-        kwargs['id'] = identity_verification_id
-        select = SelectQuery(IdentityVerificationCheck, *args, **kwargs)
-        select.identifier = 'GET_CHECKS'
-        return select.get("", *args, **kwargs)
+    def get_all(cls, user_id, *args, **kwargs):
+        kwargs['user_id'] = user_id
+        select = SelectQuery(IdentityVerification, *args, **kwargs)
+        select.identifier = 'GET_ALL'
+        return select.all(*args, **kwargs)
 
 
 class Recipient(BaseModel):
@@ -2677,6 +2675,7 @@ class Recipient(BaseModel):
     payout_method_type = CharField(api_name='PayoutMethodType', required=True)
     recipient_type = CharField(api_name='RecipientType', required=True)
     currency = CharField(api_name='Currency', required=True)
+    country = CharField(api_name='Country')
     recipient_scope = CharField(api_name='RecipientScope')
     user_id = CharField(api_name='UserId')
     individual_recipient = IndividualRecipientField(api_name='IndividualRecipient')
@@ -2728,6 +2727,7 @@ class RecipientSchema(BaseModel):
     payout_method_type = RecipientPropertySchemaField(api_name='PayoutMethodType')
     recipient_type = RecipientPropertySchemaField(api_name='RecipientType')
     currency = RecipientPropertySchemaField(api_name='Currency')
+    country = RecipientPropertySchemaField(api_name='Country')
     recipient_scope = RecipientPropertySchemaField(api_name='RecipientScope')
     tag = RecipientPropertySchemaField(api_name='Tag')
     individual_recipient = IndividualRecipientPropertySchemaField(api_name='IndividualRecipient')
@@ -2741,14 +2741,15 @@ class RecipientSchema(BaseModel):
 
         url = {
             SelectQuery.identifier: '/recipients/schema?payoutMethodType=%(payout_method_type)s&recipientType=%('
-                                    'recipient_type)s&currency=%(currency)s'
+                                    'recipient_type)s&currency=%(currency)s&country=%(country)s'
         }
 
     @classmethod
-    def get(cls, payout_method_type, recipient_type, currency, *args, **kwargs):
+    def get(cls, payout_method_type, recipient_type, currency, country, *args, **kwargs):
         kwargs['payout_method_type'] = payout_method_type
         kwargs['recipient_type'] = recipient_type
         kwargs['currency'] = currency
+        kwargs['country'] = country
         select = SelectQuery(RecipientSchema, *args, **kwargs)
         return select.get("", *args, **kwargs)
 

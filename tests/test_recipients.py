@@ -22,6 +22,7 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNotNone(RecipientsTest._recipient.local_bank_transfer)
         self.assertIsNone(RecipientsTest._recipient.international_bank_transfer)
         self.assertIsNone(RecipientsTest._recipient.business_recipient)
+        self.assertIsNotNone(RecipientsTest._recipient.country)
 
     def test_get_recipient(self):
         self.create_new_recipient()
@@ -41,7 +42,7 @@ class RecipientsTest(BaseTestLive):
         self.assertTrue(len(fetched.data) > 0)
 
     def test_get_recipient_schema_local_bank_transfer_individual(self):
-        schema = RecipientSchema.get('LocalBankTransfer', 'Individual', 'GBP')
+        schema = RecipientSchema.get('LocalBankTransfer', 'Individual', 'GBP', 'GB')
 
         self.assertIsNotNone(schema)
         self.assertIsNotNone(schema.display_name)
@@ -54,9 +55,10 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNotNone(schema.individual_recipient)
         self.assertIsNone(schema.business_recipient)
         self.assertIsNone(schema.international_bank_transfer)
+        self.assertIsNotNone(schema.country)
 
     def test_get_recipient_schema_international_bank_transfer_business(self):
-        schema = RecipientSchema.get('InternationalBankTransfer', 'Business', 'GBP')
+        schema = RecipientSchema.get('InternationalBankTransfer', 'Business', 'GBP', 'GB')
 
         self.assertIsNotNone(schema)
         self.assertIsNotNone(schema.display_name)
@@ -69,6 +71,7 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNotNone(schema.international_bank_transfer)
         self.assertIsNone(schema.local_bank_transfer)
         self.assertIsNone(schema.individual_recipient)
+        self.assertIsNotNone(schema.country)
 
     def test_get_payout_methods(self):
         payout_methods = PayoutMethod.get("DE", "EUR")
@@ -115,6 +118,7 @@ class RecipientsTest(BaseTestLive):
         recipient.payout_method_type = 'LocalBankTransfer'
         recipient.recipient_type = 'Individual'
         recipient.currency = 'GBP'
+        recipient.country = 'GB'
 
         individual_recipient = IndividualRecipient()
         individual_recipient.first_name = 'Alex'
