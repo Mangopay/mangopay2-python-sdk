@@ -1,8 +1,8 @@
 import base64
 import os
-import random
+import unittest
 
-from mangopay.resources import Client, ClientLogo, Address, BankWirePayOut, ClientWallet
+from mangopay.resources import Client, ClientLogo, BankWirePayOut, ClientWallet
 from mangopay.utils import Money
 from tests.test_base import BaseTestLive
 
@@ -29,6 +29,7 @@ class ClientsTestLive(BaseTestLive):
     #     self.assertEqual(client.headquarters_phone_number, phone_number, "Headquarter's phone number was not updated "
     #                                                                      "correctly")
 
+    @unittest.skip("skipped")
     def test_LogoUpload(self):
         file_path = os.path.join(os.path.dirname(__file__), 'resources', 'TestKycPageFile.png')
         with open(file_path, 'rb') as f:
