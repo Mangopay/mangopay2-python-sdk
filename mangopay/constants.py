@@ -210,6 +210,9 @@ EVENT_TYPE_CHOICES = Choices(
     ('RECIPIENT_ACTIVE', 'recipient_active', 'Recipient Active'),
     ('RECIPIENT_CANCELED', 'recipient_canceled', 'Recipient Canceled'),
     ('RECIPIENT_DEACTIVATED', 'recipient_deactivated', 'Recipient Deactivated'),
+
+    ('USER_ACCOUNT_VALIDATION_ASKED', 'user_account_validation_asked', 'User Account Validation Asked'),
+    ('USER_ACCOUNT_ACTIVATED', 'user_account_activated', 'User Account Activated')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
