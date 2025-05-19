@@ -1279,6 +1279,71 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
 
+    def test_deposit_preauthorized_payin_without_complement(self):
+        deposit = self.create_new_deposit()
+
+        params = {
+            "credited_wallet_id": self.get_johns_wallet().id,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "deposit_id": deposit.id
+        }
+
+        created = CardPreAuthorizedDepositPayIn(**params).create_without_complement()
+        pay_in = CardPreAuthorizedDepositPayIn().get(created.get('id'))
+
+        self.assertIsNotNone(pay_in)
+        self.assertEqual("SUCCEEDED", pay_in.status)
+        self.assertEqual("REGULAR", pay_in.nature)
+        self.assertEqual("DIRECT", pay_in.execution_type)
+        self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
+        self.assertEqual("PAYIN", pay_in.type)
+
+    def test_deposit_preauthorized_payin_prior_to_complement(self):
+        deposit = self.create_new_deposit()
+
+        params = {
+            "credited_wallet_id": self.get_johns_wallet().id,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "deposit_id": deposit.id
+        }
+
+        created = CardPreAuthorizedDepositPayIn(**params).create_prior_to_complement()
+        pay_in = CardPreAuthorizedDepositPayIn().get(created.get('id'))
+
+        self.assertIsNotNone(pay_in)
+        self.assertEqual("SUCCEEDED", pay_in.status)
+        self.assertEqual("REGULAR", pay_in.nature)
+        self.assertEqual("DIRECT", pay_in.execution_type)
+        self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
+        self.assertEqual("PAYIN", pay_in.type)
+
+    def test_deposit_preauthorized_payin_complement(self):
+        deposit = self.create_new_deposit()
+
+        dto = {
+            "payment_status": "NO_SHOW_REQUESTED"
+        }
+        deposit.update(deposit.get_pk(), **dto).execute()
+
+        params = {
+            "credited_wallet_id": self.get_johns_wallet().id,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "deposit_id": deposit.id
+        }
+
+        created = CardPreAuthorizedDepositPayIn(**params).create_complement()
+        pay_in = CardPreAuthorizedDepositPayIn().get(created.get('id'))
+
+        self.assertIsNotNone(pay_in)
+        self.assertEqual("SUCCEEDED", pay_in.status)
+        self.assertEqual("REGULAR", pay_in.nature)
+        self.assertEqual("DIRECT", pay_in.execution_type)
+        self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
+        self.assertEqual("PAYIN", pay_in.type)
+
     @unittest.skip("can't be tested yet")
     def test_card_preauthorized_deposit_payin_check_card_info(self):
         deposit = self.create_new_deposit()

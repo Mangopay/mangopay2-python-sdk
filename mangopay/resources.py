@@ -1557,8 +1557,29 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
         verbose_name_plural = 'card_preauthorized_deposit_payins'
         url = {
             InsertQuery.identifier: '/payins/deposit-preauthorized/direct/full-capture',
-            SelectQuery.identifier: '/payins'
+            SelectQuery.identifier: '/payins',
+            'CREATE_WITHOUT_COMPLEMENT': '/payins/deposit-preauthorized/direct/full-capture',
+            'CREATE_PRIOR_TO_COMPLEMENT': '/payins/deposit-preauthorized/direct/capture-with-complement',
+            'CREATE_COMPLEMENT': '/payins/deposit-preauthorized/direct/complement'
         }
+
+    def create_without_complement(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.identifier = 'CREATE_WITHOUT_COMPLEMENT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
+    def create_prior_to_complement(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.identifier = 'CREATE_PRIOR_TO_COMPLEMENT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
+    def create_complement(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.identifier = 'CREATE_COMPLEMENT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
 
 
 class PaymentMethodMetadata(BaseModel):
