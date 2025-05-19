@@ -1298,6 +1298,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("DIRECT", pay_in.execution_type)
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
+        self.assertIsNotNone(pay_in.deposit_id)
 
     def test_deposit_preauthorized_payin_prior_to_complement(self):
         deposit = self.create_new_deposit()
@@ -1318,6 +1319,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("DIRECT", pay_in.execution_type)
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
+        self.assertIsNotNone(pay_in.deposit_id)
 
     def test_deposit_preauthorized_payin_complement(self):
         deposit = self.create_new_deposit()
@@ -1343,6 +1345,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("DIRECT", pay_in.execution_type)
         self.assertEqual("PREAUTHORIZED", pay_in.payment_type)
         self.assertEqual("PAYIN", pay_in.type)
+        self.assertIsNotNone(pay_in.deposit_id)
 
     @unittest.skip("can't be tested yet")
     def test_card_preauthorized_deposit_payin_check_card_info(self):
