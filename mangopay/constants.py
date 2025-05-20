@@ -212,7 +212,14 @@ EVENT_TYPE_CHOICES = Choices(
     ('RECIPIENT_DEACTIVATED', 'recipient_deactivated', 'Recipient Deactivated'),
 
     ('USER_ACCOUNT_VALIDATION_ASKED', 'user_account_validation_asked', 'User Account Validation Asked'),
-    ('USER_ACCOUNT_ACTIVATED', 'user_account_activated', 'User Account Activated')
+    ('USER_ACCOUNT_ACTIVATED', 'user_account_activated', 'User Account Activated'),
+
+    ('INSTANT_CONVERSION_CREATED', 'instant_conversion_created', 'Instant Conversion Created'),
+    ('INSTANT_CONVERSION_SUCCEEDED', 'instant_conversion_succeeded', 'Instant Conversion Succeeded'),
+    ('INSTANT_CONVERSION_FAILED', 'instant_conversion_failed', 'Instant Conversion Failed'),
+    ('QUOTED_CONVERSION_CREATED', 'quoted_conversion_created', 'Quoted Conversion Created'),
+    ('QUOTED_CONVERSION_SUCCEEDED', 'quoted_conversion_succeeded', 'Quoted Conversion Succeeded'),
+    ('QUOTED_CONVERSION_FAILED', 'quoted_conversion_failed', 'Quoted Conversion Failed')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
