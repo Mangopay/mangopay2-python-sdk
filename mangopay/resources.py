@@ -1988,7 +1988,8 @@ class Transaction(BaseModel):
             'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
             'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
             'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions',
-            'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions'
+            'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions',
+            'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/'
         }
 
     def __str__(self):
@@ -2622,6 +2623,13 @@ class Deposit(BaseModel):
         kwargs['card_id'] = card_id
         select = SelectQuery(Deposit, *args, **kwargs)
         select.identifier = 'GET_ALL_FOR_CARD'
+        return select.all(*args, **kwargs)
+
+    @classmethod
+    def get_transactions(cls, deposit_id, *args, **kwargs):
+        kwargs['deposit_id'] = deposit_id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'DEPOSIT_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
 

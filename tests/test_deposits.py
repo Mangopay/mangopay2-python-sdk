@@ -1,6 +1,8 @@
+import time
 import unittest
 
-from mangopay.resources import Deposit
+from mangopay.resources import Deposit, CardPreAuthorizedDepositPayIn
+from mangopay.utils import Money
 from tests.test_base import BaseTestLive
 
 
@@ -32,6 +34,24 @@ class DepositsTest(BaseTestLive):
         self.assertIsNotNone(result)
         self.assertIsInstance(result.data, list)
         self.assertTrue(len(result.data) > 0)
+
+    def test_get_transactions(self):
+        deposit = self.create_new_deposit()
+
+        params = {
+            "credited_wallet_id": self.get_johns_wallet().id,
+            "debited_funds": Money(amount=1000, currency='EUR'),
+            "fees": Money(amount=0, currency='EUR'),
+            "deposit_id": deposit.id
+        }
+
+        CardPreAuthorizedDepositPayIn(**params).create_without_complement()
+
+        time.sleep(1)
+        transactions = Deposit.get_transactions(deposit.id)
+        self.assertIsNotNone(transactions)
+        self.assertIsInstance(transactions.data, list)
+        self.assertTrue(len(transactions.data) > 0)
 
     @unittest.skip("can't be tested yet")
     def test_cancel(self):
