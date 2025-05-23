@@ -12,6 +12,9 @@ class VirtualAccountTest(BaseTestLive):
 
         self.assertIsNotNone(virtual_account)
         self.assertEqual(virtual_account.status, 'ACTIVE')
+        self.assertEqual(virtual_account.result_message, 'Success')
+        self.assertEqual(virtual_account.result_code, '000000')
+        self.assertIsNotNone(virtual_account.local_account_details.bank_name)
 
     def test_get_virtual_account(self):
         virtual_account = BaseTestLive.create_new_virtual_account()
