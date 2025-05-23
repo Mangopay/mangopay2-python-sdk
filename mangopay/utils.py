@@ -1041,34 +1041,38 @@ class PayPalTrackingInformation(object):
 
 
 class LocalAccountDetails(object):
-    def __init__(self, address=None, account=None):
+    def __init__(self, address=None, account=None, bank_name=None):
         self.address = address
         self.account = account
+        self.bank_name = bank_name
 
     def __str__(self):
-        return 'LocalAccountDetails: %s %s' % \
-            (self.address, self.account)
+        return 'LocalAccountDetails: %s %s %s' % \
+            (self.address, self.account, self.bank_name)
 
     def to_api_json(self):
         return {
             "Address": self.address,
-            "Account": self.account
+            "Account": self.account,
+            "BankName": self.bank_name
         }
 
 
 class InternationalAccountDetails(object):
-    def __init__(self, address=None, account=None):
+    def __init__(self, address=None, account=None, bank_name=None):
         self.address = address
         self.account = account
+        self.bank_name = bank_name
 
     def __str__(self):
-        return 'InternationalAccountDetails: %s %s' % \
-            (self.address, self.account)
+        return 'InternationalAccountDetails: %s %s %s' % \
+            (self.address, self.account, self.bank_name)
 
     def to_api_json(self):
         return {
             "Address": self.address,
-            "Account": self.account
+            "Account": self.account,
+            "BankName": self.bank_name
         }
 
 
