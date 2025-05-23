@@ -9,7 +9,7 @@ uk_header_flag = False
 
 package_version = None
 try:
-    with open('../setup.py', 'r') as f:
+    with open('./setup.py', 'r') as f:
         for line in f:
             if line.startswith('    version'):
                 package_version = line.split('=')[1].replace("'", "").replace(",", "").replace("\n", "")
