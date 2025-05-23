@@ -213,6 +213,7 @@ EVENT_TYPE_CHOICES = Choices(
 
     ('USER_ACCOUNT_VALIDATION_ASKED', 'user_account_validation_asked', 'User Account Validation Asked'),
     ('USER_ACCOUNT_ACTIVATED', 'user_account_activated', 'User Account Activated'),
+    ('USER_ACCOUNT_CLOSED', 'user_account_closed', 'User Account Closed'),
 
     ('INSTANT_CONVERSION_CREATED', 'instant_conversion_created', 'Instant Conversion Created'),
     ('INSTANT_CONVERSION_SUCCEEDED', 'instant_conversion_succeeded', 'Instant Conversion Succeeded'),
