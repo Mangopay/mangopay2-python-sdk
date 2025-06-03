@@ -1,4 +1,4 @@
-from mangopay.resources import Report, ReportV2
+from mangopay.resources import ReportV2
 from mangopay.utils import ReportFilter
 from tests.test_base import BaseTestLive
 
@@ -39,7 +39,7 @@ class ReportsV2TestLive(BaseTestLive):
         report.after_date = 1740787200
         report.before_date = 1743544740
         created = report.save()
-        result = Report.get(created['Id'])
+        result = ReportV2.get(created['id'])
 
         self.assertEqual(report.id, result.id)
 

@@ -2421,7 +2421,7 @@ class ReportV2(BaseModel):
         verbose_name_plural = 'reportsv2'
         url = {
             InsertQuery.identifier: '/reporting/reports',
-            SelectQuery.identifier: '/reporting/reports/%(id)s'
+            SelectQuery.identifier: '/reporting/reports'
         }
 
 
