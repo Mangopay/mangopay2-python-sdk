@@ -220,7 +220,10 @@ EVENT_TYPE_CHOICES = Choices(
     ('INSTANT_CONVERSION_FAILED', 'instant_conversion_failed', 'Instant Conversion Failed'),
     ('QUOTED_CONVERSION_CREATED', 'quoted_conversion_created', 'Quoted Conversion Created'),
     ('QUOTED_CONVERSION_SUCCEEDED', 'quoted_conversion_succeeded', 'Quoted Conversion Succeeded'),
-    ('QUOTED_CONVERSION_FAILED', 'quoted_conversion_failed', 'Quoted Conversion Failed')
+    ('QUOTED_CONVERSION_FAILED', 'quoted_conversion_failed', 'Quoted Conversion Failed'),
+
+    ('REPORT_GENERATED', 'report_generated', 'Report Generated'),
+    ('REPORT_FAILED', 'report_failed', 'Report Failed')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
