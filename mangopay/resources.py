@@ -18,7 +18,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
-                     BusinessRecipientPropertySchemaField)
+                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
 
 
@@ -2800,3 +2800,15 @@ class PayoutMethod(BaseModel):
         kwargs['currency'] = currency
         select = SelectQuery(PayoutMethod, *args, **kwargs)
         return select.get("", *args, **kwargs)
+
+
+class UserDataFormatValidation(BaseModel):
+    company_number = CompanyNumberValidationField(api_name='CompanyNumber')
+
+    class Meta:
+        verbose_name = 'user_data_format_validation'
+        verbose_name_plural = 'user_data_format_validations'
+
+        url = {
+            InsertQuery.identifier: '/users/data-formats/validation'
+        }
