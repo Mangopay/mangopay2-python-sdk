@@ -2800,3 +2800,29 @@ class PayoutMethod(BaseModel):
         kwargs['currency'] = currency
         select = SelectQuery(PayoutMethod, *args, **kwargs)
         return select.get("", *args, **kwargs)
+
+
+class ExtendedCardWebPayin(BaseModel):
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    expiration_date = CharField(api_name='ExpirationDate')
+    alias = CharField(api_name='Alias')
+    card_type = CharField(api_name='CardType',
+                          choices=constants.CARD_TYPE_CHOICES,
+                          default=None)
+    country = CharField(api_name='Country')
+    fingerprint = CharField(api_name='Fingerprint')
+
+    class Meta:
+        verbose_name = 'extended_card_web_payin'
+        verbose_name_plural = 'extended_card_web_payins'
+
+        url = {
+            SelectQuery.identifier: '/payins/card/web/%(id)s/extended'
+        }
+
+    @classmethod
+    def get(cls, pay_in_id, *args, **kwargs):
+        kwargs['id'] = pay_in_id
+        select = SelectQuery(ExtendedCardWebPayin, *args, **kwargs)
+        return select.get("", *args, **kwargs)

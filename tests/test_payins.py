@@ -9,7 +9,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
     CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, \
-    RecurringPayPalPayInMIT
+    RecurringPayPalPayInMIT, ExtendedCardWebPayin
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
 from tests import settings
@@ -2185,3 +2185,11 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("PAY_BY_BANK", result.payment_type)
         self.assertEqual("PAYIN", result.type)
+
+    def test_get_extended_card_web_payin(self):
+        payin = BaseTestLive.get_johns_payin()
+        result = ExtendedCardWebPayin.get(payin.id)
+
+        self.assertIsNotNone(result)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("CARD", result.payment_type)
