@@ -1295,3 +1295,33 @@ class BusinessRecipientPropertySchema(object):
             "BusinessName": self.business_name,
             "Address": self.address
         }
+
+
+@add_camelcase_aliases
+class CompanyNumberValidation(object):
+    def __init__(self, company_number=None, country_code=None, is_valid=None, validation_rules=None):
+        self.company_number = company_number
+        self.country_code = country_code
+        self.is_valid = is_valid
+        self.validation_rules = validation_rules
+
+    def __str__(self):
+        return 'CompanyNumberValidation: %s , %s, %s, %s' % \
+            (self.company_number, self.country_code, self.is_valid, self.validation_rules)
+
+    def __eq__(self, other):
+        if isinstance(other, CompanyNumberValidation):
+            stat = ((self.company_number == other.company_number) and
+                    (self.country_code == other.country_code) and
+                    (self.is_valid == other.is_valid) and
+                    (self.validation_rules == other.validation_rules))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "CompanyNumber": self.company_number,
+            "CountryCode": self.country_code,
+            "IsValid": self.is_valid,
+            "ValidationRules": self.validation_rules
+        }
