@@ -75,6 +75,23 @@ class DisputeTest(BaseTestLive):
         self.assertIsNotNone(disputes)
         self.assertTrue(disputes)
 
+    def test_GetDisputesForPayIn(self):
+        dispute = None
+
+        for d in self._client_disputes :
+            if d.initial_transaction_id is not None:
+                dispute = d
+                break
+
+        self.assertIsNotNone(dispute, 'Cannot test getting disputes for wallet because there\'s no dispute with transaction ID in the disputes list.')
+        pay_in = PayIn.get(dispute.initial_transaction_id)
+
+        self.assertIsNotNone(pay_in)
+
+        result = pay_in.disputes.all()
+
+        self.assertIsNotNone(result)
+
     def test_GetDisputesPendingSettlement(self):
         disputes_pending = Dispute.get_pending_settlement()
 
