@@ -8,8 +8,9 @@ import responses
 
 from mangopay.exceptions import APIError
 from mangopay.resources import (User, NaturalUser, Wallet,
-                                LegalUser, Transfer, Transaction, NaturalUserSca, LegalUserSca)
-from mangopay.utils import Money, Address
+                                LegalUser, Transfer, Transaction, NaturalUserSca, LegalUserSca,
+                                UserDataFormatValidation)
+from mangopay.utils import Money, Address, CompanyNumberValidation
 from tests import settings
 from tests.mocks import today, today_timestamp
 from tests.test_base import BaseTest, BaseTestLive
@@ -1000,3 +1001,15 @@ class PayInsTestLive(BaseTestLive):
             self.assertTrue('PendingUserAction RedirectUrl' in ex.headers.get('www-authenticate'))
         except Exception as ex:
             self.assertTrue('PendingUserAction RedirectUrl' in ex.headers.get('www-authenticate'))
+
+    def test_validate_user_data_format(self):
+        validation = UserDataFormatValidation()
+        validation.company_number = CompanyNumberValidation(company_number='AB123456', country_code='IT')
+        result = validation.save()
+        self.assertIsNotNone(result['company_number'])
+
+        try:
+            validation.company_number = CompanyNumberValidation(company_number='123')
+            validation.save()
+        except APIError as e:
+            self.assertTrue("One or several required parameters are missing or incorrect" in e.content['Message'])
