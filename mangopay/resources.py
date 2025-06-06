@@ -779,6 +779,10 @@ class PayIn(BaseModel):
         verbose_name_plural = 'payins'
         url = '/payins'
 
+    def __init__(self, *args, **kwargs):
+        super(PayIn, self).__init__(*args, **kwargs)
+        self.disputes = RelatedManager(self, Dispute)
+
     @classmethod
     def cast(cls, result):
         if cls.__name__ == "RecurringPayInCIT":
