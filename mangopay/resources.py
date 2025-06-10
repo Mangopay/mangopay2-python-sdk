@@ -18,7 +18,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
-                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField)
+                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
 
 
@@ -2402,6 +2402,30 @@ class ReportWallets(BaseModel):
         url = {
             SelectQuery.identifier: '/reports/',
             InsertQuery.identifier: '/reports/wallets/'
+        }
+
+
+class ReportV2(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+    report_date = DateTimeField(api_name='ReportDate')
+    status = CharField(api_name='Status')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    download_format = CharField(api_name='DownloadFormat', required=True)
+    download_url = CharField(api_name='DownloadURL')
+    report_type = CharField(api_name='ReportType', required=True)
+    sort = CharField(api_name='Sort')
+    after_date = DateTimeField(api_name='AfterDate', required=True)
+    before_date = DateTimeField(api_name='BeforeDate', required=True)
+    filters = ReportFilterField(api_name='Filters')
+    columns = ListField(api_name='Columns')
+
+    class Meta:
+        verbose_name = 'reportv2'
+        verbose_name_plural = 'reportsv2'
+        url = {
+            InsertQuery.identifier: '/reporting/reports',
+            SelectQuery.identifier: '/reporting/reports'
         }
 
 
