@@ -18,7 +18,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
-                     BusinessRecipientPropertySchemaField, ReportFilterField)
+                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
 
 
@@ -778,6 +778,10 @@ class PayIn(BaseModel):
         verbose_name = 'payin'
         verbose_name_plural = 'payins'
         url = '/payins'
+
+    def __init__(self, *args, **kwargs):
+        super(PayIn, self).__init__(*args, **kwargs)
+        self.disputes = RelatedManager(self, Dispute)
 
     @classmethod
     def cast(cls, result):
@@ -2824,3 +2828,15 @@ class PayoutMethod(BaseModel):
         kwargs['currency'] = currency
         select = SelectQuery(PayoutMethod, *args, **kwargs)
         return select.get("", *args, **kwargs)
+
+
+class UserDataFormatValidation(BaseModel):
+    company_number = CompanyNumberValidationField(api_name='CompanyNumber')
+
+    class Meta:
+        verbose_name = 'user_data_format_validation'
+        verbose_name_plural = 'user_data_format_validations'
+
+        url = {
+            InsertQuery.identifier: '/users/data-formats/validation'
+        }
