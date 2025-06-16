@@ -357,3 +357,9 @@ class CardsLiveTest(BaseTestLive):
         self.assertIsNotNone(get_card_validation_response.data[0])
         self.assertIsNotNone(get_card_validation_response.data[0].id)
         self.assertEqual(get_card_validation_response.data[0].id, validation_response['id'])
+
+    def test_get_transactions_for_fingerprint(self):
+        card = BaseTestLive.get_johns_card()
+        time.sleep(2)
+        transactions_page = Card.get_transactions_by_fingerprint(card.fingerprint)
+        self.assertTrue(len(transactions_page) > 0)
