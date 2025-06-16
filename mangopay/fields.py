@@ -969,7 +969,7 @@ class CardInfoField(Field):
 class LocalAccountDetailsField(Field):
     def python_value(self, value):
         if value is not None:
-            return LocalAccountDetails(address=value['Address'], account=value['Account'])
+            return LocalAccountDetails(address=value['Address'], account=value['Account'], bank_name=value['BankName'])
         return value
 
     def api_value(self, value):
@@ -978,7 +978,8 @@ class LocalAccountDetailsField(Field):
         if isinstance(value, LocalAccountDetails):
             value = {
                 'Address': value.address,
-                'Account': value.account
+                'Account': value.account,
+                'BankName': value.bank_name
             }
 
         return value
@@ -987,7 +988,8 @@ class LocalAccountDetailsField(Field):
 class InternationalAccountDetailsField(Field):
     def python_value(self, value):
         if value is not None:
-            return InternationalAccountDetails(address=value['Address'], account=value['Account'])
+            return InternationalAccountDetails(address=value['Address'], account=value['Account'],
+                                               bank_name=value['BankName'])
         return value
 
     def api_value(self, value):
@@ -996,7 +998,8 @@ class InternationalAccountDetailsField(Field):
         if isinstance(value, InternationalAccountDetails):
             value = {
                 'Address': value.address,
-                'Account': value.account
+                'Account': value.account,
+                'BankName': value.bank_name
             }
 
         return value

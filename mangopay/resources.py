@@ -2672,6 +2672,8 @@ class VirtualAccount(BaseModel):
     local_account_details = LocalAccountDetailsField(api_name='LocalAccountDetails')
     international_account_details = ListField(api_name='InternationalAccountDetails')
     capabilities = VirtualAccountCapabilitiesField(api_name='Capabilities')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
 
     class Meta:
         verbose_name = 'virtual_account'
