@@ -365,3 +365,18 @@ class DisputeTest(BaseTestLive):
         self.assertTrue('status' in result)
 
         self.assertEquals(result['status'], 'SUBMITTED')
+
+    def test_get_transactions(self):
+        dispute = None
+        for d in self._client_disputes:
+            if d.status in ('PENDING_CLIENT_ACTION', 'REOPENED_PENDING_CLIENT_ACTION'):
+                dispute = d
+                break
+
+        self.assertIsNotNone(
+            dispute,
+            "Cannot test closing dispute because there's no available disputes with expected status in the disputes list."
+        )
+
+        transactions = Dispute.get_transactions(dispute.id)
+        self.assertTrue(transactions.page == 1)
