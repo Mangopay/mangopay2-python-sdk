@@ -1,7 +1,6 @@
 import base64
 import os
 import time
-import unittest
 
 from mangopay.resources import Dispute, PayIn, DisputeDocument, SettlementTransfer, DisputeDocumentPage
 from mangopay.utils import Money
@@ -9,7 +8,7 @@ from tests.test_base import BaseTestLive
 
 
 # Comment following line to run DisputeTest
-@unittest.skip('Skip dispute tests because there is a lack of data.')
+# @unittest.skip('Skip dispute tests because there is a lack of data.')
 class DisputeTest(BaseTestLive):
     def setUp(self):
         self._client_disputes = Dispute.all()
@@ -365,3 +364,18 @@ class DisputeTest(BaseTestLive):
         self.assertTrue('status' in result)
 
         self.assertEquals(result['status'], 'SUBMITTED')
+
+    def test_get_transactions(self):
+        dispute = None
+        for d in self._client_disputes:
+            if d.status in ('PENDING_CLIENT_ACTION', 'REOPENED_PENDING_CLIENT_ACTION'):
+                dispute = d
+                break
+
+        self.assertIsNotNone(
+            dispute,
+            "Cannot test closing dispute because there's no available disputes with expected status in the disputes list."
+        )
+
+        transactions = Dispute.get_transactions(dispute.id)
+        self.assertTrue(transactions.page == 1)
