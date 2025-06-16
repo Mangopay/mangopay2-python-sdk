@@ -1,6 +1,7 @@
 import base64
 import os
 import time
+import unittest
 
 from mangopay.resources import Dispute, PayIn, DisputeDocument, SettlementTransfer, DisputeDocumentPage
 from mangopay.utils import Money
@@ -8,7 +9,7 @@ from tests.test_base import BaseTestLive
 
 
 # Comment following line to run DisputeTest
-# @unittest.skip('Skip dispute tests because there is a lack of data.')
+@unittest.skip('Skip dispute tests because there is a lack of data.')
 class DisputeTest(BaseTestLive):
     def setUp(self):
         self._client_disputes = Dispute.all()
