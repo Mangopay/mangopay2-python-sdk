@@ -41,6 +41,24 @@ class RecipientsTest(BaseTestLive):
         self.assertIsInstance(fetched.data, list)
         self.assertTrue(len(fetched.data) > 0)
 
+    def test_get_user_recipients_filtered_payout(self):
+        self.create_new_recipient()
+        john = BaseTestLive.get_john_sca_owner()
+        fetched = Recipient.get_user_recipients(john.id, RecipientScope='PAYOUT')
+
+        self.assertIsNotNone(fetched)
+        self.assertIsInstance(fetched.data, list)
+        self.assertTrue(len(fetched.data) > 0)
+
+    def test_get_user_recipients_filtered_payin(self):
+        self.create_new_recipient()
+        john = BaseTestLive.get_john_sca_owner()
+        fetched = Recipient.get_user_recipients(john.id, RecipientScope='PAYIN')
+
+        self.assertIsNotNone(fetched)
+        self.assertIsInstance(fetched.data, list)
+        self.assertTrue(len(fetched.data) == 0)
+
     def test_get_recipient_schema_local_bank_transfer_individual(self):
         schema = RecipientSchema.get('LocalBankTransfer', 'Individual', 'GBP', 'GB')
 

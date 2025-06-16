@@ -18,7 +18,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
-                     BusinessRecipientPropertySchemaField)
+                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
 
 
@@ -778,6 +778,10 @@ class PayIn(BaseModel):
         verbose_name = 'payin'
         verbose_name_plural = 'payins'
         url = '/payins'
+
+    def __init__(self, *args, **kwargs):
+        super(PayIn, self).__init__(*args, **kwargs)
+        self.disputes = RelatedManager(self, Dispute)
 
     @classmethod
     def cast(cls, result):
@@ -1557,8 +1561,29 @@ class CardPreAuthorizedDepositPayIn(BaseModel):
         verbose_name_plural = 'card_preauthorized_deposit_payins'
         url = {
             InsertQuery.identifier: '/payins/deposit-preauthorized/direct/full-capture',
-            SelectQuery.identifier: '/payins'
+            SelectQuery.identifier: '/payins',
+            'CREATE_WITHOUT_COMPLEMENT': '/payins/deposit-preauthorized/direct/full-capture',
+            'CREATE_PRIOR_TO_COMPLEMENT': '/payins/deposit-preauthorized/direct/capture-with-complement',
+            'CREATE_COMPLEMENT': '/payins/deposit-preauthorized/direct/complement'
         }
+
+    def create_without_complement(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.identifier = 'CREATE_WITHOUT_COMPLEMENT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
+    def create_prior_to_complement(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.identifier = 'CREATE_PRIOR_TO_COMPLEMENT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
+
+    def create_complement(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.identifier = 'CREATE_COMPLEMENT'
+        insert.insert_query = self.get_field_dict()
+        return insert.execute()
 
 
 class PaymentMethodMetadata(BaseModel):
@@ -1967,7 +1992,8 @@ class Transaction(BaseModel):
             'CARD_GET_TRANSACTIONS': '/cards/%(id)s/transactions',
             'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
             'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions',
-            'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions'
+            'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions',
+            'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/'
         }
 
     def __str__(self):
@@ -2379,6 +2405,30 @@ class ReportWallets(BaseModel):
         }
 
 
+class ReportV2(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+    report_date = DateTimeField(api_name='ReportDate')
+    status = CharField(api_name='Status')
+    result_code = CharField(api_name='ResultCode')
+    result_message = CharField(api_name='ResultMessage')
+    download_format = CharField(api_name='DownloadFormat', required=True)
+    download_url = CharField(api_name='DownloadURL')
+    report_type = CharField(api_name='ReportType', required=True)
+    sort = CharField(api_name='Sort')
+    after_date = DateTimeField(api_name='AfterDate', required=True)
+    before_date = DateTimeField(api_name='BeforeDate', required=True)
+    filters = ReportFilterField(api_name='Filters')
+    columns = ListField(api_name='Columns')
+
+    class Meta:
+        verbose_name = 'reportv2'
+        verbose_name_plural = 'reportsv2'
+        url = {
+            InsertQuery.identifier: '/reporting/reports',
+            SelectQuery.identifier: '/reporting/reports'
+        }
+
+
 class BankingAlias(BaseModel):
     tag = CharField(api_name='Tag')
     credited_user = ForeignKeyField(User, api_name='CreditedUserId')
@@ -2603,6 +2653,13 @@ class Deposit(BaseModel):
         select.identifier = 'GET_ALL_FOR_CARD'
         return select.all(*args, **kwargs)
 
+    @classmethod
+    def get_transactions(cls, deposit_id, *args, **kwargs):
+        kwargs['deposit_id'] = deposit_id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'DEPOSIT_GET_TRANSACTIONS'
+        return select.all(*args, **kwargs)
+
 
 class VirtualAccount(BaseModel):
     wallet_id = CharField(api_name='WalletId', required=True)
@@ -2773,3 +2830,15 @@ class PayoutMethod(BaseModel):
         kwargs['currency'] = currency
         select = SelectQuery(PayoutMethod, *args, **kwargs)
         return select.get("", *args, **kwargs)
+
+
+class UserDataFormatValidation(BaseModel):
+    company_number = CompanyNumberValidationField(api_name='CompanyNumber')
+
+    class Meta:
+        verbose_name = 'user_data_format_validation'
+        verbose_name_plural = 'user_data_format_validations'
+
+        url = {
+            InsertQuery.identifier: '/users/data-formats/validation'
+        }

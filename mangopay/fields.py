@@ -12,7 +12,8 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     ScopeBlocked, BrowserInfo, Shipping, CurrentState, FallbackReason, InstantPayout, CountryAuthorizationData, \
     PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
     VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative, IndividualRecipient, \
-    BusinessRecipient, RecipientPropertySchema, IndividualRecipientPropertySchema, BusinessRecipientPropertySchema
+    BusinessRecipient, RecipientPropertySchema, IndividualRecipientPropertySchema, BusinessRecipientPropertySchema, \
+    CompanyNumberValidation, ReportFilter
 
 
 class FieldDescriptor(object):
@@ -1181,5 +1182,53 @@ class BusinessRecipientPropertySchemaField(Field):
                 'BusinessName': value.business_name,
                 'Address': value.address
             }
+
+        return value
+
+
+class CompanyNumberValidationField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return CompanyNumberValidation(company_number=value.get('CompanyNumber', None),
+                                           country_code=value.get('CountryCode', None),
+                                           is_valid=value.get('IsValid', None),
+                                           validation_rules=value.get('ValidationRules', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(CompanyNumberValidationField, self).api_value(value)
+
+        if isinstance(value, CompanyNumberValidation):
+            value = {
+                'CompanyNumber': value.company_number,
+                'CountryCode': value.country_code,
+                'IsValid': value.is_valid,
+                'ValidationRules': value.validation_rules
+            }
+
+        return value
+
+
+class ReportFilterField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return ReportFilter(currency=value.get('Currency', None), user_id=value.get('UserId', None),
+                                wallet_id=value.get('WalletId', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(ReportFilterField, self).api_value(value)
+
+        if isinstance(value, ReportFilter):
+            result = {}
+            if value.currency is not None:
+                result['Currency'] = value.currency
+            if value.user_id is not None:
+                result['UserId'] = value.user_id
+            if value.wallet_id is not None:
+                result['WalletId'] = value.wallet_id
+            return result
 
         return value
