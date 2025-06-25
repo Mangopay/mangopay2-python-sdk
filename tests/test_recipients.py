@@ -34,7 +34,7 @@ class RecipientsTest(BaseTestLive):
 
     def test_get_user_recipients(self):
         self.create_new_recipient()
-        john = BaseTestLive.get_john_sca_owner()
+        john = BaseTestLive.get_john_sca_payer()
         fetched = Recipient.get_user_recipients(john.id)
 
         self.assertIsNotNone(fetched)
@@ -43,7 +43,7 @@ class RecipientsTest(BaseTestLive):
 
     def test_get_user_recipients_filtered_payout(self):
         self.create_new_recipient()
-        john = BaseTestLive.get_john_sca_owner()
+        john = BaseTestLive.get_john_sca_payer()
         fetched = Recipient.get_user_recipients(john.id, RecipientScope='PAYOUT')
 
         self.assertIsNotNone(fetched)
@@ -52,7 +52,7 @@ class RecipientsTest(BaseTestLive):
 
     def test_get_user_recipients_filtered_payin(self):
         self.create_new_recipient()
-        john = BaseTestLive.get_john_sca_owner()
+        john = BaseTestLive.get_john_sca_payer()
         fetched = Recipient.get_user_recipients(john.id, RecipientScope='PAYIN')
 
         self.assertIsNotNone(fetched)
@@ -98,7 +98,7 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNotNone(payout_methods.available_payout_methods)
 
     def test_validate(self):
-        john = BaseTestLive.get_john_sca_owner()
+        john = BaseTestLive.get_john_sca_payer()
         recipient = RecipientsTest.get_new_recipient_obj()
 
         # should pass
@@ -124,7 +124,7 @@ class RecipientsTest(BaseTestLive):
     @staticmethod
     def create_new_recipient():
         if RecipientsTest._recipient is None:
-            john = BaseTestLive.get_john_sca_owner()
+            john = BaseTestLive.get_john_sca_payer()
             recipient = RecipientsTest.get_new_recipient_obj()
             RecipientsTest._recipient = Recipient(**recipient.create(john.id))
         return RecipientsTest._recipient

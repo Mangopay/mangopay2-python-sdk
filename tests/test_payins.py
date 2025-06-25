@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+import string
 import unittest
 
 import requests
@@ -9,9 +11,10 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
     CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, \
-    RecurringPayPalPayInMIT
+    RecurringPayPalPayInMIT, PayInIntent
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
-                            GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
+                            GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo, PayInIntentExternalData,
+                            PayInIntentLineItem)
 from tests import settings
 from tests.resources import (Wallet, DirectPayIn, BankWirePayIn, PayPalPayIn,
                              PayconiqPayIn, CardWebPayIn, DirectDebitWebPayIn, constants, PaymentMethodMetadata)
@@ -2185,3 +2188,53 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("PAY_BY_BANK", result.payment_type)
         self.assertEqual("PAYIN", result.type)
+
+    def test_create_pay_in_intent_authorization(self):
+        created = BaseTestLive.create_new_pay_in_intent_authorization()
+        self.assertIsNotNone(created)
+        self.assertEqual('AUTHORIZED', created.status)
+
+    def test_create_pay_in_intent_full_capture(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+
+        external_data = PayInIntentExternalData()
+        external_data.external_processing_date = '01-10-2026'
+        external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        external_data.external_merchant_reference = 'Order-xyz-35e8490e-2ec9-4c82-978e-c712a3f5ba16'
+        external_data.external_provider_name = 'Stripe'
+        external_data.external_provider_payment_method = 'PAYPAL'
+
+        full_capture = PayInIntent()
+        full_capture.external_data = external_data
+
+        created = PayInIntent(**full_capture.create_capture(intent.id))
+
+        self.assertIsNotNone(created)
+        self.assertEqual('CAPTURED', created.status)
+
+    def test_create_pay_in_intent_partial_capture(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+
+        external_data = PayInIntentExternalData()
+        external_data.external_processing_date = '01-10-2026'
+        external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        external_data.external_merchant_reference = 'Order-xyz-35e8490e-2ec9-4c82-978e-c712a3f5ba16'
+        external_data.external_provider_name = 'Stripe'
+        external_data.external_provider_payment_method = 'PAYPAL'
+
+        line_item = PayInIntentLineItem()
+        line_item.id = intent.line_items[0]['Id']
+        line_item.amount = 1000
+        line_items = [line_item]
+
+        partial_capture = PayInIntent()
+        partial_capture.external_data = external_data
+        partial_capture.amount = 1000
+        partial_capture.currency = 'EUR'
+        partial_capture.platform_fees_amount = 0
+        partial_capture.line_items = line_items
+
+        created = PayInIntent(**partial_capture.create_capture(intent.id))
+
+        self.assertIsNotNone(created)
+        self.assertEqual('CAPTURED', created.status)

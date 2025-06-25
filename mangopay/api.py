@@ -60,11 +60,13 @@ class APIRequest(object):
     def get_rate_limits(self):
         return rate_limits
 
-    def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, without_client_id=False, **params):
-        return self.custom_request(method, url, data, idempotency_key, oauth_request, True, without_client_id, **params)
+    def request(self, method, url, data=None, idempotency_key=None, oauth_request=False, without_client_id=False,
+                is_v3=False, **params):
+        return self.custom_request(method, url, data, idempotency_key, oauth_request, True,
+                                   without_client_id, is_v3, **params)
 
     def custom_request(self, method, url, data=None, idempotency_key=None, oauth_request=False,
-                       is_mangopay_request=False, without_client_id=False, **params):
+                       is_mangopay_request=False, without_client_id=False, is_v3=False, **params):
         params = params or {}
 
         headers = {}
@@ -101,6 +103,9 @@ class APIRequest(object):
                 url = self._absolute_url(url, encoded_params)
         else:
             url = '%s?%s' % (url, encoded_params)
+
+        if is_v3:
+            url = url.replace('v2.01', 'V3.0')
 
         if data or data == {}:
             # truncated_data = truncatechars(copy.copy(data))

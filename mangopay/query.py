@@ -112,10 +112,11 @@ class SelectQuery(BaseQuery):
 class InsertQuery(BaseQuery):
     identifier = 'INSERT'
 
-    def __init__(self, model, idempotency_key=None, path_params=None, **kwargs):
+    def __init__(self, model, idempotency_key=None, path_params=None, is_v3=False, **kwargs):
         self.insert_query = kwargs
         self.idempotency_key = idempotency_key
         self.path_params = path_params
+        self.is_v3 = is_v3
         super(InsertQuery, self).__init__(model, 'POST')
 
     def parse_insert(self):
@@ -139,7 +140,8 @@ class InsertQuery(BaseQuery):
         result, data = handler.request(self.method,
                                        url,
                                        data=data,
-                                       idempotency_key=self.idempotency_key)
+                                       idempotency_key=self.idempotency_key,
+                                       is_v3=self.is_v3)
 
         return dict(self.parse_result(data, model_klass))
 

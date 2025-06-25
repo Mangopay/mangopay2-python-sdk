@@ -18,7 +18,8 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
-                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField)
+                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField,
+                     PayInIntentExternalDataField, PayInIntentBuyerField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
 
 
@@ -2842,3 +2843,43 @@ class UserDataFormatValidation(BaseModel):
         url = {
             InsertQuery.identifier: '/users/data-formats/validation'
         }
+
+
+class PayInIntent(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+    amount = IntegerField(api_name='Amount')
+    available_amount_to_split = IntegerField(api_name='AvailableAmountToSplit')
+    currency = CharField(api_name='Currency')
+    platform_fees_amount = IntegerField(api_name='PlatformFeesAmount')
+    status = CharField(api_name='Status')
+    next_actions = CharField(api_name='NextActions')
+    external_data = PayInIntentExternalDataField(api_name='ExternalData')
+    buyer = PayInIntentBuyerField(api_name='Buyer')
+    line_items = ListField(api_name='LineItems')
+    captures = ListField(api_name='Captures')
+    refunds = ListField(api_name='Refunds')
+    disputes = ListField(api_name='Disputes')
+    splits = ListField(api_name='Splits')
+    settlement_id = CharField(api_name='SettlementId')
+
+    class Meta:
+        verbose_name = 'pay_in_intent'
+        verbose_name_plural = 'pay_in_intents'
+
+        url = {
+            'CREATE_AUTHORIZATION': '/payins/intents',
+            'CREATE_CAPTURE': '/payins/intents/%(intent_id)s/captures'
+        }
+
+    def create_authorization(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, None, True, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE_AUTHORIZATION'
+        return insert.execute()
+
+    def create_capture(self, intent_id, idempotency_key=None, **kwargs):
+        path_params = {'intent_id': intent_id}
+        insert = InsertQuery(self, idempotency_key, path_params, True, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE_CAPTURE'
+        return insert.execute()
