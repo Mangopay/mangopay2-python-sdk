@@ -820,6 +820,7 @@ class PayIn(BaseModel):
             ("IDEAL", "WEB"): IdealPayIn,
             ("GIROPAY", "WEB"): GiropayPayIn,
             ("BANCONTACT", "WEB"): BancontactPayIn,
+            ("BIZUM", "WEB"): BizumPayIn,
             ("SWISH", "WEB"): SwishPayIn,
         }
 
@@ -1467,6 +1468,26 @@ class BancontactPayIn(PayIn):
         verbose_name_plural = 'bancontact_payins'
         url = {
             InsertQuery.identifier: '/payins/payment-methods/bancontact',
+            SelectQuery.identifier: '/payins'
+        }
+
+
+class BizumPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    return_url = CharField(api_name='ReturnURL')
+    phone = CharField(api_name='Phone')
+    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
+    tag = CharField(api_name='Tag')
+
+    class Meta:
+        verbose_name = 'bizum_payin'
+        verbose_name_plural = 'bizum_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/bizum',
             SelectQuery.identifier: '/payins'
         }
 
