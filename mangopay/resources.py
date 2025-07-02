@@ -616,6 +616,13 @@ class Card(BaseModel):
         select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
+    @classmethod
+    def get_transactions_by_fingerprint(cls, fingerprint, *args, **kwargs):
+        kwargs['fingerprint'] = fingerprint
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'TRANSACTIONS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
@@ -2014,7 +2021,8 @@ class Transaction(BaseModel):
             'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
             'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions',
             'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions',
-            'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/'
+            'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/',
+            'TRANSACTIONS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s/transactions'
         }
 
     def __str__(self):
