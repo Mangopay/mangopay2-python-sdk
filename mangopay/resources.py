@@ -2022,7 +2022,8 @@ class Transaction(BaseModel):
             'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions',
             'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions',
             'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/',
-            'TRANSACTIONS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s/transactions'
+            'TRANSACTIONS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s/transactions',
+            'DISPUTE_GET_TRANSACTIONS': '/disputes/%(dispute_id)s/transactions/'
         }
 
     def __str__(self):
@@ -2195,6 +2196,13 @@ class Dispute(BaseModel):
     def get_pending_settlement(cls, *args, **kwargs):
         select = SelectQuery(cls, *args, **kwargs)
         select.identifier = 'PENDING_SETTLEMENT'
+        return select.all(*args, **kwargs)
+
+    @classmethod
+    def get_transactions(cls, dispute_id, *args, **kwargs):
+        kwargs['dispute_id'] = dispute_id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'DISPUTE_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
 
