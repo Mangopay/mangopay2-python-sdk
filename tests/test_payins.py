@@ -8,7 +8,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
-    CardRegistration, BancontactPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, \
+    CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, \
     RecurringPayPalPayInMIT
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo)
@@ -1872,6 +1872,80 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("REGULAR", result.nature)
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("BCMC", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_BizumWeb_CreateWithPhone(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = BizumPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 200
+        pay_in.fees.currency = 'EUR'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 2000
+        pay_in.debited_funds.currency = 'EUR'
+        pay_in.statement_descriptor = 'Example123'
+        pay_in.phone = '+34700000000'
+        pay_in.tag = 'Bizum PayIn'
+
+        result = BizumPayIn(**pay_in.save())
+        fetched = BizumPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+        self.assertIsNotNone(result.phone)
+        self.assertIsNone(result.return_url)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("BIZUM", result.payment_type)
+        self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_BizumWeb_CreateWithReturnUrl(self):
+        user = BaseTestLive.get_john(True)
+
+        # create wallet
+        credited_wallet = Wallet()
+        credited_wallet.owners = (user,)
+        credited_wallet.currency = 'EUR'
+        credited_wallet.description = 'WALLET IN EUR'
+        credited_wallet = Wallet(**credited_wallet.save())
+
+        pay_in = BizumPayIn()
+        pay_in.author = user
+        pay_in.credited_wallet = credited_wallet
+        pay_in.fees = Money()
+        pay_in.fees.amount = 200
+        pay_in.fees.currency = 'EUR'
+        pay_in.debited_funds = Money()
+        pay_in.debited_funds.amount = 2000
+        pay_in.debited_funds.currency = 'EUR'
+        pay_in.statement_descriptor = 'Example123'
+        pay_in.return_url = 'https://docs.mangopay.com/please-ignore'
+        pay_in.tag = 'Bizum PayIn'
+
+        result = BizumPayIn(**pay_in.save())
+        fetched = BizumPayIn().get(result.id)
+
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(result.id, fetched.id)
+        self.assertIsNone(result.phone)
+        self.assertIsNotNone(result.return_url)
+
+        self.assertEqual("CREATED", result.status)
+        self.assertEqual("WEB", result.execution_type)
+        self.assertEqual("BIZUM", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
     def test_PayIns_Legacy_IdealWeb_Create(self):

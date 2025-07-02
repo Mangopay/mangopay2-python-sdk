@@ -352,6 +352,7 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("IDEAL", "ideal", "Ideal"),
     ("GIROPAY", "giropay", "Giropay"),
     ("BCMC", "bancontact", "Bancontact"),
+    ("BIZUM", "bizum", "Bizum"),
     ("SWISH", "swish", "Swish"),
     ("TWINT", "twint", "Twint")
 )
