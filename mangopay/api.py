@@ -65,6 +65,9 @@ class APIRequest(object):
         return self.custom_request(method, url, data, idempotency_key, oauth_request, True,
                                    without_client_id, is_v3, **params)
 
+    def multipart_request(self, method, url, file, idempotency_key=None, oauth_request=False, is_v3=False):
+        return self.custom_multipart_request(method, url, file, idempotency_key, oauth_request, is_v3)
+
     def custom_request(self, method, url, data=None, idempotency_key=None, oauth_request=False,
                        is_mangopay_request=False, without_client_id=False, is_v3=False, **params):
         params = params or {}
@@ -178,6 +181,93 @@ class APIRequest(object):
                     if six.PY3:
                         content = content.decode('utf-8')
 
+                    return result, json.loads(content)
+                except ValueError:
+                    if result.content.startswith(b'data='):
+                        return result.content
+                    self._create_decodeerror(result, url=url)
+            else:
+                self._create_decodeerror(result, url=url)
+
+    def custom_multipart_request(self, method, url, file, idempotency_key=None, oauth_request=False, is_v3=False):
+        if not isinstance(file, bytes):
+            raise TypeError("The 'file' parameter must be of type 'bytes'.")
+
+        headers = {'User-Agent': 'Mangopay-SDK/' + str(
+            mangopay.package_version) + ' (Python/' + platform.python_version() + ')'}
+
+        if oauth_request:
+            headers['Authorization'] = self.auth_manager.basic_token()
+        else:
+            headers['Authorization'] = self.auth_manager.get_token()
+
+        if idempotency_key:
+            headers['Idempotency-Key'] = idempotency_key
+
+        if self.uk_header_flag:
+            headers['x-tenant-id'] = 'uk'
+
+        if oauth_request:
+            url = self.api_url + url
+        else:
+            url = self._absolute_url(url, '')
+
+        if is_v3:
+            url = url.replace('v2.01', 'V3.0')
+
+        files = {'file': ('settlement_file.csv', file)}
+
+        logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- file: %s', url, headers, 'provided' if file else 'none')
+        ts = time.time()
+
+        request_started.send(url=url, data=None, headers=headers, method=method)
+
+        try:
+            result = requests_session.request(method, url,
+                                              files=files,
+                                              headers=headers,
+                                              timeout=self.timeout,
+                                              proxies=self.proxies)
+        except ConnectionError as e:
+            msg = f'{type(e).__name__}: {e}' if str(e) else type(e).__name__
+            reraise_as(APIError(msg))
+
+        except Timeout as e:
+            msg = f'{type(e).__name__}: {e}' if str(e) else type(e).__name__
+            reraise_as(APIError(msg))
+
+        laps = time.time() - ts
+
+        request_finished.send(url=url,
+                              data=None,
+                              headers=headers,
+                              method=method,
+                              result=result,
+                              laps=laps)
+
+        logger.debug('DATA[OUT -> %s][%2.3f seconds]\n\t- status_code: %s\n\t- headers: %s\n\t- content: %s',
+                     url,
+                     laps,
+                     result.status_code,
+                     result.headers,
+                     result.text if hasattr(result, 'text') else result.content
+                     )
+
+        self.read_response_headers(result.headers)
+
+        if result.status_code not in (requests.codes.ok, requests.codes.not_found,
+                                      requests.codes.created, requests.codes.accepted,
+                                      requests.codes.no_content):
+            self._create_apierror(result, url=url, data=None, method=method)
+        elif result.status_code == requests.codes.no_content or (
+                result.status_code == requests.codes.ok and result.content == b''):
+            return result, None
+        else:
+            if result.content:
+                try:
+                    content = result.content
+                    if six.PY3:
+                        content = content.decode('utf-8')
                     return result, json.loads(content)
                 except ValueError:
                     if result.content.startswith(b'data='):

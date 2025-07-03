@@ -2238,3 +2238,9 @@ class PayInsTestLive(BaseTestLive):
 
         self.assertIsNotNone(created)
         self.assertEqual('CAPTURED', created.status)
+
+    def test_get_pay_in_intent(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        fetched = PayInIntent.get(intent.id)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(fetched.status, intent.status)
