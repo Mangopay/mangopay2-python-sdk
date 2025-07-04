@@ -1356,3 +1356,133 @@ class ReportFilter(object):
             "UserId": self.user_id,
             "WalletId": self.wallet_id
         }
+
+
+@add_camelcase_aliases
+class PayInIntentExternalData(object):
+    def __init__(self, external_processing_date=None, external_provider_reference=None,
+                 external_merchant_reference=None, external_provider_name=None, external_provider_payment_method=None):
+        self.external_processing_date = external_processing_date
+        self.external_provider_reference = external_provider_reference
+        self.external_merchant_reference = external_merchant_reference
+        self.external_provider_name = external_provider_name
+        self.external_provider_payment_method = external_provider_payment_method
+
+    def __str__(self):
+        return 'PayInIntentExternalData: %s %s %s %s %s' % \
+            (self.external_processing_date, self.external_provider_reference, self.external_merchant_reference,
+             self.external_provider_name, self.external_provider_payment_method)
+
+    def __eq__(self, other):
+        if isinstance(other, PayInIntentExternalData):
+            stat = ((self.external_processing_date == other.external_processing_date) and
+                    (self.external_provider_reference == other.external_provider_reference) and
+                    (self.external_merchant_reference == other.external_merchant_reference) and
+                    (self.external_provider_name == other.external_provider_name) and
+                    (self.external_provider_payment_method == other.external_provider_payment_method))
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "ExternalProcessingDate": self.external_processing_date,
+            "ExternalProviderReference": self.external_provider_reference,
+            "ExternalMerchantReference": self.external_merchant_reference,
+            "ExternalProviderName": self.external_provider_name,
+            "ExternalProviderPaymentMethod": self.external_provider_payment_method
+        }
+
+
+@add_camelcase_aliases
+class PayInIntentBuyer(object):
+    def __init__(self, id=None):
+        self.id = id
+
+    def __str__(self):
+        return 'PayInIntentBuyer: %s' % self.id
+
+    def __eq__(self, other):
+        if isinstance(other, PayInIntentBuyer):
+            stat = (self.id == other.id)
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "Id": self.id
+        }
+
+
+@add_camelcase_aliases
+class PayInIntentLineItem(object):
+    def __init__(self, id=None, seller=None, sku=None, name=None, description=None, quantity=None, unit_amount=None, amount=None,
+                 tax_amount=None, discount_amount=None, category=None, shipping_address=None,
+                 total_line_item_amount=None, canceled_amount=None, captured_amount=None, refunded_amount=None,
+                 disputed_amount=None, split_amount=None):
+        self.id = id
+        self.seller = seller
+        self.sku = sku
+        self.name = name
+        self.description = description
+        self.quantity = quantity
+        self.unit_amount = unit_amount
+        self.amount = amount
+        self.tax_amount = tax_amount
+        self.discount_amount = discount_amount
+        self.category = category
+        self.shipping_address = shipping_address
+        self.total_line_item_amount = total_line_item_amount
+        self.canceled_amount = canceled_amount
+        self.captured_amount = captured_amount
+        self.refunded_amount = refunded_amount
+        self.disputed_amount = disputed_amount
+        self.split_amount = split_amount
+
+    def __str__(self):
+        return 'PayInIntentLineItem: %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s' % \
+            (self.id, self.seller, self.sku, self.name, self.description, self.quantity, self.unit_amount, self.amount,
+             self.tax_amount, self.discount_amount, self.category, self.shipping_address, self.total_line_item_amount,
+             self.canceled_amount, self.captured_amount, self.refunded_amount, self.disputed_amount, self.split_amount)
+
+    def to_api_json(self):
+        return {
+            "Id": self.id,
+            "Seller": self.seller,
+            "Sku": self.sku,
+            "Name": self.name,
+            "Description": self.description,
+            "Quantity": self.quantity,
+            "UnitAmount": self.unit_amount,
+            "Amount": self.amount,
+            "TaxAmount": self.tax_amount,
+            "DiscountAmount": self.discount_amount,
+            "Category": self.category,
+            "ShippingAddress": self.shipping_address,
+            "TotalLineItemAmount": self.total_line_item_amount,
+            "CanceledAmount": self.canceled_amount,
+            "CapturedAmount": self.captured_amount,
+            "RefundedAmount": self.refunded_amount,
+            "DisputedAmount": self.disputed_amount,
+            "SplitAmount": self.split_amount
+        }
+
+
+@add_camelcase_aliases
+class PayInIntentSeller(object):
+    def __init__(self, author_id=None, wallet_id=None, fees_amount=None, transfer_date=None):
+        self.author_id = author_id
+        self.wallet_id = wallet_id
+        self.fees_amount = fees_amount
+        self.transfer_date = transfer_date
+
+    def __str__(self):
+        return 'PayInIntentSeller: %s %s %s %s' % \
+            (self.author_id, self.wallet_id, self.fees_amount, self.transfer_date)
+
+    def to_api_json(self):
+        return {
+            "AuthorId": self.author_id,
+            "WalletId": self.wallet_id,
+            "FeesAmount": self.fees_amount,
+            "TransferDate": self.transfer_date
+        }

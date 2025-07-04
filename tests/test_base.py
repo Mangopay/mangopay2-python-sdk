@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+import string
 import time
 import unittest
 from datetime import date
@@ -11,8 +13,9 @@ from mangopay import APIRequest
 from mangopay import get_default_handler
 from mangopay.auth import AuthorizationTokenManager, StaticStorageStrategy
 from mangopay.resources import BankAccount, Document, ReportTransactions, UboDeclaration, Ubo, Deposit, DirectPayIn, \
-    VirtualAccount, NaturalUserSca, LegalUserSca
-from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo, LegalRepresentative
+    VirtualAccount, NaturalUserSca, LegalUserSca, PayInIntent
+from mangopay.utils import Address, ReportTransactionsFilters, Birthplace, BrowserInfo, LegalRepresentative, \
+    PayInIntentLineItem, PayInIntentBuyer, PayInIntentSeller, PayInIntentExternalData
 from tests import settings
 from tests.mocks import RegisteredMocks
 from tests.resources import (NaturalUser, LegalUser, Wallet,
@@ -770,6 +773,40 @@ class BaseTestLive(unittest.TestCase):
         virtual_account.virtual_account_purpose = 'COLLECTION'
 
         return VirtualAccount(**virtual_account.save())
+
+    @staticmethod
+    def create_new_pay_in_intent_authorization():
+        user = BaseTestLive.get_john()
+        wallet = BaseTestLive.get_johns_wallet()
+
+        external_data = PayInIntentExternalData()
+        external_data.external_processing_date = '01-10-2024'
+        external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        external_data.external_merchant_reference = 'Order-xyz-35e8490e-2ec9-4c82-978e-c712a3f5ba16'
+        external_data.external_provider_name = 'Stripe'
+        external_data.external_provider_payment_method = 'PAYPAL'
+
+        seller = PayInIntentSeller()
+        seller.wallet_id = wallet.id
+        seller.transfer_date = '13-11-2030'
+
+        buyer = PayInIntentBuyer()
+        buyer.id = user.id
+
+        line_item = PayInIntentLineItem()
+        line_item.seller = seller
+        line_item.sku = 'item-123456'
+        line_item.quantity = 1
+        line_item.unit_amount = 1000
+        line_items = [line_item]
+
+        intent_authorization = PayInIntent()
+        intent_authorization.amount = 1000
+        intent_authorization.currency = 'EUR'
+        intent_authorization.external_data = external_data
+        intent_authorization.line_items = line_items
+        intent_authorization.buyer = buyer
+        return PayInIntent(**intent_authorization.create_authorization())
 
     def test_handler(self):
         api_url = "test_api_url"
