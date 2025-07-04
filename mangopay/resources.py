@@ -618,6 +618,13 @@ class Card(BaseModel):
         select.identifier = 'CARD_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
+    @classmethod
+    def get_transactions_by_fingerprint(cls, fingerprint, *args, **kwargs):
+        kwargs['fingerprint'] = fingerprint
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'TRANSACTIONS_FOR_FINGERPRINT'
+        return select.all(*args, **kwargs)
+
     class Meta:
         verbose_name = 'card'
         verbose_name_plural = 'cards'
@@ -822,6 +829,7 @@ class PayIn(BaseModel):
             ("IDEAL", "WEB"): IdealPayIn,
             ("GIROPAY", "WEB"): GiropayPayIn,
             ("BANCONTACT", "WEB"): BancontactPayIn,
+            ("BIZUM", "WEB"): BizumPayIn,
             ("SWISH", "WEB"): SwishPayIn,
         }
 
@@ -1474,6 +1482,26 @@ class BancontactPayIn(PayIn):
         }
 
 
+class BizumPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId', required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    fees = MoneyField(api_name='Fees', required=True)
+    credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
+    statement_descriptor = CharField(api_name='StatementDescriptor')
+    return_url = CharField(api_name='ReturnURL')
+    phone = CharField(api_name='Phone')
+    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
+    tag = CharField(api_name='Tag')
+
+    class Meta:
+        verbose_name = 'bizum_payin'
+        verbose_name_plural = 'bizum_payins'
+        url = {
+            InsertQuery.identifier: '/payins/payment-methods/bizum',
+            SelectQuery.identifier: '/payins'
+        }
+
+
 class CardWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
@@ -1996,7 +2024,9 @@ class Transaction(BaseModel):
             'BANK_ACCOUNT_GET_TRANSACTIONS': '/bankaccounts/%(id)s/transactions',
             'PRE_AUTHORIZATION_TRANSACTIONS': '/preauthorizations/%(id)s/transactions',
             'CLIENT_WALLET_TRANSACTIONS': '/clients/wallets/%(fund_type)s/%(currency)s/transactions',
-            'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/'
+            'DEPOSIT_GET_TRANSACTIONS': '/deposit-preauthorizations/%(deposit_id)s/transactions/',
+            'TRANSACTIONS_FOR_FINGERPRINT': '/cards/fingerprints/%(fingerprint)s/transactions',
+            'DISPUTE_GET_TRANSACTIONS': '/disputes/%(dispute_id)s/transactions/'
         }
 
     def __str__(self):
@@ -2169,6 +2199,13 @@ class Dispute(BaseModel):
     def get_pending_settlement(cls, *args, **kwargs):
         select = SelectQuery(cls, *args, **kwargs)
         select.identifier = 'PENDING_SETTLEMENT'
+        return select.all(*args, **kwargs)
+
+    @classmethod
+    def get_transactions(cls, dispute_id, *args, **kwargs):
+        kwargs['dispute_id'] = dispute_id
+        select = SelectQuery(Transaction, *args, **kwargs)
+        select.identifier = 'DISPUTE_GET_TRANSACTIONS'
         return select.all(*args, **kwargs)
 
 

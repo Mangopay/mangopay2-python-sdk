@@ -2,7 +2,8 @@ from .utils import Choices
 
 USER_TYPE_CHOICES = Choices(
     ('NATURAL', 'natural', 'Natural user'),
-    ('LEGAL', 'legal', 'Legal user')
+    ('LEGAL', 'legal', 'Legal user'),
+    ('PLATFORM', 'platform', 'Platform user')
 )
 
 LEGAL_USER_TYPE_CHOICES = Choices(
@@ -178,6 +179,10 @@ EVENT_TYPE_CHOICES = Choices(
     ('UBO_DECLARATION_INCOMPLETE', 'ubo_declaration_incomplete', 'Ubo Declaration Incomplete'),
     ('USER_KYC_LIGHT', 'user_kyc_light', 'User Kyc Light'),
 
+    ('SCA_ENROLLMENT_SUCCEEDED', 'sca_enrollment_succeeded', 'Sca enrollment succeeded'),
+    ('SCA_ENROLLMENT_FAILED', 'sca_enrollment_failed', 'Sca enrollment failed'),
+    ('SCA_ENROLLMENT_EXPIRED', 'sca_enrollment_expired', 'Sca enrollment expired'),
+
     ('VIRTUAL_ACCOUNT_ACTIVE', 'virtual_account_active', 'Virtual Account Active'),
     ('VIRTUAL_ACCOUNT_BLOCKED', 'virtual_account_blocked', 'Virtual Account Blocked'),
     ('VIRTUAL_ACCOUNT_CLOSED', 'virtual_account_closed', 'Virtual Account Closed'),
@@ -221,6 +226,10 @@ EVENT_TYPE_CHOICES = Choices(
     ('QUOTED_CONVERSION_CREATED', 'quoted_conversion_created', 'Quoted Conversion Created'),
     ('QUOTED_CONVERSION_SUCCEEDED', 'quoted_conversion_succeeded', 'Quoted Conversion Succeeded'),
     ('QUOTED_CONVERSION_FAILED', 'quoted_conversion_failed', 'Quoted Conversion Failed'),
+
+    ('USER_CATEGORY_UPDATED_TO_OWNER', 'user_category_updated_to_owner', 'User category updated to owner'),
+    ('USER_CATEGORY_UPDATED_TO_PAYER', 'user_category_updated_to_payer', 'User category updated to payer'),
+    ('USER_CATEGORY_UPDATED_TO_PLATFORM', 'user_category_updated_to_platform', 'User category updated to platform'),
 
     ('REPORT_GENERATED', 'report_generated', 'Report Generated'),
     ('REPORT_FAILED', 'report_failed', 'Report Failed')
@@ -343,6 +352,7 @@ PAYIN_PAYMENT_TYPE = Choices(
     ("IDEAL", "ideal", "Ideal"),
     ("GIROPAY", "giropay", "Giropay"),
     ("BCMC", "bancontact", "Bancontact"),
+    ("BIZUM", "bizum", "Bizum"),
     ("SWISH", "swish", "Swish"),
     ("TWINT", "twint", "Twint")
 )
