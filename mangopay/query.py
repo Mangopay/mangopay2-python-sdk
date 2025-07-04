@@ -149,10 +149,11 @@ class InsertQuery(BaseQuery):
 class InsertMultipartQuery(BaseQuery):
     identifier = 'INSERT_MULTIPART'
 
-    def __init__(self, model, file, idempotency_key=None, **kwargs):
+    def __init__(self, model, file, file_name, idempotency_key=None, **kwargs):
         self.insert_query = kwargs
         self.idempotency_key = idempotency_key
         self.file = file
+        self.file_name = file_name
         super(InsertMultipartQuery, self).__init__(model, 'POST')
 
     def execute(self, handler=None, model_klass=None, is_v3=False):
@@ -161,6 +162,7 @@ class InsertMultipartQuery(BaseQuery):
         result, data = handler.multipart_request(self.method,
                                                  url,
                                                  file=self.file,
+                                                 file_name=self.file_name,
                                                  idempotency_key=self.idempotency_key,
                                                  is_v3=is_v3)
         return dict(self.parse_result(data, model_klass))
@@ -202,10 +204,11 @@ class UpdateQuery(BaseQuery):
 class UpdateMultipartQuery(BaseQuery):
     identifier = 'UPDATE_MULTIPART'
 
-    def __init__(self, model, file, reference, **kwargs):
+    def __init__(self, model, file, file_name, reference, **kwargs):
         self.update_query = kwargs
         self.reference = reference
         self.file = file
+        self.file_name = file_name
         super(UpdateMultipartQuery, self).__init__(model, 'PUT')
 
     def execute(self, handler=None, is_v3=False):
@@ -217,6 +220,7 @@ class UpdateMultipartQuery(BaseQuery):
         result, data = handler.multipart_request(self.method,
                                                  url,
                                                  file=self.file,
+                                                 file_name=self.file_name,
                                                  is_v3=is_v3)
 
         return self.parse_result(data)

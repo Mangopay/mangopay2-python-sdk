@@ -65,8 +65,8 @@ class APIRequest(object):
         return self.custom_request(method, url, data, idempotency_key, oauth_request, True,
                                    without_client_id, is_v3, **params)
 
-    def multipart_request(self, method, url, file, idempotency_key=None, oauth_request=False, is_v3=False):
-        return self.custom_multipart_request(method, url, file, idempotency_key, oauth_request, is_v3)
+    def multipart_request(self, method, url, file, file_name, idempotency_key=None, oauth_request=False, is_v3=False):
+        return self.custom_multipart_request(method, url, file, file_name, idempotency_key, oauth_request, is_v3)
 
     def custom_request(self, method, url, data=None, idempotency_key=None, oauth_request=False,
                        is_mangopay_request=False, without_client_id=False, is_v3=False, **params):
@@ -189,7 +189,7 @@ class APIRequest(object):
             else:
                 self._create_decodeerror(result, url=url)
 
-    def custom_multipart_request(self, method, url, file, idempotency_key=None, oauth_request=False, is_v3=False):
+    def custom_multipart_request(self, method, url, file, file_name, idempotency_key=None, oauth_request=False, is_v3=False):
         if not isinstance(file, bytes):
             raise TypeError("The 'file' parameter must be of type 'bytes'.")
 
@@ -215,7 +215,7 @@ class APIRequest(object):
         if is_v3:
             url = url.replace('v2.01', 'V3.0')
 
-        files = {'file': ('settlement_file.csv', file)}
+        files = {'file': (file_name, file)}
 
         logger.debug('DATA[IN -> %s]\n\t- headers: %s\n\t- file: %s', url, headers, 'provided' if file else 'none')
         ts = time.time()

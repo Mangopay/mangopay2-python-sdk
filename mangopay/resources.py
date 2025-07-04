@@ -2916,7 +2916,7 @@ class Settlement(BaseModel):
 
     @classmethod
     def upload(cls, file, idempotency_key=None, **kwargs):
-        insert = InsertMultipartQuery(Settlement, file, idempotency_key, **kwargs)
+        insert = InsertMultipartQuery(Settlement, file, 'settlement_file.csv', idempotency_key, **kwargs)
         insert.identifier = 'UPLOAD'
         return insert.execute(is_v3=True)
 
@@ -2928,6 +2928,6 @@ class Settlement(BaseModel):
 
     @classmethod
     def update_file(cls, settlement_id, file, **kwargs):
-        update = UpdateMultipartQuery(Settlement, file, settlement_id, **kwargs)
+        update = UpdateMultipartQuery(Settlement, file, 'settlement_file.csv', settlement_id, **kwargs)
         update.identifier = 'UPDATE'
         return update.execute(is_v3=True)
