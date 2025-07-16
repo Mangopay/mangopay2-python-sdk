@@ -186,17 +186,20 @@ class UpdateQuery(BaseQuery):
 
         return pairs
 
-    def execute(self, handler=None):
+    def execute(self, handler=None, is_v3=False):
         handler = handler or self.handler
 
         data = self.parse_update()
 
         meta_url = self.parse_url(self.model._meta.url, self.update_query)
-        url = '%s/%s' % (meta_url, self.reference)
+        if self.reference is not None:
+            url = '%s/%s' % (meta_url, self.reference)
+        else:
+            url = meta_url
 
         result, data = handler.request(self.method,
                                        url,
-                                       data=data)
+                                       data=data, is_v3=is_v3)
 
         return self.parse_result(data)
 

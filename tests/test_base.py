@@ -780,7 +780,7 @@ class BaseTestLive(unittest.TestCase):
         wallet = BaseTestLive.get_johns_wallet()
 
         external_data = PayInIntentExternalData()
-        external_data.external_processing_date = '01-10-2024'
+        external_data.external_processing_date = 1728133765
         external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
         external_data.external_merchant_reference = 'Order-xyz-35e8490e-2ec9-4c82-978e-c712a3f5ba16'
         external_data.external_provider_name = 'Stripe'
@@ -788,7 +788,7 @@ class BaseTestLive(unittest.TestCase):
 
         seller = PayInIntentSeller()
         seller.wallet_id = wallet.id
-        seller.transfer_date = '13-11-2030'
+        seller.transfer_date = 1728133765
 
         buyer = PayInIntentBuyer()
         buyer.id = user.id

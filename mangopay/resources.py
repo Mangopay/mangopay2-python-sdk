@@ -2908,7 +2908,8 @@ class PayInIntent(BaseModel):
         url = {
             'CREATE_AUTHORIZATION': '/payins/intents',
             'CREATE_CAPTURE': '/payins/intents/%(intent_id)s/captures',
-            'GET': '/payins/intents'
+            'GET': '/payins/intents',
+            'CANCEL': '/payins/intents/%(id)s/cancel'
         }
 
     def create_authorization(self, idempotency_key=None, **kwargs):
@@ -2930,11 +2931,18 @@ class PayInIntent(BaseModel):
         select.identifier = 'GET'
         return select.get(pay_in_intent_id, is_v3=True, *args, **kwargs)
 
+    @classmethod
+    def cancel(cls, pay_in_intent_id, **kwargs):
+        kwargs['id'] = pay_in_intent_id
+        update = UpdateQuery(PayInIntent, None, **kwargs)
+        update.identifier = 'CANCEL'
+        return update.execute(is_v3=True)
+
 
 class Settlement(BaseModel):
     settlement_id = CharField(api_name='SettlementId')
     status = CharField(api_name='Status')
-    settlement_date = CharField(api_name='SettlementDate')
+    settlement_date = DateTimeField(api_name='SettlementDate')
     external_provider_name = CharField(api_name='ExternalProviderName')
     declared_intent_amount = IntegerField(api_name='DeclaredIntentAmount')
     external_processor_fees_amount = IntegerField(api_name='ExternalProcessorFeesAmount')

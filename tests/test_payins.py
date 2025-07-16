@@ -10,7 +10,8 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
-    CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, RecurringPayPalPayInCIT, \
+    CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, \
+    RecurringPayPalPayInCIT, \
     RecurringPayPalPayInMIT, PayInIntent
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo, PayInIntentExternalData,
@@ -2318,3 +2319,8 @@ class PayInsTestLive(BaseTestLive):
         fetched = PayInIntent.get(intent.id)
         self.assertIsNotNone(fetched)
         self.assertEqual(fetched.status, intent.status)
+
+    def test_cancel_pay_in_intent(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        canceled = PayInIntent(**PayInIntent.cancel(intent.id))
+        self.assertEqual(canceled.status, 'CANCELED')
