@@ -2322,5 +2322,11 @@ class PayInsTestLive(BaseTestLive):
 
     def test_cancel_pay_in_intent(self):
         intent = BaseTestLive.create_new_pay_in_intent_authorization()
-        canceled = PayInIntent(**PayInIntent.cancel(intent.id))
+        external_data = PayInIntentExternalData()
+        external_data.external_processing_date = 1728133765
+        external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        cancel_details = {
+            'external_data': external_data
+        }
+        canceled = PayInIntent(**PayInIntent.cancel(intent.id, **cancel_details))
         self.assertEqual(canceled.status, 'CANCELED')
