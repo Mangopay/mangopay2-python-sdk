@@ -2931,12 +2931,12 @@ class PayInIntent(BaseModel):
         select.identifier = 'GET'
         return select.get(pay_in_intent_id, is_v3=True, *args, **kwargs)
 
-    @classmethod
-    def cancel(cls, pay_in_intent_id, **kwargs):
-        kwargs['id'] = pay_in_intent_id
-        update = UpdateQuery(PayInIntent, None, **kwargs)
-        update.identifier = 'CANCEL'
-        return update.execute(is_v3=True)
+    # @classmethod
+    # def cancel(cls, pay_in_intent_id, **kwargs):
+    #     kwargs['id'] = pay_in_intent_id
+    #     update = UpdateQuery(PayInIntent, None, **kwargs)
+    #     update.identifier = 'CANCEL'
+    #     return update.execute(is_v3=True)
 
 
 class Settlement(BaseModel):
