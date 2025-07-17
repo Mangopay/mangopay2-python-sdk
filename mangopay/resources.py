@@ -2976,3 +2976,22 @@ class Settlement(BaseModel):
         update = UpdateMultipartQuery(Settlement, file, 'settlement_file.csv', settlement_id, **kwargs)
         update.identifier = 'UPDATE'
         return update.execute(is_v3=True)
+
+
+class PayInIntentSplit(BaseModel):
+    splits = ListField(api_name='Splits')
+
+    class Meta:
+        verbose_name = 'pay_in_intent_split'
+        verbose_name_plural = 'pay_in_intent_splits'
+
+        url = {
+            'CREATE': '/payins/intents/%(intent_id)s/splits'
+        }
+
+    def create(self, intent_id, idempotency_key=None, **kwargs):
+        path_params = {'intent_id': intent_id}
+        insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE'
+        return insert.execute(is_v3=True)

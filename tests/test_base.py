@@ -788,6 +788,7 @@ class BaseTestLive(unittest.TestCase):
 
         seller = PayInIntentSeller()
         seller.wallet_id = wallet.id
+        seller.author_id = wallet.owners_ids[0]
         seller.transfer_date = 1728133765
 
         buyer = PayInIntentBuyer()

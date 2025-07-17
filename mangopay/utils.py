@@ -1486,3 +1486,33 @@ class PayInIntentSeller(object):
             "FeesAmount": self.fees_amount,
             "TransferDate": self.transfer_date
         }
+
+@add_camelcase_aliases
+class IntentSplit(object):
+    def __init__(self, line_item_id=None, wallet_id=None, seller_id=None, split_amount=None, fees_amount=None,
+                 transfer_date=None, description=None, status=None):
+        self.line_item_id = line_item_id
+        self.wallet_id = wallet_id
+        self.seller_id = seller_id
+        self.split_amount = split_amount
+        self.fees_amount = fees_amount
+        self.description = description
+        self.status = status
+        self.transfer_date = transfer_date
+
+    def __str__(self):
+        return 'PayInIntentSplit: %s %s %s %s %s %s %s %s' % \
+            (self.line_item_id, self.wallet_id, self.seller_id, self.split_amount, self.fees_amount, self.description,
+             self.status, self.transfer_date)
+
+    def to_api_json(self):
+        return {
+            "LineItemId": self.line_item_id,
+            "WalletId": self.wallet_id,
+            "SellerId": self.seller_id,
+            "SplitAmount": self.split_amount,
+            "FeesAmount": self.fees_amount,
+            "Description": self.description,
+            "Status": self.status,
+            "TransferDate": self.transfer_date
+        }
