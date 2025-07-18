@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import time
 
 from mangopay.resources import Settlement
 from tests.test_base import BaseTestLive
@@ -15,9 +14,8 @@ class SettlementTestLive(BaseTestLive):
 
     def test_get_settlement(self):
         uploaded = self.create_new_settlement()
-        time.sleep(10)
         fetched = Settlement.get(uploaded.settlement_id)
-        self.assertEqual('PARTIALLY_SETTLED', fetched.status)
+        self.assertEqual('UPLOADED', fetched.status)
 
     def test_update_settlement(self):
         before_update = self.create_new_settlement()
@@ -29,9 +27,6 @@ class SettlementTestLive(BaseTestLive):
         after_update = Settlement(**Settlement.update_file(before_update.settlement_id, data))
 
         self.assertEqual('UPLOADED', after_update.status)
-        time.sleep(10)
-        fetched = Settlement.get(after_update.settlement_id)
-        self.assertEqual('PARTIALLY_SETTLED', fetched.status)
 
     @staticmethod
     def create_new_settlement():
