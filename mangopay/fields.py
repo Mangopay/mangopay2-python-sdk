@@ -13,7 +13,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
     VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative, IndividualRecipient, \
     BusinessRecipient, RecipientPropertySchema, IndividualRecipientPropertySchema, BusinessRecipientPropertySchema, \
-    CompanyNumberValidation, ReportFilter
+    CompanyNumberValidation, ReportFilter, PayInIntentExternalData, PayInIntentBuyer
 
 
 class FieldDescriptor(object):
@@ -1229,6 +1229,57 @@ class ReportFilterField(Field):
                 result['UserId'] = value.user_id
             if value.wallet_id is not None:
                 result['WalletId'] = value.wallet_id
+            return result
+
+        return value
+
+
+class PayInIntentExternalDataField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PayInIntentExternalData(external_processing_date=value.get('ExternalProcessingDate', None),
+                                           external_provider_reference=value.get('ExternalProviderReference', None),
+                                           external_merchant_reference=value.get('ExternalMerchantReference', None),
+                                           external_provider_name=value.get('ExternalProviderName', None),
+                                           external_provider_payment_method=value.get('ExternalProviderPaymentMethod',
+                                                                                      None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(PayInIntentExternalDataField, self).api_value(value)
+
+        if isinstance(value, PayInIntentExternalData):
+            result = {}
+            if value.external_processing_date is not None:
+                result['ExternalProcessingDate'] = value.external_processing_date
+            if value.external_provider_reference is not None:
+                result['ExternalProviderReference'] = value.external_provider_reference
+            if value.external_merchant_reference is not None:
+                result['ExternalMerchantReference'] = value.external_merchant_reference
+            if value.external_provider_name is not None:
+                result['ExternalProviderName'] = value.external_provider_name
+            if value.external_provider_payment_method is not None:
+                result['ExternalProviderPaymentMethod'] = value.external_provider_payment_method
+            return result
+
+        return value
+
+
+class PayInIntentBuyerField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return PayInIntentBuyer(id=value.get('Id', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(PayInIntentBuyerField, self).api_value(value)
+
+        if isinstance(value, PayInIntentBuyer):
+            result = {}
+            if value.id is not None:
+                result['Id'] = value.id
             return result
 
         return value

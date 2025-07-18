@@ -47,7 +47,8 @@ class SelectQuery(BaseQuery):
     def __init__(self, model, *args, **kwargs):
         super(SelectQuery, self).__init__(model, 'GET')
 
-    def get(self, reference, handler=None, resource_model=None, without_client_id=False, with_query_params=False, **kwargs):
+    def get(self, reference, handler=None, resource_model=None, without_client_id=False, with_query_params=False,
+            is_v3=False, **kwargs):
         model = resource_model or self.model
         handler = handler or self.handler
 
@@ -58,9 +59,9 @@ class SelectQuery(BaseQuery):
             url = '%s' % meta_url
 
         if with_query_params:
-            result, data = handler.request(self.method, url, without_client_id=without_client_id, **kwargs)
+            result, data = handler.request(self.method, url, without_client_id=without_client_id, is_v3=is_v3, **kwargs)
         else:
-            result, data = handler.request(self.method, url, without_client_id=without_client_id)
+            result, data = handler.request(self.method, url, without_client_id=without_client_id, is_v3=is_v3)
 
         if 'errors' in data:
             if result.status_code == 404:
@@ -129,7 +130,7 @@ class InsertQuery(BaseQuery):
 
         return pairs
 
-    def execute(self, handler=None, model_klass=None):
+    def execute(self, handler=None, model_klass=None, is_v3=False):
         handler = handler or self.handler
 
         data = self.parse_insert()
@@ -139,8 +140,31 @@ class InsertQuery(BaseQuery):
         result, data = handler.request(self.method,
                                        url,
                                        data=data,
-                                       idempotency_key=self.idempotency_key)
+                                       idempotency_key=self.idempotency_key,
+                                       is_v3=is_v3)
 
+        return dict(self.parse_result(data, model_klass))
+
+
+class InsertMultipartQuery(BaseQuery):
+    identifier = 'INSERT_MULTIPART'
+
+    def __init__(self, model, file, file_name, idempotency_key=None, **kwargs):
+        self.insert_query = kwargs
+        self.idempotency_key = idempotency_key
+        self.file = file
+        self.file_name = file_name
+        super(InsertMultipartQuery, self).__init__(model, 'POST')
+
+    def execute(self, handler=None, model_klass=None, is_v3=False):
+        handler = handler or self.handler
+        url = self.parse_url(self.model._meta.url)
+        result, data = handler.multipart_request(self.method,
+                                                 url,
+                                                 file=self.file,
+                                                 file_name=self.file_name,
+                                                 idempotency_key=self.idempotency_key,
+                                                 is_v3=is_v3)
         return dict(self.parse_result(data, model_klass))
 
 
@@ -162,17 +186,45 @@ class UpdateQuery(BaseQuery):
 
         return pairs
 
-    def execute(self, handler=None):
+    def execute(self, handler=None, is_v3=False):
         handler = handler or self.handler
 
         data = self.parse_update()
 
         meta_url = self.parse_url(self.model._meta.url, self.update_query)
-        url = '%s/%s' % (meta_url, self.reference)
+        if self.reference is not None:
+            url = '%s/%s' % (meta_url, self.reference)
+        else:
+            url = meta_url
 
         result, data = handler.request(self.method,
                                        url,
-                                       data=data)
+                                       data=data, is_v3=is_v3)
+
+        return self.parse_result(data)
+
+
+class UpdateMultipartQuery(BaseQuery):
+    identifier = 'UPDATE_MULTIPART'
+
+    def __init__(self, model, file, file_name, reference, **kwargs):
+        self.update_query = kwargs
+        self.reference = reference
+        self.file = file
+        self.file_name = file_name
+        super(UpdateMultipartQuery, self).__init__(model, 'PUT')
+
+    def execute(self, handler=None, is_v3=False):
+        handler = handler or self.handler
+
+        meta_url = self.parse_url(self.model._meta.url, self.update_query)
+        url = '%s/%s' % (meta_url, self.reference)
+
+        result, data = handler.multipart_request(self.method,
+                                                 url,
+                                                 file=self.file,
+                                                 file_name=self.file_name,
+                                                 is_v3=is_v3)
 
         return self.parse_result(data)
 

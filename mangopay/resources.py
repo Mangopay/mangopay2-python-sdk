@@ -18,8 +18,10 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LocalAccountDetailsField, VirtualAccountCapabilitiesField, PaymentRefField, PendingUserActionField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
-                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField)
-from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery
+                     BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField,
+                     PayInIntentExternalDataField, PayInIntentBuyerField)
+from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery, InsertMultipartQuery, \
+    UpdateMultipartQuery
 
 
 class BaseModel(BaseApiModel):
@@ -857,7 +859,8 @@ class RecurringPayInRegistration(BaseModel):
     recurring_type = CharField(api_name='RecurringType')
     current_state = CurrentStateField(api_name='CurrentState')
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
-    payment_type = CharField(api_name='PaymentType', choices=constants.RECURRING_PAYIN_REGISTRATION_PAYMENT_TYPE, default=None)
+    payment_type = CharField(api_name='PaymentType', choices=constants.RECURRING_PAYIN_REGISTRATION_PAYMENT_TYPE,
+                             default=None)
 
     def get_read_only_properties(self):
         read_only = ["Id", "FreeCycles", "CycleNumber", "TotalAmount", "RecurringType", "Status", "CurrentState"]
@@ -2879,3 +2882,116 @@ class UserDataFormatValidation(BaseModel):
         url = {
             InsertQuery.identifier: '/users/data-formats/validation'
         }
+
+
+class PayInIntent(BaseModel):
+    creation_date = DateTimeField(api_name='CreationDate')
+    amount = IntegerField(api_name='Amount')
+    available_amount_to_split = IntegerField(api_name='AvailableAmountToSplit')
+    currency = CharField(api_name='Currency')
+    platform_fees_amount = IntegerField(api_name='PlatformFeesAmount')
+    status = CharField(api_name='Status')
+    next_actions = CharField(api_name='NextActions')
+    external_data = PayInIntentExternalDataField(api_name='ExternalData')
+    buyer = PayInIntentBuyerField(api_name='Buyer')
+    line_items = ListField(api_name='LineItems')
+    captures = ListField(api_name='Captures')
+    refunds = ListField(api_name='Refunds')
+    disputes = ListField(api_name='Disputes')
+    splits = ListField(api_name='Splits')
+    settlement_id = CharField(api_name='SettlementId')
+
+    class Meta:
+        verbose_name = 'pay_in_intent'
+        verbose_name_plural = 'pay_in_intents'
+
+        url = {
+            'CREATE_AUTHORIZATION': '/payins/intents',
+            'CREATE_CAPTURE': '/payins/intents/%(intent_id)s/captures',
+            'GET': '/payins/intents',
+            'CANCEL': '/payins/intents/%(id)s/cancel'
+        }
+
+    def create_authorization(self, idempotency_key=None, **kwargs):
+        insert = InsertQuery(self, idempotency_key, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE_AUTHORIZATION'
+        return insert.execute(is_v3=True)
+
+    def create_capture(self, intent_id, idempotency_key=None, **kwargs):
+        path_params = {'intent_id': intent_id}
+        insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE_CAPTURE'
+        return insert.execute(is_v3=True)
+
+    @classmethod
+    def get(cls, pay_in_intent_id, *args, **kwargs):
+        select = SelectQuery(PayInIntent, *args, **kwargs)
+        select.identifier = 'GET'
+        return select.get(pay_in_intent_id, is_v3=True, *args, **kwargs)
+
+    # @classmethod
+    # def cancel(cls, pay_in_intent_id, **kwargs):
+    #     kwargs['id'] = pay_in_intent_id
+    #     update = UpdateQuery(PayInIntent, None, **kwargs)
+    #     update.identifier = 'CANCEL'
+    #     return update.execute(is_v3=True)
+
+
+class Settlement(BaseModel):
+    settlement_id = CharField(api_name='SettlementId')
+    status = CharField(api_name='Status')
+    settlement_date = DateTimeField(api_name='SettlementDate')
+    external_provider_name = CharField(api_name='ExternalProviderName')
+    declared_intent_amount = IntegerField(api_name='DeclaredIntentAmount')
+    external_processor_fees_amount = IntegerField(api_name='ExternalProcessorFeesAmount')
+    actual_settlement_amount = IntegerField(api_name='ActualSettlementAmount')
+    funds_missing_amount = IntegerField(api_name='FundsMissingAmount')
+
+    class Meta:
+        verbose_name = 'settlement'
+        verbose_name_plural = 'settlements'
+
+        url = {
+            'UPLOAD': '/payins/intents/settlements',
+            'GET': '/payins/intents/settlements',
+            'UPDATE': '/payins/intents/settlements'
+        }
+
+    @classmethod
+    def upload(cls, file, idempotency_key=None, **kwargs):
+        insert = InsertMultipartQuery(Settlement, file, 'settlement_file.csv', idempotency_key, **kwargs)
+        insert.identifier = 'UPLOAD'
+        return insert.execute(is_v3=True)
+
+    @classmethod
+    def get(cls, settlement_id, *args, **kwargs):
+        select = SelectQuery(Settlement, *args, **kwargs)
+        select.identifier = 'GET'
+        return select.get(settlement_id, is_v3=True, *args, **kwargs)
+
+    @classmethod
+    def update_file(cls, settlement_id, file, **kwargs):
+        update = UpdateMultipartQuery(Settlement, file, 'settlement_file.csv', settlement_id, **kwargs)
+        update.identifier = 'UPDATE'
+        return update.execute(is_v3=True)
+
+
+class PayInIntentSplit(BaseModel):
+    splits = ListField(api_name='Splits')
+
+    class Meta:
+        verbose_name = 'pay_in_intent_split'
+        verbose_name_plural = 'pay_in_intent_splits'
+
+        url = {
+            'CREATE': '/payins/intents/%(intent_id)s/splits'
+        }
+
+    def create(self, intent_id, idempotency_key=None, **kwargs):
+        path_params = {'intent_id': intent_id}
+        insert = InsertQuery(self, idempotency_key, path_params, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = 'CREATE'
+        return insert.execute(is_v3=True)
