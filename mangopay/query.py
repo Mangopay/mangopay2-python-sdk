@@ -59,7 +59,7 @@ class SelectQuery(BaseQuery):
             url = '%s' % meta_url
 
         if with_query_params:
-            result, data = handler.request(self.method, url, without_client_id=without_client_id, is_v3=is_v3 **kwargs)
+            result, data = handler.request(self.method, url, without_client_id=without_client_id, is_v3=is_v3, **kwargs)
         else:
             result, data = handler.request(self.method, url, without_client_id=without_client_id, is_v3=is_v3)
 
