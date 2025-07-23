@@ -19,7 +19,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
                      BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField,
-                     PayInIntentExternalDataField, PayInIntentBuyerField)
+                     PayInIntentExternalDataField, PayInIntentBuyerField, SupportedBanksField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery, InsertMultipartQuery, \
     UpdateMultipartQuery
 
@@ -1730,6 +1730,23 @@ class PayByBankPayIn(PayIn):
             InsertQuery.identifier: '/payins/payment-methods/openbanking',
             SelectQuery.identifier: '/payins'
         }
+
+
+class PayByBankSupportedBank(BaseModel):
+    supported_banks = SupportedBanksField(api_name="SupportedBanks")
+
+    class Meta:
+        verbose_name = 'pay_by_bank_supported_bank'
+        verbose_name_plural = 'pay_by_bank_supported_banks'
+        url = {
+            'GET': '/payment-methods/openbanking/metadata/supported-banks'
+        }
+
+    @classmethod
+    def get(cls, *args, **kwargs):
+        select = SelectQuery(PayByBankSupportedBank, *args, **kwargs)
+        select.identifier = 'GET'
+        return select.get("", with_query_params=True, *args, **kwargs)
 
 
 @python_2_unicode_compatible

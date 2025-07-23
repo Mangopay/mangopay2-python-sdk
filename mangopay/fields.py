@@ -13,7 +13,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
     VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative, IndividualRecipient, \
     BusinessRecipient, RecipientPropertySchema, IndividualRecipientPropertySchema, BusinessRecipientPropertySchema, \
-    CompanyNumberValidation, ReportFilter, PayInIntentExternalData, PayInIntentBuyer
+    CompanyNumberValidation, ReportFilter, PayInIntentExternalData, PayInIntentBuyer, SupportedBank
 
 
 class FieldDescriptor(object):
@@ -1280,6 +1280,25 @@ class PayInIntentBuyerField(Field):
             result = {}
             if value.id is not None:
                 result['Id'] = value.id
+            return result
+
+        return value
+
+
+class SupportedBanksField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return SupportedBank(countries=value.get('Countries', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(SupportedBanksField, self).api_value(value)
+
+        if isinstance(value, SupportedBank):
+            result = {}
+            if value.countries is not None:
+                result['Countries'] = value.countries
             return result
 
         return value
