@@ -12,7 +12,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
     CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, \
     RecurringPayPalPayInCIT, \
-    RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplit
+    RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplit, PayByBankSupportedBank
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo, PayInIntentExternalData,
                             PayInIntentLineItem, IntentSplit)
@@ -2263,6 +2263,18 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("WEB", result.execution_type)
         self.assertEqual("PAY_BY_BANK", result.payment_type)
         self.assertEqual("PAYIN", result.type)
+
+    def test_PayIns_PayByBankWeb_GetSupportedBanks(self):
+        result = PayByBankSupportedBank.get()
+        self.assertTrue(len(result.supported_banks.countries) > 0)
+
+        result_filtered = PayByBankSupportedBank.get(CountryCodes="DE")
+        self.assertTrue(len(result_filtered.supported_banks.countries) == 1)
+
+        result_filtered_paginated = PayByBankSupportedBank.get(CountryCodes="DE", page=1, per_page=2)
+        self.assertTrue(len(result_filtered_paginated.supported_banks.countries) == 1)
+        self.assertTrue(len(result_filtered_paginated.supported_banks.countries[0]['Banks']) == 2)
+
 
     def test_create_pay_in_intent_authorization(self):
         created = BaseTestLive.create_new_pay_in_intent_authorization()

@@ -1516,3 +1516,23 @@ class IntentSplit(object):
             "Status": self.status,
             "TransferDate": self.transfer_date
         }
+
+
+@add_camelcase_aliases
+class SupportedBank(object):
+    def __init__(self, countries=None):
+        self.countries = countries
+
+    def __str__(self):
+        return 'SupportedBank: %s' % self.countries
+
+    def __eq__(self, other):
+        if isinstance(other, SupportedBank):
+            stat = (self.countries == other.countries)
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "Countries": self.countries
+        }
