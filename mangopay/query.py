@@ -171,9 +171,10 @@ class InsertMultipartQuery(BaseQuery):
 class UpdateQuery(BaseQuery):
     identifier = 'UPDATE'
 
-    def __init__(self, model, reference, **kwargs):
+    def __init__(self, model, reference, path_params=None, **kwargs):
         self.update_query = kwargs
         self.reference = reference
+        self.path_params = path_params
         super(UpdateQuery, self).__init__(model, 'PUT')
 
     def parse_update(self):
@@ -191,7 +192,7 @@ class UpdateQuery(BaseQuery):
 
         data = self.parse_update()
 
-        meta_url = self.parse_url(self.model._meta.url, self.update_query)
+        meta_url = self.parse_url(self.model._meta.url, self.update_query, self.path_params)
         if self.reference is not None:
             url = '%s/%s' % (meta_url, self.reference)
         else:

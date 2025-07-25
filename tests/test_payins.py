@@ -6,13 +6,14 @@ import unittest
 import requests
 import responses
 
+from mangopay.exceptions import APIError
 from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, GooglepayPayIn, \
     RecurringPayInRegistration, \
     RecurringPayInCIT, PayInRefund, RecurringPayInMIT, CardPreAuthorizedDepositPayIn, MbwayPayIn, PayPalWebPayIn, \
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
     CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, \
     RecurringPayPalPayInCIT, \
-    RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplit
+    RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplits, PayInIntentSplit
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo, PayInIntentExternalData,
                             PayInIntentLineItem, IntentSplit)
@@ -791,6 +792,28 @@ def new_blik(user, credited_wallet):
     pay_in.redirect_url = 'https://r3.girogate.de/ti/dumbdummy?tx=140079495229&rs=oHkl4WvsgwtWpMptWpqWlFa90j0EzzO9&cs=e43baf1ae4a556dfb823fd304acc408580c193e04c1a9bcb26699b4185393b05'
     pay_in.tag = 'Blik tag'
     return pay_in
+
+
+def create_new_splits(intent):
+    external_data = PayInIntentExternalData()
+    external_data.external_processing_date = '01-10-2026'
+    external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+    external_data.external_merchant_reference = 'Order-xyz-35e8490e-2ec9-4c82-978e-c712a3f5ba16'
+    external_data.external_provider_name = 'Stripe'
+    external_data.external_provider_payment_method = 'PAYPAL'
+
+    full_capture = PayInIntent()
+    full_capture.external_data = external_data
+    PayInIntent(**full_capture.create_capture(intent.id))
+
+    split = IntentSplit()
+    split.line_item_id = intent.line_items[0]['Id']
+    split.split_amount = 10
+
+    intent_splits = PayInIntentSplits()
+    intent_splits.splits = [split]
+
+    return PayInIntentSplits(**intent_splits.create(intent.id))
 
 
 class PayInsTestLive(BaseTestLive):
@@ -2333,26 +2356,44 @@ class PayInsTestLive(BaseTestLive):
 
     def test_create_pay_in_intent_splits(self):
         intent = BaseTestLive.create_new_pay_in_intent_authorization()
-
-        external_data = PayInIntentExternalData()
-        external_data.external_processing_date = '01-10-2026'
-        external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-        external_data.external_merchant_reference = 'Order-xyz-35e8490e-2ec9-4c82-978e-c712a3f5ba16'
-        external_data.external_provider_name = 'Stripe'
-        external_data.external_provider_payment_method = 'PAYPAL'
-
-        full_capture = PayInIntent()
-        full_capture.external_data = external_data
-        PayInIntent(**full_capture.create_capture(intent.id))
-
-        split = IntentSplit()
-        split.line_item_id = intent.line_items[0]['Id']
-        split.split_amount = 10
-
-        intent_splits = PayInIntentSplit()
-        intent_splits.splits = [split]
-
-        created_splits = PayInIntentSplit(**intent_splits.create(intent.id))
+        created_splits = create_new_splits(intent)
 
         self.assertIsNotNone(created_splits)
         self.assertEqual('CREATED', created_splits.splits[0]['Status'])
+
+    def test_execute_split(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        created_splits = create_new_splits(intent)
+        try:
+            PayInIntentSplit.execute(intent.id, created_splits.splits[0]['Id'])
+        except APIError as e:
+            # expect error. A success flow can't be tested automatically because a manual payin needs to be created
+            self.assertTrue("One or several required parameters are missing or incorrect" in e.content['Message'])
+
+    def test_reverse_split(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        created_splits = create_new_splits(intent)
+        try:
+            PayInIntentSplit.reverse(intent.id, created_splits.splits[0]['Id'])
+        except APIError as e:
+            # expect error. A success flow can't be tested automatically because a manual payin needs to be created
+            self.assertTrue("One or several required parameters are missing or incorrect" in e.content['Message'])
+
+    def test_get_split(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        created_splits = create_new_splits(intent)
+        fetched = PayInIntentSplit.get(intent.id, created_splits.splits[0]['Id'])
+        self.assertEqual('CREATED', fetched.status)
+
+    def test_update_split(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        created_splits = create_new_splits(intent)
+        updated = PayInIntentSplit.update_split(
+            intent.id,
+            created_splits.splits[0]['Id'],
+            **{
+                'description': 'updated description',
+                'line_item_id': created_splits.splits[0]['LineItemId']
+            }
+        )
+        self.assertEqual('updated description', updated['description'])
