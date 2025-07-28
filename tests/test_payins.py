@@ -1270,7 +1270,8 @@ class PayInsTestLive(BaseTestLive):
             "credited_wallet_id": self.get_johns_wallet().id,
             "debited_funds": Money(amount=1000, currency='EUR'),
             "fees": Money(amount=0, currency='EUR'),
-            "deposit_id": deposit.id
+            "deposit_id": deposit.id,
+            "author_id": deposit.author_id
         }
 
         created = CardPreAuthorizedDepositPayIn(**params).save()
@@ -1290,7 +1291,8 @@ class PayInsTestLive(BaseTestLive):
             "credited_wallet_id": self.get_johns_wallet().id,
             "debited_funds": Money(amount=1000, currency='EUR'),
             "fees": Money(amount=0, currency='EUR'),
-            "deposit_id": deposit.id
+            "deposit_id": deposit.id,
+            "author_id": deposit.author_id
         }
 
         created = CardPreAuthorizedDepositPayIn(**params).create_without_complement()
@@ -1311,7 +1313,8 @@ class PayInsTestLive(BaseTestLive):
             "credited_wallet_id": self.get_johns_wallet().id,
             "debited_funds": Money(amount=1000, currency='EUR'),
             "fees": Money(amount=0, currency='EUR'),
-            "deposit_id": deposit.id
+            "deposit_id": deposit.id,
+            "author_id": deposit.author_id
         }
 
         created = CardPreAuthorizedDepositPayIn(**params).create_prior_to_complement()
@@ -1337,7 +1340,8 @@ class PayInsTestLive(BaseTestLive):
             "credited_wallet_id": self.get_johns_wallet().id,
             "debited_funds": Money(amount=1000, currency='EUR'),
             "fees": Money(amount=0, currency='EUR'),
-            "deposit_id": deposit.id
+            "deposit_id": deposit.id,
+            "author_id": deposit.author_id
         }
 
         created = CardPreAuthorizedDepositPayIn(**params).create_complement()
