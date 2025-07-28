@@ -951,17 +951,19 @@ class PayinsLinked(object):
 
 
 class LineItem(object):
-    def __init__(self, name=None, quantity=None, unit_amount=None, tax_amount=None, description=None, category=None):
+    def __init__(self, name=None, quantity=None, unit_amount=None, tax_amount=None, description=None, category=None,
+                 sku=None):
         self.name = name
         self.quantity = quantity
         self.unit_amount = unit_amount
         self.tax_amount = tax_amount
         self.description = description
         self.category = category
+        self.sku = sku
 
     def __str__(self):
-        return 'LineItem: %s %s %s %s %s %s' % \
-            (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description, self.category)
+        return 'LineItem: %s %s %s %s %s %s %s' % \
+            (self.name, self.quantity, self.unit_amount, self.tax_amount, self.description, self.category, self.sku)
 
     def to_api_json(self):
         return {
@@ -970,7 +972,8 @@ class LineItem(object):
             "UnitAmount": self.unit_amount,
             "TaxAmount": self.tax_amount,
             "Description": self.description,
-            "Category": self.category
+            "Category": self.category,
+            "Sku": self.sku
         }
 
 
@@ -1515,4 +1518,24 @@ class IntentSplit(object):
             "Description": self.description,
             "Status": self.status,
             "TransferDate": self.transfer_date
+        }
+
+
+@add_camelcase_aliases
+class SupportedBank(object):
+    def __init__(self, countries=None):
+        self.countries = countries
+
+    def __str__(self):
+        return 'SupportedBank: %s' % self.countries
+
+    def __eq__(self, other):
+        if isinstance(other, SupportedBank):
+            stat = (self.countries == other.countries)
+            return stat
+        return False
+
+    def to_api_json(self):
+        return {
+            "Countries": self.countries
         }
