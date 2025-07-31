@@ -294,7 +294,11 @@ class APIRequest(object):
                     rate_limit = RateLimit()
                     number_of_minutes = (int(rate_limit_reset[i].strip()) - current_time) / 60
 
-                    if number_of_minutes <= 15:
+                    if number_of_minutes <= 1:
+                        rate_limit.interval_minutes = 1
+                    elif number_of_minutes <= 5:
+                        rate_limit.interval_minutes = 5
+                    elif number_of_minutes <= 15:
                         rate_limit.interval_minutes = 15
                     elif number_of_minutes <= 30:
                         rate_limit.interval_minutes = 30
