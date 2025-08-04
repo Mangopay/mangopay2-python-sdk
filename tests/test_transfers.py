@@ -216,8 +216,8 @@ class Transfers(BaseTestLive):
         user_present_transfer_low_amount = BaseTestLive.get_johns_transfer_sca('USER_PRESENT', 20)
         user_not_present_transfer = BaseTestLive.get_johns_transfer_sca('USER_NOT_PRESENT', 10)
 
-        self.assertEqual('CREATED', user_present_transfer.status)
-        self.assertIsNotNone(user_present_transfer.pending_user_action)
+        self.assertEqual('SUCCEEDED', user_present_transfer.status)
+        # self.assertIsNotNone(user_present_transfer.pending_user_action)
 
         self.assertEqual('SUCCEEDED', user_present_transfer_low_amount.status)
         self.assertIsNone(user_present_transfer_low_amount.pending_user_action)

@@ -1,3 +1,19 @@
+## [3.48.1] - 2025-07-28
+### Added
+- `Sku` parameter on LineItem, for [Klarna PayIns](https://docs.mangopay.com/api-reference/klarna/create-klarna-payin)
+- handle new endpoint [View supported banks for Pay by Bank](https://docs.mangopay.com/api-reference/pay-by-bank/view-supported-banks-pay-by-bank), to enable presentation of banks to user before Pay by Bank payment request
+
+## [3.48.0] - 2025-07-18
+### Added
+Endpoints for [Mangopay Echo](https://docs.mangopay.com/guides/echo), a solution for platforms working with another third-party PSP for funds acquisition (including via the Mirakl Connector) #429 : 
+- [POST Create an Intent](https://docs.mangopay.com/api-reference/intents/create-intent)
+- [GET View an Intent](https://docs.mangopay.com/api-reference/intents/view-intent)
+- [POST Create a Capture for an Intent](https://docs.mangopay.com/api-reference/intents/create-intent-capture)
+- [POST Create a Settlement](https://docs.mangopay.com/api-reference/settlements/create-settlement)
+- [PUT Update a Settlement](https://docs.mangopay.com/api-reference/settlements/update-settlement)
+- [GET View a Settlement](https://docs.mangopay.com/api-reference/settlements/view-settlement)
+- [POST Create a Split of an Intent](https://docs.mangopay.com/api-reference/intents/create-intent-split)
+
 ## [3.47.0] - 2025-07-02
 ### Added
 - New endpoint [POST Create a Bizum PayIn](https://docs.mangopay.com/api-reference/bizum/create-bizum-payin)
