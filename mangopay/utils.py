@@ -1336,20 +1336,35 @@ class CompanyNumberValidation(object):
 
 @add_camelcase_aliases
 class ReportFilter(object):
-    def __init__(self, currency=None, user_id=None, wallet_id=None):
+    def __init__(self, currency=None, user_id=None, wallet_id=None, payment_method=None, status=None, type=None,
+                 intent_id=None,
+                 external_provider_name=None, scheduled=None):
         self.currency = currency
         self.user_id = user_id
         self.wallet_id = wallet_id
+        self.payment_method = payment_method
+        self.status = status
+        self.type = type
+        self.intent_id = intent_id
+        self.external_provider_name = external_provider_name
+        self.scheduled = scheduled
 
     def __str__(self):
-        return 'ReportFilter: %s , %s, %s' % \
-            (self.currency, self.user_id, self.wallet_id)
+        return 'ReportFilter: %s, %s, %s, %s, %s, %s, %s, %s, %s' % \
+            (self.currency, self.user_id, self.wallet_id, self.payment_method, self.status, self.type, self.intent_id,
+             self.external_provider_name, self.scheduled)
 
     def __eq__(self, other):
         if isinstance(other, ReportFilter):
             stat = ((self.currency == other.currency) and
                     (self.user_id == other.user_id) and
-                    (self.wallet_id == other.wallet_id))
+                    (self.wallet_id == other.wallet_id) and
+                    (self.payment_method == other.payment_method) and
+                    (self.status == other.status) and
+                    (self.type == other.type) and
+                    (self.intent_id == other.intent_id) and
+                    (self.external_provider_name == other.external_provider_name) and
+                    (self.scheduled == other.scheduled))
             return stat
         return False
 
@@ -1357,7 +1372,13 @@ class ReportFilter(object):
         return {
             "Currency": self.currency,
             "UserId": self.user_id,
-            "WalletId": self.wallet_id
+            "WalletId": self.wallet_id,
+            "PaymentMethod": self.payment_method,
+            "Status": self.status,
+            "Type": self.type,
+            "IntentId": self.intent_id,
+            "ExternalProviderName": self.external_provider_name,
+            "Scheduled": self.scheduled
         }
 
 

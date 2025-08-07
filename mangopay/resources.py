@@ -2996,6 +2996,57 @@ class Settlement(BaseModel):
 
 
 class PayInIntentSplit(BaseModel):
+    line_item_id = CharField(api_name='LineItemId')
+    wallet_id = CharField(api_name='WalletId')
+    seller_id = CharField(api_name='SellerId')
+    split_amount = IntegerField(api_name='SplitAmount')
+    fees_amount = IntegerField(api_name='FeesAmount')
+    description = CharField(api_name='Description')
+    status = CharField(api_name='Status')
+    transfer_date = DateTimeField(api_name='TransferDate')
+
+    class Meta:
+        verbose_name = 'intent_split'
+        verbose_name_plural = 'intent_splits'
+
+        url = {
+            'EXECUTE': '/payins/intents/%(intent_id)s/splits/%(split_id)s/execute',
+            'REVERSE': '/payins/intents/%(intent_id)s/splits/%(split_id)s/reverse',
+            'GET': '/payins/intents/%(intent_id)s/splits/%(split_id)s',
+            'UPDATE': '/payins/intents/%(intent_id)s/splits/%(split_id)s'
+        }
+
+    @classmethod
+    def execute(cls, intent_id, split_id, idempotency_key=None, *args, **kwargs):
+        path_params = {'intent_id': intent_id, 'split_id': split_id}
+        insert = InsertQuery(PayInIntentSplit, idempotency_key, path_params, **kwargs)
+        insert.identifier = 'EXECUTE'
+        return insert.execute(*args, is_v3=True)
+
+    @classmethod
+    def reverse(cls, intent_id, split_id, idempotency_key=None, *args, **kwargs):
+        path_params = {'intent_id': intent_id, 'split_id': split_id}
+        insert = InsertQuery(PayInIntentSplit, idempotency_key, path_params, **kwargs)
+        insert.identifier = 'REVERSE'
+        return insert.execute(*args, is_v3=True)
+
+    @classmethod
+    def get(cls, intent_id, split_id, *args, **kwargs):
+        kwargs['intent_id'] = intent_id
+        kwargs['split_id'] = split_id
+        select = SelectQuery(PayInIntentSplit, *args, **kwargs)
+        select.identifier = 'GET'
+        return select.get("", *args, is_v3=True, **kwargs)
+
+    @classmethod
+    def update_split(cls, intent_id, split_id, *args, **kwargs):
+        path_params = {'intent_id': intent_id, 'split_id': split_id}
+        update = UpdateQuery(PayInIntentSplit, "", path_params=path_params, **kwargs)
+        update.identifier = 'UPDATE'
+        return update.execute(*args, is_v3=True)
+
+
+class PayInIntentSplits(BaseModel):
     splits = ListField(api_name='Splits')
 
     class Meta:
