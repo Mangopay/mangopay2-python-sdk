@@ -1214,7 +1214,11 @@ class ReportFilterField(Field):
     def python_value(self, value):
         if value is not None:
             return ReportFilter(currency=value.get('Currency', None), user_id=value.get('UserId', None),
-                                wallet_id=value.get('WalletId', None))
+                                wallet_id=value.get('WalletId', None), payment_method=value.get('PaymentMethod', None),
+                                status=value.get('Status', None), type=value.get('Type', None),
+                                intent_id=value.get('IntentId', None),
+                                external_provider_name=value.get('ExternalProviderName', None),
+                                scheduled=value.get('Scheduled', None))
 
         return value
 
@@ -1229,6 +1233,18 @@ class ReportFilterField(Field):
                 result['UserId'] = value.user_id
             if value.wallet_id is not None:
                 result['WalletId'] = value.wallet_id
+            if value.payment_method is not None:
+                result['PaymentMethod'] = value.payment_method
+            if value.status is not None:
+                result['Status'] = value.status
+            if value.type is not None:
+                result['Type'] = value.type
+            if value.intent_id is not None:
+                result['IntentId'] = value.intent_id
+            if value.external_provider_name is not None:
+                result['ExternalProviderName'] = value.external_provider_name
+            if value.scheduled is not None:
+                result['Scheduled'] = value.scheduled
             return result
 
         return value
