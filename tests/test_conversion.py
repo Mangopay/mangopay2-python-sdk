@@ -1,4 +1,5 @@
-from mangopay.resources import ConversionQuote, QuotedConversion, InstantConversion
+from mangopay.resources import ConversionQuote, QuotedConversion, InstantConversion, ClientWalletsQuotedConversion, \
+    ClientWalletsInstantConversion
 from mangopay.utils import Money
 from tests.resources import ConversionRate, Conversion, Wallet
 from tests.test_base import BaseTestLive
@@ -173,3 +174,31 @@ class ConversionsTest(BaseTestLive):
         self.assertIsNotNone(response.data[0].debited_funds.amount)
         self.assertIsNotNone(response.data[0].credited_funds.amount)
         self.assertEqual(response.data[0].status, 'SUCCEEDED')
+
+    def test_create_client_wallets_quoted_conversion(self):
+        conversion_quote = ConversionQuote()
+        conversion_quote.credited_funds = Money(currency='GBP', amount=None)
+        conversion_quote.debited_funds = Money(currency='EUR', amount=50)
+        conversion_quote.duration = 300
+        conversion_quote.tag = "Created using the Mangopay Python SDK"
+        created_conversion_quote = conversion_quote.create_conversion_quote()
+
+        quoted_conversion = ClientWalletsQuotedConversion()
+        quoted_conversion.quote_id = created_conversion_quote['id']
+        quoted_conversion.credited_wallet_type = 'CREDIT'
+        quoted_conversion.debited_wallet_type = 'FEES'
+
+        response = quoted_conversion.save()
+        self.assertIsNotNone(response)
+        self.assertEqual(response['status'], 'SUCCEEDED')
+
+    def test_create_client_wallets_instant_conversion(self):
+        quoted_conversion = ClientWalletsInstantConversion()
+        quoted_conversion.credited_wallet_type = 'FEES'
+        quoted_conversion.debited_wallet_type = 'FEES'
+        quoted_conversion.credited_funds = Money(currency='EUR', amount=None)
+        quoted_conversion.debited_funds = Money(currency='GBP', amount=50)
+
+        response = quoted_conversion.save()
+        self.assertIsNotNone(response)
+        self.assertEqual(response['status'], 'SUCCEEDED')
