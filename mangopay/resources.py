@@ -521,6 +521,26 @@ class QuotedConversion(BaseModel):
         }
 
 
+class ClientWalletsQuotedConversion(BaseModel):
+    quote = ForeignKeyField(ConversionQuote, api_name='QuoteId', required=True)
+    debited_wallet_type = CharField(Wallet, api_name="DebitedWalletType", required=True)
+    credited_wallet_type = CharField(Wallet, api_name="CreditedWalletType", required=True)
+    tag = CharField(api_name="Tag")
+
+    def save(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = InsertQuery.identifier
+        return insert.execute(model_klass=Conversion)
+
+    class Meta:
+        verbose_name = 'client_wallet_quoted_conversion'
+        verbose_name_plural = 'client_wallet_quoted_conversions'
+        url = {
+            InsertQuery.identifier: '/clients/conversions/quoted-conversion'
+        }
+
+
 class InstantConversion(BaseModel):
     author = ForeignKeyField(User, api_name="AuthorId")
     debited_wallet = ForeignKeyField(Wallet, api_name="DebitedWalletId")
@@ -541,6 +561,27 @@ class InstantConversion(BaseModel):
         verbose_name_plural = 'instant_conversions'
         url = {
             'INSTANT_CONVERSION': '/conversions/instant-conversion'
+        }
+
+
+class ClientWalletsInstantConversion(BaseModel):
+    debited_wallet_type = CharField(Wallet, api_name="DebitedWalletType", required=True)
+    credited_wallet_type = CharField(Wallet, api_name="CreditedWalletType", required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    credited_funds = MoneyField(api_name='CreditedFunds', required=True)
+    tag = CharField(api_name="Tag")
+
+    def save(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = InsertQuery.identifier
+        return insert.execute(model_klass=Conversion)
+
+    class Meta:
+        verbose_name = 'client_wallet_instant_conversion'
+        verbose_name_plural = 'client_wallet_instant_conversions'
+        url = {
+            InsertQuery.identifier: '/clients/conversions/instant-conversion'
         }
 
 
