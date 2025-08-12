@@ -2150,7 +2150,7 @@ class Dispute(BaseModel):
             'CLOSE_DISPUTE': '/disputes/%(id)s/close/',
             'SUBMIT_DISPUTE': '/disputes/%(id)s/submit/',
             'RE_SUBMIT_DISPUTE': '/disputes/%(id)s/submit/',
-            'PENDING_SETTLEMENT': '/disputes/pending-settlement'
+            'PENDING_SETTLEMENT': '/disputes/pendingsettlement'
         }
 
     def __init__(self, *args, **kwargs):
