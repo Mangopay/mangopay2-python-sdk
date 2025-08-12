@@ -3063,3 +3063,23 @@ class PayInIntentSplits(BaseModel):
         insert.insert_query = self.get_field_dict()
         insert.identifier = 'CREATE'
         return insert.execute(is_v3=True)
+
+
+@python_2_unicode_compatible
+class ClientBankWireDirectPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId')
+    credited_wallet_id = CharField(api_name='CreditedWalletId', required=True)
+    declared_debited_funds = MoneyField(api_name='DeclaredDebitedFunds', required=True)
+    declared_fees = MoneyField(api_name='DeclaredFees')
+    wire_reference = CharField(api_name='WireReference')
+    bank_account = CharField(api_name='BankAccount')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/clients/payins/bankwire/direct',
+            SelectQuery.identifier: '/payins'
+        }
