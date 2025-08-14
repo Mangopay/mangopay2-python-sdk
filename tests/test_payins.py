@@ -13,7 +13,8 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     GooglePayDirectPayIn, MultibancoPayIn, SatispayPayIn, BlikPayIn, KlarnaPayIn, IdealPayIn, GiropayPayIn, \
     CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, \
     RecurringPayPalPayInCIT, \
-    RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplit, PayInIntentSplits, PayByBankSupportedBank
+    RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplit, PayInIntentSplits, PayByBankSupportedBank, \
+    ClientBankWireDirectPayIn
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo, PayInIntentExternalData,
                             PayInIntentLineItem, IntentSplit)
@@ -2412,3 +2413,14 @@ class PayInsTestLive(BaseTestLive):
             }
         )
         self.assertEqual('updated description', updated['description'])
+
+    def test_create_client_bank_wire_direct_payin(self):
+        pay_in = ClientBankWireDirectPayIn()
+        pay_in.credited_wallet_id = 'CREDIT_EUR'
+        pay_in.declared_debited_funds = Money(amount=100, currency='EUR')
+        created = ClientBankWireDirectPayIn(**pay_in.save())
+        self.assertIsNotNone(created)
+        self.assertEqual('CREATED', created.status)
+        self.assertEqual('PAYIN', created.type)
+        self.assertEqual('BANK_WIRE', created.payment_type)
+        self.assertEqual('DIRECT', created.execution_type)
