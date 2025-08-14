@@ -94,8 +94,7 @@ class DisputeTest(BaseTestLive):
 
     def test_GetDisputesPendingSettlement(self):
         disputes_pending = Dispute.get_pending_settlement()
-
-        self.assertTrue(disputes_pending)
+        self.assertTrue(len(disputes_pending.data) > 0)
 
 
     def test_CreateDisputeDocument(self):
