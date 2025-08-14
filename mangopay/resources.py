@@ -521,6 +521,26 @@ class QuotedConversion(BaseModel):
         }
 
 
+class ClientWalletsQuotedConversion(BaseModel):
+    quote = ForeignKeyField(ConversionQuote, api_name='QuoteId', required=True)
+    debited_wallet_type = CharField(Wallet, api_name="DebitedWalletType", required=True)
+    credited_wallet_type = CharField(Wallet, api_name="CreditedWalletType", required=True)
+    tag = CharField(api_name="Tag")
+
+    def save(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = InsertQuery.identifier
+        return insert.execute(model_klass=Conversion)
+
+    class Meta:
+        verbose_name = 'client_wallet_quoted_conversion'
+        verbose_name_plural = 'client_wallet_quoted_conversions'
+        url = {
+            InsertQuery.identifier: '/clients/conversions/quoted-conversion'
+        }
+
+
 class InstantConversion(BaseModel):
     author = ForeignKeyField(User, api_name="AuthorId")
     debited_wallet = ForeignKeyField(Wallet, api_name="DebitedWalletId")
@@ -541,6 +561,27 @@ class InstantConversion(BaseModel):
         verbose_name_plural = 'instant_conversions'
         url = {
             'INSTANT_CONVERSION': '/conversions/instant-conversion'
+        }
+
+
+class ClientWalletsInstantConversion(BaseModel):
+    debited_wallet_type = CharField(Wallet, api_name="DebitedWalletType", required=True)
+    credited_wallet_type = CharField(Wallet, api_name="CreditedWalletType", required=True)
+    debited_funds = MoneyField(api_name='DebitedFunds', required=True)
+    credited_funds = MoneyField(api_name='CreditedFunds', required=True)
+    tag = CharField(api_name="Tag")
+
+    def save(self, **kwargs):
+        insert = InsertQuery(self, **kwargs)
+        insert.insert_query = self.get_field_dict()
+        insert.identifier = InsertQuery.identifier
+        return insert.execute(model_klass=Conversion)
+
+    class Meta:
+        verbose_name = 'client_wallet_instant_conversion'
+        verbose_name_plural = 'client_wallet_instant_conversions'
+        url = {
+            InsertQuery.identifier: '/clients/conversions/instant-conversion'
         }
 
 
@@ -2150,7 +2191,7 @@ class Dispute(BaseModel):
             'CLOSE_DISPUTE': '/disputes/%(id)s/close/',
             'SUBMIT_DISPUTE': '/disputes/%(id)s/submit/',
             'RE_SUBMIT_DISPUTE': '/disputes/%(id)s/submit/',
-            'PENDING_SETTLEMENT': '/disputes/pending-settlement'
+            'PENDING_SETTLEMENT': '/disputes/pendingsettlement'
         }
 
     def __init__(self, *args, **kwargs):
@@ -3063,3 +3104,23 @@ class PayInIntentSplits(BaseModel):
         insert.insert_query = self.get_field_dict()
         insert.identifier = 'CREATE'
         return insert.execute(is_v3=True)
+
+
+@python_2_unicode_compatible
+class ClientBankWireDirectPayIn(PayIn):
+    author = ForeignKeyField(User, api_name='AuthorId')
+    credited_wallet_id = CharField(api_name='CreditedWalletId', required=True)
+    declared_debited_funds = MoneyField(api_name='DeclaredDebitedFunds', required=True)
+    declared_fees = MoneyField(api_name='DeclaredFees')
+    wire_reference = CharField(api_name='WireReference')
+    bank_account = CharField(api_name='BankAccount')
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
+
+    class Meta:
+        verbose_name = 'payin'
+        verbose_name_plural = 'payins'
+        url = {
+            InsertQuery.identifier: '/clients/payins/bankwire/direct',
+            SelectQuery.identifier: '/payins'
+        }
