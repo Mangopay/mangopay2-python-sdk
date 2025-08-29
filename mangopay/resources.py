@@ -1974,6 +1974,8 @@ class Refund(BaseModel):
 class TransferRefund(Refund):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     transfer = ForeignKeyField(Transfer)
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
 
     class Meta:
         verbose_name = 'refund'
