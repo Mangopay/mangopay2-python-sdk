@@ -1560,3 +1560,23 @@ class SupportedBank(object):
         return {
             "Countries": self.countries
         }
+
+
+@add_camelcase_aliases
+class VerificationOfPayee(object):
+    def __init__(self, recipient_verification_id=None, recipient_verification_check=None,
+                 recipient_verification_message=None):
+        self.recipient_verification_id = recipient_verification_id
+        self.recipient_verification_check = recipient_verification_check
+        self.recipient_verification_message = recipient_verification_message
+
+    def __str__(self):
+        return ('VerificationOfPayee: %s %s %s' % self.recipient_verification_id, self.recipient_verification_check,
+                self.recipient_verification_message)
+
+    def to_api_json(self):
+        return {
+            "RecipientVerificationId": self.recipient_verification_id,
+            "RecipientVerificationCheck": self.recipient_verification_check,
+            "RecipientVerificationMessage": self.recipient_verification_message
+        }
