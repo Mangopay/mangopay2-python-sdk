@@ -14,7 +14,7 @@ class TokenTestLive(BaseTestLive):
         new_token = new_token_result[1]['token_type'] + ' ' + new_token_result[1]['access_token']
 
         self.assertFalse(old_token == new_token)
-        new_token_result[1]['timestamp'] = time.time() + (int(new_token_result[1]['expires_in']) - 10)
+        new_token_result[1]['timestamp'] = time.time() + (int(new_token_result[1]['expires_in']) - 30)
         BaseTestLive.get_oauth_manager().set_token(new_token_result[1])
 
         stored_token = BaseTestLive.get_oauth_manager().get_token()
