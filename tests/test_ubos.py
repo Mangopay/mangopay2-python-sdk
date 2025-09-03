@@ -55,7 +55,7 @@ class UbosTests(BaseTestLive):
             "birthday": 25755342,
             "nationality": "GB",
             "birthplace": birthplace,
-            "isActive": True
+            "is_active": True
         }
         updated_ubo = to_be_updated.update(to_be_updated.get_pk(), **params_to_be_updated).execute()
 
