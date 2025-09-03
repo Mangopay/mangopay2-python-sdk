@@ -1,3 +1,15 @@
+## [3.49.2] - 2025-09-03
+### Added
+- Support for missing fields on TransferRefund #444 (thank you @obarahona10 #377) 
+
+### Changed
+- Casing of 3 fields to harmonise on snake_case #443 ⚠️ **Breaking change** for Conversion `quote_Id`, Document(KYC) `processed_date`, and Ubo `is_active` (thanks @samitnuk #268) 
+- OAuth token refresh buffer before expiry updated to 30s #446 
+- Updated testing library to pynose (thank you @nandoks #441)
+
+### Fixed
+- Tests
+
 ## [3.49.1] - 2025-08-14
 ### Added
 - Support for [POST Create a Quoted Conversion between Client Wallets](https://docs.mangopay.com/api-reference/conversions/create-quoted-conversion-client-wallets) and [POST Create an Instant Conversion between Client Wallets](https://docs.mangopay.com/api-reference/conversions/create-instant-conversion-client-wallets) #437 
