@@ -1,5 +1,5 @@
 responses==0.25.6
-nose==1.3.7
+pynose==1.5.4
 coverage==7.6.12
 exam==0.10.6
 httplib2==0.22.0

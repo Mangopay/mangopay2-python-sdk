@@ -469,7 +469,7 @@ class ConversionQuote(BaseModel):
 
 @python_2_unicode_compatible
 class Conversion(BaseModel):
-    quoteId = ForeignKeyField(ConversionQuote, api_name='QuoteId', default=None)
+    quote_id = ForeignKeyField(ConversionQuote, api_name='QuoteId', default=None)
     type = CharField(api_name='Type', choices=constants.TRANSACTION_TYPE_CHOICES, default=None)
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     status = CharField(api_name='Status', choices=constants.STATUS_CHOICES, default=None)
@@ -1974,6 +1974,8 @@ class Refund(BaseModel):
 class TransferRefund(Refund):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     transfer = ForeignKeyField(Transfer)
+    debited_funds = MoneyField(api_name='DebitedFunds')
+    fees = MoneyField(api_name='Fees')
 
     class Meta:
         verbose_name = 'refund'
@@ -2021,7 +2023,7 @@ class Document(KYC):
     status = CharField(api_name='Status', choices=constants.DOCUMENTS_STATUS_CHOICES, default=None)
     refused_reason_type = CharField(api_name='RefusedReasonType')
     refused_reason_message = CharField(api_name='RefusedReasonMessage')
-    processedDate = DateTimeField(api_name='ProcessedDate')
+    processed_date = DateTimeField(api_name='ProcessedDate')
     flags = ListField(api_name='Flags')
 
     class Meta:
@@ -2640,7 +2642,7 @@ class Ubo(BaseModel):
     birthplace = BirthplaceField(api_name='Birthplace', required=True)
     user = ForeignKeyField(User)
     ubo_declaration = ForeignKeyField(UboDeclaration)
-    isActive = BooleanField(api_name='IsActive')
+    is_active = BooleanField(api_name='IsActive')
 
     class Meta:
         verbose_name = 'ubo'

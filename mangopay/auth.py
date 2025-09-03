@@ -1,13 +1,12 @@
 import base64
 import hashlib
 import json
-import stat
-
 import os
+import stat
 import tempfile
+import time
 
 import six
-import time
 
 import mangopay
 from mangopay.exceptions import AuthenticationError
@@ -90,7 +89,7 @@ class AuthorizationTokenManager(object):
                 token = auth_result[1]
             else:
                 return None
-            token['timestamp'] = time.time() + (int(token['expires_in']) - 10)
+            token['timestamp'] = time.time() + (int(token['expires_in']) - 30)
             self.set_token(token)
 
         return token['token_type'] + ' ' + token['access_token']
