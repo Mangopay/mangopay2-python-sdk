@@ -61,7 +61,7 @@ class UbosTests(BaseTestLive):
 
         self.assertEqual(updated_ubo['first_name'], "UpdatedFirstName")
         self.assertEqual(updated_ubo['nationality'], "GB")
-        self.assertEqual(updated_ubo["isActive"], True)
+        self.assertEqual(updated_ubo["is_active"], True)
 
     def test_update_ubo_partial(self):
         to_be_updated = self.get_ubo(True)
