@@ -232,7 +232,24 @@ EVENT_TYPE_CHOICES = Choices(
     ('USER_CATEGORY_UPDATED_TO_PLATFORM', 'user_category_updated_to_platform', 'User category updated to platform'),
 
     ('REPORT_GENERATED', 'report_generated', 'Report Generated'),
-    ('REPORT_FAILED', 'report_failed', 'Report Failed')
+    ('REPORT_FAILED', 'report_failed', 'Report Failed'),
+
+    ('INTENT_AUTHORIZED', 'intent_authorized', 'Intent Authorized'),
+    ('INTENT_CAPTURED', 'intent_captured', 'Intent Captured'),
+    ('INTENT_REFUNDED', 'intent_refunded', 'Intent Refunded'),
+    ('INTENT_REFUND_REVERSED', 'intent_refund_reversed', 'Intent Refund Reversed'),
+    ('INTENT_DISPUTE_CREATED', 'intent_dispute_created', 'Intent Dispute Created'),
+    ('INTENT_DISPUTE_DEFENDED', 'intent_dispute_defended', 'Intent Dispute Defended'),
+    ('INTENT_DISPUTE_WON', 'intent_dispute_won', 'Intent Dispute Won'),
+    ('INTENT_DISPUTE_LOST', 'intent_dispute_lost', 'Intent Dispute Lost'),
+    ('INTENT_SETTLED_NOT_PAID', 'intent_settled_not_paid', 'Intent Settled Not Paid'),
+    ('INTENT_PAID', 'intent_paid', 'Intent Paid'),
+
+    ('SPLIT_CREATED', 'split_created', 'Split Created'),
+    ('SPLIT_PENDING_FUNDS_RECEPTION', 'split_pending_funds_reception', 'Split Pending Funds Reception'),
+    ('SPLIT_AVAILABLE', 'split_available', 'Split Available'),
+    ('SPLIT_REJECTED', 'split_rejected', 'Split Rejected'),
+    ('SPLIT_REVERSED', 'split_reversed', 'Split Reversed')
 )
 
 NOTIFICATION_STATUS_CHOICES = Choices(
