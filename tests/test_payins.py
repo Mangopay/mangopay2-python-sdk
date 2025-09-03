@@ -1352,6 +1352,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("PAYIN", pay_in.type)
         self.assertIsNotNone(pay_in.deposit_id)
 
+    @unittest.skip("skipped because of PSP configuration error")
     def test_deposit_preauthorized_payin_complement(self):
         deposit = self.create_new_deposit()
 
@@ -1486,6 +1487,7 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual("MBWAY", result.payment_type)
         self.assertEqual("PAYIN", result.type)
 
+    @unittest.skip("skipped because of Generic Operation error")
     def test_PayIns_PayPalWeb_Create(self):
         user = BaseTestLive.get_john(True)
 
