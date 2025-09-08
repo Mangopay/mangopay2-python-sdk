@@ -1,3 +1,7 @@
+## [3.49.3] - 2025-09-08
+### Added
+- Support for `ProfilingAttemptReference` on all payment methods
+
 ## [3.49.2] - 2025-09-03
 ### Added
 - Support for missing fields on TransferRefund #444 (thank you @obarahona10 #377) 
