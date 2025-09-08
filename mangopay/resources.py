@@ -817,6 +817,7 @@ class PayIn(BaseModel):
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -1531,7 +1532,6 @@ class BizumPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     return_url = CharField(api_name='ReturnURL')
     phone = CharField(api_name='Phone')
-    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
     tag = CharField(api_name='Tag')
 
     class Meta:
