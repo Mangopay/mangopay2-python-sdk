@@ -817,6 +817,7 @@ class PayIn(BaseModel):
     nature = CharField(api_name='Nature', choices=constants.NATURE_CHOICES, default=None)
     payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
     execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -1382,7 +1383,6 @@ class BlikPayIn(PayIn):
     code = CharField(api_name='Code')
     ip_address = CharField(api_name='IpAddress')
     browser_info = BrowserInfoField(api_name='BrowserInfo')
-    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
 
     class Meta:
         verbose_name = 'blik_payin'
@@ -1432,7 +1432,6 @@ class IdealPayIn(PayIn):
     creation_date = DateTimeField(api_name='CreationDate')
     redirect_url = CharField(api_name='RedirectURL')
     bank_name = CharField(api_name='BankName', choices=constants.BANK_NAME_CHOICES)
-    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
 
     class Meta:
         verbose_name = 'ideal_payin'
@@ -1515,7 +1514,6 @@ class BancontactPayIn(PayIn):
     recurring = BooleanField(api_name='Recurring')
     culture = CharField(api_name='Culture')
     deep_link_url = CharField(api_name='DeepLinkURL')
-    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
 
     class Meta:
         verbose_name = 'gancontact_payin'
@@ -1534,7 +1532,6 @@ class BizumPayIn(PayIn):
     statement_descriptor = CharField(api_name='StatementDescriptor')
     return_url = CharField(api_name='ReturnURL')
     phone = CharField(api_name='Phone')
-    profiling_attempt_reference = CharField(api_name='ProfilingAttemptReference')
     tag = CharField(api_name='Tag')
 
     class Meta:
