@@ -3126,3 +3126,28 @@ class ClientBankWireDirectPayIn(PayIn):
             InsertQuery.identifier: '/clients/payins/bankwire/direct',
             SelectQuery.identifier: '/payins'
         }
+
+
+class PayPalDataCollection(BaseModel):
+    # since the properties needed by PayPal are different depending on the use-case,
+    # use Dict as payload and response for Create and Get. The cast to PayPalDataCollection model is skipped.
+    class Meta:
+        verbose_name = 'paypal_data_collection'
+        verbose_name_plural = 'paypal_data_collections'
+        url = {
+            'CREATE': '/payins/payment-methods/paypal/data-collection',
+            'GET': '/payins/payment-methods/paypal/data-collection'
+        }
+
+    @classmethod
+    def create(cls, idempotency_key=None, handler=None, **kwargs):
+        insert = InsertQuery(PayPalDataCollection, idempotency_key, None, **kwargs)
+        insert.insert_query = kwargs
+        insert.identifier = 'CREATE'
+        return insert.execute(handler=handler, strict_dict_parsing=False)
+
+    @classmethod
+    def get(cls, data_collection_id, *args, **kwargs):
+        select = SelectQuery(PayPalDataCollection, *args, **kwargs)
+        select.identifier = 'GET'
+        return select.get(data_collection_id, strict_dict_parsing=False, **kwargs)
