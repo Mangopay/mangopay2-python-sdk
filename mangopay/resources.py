@@ -2536,6 +2536,7 @@ class BankingAlias(BaseModel):
     type = CharField(api_name='Type')
     owner_name = CharField(api_name='OwnerName')
     active = BooleanField(api_name='Active')
+    virtual_account_purpose = CharField(api_name='VirtualAccountPurpose')
 
     class Meta:
         verbose_name = 'bankingalias'
