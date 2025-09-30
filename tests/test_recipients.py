@@ -23,6 +23,7 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNone(RecipientsTest._recipient.international_bank_transfer)
         self.assertIsNone(RecipientsTest._recipient.business_recipient)
         self.assertIsNotNone(RecipientsTest._recipient.country)
+        self.assertIsNotNone(RecipientsTest._recipient.recipient_verification_of_payee)
 
     def test_get_recipient(self):
         self.create_new_recipient()
@@ -131,24 +132,25 @@ class RecipientsTest(BaseTestLive):
     @staticmethod
     def get_new_recipient_obj():
         recipient = Recipient()
-        recipient.display_name = 'Alex Smith GBP account'
+        recipient.display_name = 'John EUR account'
         recipient.payout_method_type = 'LocalBankTransfer'
         recipient.recipient_type = 'Individual'
-        recipient.currency = 'GBP'
-        recipient.country = 'GB'
+        recipient.currency = 'EUR'
+        recipient.country = 'DE'
 
         individual_recipient = IndividualRecipient()
-        individual_recipient.first_name = 'Alex'
-        individual_recipient.last_name = 'Smith'
+        individual_recipient.first_name = 'John'
+        individual_recipient.last_name = 'Doe'
         individual_recipient.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
                                                city='City', region='Region',
-                                               postal_code='11222', country='FR')
+                                               postal_code='11222', country='DE')
         recipient.individual_recipient = individual_recipient
 
         recipient.local_bank_transfer = {
-            'GBP': {
+            'EUR': {
                 'SortCode': '200000',
-                'AccountNumber': '55779911'
+                'AccountNumber': '55779911',
+                'IBAN': 'DE75512108001245126199'
             }
         }
 
