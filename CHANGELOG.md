@@ -1,3 +1,24 @@
+## [3.49.4] - 2025-09-23
+### Added
+- Webhook event types for [Echo](https://docs.mangopay.com/guides/echo), Mangopay's solution for third-party PSP integrations: `INTENT_AUTHORIZED`,`INTENT_CAPTURED`,`INTENT_REFUNDED`,`INTENT_REFUND_REVERSED`,`INTENT_DISPUTE_CREATED`,`INTENT_DISPUTE_DEFENDED`,`INTENT_DISPUTE_WON`,`INTENT_DISPUTE_LOST`,`INTENT_SETTLED_NOT_PAID`,`INTENT_PAID`,`SPLIT_CREATED`,`SPLIT_PENDING_FUNDS_RECEPTION`,`SPLIT_AVAILABLE`,`SPLIT_REJECTED`,`SPLIT_REVERSED` #448  
+- Support for `VirtualAccountPurpose` on Banking Alias object #451 
+
+## [3.49.3] - 2025-09-08
+### Added
+- Support for `ProfilingAttemptReference` on all payment methods
+
+## [3.49.2] - 2025-09-03
+### Added
+- Support for missing fields on TransferRefund #444 (thank you @obarahona10 #377) 
+
+### Changed
+- Casing of 3 fields to harmonise on snake_case #443 ⚠️ **Breaking change** for Conversion `quote_Id`, Document(KYC) `processed_date`, and Ubo `is_active` (thanks @samitnuk #268) 
+- OAuth token refresh buffer before expiry updated to 30s #446 
+- Updated testing library to pynose (thank you @nandoks #441)
+
+### Fixed
+- Tests
+
 ## [3.49.1] - 2025-08-14
 ### Added
 - Support for [POST Create a Quoted Conversion between Client Wallets](https://docs.mangopay.com/api-reference/conversions/create-quoted-conversion-client-wallets) and [POST Create an Instant Conversion between Client Wallets](https://docs.mangopay.com/api-reference/conversions/create-instant-conversion-client-wallets) #437 

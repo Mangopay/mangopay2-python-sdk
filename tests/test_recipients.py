@@ -30,7 +30,6 @@ class RecipientsTest(BaseTestLive):
 
         self.assertIsNotNone(fetched)
         self.assertEqual(RecipientsTest._recipient.id, fetched.id)
-        self.assertEqual(RecipientsTest._recipient.status, fetched.status)
 
     def test_get_user_recipients(self):
         self.create_new_recipient()

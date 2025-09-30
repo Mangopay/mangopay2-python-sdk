@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+import responses
+
 from tests import settings
 from tests.resources import BankingAliasIBAN, BankingAlias
-from tests.test_base import BaseTest, BaseTestLive
-
-import responses
+from tests.test_base import BaseTest
 
 
 class BankingAliasesTest(BaseTest):
@@ -28,7 +28,8 @@ class BankingAliasesTest(BaseTest):
                     "Active": True,
                     "Type":"IBAN",
                     "Id":"25337928",
-                    "WalletId":"1169420"
+                    "WalletId":"1169420",
+                    "VirtualAccountPurpose": "COLLECTION"
                 },
                 'status': 200
             },
@@ -81,6 +82,7 @@ class BankingAliasesTest(BaseTest):
 
         self.assertEqual(bankingAlias.country, 'LU')
         self.assertEqual(bankingAlias.iban, 'LU32062DZDP2JLJU9RP3')
+        self.assertEqual(bankingAlias.virtual_account_purpose, 'COLLECTION')
 
         walletBankingAliases = BankingAlias(
             wallet = self.natural_user_wallet

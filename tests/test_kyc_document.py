@@ -14,13 +14,13 @@ class KYCDocumentTestLive(BaseTestLive):
 
         self.assertTrue(len(documents.data) > 0)
 
-        result = Document.all(page=1, per_page=2, Sort='CreationDate:ASC',
+        result = Document.all(page=0, per_page=2, Sort='CreationDate:ASC',
                               BeforeDate=current_time + 1000,
                               AfterDate=current_time - 1000)
 
         self.assertTrue(len(result.data) > 0)
 
-        result2 = Document.all(page=1, per_page=2, Sort='CreationDate:DESC',
+        result2 = Document.all(page=0, per_page=2, Sort='CreationDate:DESC',
                                BeforeDate=current_time + 1000,
                                AfterDate=current_time - 1000)
 
