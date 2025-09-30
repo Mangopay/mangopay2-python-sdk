@@ -2970,7 +2970,7 @@ class PayInIntent(BaseModel):
             'CREATE_AUTHORIZATION': '/payins/intents',
             'CREATE_CAPTURE': '/payins/intents/%(intent_id)s/captures',
             'GET': '/payins/intents',
-            'CANCEL': '/payins/intents/%(id)s/cancel'
+            'CANCEL': '/payins/intents/%(intent_id)s/cancel'
         }
 
     def create_authorization(self, idempotency_key=None, **kwargs):
@@ -2992,12 +2992,12 @@ class PayInIntent(BaseModel):
         select.identifier = 'GET'
         return select.get(pay_in_intent_id, is_v3=True, *args, **kwargs)
 
-    # @classmethod
-    # def cancel(cls, pay_in_intent_id, **kwargs):
-    #     kwargs['id'] = pay_in_intent_id
-    #     update = UpdateQuery(PayInIntent, None, **kwargs)
-    #     update.identifier = 'CANCEL'
-    #     return update.execute(is_v3=True)
+    @classmethod
+    def cancel(cls, intent_id, idempotency_key=None, **kwargs):
+        path_params = {'intent_id': intent_id}
+        insert = InsertQuery(PayInIntent, idempotency_key, path_params, **kwargs)
+        insert.identifier = 'CANCEL'
+        return insert.execute(is_v3=True)
 
 
 class Settlement(BaseModel):
