@@ -9,7 +9,7 @@ from tests.test_base import BaseTestLive
 class RecipientsTest(BaseTestLive):
     _recipient = None
 
-    def test_create_recipient(self):
+    def test_create_recipient_vop_null(self):
         self.create_new_recipient()
         self.assertIsNotNone(RecipientsTest._recipient)
         self.assertIsNotNone(RecipientsTest._recipient.display_name)
@@ -23,6 +23,35 @@ class RecipientsTest(BaseTestLive):
         self.assertIsNone(RecipientsTest._recipient.international_bank_transfer)
         self.assertIsNone(RecipientsTest._recipient.business_recipient)
         self.assertIsNotNone(RecipientsTest._recipient.country)
+        self.assertIsNone(RecipientsTest._recipient.recipient_verification_of_payee)
+
+    def test_create_recipient_vop_not_null(self):
+        john = BaseTestLive.get_john_sca_payer()
+
+        recipient = Recipient()
+        recipient.display_name = 'EUR account'
+        recipient.payout_method_type = 'LocalBankTransfer'
+        recipient.recipient_type = 'Individual'
+        recipient.currency = 'EUR'
+        recipient.country = 'DE'
+
+        individual_recipient = IndividualRecipient()
+        individual_recipient.first_name = 'John'
+        individual_recipient.last_name = 'Doe'
+        individual_recipient.address = Address(address_line_1='AddressLine1', address_line_2='AddressLine2',
+                                               city='City', region='Region',
+                                               postal_code='11222', country='DE')
+        recipient.individual_recipient = individual_recipient
+
+        recipient.local_bank_transfer = {
+            'EUR': {
+                'IBAN': 'DE75512108001245126199'
+            }
+        }
+
+        recipient = Recipient(**recipient.create(john.id))
+        self.assertIsNotNone(recipient)
+        self.assertIsNotNone(recipient.recipient_verification_of_payee)
 
     def test_get_recipient(self):
         self.create_new_recipient()

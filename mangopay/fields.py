@@ -13,7 +13,7 @@ from .utils import timestamp_from_datetime, timestamp_from_date, Money, DebitedB
     PayinsLinked, ConversionRate, CardInfo, LocalAccountDetails, InternationalAccountDetails, \
     VirtualAccountCapabilities, PaymentRef, PendingUserAction, LegalRepresentative, IndividualRecipient, \
     BusinessRecipient, RecipientPropertySchema, IndividualRecipientPropertySchema, BusinessRecipientPropertySchema, \
-    CompanyNumberValidation, ReportFilter, PayInIntentExternalData, PayInIntentBuyer, SupportedBank
+    CompanyNumberValidation, ReportFilter, PayInIntentExternalData, PayInIntentBuyer, SupportedBank, VerificationOfPayee
 
 
 class FieldDescriptor(object):
@@ -1315,6 +1315,31 @@ class SupportedBanksField(Field):
             result = {}
             if value.countries is not None:
                 result['Countries'] = value.countries
+            return result
+
+        return value
+
+
+class VerificationOfPayeeField(Field):
+    def python_value(self, value):
+        if value is not None:
+            return VerificationOfPayee(recipient_verification_id=value.get('RecipientVerificationId', None),
+                                       recipient_verification_check=value.get('RecipientVerificationCheck', None),
+                                       recipient_verification_message=value.get('RecipientVerificationMessage', None))
+
+        return value
+
+    def api_value(self, value):
+        value = super(VerificationOfPayeeField, self).api_value(value)
+
+        if isinstance(value, VerificationOfPayee):
+            result = {}
+            if value.recipient_verification_id is not None:
+                result['RecipientVerificationId'] = value.recipient_verification_id
+            if value.recipient_verification_check is not None:
+                result['RecipientVerificationCheck'] = value.recipient_verification_check
+            if value.recipient_verification_message is not None:
+                result['RecipientVerificationMessage'] = value.recipient_verification_message
             return result
 
         return value

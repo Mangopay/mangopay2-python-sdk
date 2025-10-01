@@ -14,7 +14,7 @@ from mangopay.resources import DirectDebitDirectPayIn, Mandate, ApplepayPayIn, G
     CardRegistration, BancontactPayIn, BizumPayIn, SwishPayIn, PayconiqV2PayIn, TwintPayIn, PayByBankPayIn, \
     RecurringPayPalPayInCIT, \
     RecurringPayPalPayInMIT, PayInIntent, PayInIntentSplit, PayInIntentSplits, PayByBankSupportedBank, \
-    ClientBankWireDirectPayIn
+    ClientBankWireDirectPayIn, PayPalDataCollection
 from mangopay.utils import (Money, ShippingAddress, Shipping, Billing, Address, SecurityInfo, ApplepayPaymentData,
                             GooglepayPaymentData, DebitedBankAccount, LineItem, CardInfo, PayInIntentExternalData,
                             PayInIntentLineItem, IntentSplit)
@@ -2361,16 +2361,16 @@ class PayInsTestLive(BaseTestLive):
         self.assertIsNotNone(fetched)
         self.assertEqual(fetched.status, intent.status)
 
-    # def test_cancel_pay_in_intent(self):
-    #     intent = BaseTestLive.create_new_pay_in_intent_authorization()
-    #     external_data = PayInIntentExternalData()
-    #     external_data.external_processing_date = 1728133765
-    #     external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-    #     cancel_details = {
-    #         'external_data': external_data
-    #     }
-    #     canceled = PayInIntent(**PayInIntent.cancel(intent.id, **cancel_details))
-    #     self.assertEqual(canceled.status, 'CANCELED')
+    def test_cancel_pay_in_intent(self):
+        intent = BaseTestLive.create_new_pay_in_intent_authorization()
+        external_data = PayInIntentExternalData()
+        external_data.external_processing_date = 1728133765
+        external_data.external_provider_reference = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        cancel_details = {
+            'external_data': external_data
+        }
+        cancelled = PayInIntent(**PayInIntent.cancel(intent.id, **cancel_details))
+        self.assertEqual(cancelled.status, 'CANCELLED')
 
     def test_create_pay_in_intent_splits(self):
         intent = BaseTestLive.create_new_pay_in_intent_authorization()
@@ -2426,3 +2426,37 @@ class PayInsTestLive(BaseTestLive):
         self.assertEqual('PAYIN', created.type)
         self.assertEqual('BANK_WIRE', created.payment_type)
         self.assertEqual('DIRECT', created.execution_type)
+
+    def test_paypal_data_collection(self):
+        data = {
+            "sender_account_id": "A12345N343",
+            "sender_first_name": "Jane",
+            "sender_last_name": "Doe",
+            "sender_email": "jane.doe@sample.com",
+            "sender_phone": "(042)11234567",
+            "sender_address_zip": "75009",
+            "sender_country_code": "FR",
+            "sender_create_date": "2012-12-09T19:14:55.277-0:00",
+            "sender_signup_ip": "10.220.90.20",
+            "sender_popularity_score": "high",
+            "receiver_account_id": "A12345N344",
+            "receiver_create_date": "2012-12-09T19:14:55.277-0:00",
+            "receiver_email": "jane@sample.com",
+            "receiver_address_country_code": "FR",
+            "business_name": "Jane Ltd",
+            "recipient_popularity_score": "high",
+            "first_interaction_date": "2012-12-09T19:14:55.277-0:00",
+            "txn_count_total": "34",
+            "vertical": "Household goods",
+            "transaction_is_tangible": "0"
+        }
+
+        created = PayPalDataCollection.create(**data)
+        self.assertIsNotNone(created)
+        self.assertIsNotNone(created['dataCollectionId'])
+
+        fetched = PayPalDataCollection.get(created['dataCollectionId'])
+        self.assertIsNotNone(fetched)
+        self.assertIsNotNone(fetched['dataCollectionId'])
+        self.assertEqual('Jane', fetched['sender_first_name'])
+        self.assertEqual('Doe', fetched['sender_last_name'])

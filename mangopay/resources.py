@@ -19,7 +19,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
                      BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField,
-                     PayInIntentExternalDataField, PayInIntentBuyerField, SupportedBanksField)
+                     PayInIntentExternalDataField, PayInIntentBuyerField, SupportedBanksField, VerificationOfPayeeField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery, InsertMultipartQuery, \
     UpdateMultipartQuery
 
@@ -1018,6 +1018,7 @@ class RecurringPayPalPayInCIT(PayIn):
     buyer_phone = CharField(api_name='BuyerPhone')
     paypal_payer_id = CharField(api_name='PaypalPayerID')
     recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+    data_collection_id = CharField(api_name='DataCollectionId')
 
     class Meta:
         verbose_name = 'recurring_paypal_payin'
@@ -1053,6 +1054,7 @@ class RecurringPayPalPayInMIT(PayIn):
     buyer_phone = CharField(api_name='BuyerPhone')
     paypal_payer_id = CharField(api_name='PaypalPayerID')
     recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+    data_collection_id = CharField(api_name='DataCollectionId')
 
     class Meta:
         verbose_name = 'recurring_paypal_payin'
@@ -1190,6 +1192,7 @@ class PayPalWebPayIn(PayIn):
     buyer_phone = CharField(api_name='BuyerPhone')
     paypal_order_id = CharField(api_name='PaypalOrderID')
     trackings = ListField(api_name='Trackings')
+    data_collection_id = CharField(api_name='DataCollectionId')
 
     class Meta:
         verbose_name = 'payin'
@@ -1871,6 +1874,7 @@ class BankWirePayOut(BaseModel):
     mode_requested = CharField(api_name='ModeRequested')
     mode_applied = CharField(api_name='ModeApplied')
     fallback_reason = FallbackReasonField(api_name='FallbackReason')
+    recipient_verification_of_payee = VerificationOfPayeeField(api_name='RecipientVerificationOfPayee')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -2843,6 +2847,7 @@ class Recipient(BaseModel):
     local_bank_transfer = DictField(api_name='LocalBankTransfer')
     international_bank_transfer = DictField(api_name='InternationalBankTransfer')
     pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+    recipient_verification_of_payee = VerificationOfPayeeField(api_name='RecipientVerificationOfPayee')
 
     class Meta:
         verbose_name = 'recipient'
@@ -2970,7 +2975,7 @@ class PayInIntent(BaseModel):
             'CREATE_AUTHORIZATION': '/payins/intents',
             'CREATE_CAPTURE': '/payins/intents/%(intent_id)s/captures',
             'GET': '/payins/intents',
-            'CANCEL': '/payins/intents/%(id)s/cancel'
+            'CANCEL': '/payins/intents/%(intent_id)s/cancel'
         }
 
     def create_authorization(self, idempotency_key=None, **kwargs):
@@ -2992,12 +2997,12 @@ class PayInIntent(BaseModel):
         select.identifier = 'GET'
         return select.get(pay_in_intent_id, is_v3=True, *args, **kwargs)
 
-    # @classmethod
-    # def cancel(cls, pay_in_intent_id, **kwargs):
-    #     kwargs['id'] = pay_in_intent_id
-    #     update = UpdateQuery(PayInIntent, None, **kwargs)
-    #     update.identifier = 'CANCEL'
-    #     return update.execute(is_v3=True)
+    @classmethod
+    def cancel(cls, intent_id, idempotency_key=None, **kwargs):
+        path_params = {'intent_id': intent_id}
+        insert = InsertQuery(PayInIntent, idempotency_key, path_params, **kwargs)
+        insert.identifier = 'CANCEL'
+        return insert.execute(is_v3=True)
 
 
 class Settlement(BaseModel):
@@ -3127,3 +3132,28 @@ class ClientBankWireDirectPayIn(PayIn):
             InsertQuery.identifier: '/clients/payins/bankwire/direct',
             SelectQuery.identifier: '/payins'
         }
+
+
+class PayPalDataCollection(BaseModel):
+    # since the properties needed by PayPal are different depending on the use-case,
+    # use Dict as payload and response for Create and Get. The cast to PayPalDataCollection model is skipped.
+    class Meta:
+        verbose_name = 'paypal_data_collection'
+        verbose_name_plural = 'paypal_data_collections'
+        url = {
+            'CREATE': '/payins/payment-methods/paypal/data-collection',
+            'GET': '/payins/payment-methods/paypal/data-collection'
+        }
+
+    @classmethod
+    def create(cls, idempotency_key=None, handler=None, **kwargs):
+        insert = InsertQuery(PayPalDataCollection, idempotency_key, None, **kwargs)
+        insert.insert_query = kwargs
+        insert.identifier = 'CREATE'
+        return insert.execute(handler=handler, strict_dict_parsing=False)
+
+    @classmethod
+    def get(cls, data_collection_id, *args, **kwargs):
+        select = SelectQuery(PayPalDataCollection, *args, **kwargs)
+        select.identifier = 'GET'
+        return select.get(data_collection_id, strict_dict_parsing=False, **kwargs)

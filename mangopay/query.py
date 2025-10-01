@@ -48,7 +48,7 @@ class SelectQuery(BaseQuery):
         super(SelectQuery, self).__init__(model, 'GET')
 
     def get(self, reference, handler=None, resource_model=None, without_client_id=False, with_query_params=False,
-            is_v3=False, **kwargs):
+            is_v3=False, strict_dict_parsing=True, **kwargs):
         model = resource_model or self.model
         handler = handler or self.handler
 
@@ -73,8 +73,10 @@ class SelectQuery(BaseQuery):
         cast = getattr(model, 'cast', lambda result: model)
         model_klass = cast(data)
 
-        return model_klass(handler=handler,
-                           **dict(self.parse_result(data, model_klass)))
+        if strict_dict_parsing:
+            return model_klass(handler=handler,
+                               **dict(self.parse_result(data, model_klass)))
+        return data
 
     def list(self, reference, resource_model, handler=None, **kwargs):
         handler = handler or self.handler
@@ -130,10 +132,13 @@ class InsertQuery(BaseQuery):
 
         return pairs
 
-    def execute(self, handler=None, model_klass=None, is_v3=False):
+    def execute(self, handler=None, model_klass=None, is_v3=False, strict_dict_parsing=True):
         handler = handler or self.handler
 
-        data = self.parse_insert()
+        if strict_dict_parsing:
+            data = self.parse_insert()
+        else:
+            data = self.insert_query
 
         url = self.parse_url(self.model._meta.url, self.insert_query, self.path_params)
 
@@ -143,7 +148,9 @@ class InsertQuery(BaseQuery):
                                        idempotency_key=self.idempotency_key,
                                        is_v3=is_v3)
 
-        return dict(self.parse_result(data, model_klass))
+        if strict_dict_parsing:
+            return dict(self.parse_result(data, model_klass))
+        return data
 
 
 class InsertMultipartQuery(BaseQuery):
