@@ -1,3 +1,9 @@
+## [3.50.0] - 2025-10-01
+### Added
+- [Verification of Payee (VOP)](https://docs.mangopay.com/guides/vop/recipients-payouts) API response fields (`RecipientVerificationOfPayee` and sub-properties) on the endpoints [GET View a Recipient](https://docs.mangopay.com/api-reference/recipients/view-recipient), [POST Create a Recipient](https://docs.mangopay.com/api-reference/recipients/create-recipient), [POST Create a Payout](https://docs.mangopay.com/api-reference/payouts/create-payout) ([API release note](https://docs.mangopay.com/release-notes/api/2025-09-30), #445)
+- Support for the [POST Cancel an Intent](https://docs.mangopay.com/api-reference/intents/cancel-intent) endpoint for [Echo](https://docs.mangopay.com/guides/echo), Mangopay's solution for platforms working with another third-party PSP for funds acquisition (#453) 
+- Support for [POST Submit data for a PayPal PayIn](https://docs.mangopay.com/api-reference/paypal/submit-data-paypal-payin) endpoint (#450)
+
 ## [3.49.4] - 2025-09-23
 ### Added
 - Webhook event types for [Echo](https://docs.mangopay.com/guides/echo), Mangopay's solution for third-party PSP integrations: `INTENT_AUTHORIZED`,`INTENT_CAPTURED`,`INTENT_REFUNDED`,`INTENT_REFUND_REVERSED`,`INTENT_DISPUTE_CREATED`,`INTENT_DISPUTE_DEFENDED`,`INTENT_DISPUTE_WON`,`INTENT_DISPUTE_LOST`,`INTENT_SETTLED_NOT_PAID`,`INTENT_PAID`,`SPLIT_CREATED`,`SPLIT_PENDING_FUNDS_RECEPTION`,`SPLIT_AVAILABLE`,`SPLIT_REJECTED`,`SPLIT_REVERSED` #448  
