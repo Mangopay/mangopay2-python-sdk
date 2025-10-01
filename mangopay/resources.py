@@ -19,7 +19,7 @@ from .fields import (PrimaryKeyField, EmailField, CharField,
                      LegalRepresentativeField, IndividualRecipientField, BusinessRecipientField,
                      RecipientPropertySchemaField, IndividualRecipientPropertySchemaField,
                      BusinessRecipientPropertySchemaField, CompanyNumberValidationField, ReportFilterField,
-                     PayInIntentExternalDataField, PayInIntentBuyerField, SupportedBanksField)
+                     PayInIntentExternalDataField, PayInIntentBuyerField, SupportedBanksField, VerificationOfPayeeField)
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery, DeleteQuery, InsertMultipartQuery, \
     UpdateMultipartQuery
 
@@ -1871,6 +1871,7 @@ class BankWirePayOut(BaseModel):
     mode_requested = CharField(api_name='ModeRequested')
     mode_applied = CharField(api_name='ModeApplied')
     fallback_reason = FallbackReasonField(api_name='FallbackReason')
+    recipient_verification_of_payee = VerificationOfPayeeField(api_name='RecipientVerificationOfPayee')
 
     def get_refunds(self, *args, **kwargs):
         kwargs['id'] = self.id
@@ -2843,6 +2844,7 @@ class Recipient(BaseModel):
     local_bank_transfer = DictField(api_name='LocalBankTransfer')
     international_bank_transfer = DictField(api_name='InternationalBankTransfer')
     pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+    recipient_verification_of_payee = VerificationOfPayeeField(api_name='RecipientVerificationOfPayee')
 
     class Meta:
         verbose_name = 'recipient'

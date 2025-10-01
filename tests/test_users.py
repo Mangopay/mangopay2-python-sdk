@@ -883,6 +883,7 @@ class PayOutsTestLive(BaseTestLive):
 
     def test_PayOut_GetRefunds(self):
         payout = BaseTestLive.get_johns_payout()
+        self.assertIsNotNone(payout.recipient_verification_of_payee)
 
         refunds = payout.get_refunds()
 
