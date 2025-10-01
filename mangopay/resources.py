@@ -1018,6 +1018,7 @@ class RecurringPayPalPayInCIT(PayIn):
     buyer_phone = CharField(api_name='BuyerPhone')
     paypal_payer_id = CharField(api_name='PaypalPayerID')
     recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+    data_collection_id = CharField(api_name='DataCollectionId')
 
     class Meta:
         verbose_name = 'recurring_paypal_payin'
@@ -1053,6 +1054,7 @@ class RecurringPayPalPayInMIT(PayIn):
     buyer_phone = CharField(api_name='BuyerPhone')
     paypal_payer_id = CharField(api_name='PaypalPayerID')
     recurring_payin_registration_id = CharField(api_name='RecurringPayinRegistrationId', required=True)
+    data_collection_id = CharField(api_name='DataCollectionId')
 
     class Meta:
         verbose_name = 'recurring_paypal_payin'
@@ -1190,6 +1192,7 @@ class PayPalWebPayIn(PayIn):
     buyer_phone = CharField(api_name='BuyerPhone')
     paypal_order_id = CharField(api_name='PaypalOrderID')
     trackings = ListField(api_name='Trackings')
+    data_collection_id = CharField(api_name='DataCollectionId')
 
     class Meta:
         verbose_name = 'payin'

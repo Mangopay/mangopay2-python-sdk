@@ -2457,6 +2457,6 @@ class PayInsTestLive(BaseTestLive):
 
         fetched = PayPalDataCollection.get(created['dataCollectionId'])
         self.assertIsNotNone(fetched)
-        self.assertIsNotNone(fetched['DataCollectionId'])
+        self.assertIsNotNone(fetched['dataCollectionId'])
         self.assertEqual('Jane', fetched['sender_first_name'])
         self.assertEqual('Doe', fetched['sender_last_name'])
