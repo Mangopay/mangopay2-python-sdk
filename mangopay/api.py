@@ -88,6 +88,7 @@ class APIRequest(object):
                 headers['Idempotency-Key'] = idempotency_key
 
             if self.uk_header_flag:
+                logger.warning('uk_header_flag is deprecated and will be removed in future versions')
                 headers['x-tenant-id'] = 'uk'
         else:
             if "data_XXX" in params:
