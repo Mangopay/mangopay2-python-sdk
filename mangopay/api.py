@@ -205,6 +205,7 @@ class APIRequest(object):
             headers['Idempotency-Key'] = idempotency_key
 
         if self.uk_header_flag:
+            logger.warning('uk_header_flag is deprecated and will be removed in future versions')
             headers['x-tenant-id'] = 'uk'
 
         if oauth_request:
