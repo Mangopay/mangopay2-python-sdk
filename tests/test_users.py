@@ -813,7 +813,8 @@ class UserTestLive(BaseTestLive):
             'terms_and_conditions_accepted': True,
             'birthday': 188352000,
             'nationality': 'FR',
-            'country_of_residence': 'FR'
+            'country_of_residence': 'FR',
+            'sca_context': 'USER_PRESENT'
         })
 
         # option 2: use the whole object with the updated fields
@@ -862,7 +863,8 @@ class UserTestLive(BaseTestLive):
                 'PostalCode': '11222',
                 'Country': 'FR'
             },
-            'company_number': '123456789'
+            'company_number': '123456789',
+            'sca_context': 'USER_NOT_PRESENT'
         })
 
         # option 2: use the whole object with the updated fields

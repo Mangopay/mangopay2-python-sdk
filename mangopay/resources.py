@@ -242,6 +242,7 @@ class NaturalUserSca(User):
     phone_number_country = CharField(api_name='PhoneNumberCountry')
     address = AddressField(api_name='Address')
     pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+    sca_context = CharField(api_name='ScaContext')
 
     class Meta:
         verbose_name = 'sca_user'
@@ -327,6 +328,7 @@ class LegalUserSca(User):
     terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted', required=True)
     user_category = CharField(api_name='UserCategory', required=True)
     legal_representative_address = AddressField(api_name='LegalRepresentativeAddress')
+    sca_context = CharField(api_name='ScaContext')
 
     class Meta:
         verbose_name = 'sca_user'
