@@ -137,12 +137,20 @@ class User(BaseModel):
         return select.get(user_id, *args, **kwargs)
 
     @staticmethod
-    def enroll_sca(user_id):
-        insert = InsertQuery(ScaEnrollment)
+    def enroll_sca(user_id, idempotency_key=None):
+        insert = InsertQuery(ScaEnrollment, idempotency_key)
         insert.insert_query['id'] = user_id
         insert.identifier = 'USERS_ENROLL_SCA'
         result = insert.execute()
         return ScaEnrollment(**result)
+
+    @staticmethod
+    def manage_consent(user_id, idempotency_key=None):
+        insert = InsertQuery(UserConsent, idempotency_key)
+        insert.insert_query['id'] = user_id
+        insert.identifier = 'USERS_MANAGE_CONSENT'
+        result = insert.execute()
+        return UserConsent(**result)
 
     def get_emoney(self, *args, **kwargs):
         kwargs['user_id'] = self.id
@@ -186,6 +194,18 @@ class ScaEnrollment(BaseModel):
         verbose_name_plural = 'sca_enrollments'
         url = {
             'USERS_ENROLL_SCA': '/sca/users/%(id)s/enrollment'
+        }
+
+
+@python_2_unicode_compatible
+class UserConsent(BaseModel):
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+
+    class Meta:
+        verbose_name = 'user_consent'
+        verbose_name_plural = 'user_consents'
+        url = {
+            'USERS_MANAGE_CONSENT': '/sca/users/%(id)s/consent'
         }
 
 

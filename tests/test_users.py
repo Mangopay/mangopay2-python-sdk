@@ -831,10 +831,18 @@ class UserTestLive(BaseTestLive):
 
         self.assertIsNotNone(categorized)
 
-    def test_Users_enrollSca(self):
+    def test_Users_enroll_sca(self):
         user = BaseTestLive.get_john()
         enrollment_result = User.enroll_sca(user.id)
         self.assertIsNotNone(enrollment_result.pending_user_action.redirect_url)
+
+    def test_Users_manage_consent(self):
+        user = BaseTestLive.get_john()
+        enrollment_result = User.enroll_sca(user.id)
+        self.assertIsNotNone(enrollment_result.pending_user_action.redirect_url)
+
+        consent_result = User.manage_consent(user.id)
+        self.assertIsNotNone(consent_result.pending_user_action.redirect_url)
 
     def test_Users_categorizeLegal(self):
         user = BaseTestLive.get_user_legal_sca_payer()
