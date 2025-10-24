@@ -385,7 +385,12 @@ class Wallet(BaseModel):
     class Meta:
         verbose_name = 'wallet'
         verbose_name_plural = 'wallets'
-        url = '/wallets'
+        url = {
+            InsertQuery.identifier: '/wallets',
+            SelectQuery.identifier: '/wallets',
+            UpdateQuery.identifier: '/wallets',
+            'GET_ALL_FOR_USER': '/users/%(user_id)s/wallets'
+        }
 
     def __init__(self, *args, **kwargs):
         super(Wallet, self).__init__(*args, **kwargs)
@@ -413,6 +418,13 @@ class Wallet(BaseModel):
         if len(args) == 1 and cls.is_client_wallet(args[0]):
             return ClientWallet.get(*tuple(args[0].split('_')), **kwargs)
         return super(Wallet, cls).get(with_query_params=True, *args, **kwargs)
+
+    @staticmethod
+    def get_all_for_user(user_id, *args, **kwargs):
+        kwargs['user_id'] = user_id
+        select = SelectQuery(Wallet, *args, **kwargs)
+        select.identifier = 'GET_ALL_FOR_USER'
+        return select.all(*args, **kwargs)
 
 
 @python_2_unicode_compatible
