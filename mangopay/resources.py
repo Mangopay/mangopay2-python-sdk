@@ -47,6 +47,7 @@ class Client(BaseApiModel):
     headquarters_address = AddressField(api_name='HeadquartersAddress')
     headquarters_phone_number = CharField(api_name='HeadquartersPhoneNumber')
     tax_number = CharField(api_name='TaxNumber')
+    licensor = CharField(api_name='Licensor')
 
     class Meta:
         verbose_name = 'client'
@@ -137,12 +138,20 @@ class User(BaseModel):
         return select.get(user_id, *args, **kwargs)
 
     @staticmethod
-    def enroll_sca(user_id):
-        insert = InsertQuery(ScaEnrollment)
+    def enroll_sca(user_id, idempotency_key=None):
+        insert = InsertQuery(ScaEnrollment, idempotency_key)
         insert.insert_query['id'] = user_id
         insert.identifier = 'USERS_ENROLL_SCA'
         result = insert.execute()
         return ScaEnrollment(**result)
+
+    @staticmethod
+    def manage_consent(user_id, idempotency_key=None):
+        insert = InsertQuery(UserConsent, idempotency_key)
+        insert.insert_query['id'] = user_id
+        insert.identifier = 'USERS_MANAGE_CONSENT'
+        result = insert.execute()
+        return UserConsent(**result)
 
     def get_emoney(self, *args, **kwargs):
         kwargs['user_id'] = self.id
@@ -186,6 +195,18 @@ class ScaEnrollment(BaseModel):
         verbose_name_plural = 'sca_enrollments'
         url = {
             'USERS_ENROLL_SCA': '/sca/users/%(id)s/enrollment'
+        }
+
+
+@python_2_unicode_compatible
+class UserConsent(BaseModel):
+    pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+
+    class Meta:
+        verbose_name = 'user_consent'
+        verbose_name_plural = 'user_consents'
+        url = {
+            'USERS_MANAGE_CONSENT': '/sca/users/%(id)s/consent'
         }
 
 
@@ -242,6 +263,7 @@ class NaturalUserSca(User):
     phone_number_country = CharField(api_name='PhoneNumberCountry')
     address = AddressField(api_name='Address')
     pending_user_action = PendingUserActionField(api_name='PendingUserAction')
+    sca_context = CharField(api_name='ScaContext')
 
     class Meta:
         verbose_name = 'sca_user'
@@ -327,6 +349,7 @@ class LegalUserSca(User):
     terms_and_conditions_accepted = BooleanField(api_name='TermsAndConditionsAccepted', required=True)
     user_category = CharField(api_name='UserCategory', required=True)
     legal_representative_address = AddressField(api_name='LegalRepresentativeAddress')
+    sca_context = CharField(api_name='ScaContext')
 
     class Meta:
         verbose_name = 'sca_user'
@@ -385,7 +408,12 @@ class Wallet(BaseModel):
     class Meta:
         verbose_name = 'wallet'
         verbose_name_plural = 'wallets'
-        url = '/wallets'
+        url = {
+            InsertQuery.identifier: '/wallets',
+            SelectQuery.identifier: '/wallets',
+            UpdateQuery.identifier: '/wallets',
+            'GET_ALL_FOR_USER': '/users/%(user_id)s/wallets'
+        }
 
     def __init__(self, *args, **kwargs):
         super(Wallet, self).__init__(*args, **kwargs)
@@ -413,6 +441,13 @@ class Wallet(BaseModel):
         if len(args) == 1 and cls.is_client_wallet(args[0]):
             return ClientWallet.get(*tuple(args[0].split('_')), **kwargs)
         return super(Wallet, cls).get(with_query_params=True, *args, **kwargs)
+
+    @staticmethod
+    def get_all_for_user(user_id, *args, **kwargs):
+        kwargs['user_id'] = user_id
+        select = SelectQuery(Wallet, *args, **kwargs)
+        select.identifier = 'GET_ALL_FOR_USER'
+        return select.all(*args, **kwargs)
 
 
 @python_2_unicode_compatible
@@ -1571,6 +1606,30 @@ class CardWebPayIn(PayIn):
             InsertQuery.identifier: '/payins/card/web',
             SelectQuery.identifier: '/payins'
         }
+
+
+class ExtendedCardWebPayIn(BaseModel):
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    expiration_date = DateTimeField(api_name='ExpirationDate')
+    alias = CharField(api_name='Alias')
+    card_type = CharField(api_name='CardType', choices=constants.CARD_TYPE_CHOICES, default=None)
+    country = CharField(api_name='Country')
+    fingerprint = CharField(api_name='Fingerprint')
+
+    class Meta:
+        verbose_name = 'extended_card_payin'
+        verbose_name_plural = 'extended_card_payins'
+        url = {
+            'GET': '/payins/card/web/%(id)s/extended',
+        }
+
+    @classmethod
+    def get(cls, pay_in_id, *args, **kwargs):
+        select = SelectQuery(ExtendedCardWebPayIn, *args, **kwargs)
+        kwargs['id'] = pay_in_id
+        select.identifier = 'GET'
+        return select.get("", *args, **kwargs)
 
 
 class DirectDebitWebPayIn(PayIn):
