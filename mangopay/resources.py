@@ -1608,6 +1608,30 @@ class CardWebPayIn(PayIn):
         }
 
 
+class ExtendedCardWebPayIn(BaseModel):
+    payment_type = CharField(api_name='PaymentType', choices=constants.PAYIN_PAYMENT_TYPE, default=None)
+    execution_type = CharField(api_name='ExecutionType', choices=constants.EXECUTION_TYPE_CHOICES, default=None)
+    expiration_date = DateTimeField(api_name='ExpirationDate')
+    alias = CharField(api_name='Alias')
+    card_type = CharField(api_name='CardType', choices=constants.CARD_TYPE_CHOICES, default=None)
+    country = CharField(api_name='Country')
+    fingerprint = CharField(api_name='Fingerprint')
+
+    class Meta:
+        verbose_name = 'extended_card_payin'
+        verbose_name_plural = 'extended_card_payins'
+        url = {
+            'GET': '/payins/card/web/%(id)s/extended',
+        }
+
+    @classmethod
+    def get(cls, pay_in_id, *args, **kwargs):
+        select = SelectQuery(ExtendedCardWebPayIn, *args, **kwargs)
+        kwargs['id'] = pay_in_id
+        select.identifier = 'GET'
+        return select.get("", *args, **kwargs)
+
+
 class DirectDebitWebPayIn(PayIn):
     author = ForeignKeyField(User, api_name='AuthorId', required=True)
     credited_wallet = ForeignKeyField(Wallet, api_name='CreditedWalletId', required=True)
