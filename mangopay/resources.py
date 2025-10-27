@@ -47,6 +47,7 @@ class Client(BaseApiModel):
     headquarters_address = AddressField(api_name='HeadquartersAddress')
     headquarters_phone_number = CharField(api_name='HeadquartersPhoneNumber')
     tax_number = CharField(api_name='TaxNumber')
+    licensor = CharField(api_name='Licensor')
 
     class Meta:
         verbose_name = 'client'
