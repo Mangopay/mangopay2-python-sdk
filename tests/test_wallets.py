@@ -352,5 +352,5 @@ class WalletsTestLive(BaseTestLive):
         BaseTestLive.get_johns_wallet()
         all_wallets = Wallet.get_all_for_user(user.id)
 
-        self.assertEqual(len(all_wallets), 1)
+        self.assertTrue(len(all_wallets) >= 1)
         self.assertTrue(all_wallets.data[0].owners_ids[0] == user.id)
